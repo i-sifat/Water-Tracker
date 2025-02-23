@@ -6,24 +6,24 @@ import 'package:watertracker/ui/hydration_progress/hydration_progress_page.dart'
 import 'package:watertracker/ui/settings/settings_page.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final _pages = <Widget>[
-    HydrationPoolPage(),
-    HydrationProgressPage(),
-    SettingsPage(),
+  final List<Widget> _pages = [
+    const HydrationPoolPage(),
+    const HydrationProgressPage(),
+    const SettingsPage(),
   ];
+
   int _currentPage = 0;
 
   void _changePage(int index) {
     if (index == _currentPage) return;
-
-    setState(() {
-      _currentPage = index;
-    });
+    setState(() => _currentPage = index);
   }
 
   @override
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
               secondaryAnimation,
             ) {
               return FadeThroughTransition(
-                fillColor: Theme.of(context).backgroundColor,
+                fillColor: Theme.of(context).colorScheme.background,
                 animation: primaryAnimation,
                 secondaryAnimation: secondaryAnimation,
                 child: child,

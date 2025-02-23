@@ -6,7 +6,7 @@ class WaterInput {
   final IconData icon;
   final Color backgroundColor;
 
-  WaterInput({
+  const WaterInput({
     required this.milliliters,
     required this.icon,
     required this.backgroundColor,
@@ -19,37 +19,37 @@ class WaterInput {
 }
 
 class _Small extends WaterInput {
-  _Small()
+  const _Small()
       : super(
           milliliters: 180,
           icon: AppSymbols.coffee_cup,
-          backgroundColor: Color(0xFFF1EEFF),
+          backgroundColor: const Color(0xFFF1EEFF),
         );
 }
 
 class _Regular extends WaterInput {
-  _Regular()
+  const _Regular()
       : super(
           milliliters: 250,
           icon: AppSymbols.water_glass,
-          backgroundColor: Color(0xFFF8F8F6),
+          backgroundColor: const Color(0xFFF8F8F6),
         );
 }
 
 class _Medium extends WaterInput {
-  _Medium()
+  const _Medium()
       : super(
           milliliters: 500,
           icon: AppSymbols.water,
-          backgroundColor: Color(0xFFFFFAEC),
+          backgroundColor: const Color(0xFFFFFAEC),
         );
 }
 
 class _Large extends WaterInput {
-  _Large()
+  const _Large()
       : super(
           milliliters: 750,
           icon: AppSymbols.jug,
-          backgroundColor: Color(0xFFFBE9E3),
+          backgroundColor: const Color(0xFFFBE9E3),
         );
 }

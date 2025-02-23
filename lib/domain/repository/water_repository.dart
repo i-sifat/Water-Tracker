@@ -7,45 +7,48 @@ import 'package:watertracker/domain/model/water_settings.dart';
 
 class WaterRepository {
   WaterRepository() {
-    PlatformMessenger.setMethodCallHandler((call) {
-      switch (call.method) {
-        case Constant.methodWaterSettingsChanged:
-          _waterSettings.add(WaterSettings.fromMap(call.arguments));
-          break;
-        default:
-          break;
+    PlatformMessenger.setMethodCallHandler((call) async {
+      if (call.method == Constant.methodWaterSettingsChanged) {
+        final args = call.arguments as Map<String, dynamic>;
+        _waterSettings.add(WaterSettings.fromMap(args));
       }
-      return Future.value(null);
+      return null;
     });
   }
 
-  final _waterSettings = BehaviorSubject<WaterSettings>();
+  final _waterSettings =
+      BehaviorSubject<WaterSettings>.seeded(WaterSettings.initial());
 
   Stream<WaterSettings> get waterSettings => _waterSettings.stream;
 
-  void drinkWater(int milliliters) {
-    PlatformMessenger.invokeMethod(Constant.methodDrinkWater, milliliters);
+  Future<void> drinkWater(int milliliters) async {
+    await PlatformMessenger.invokeMethod(
+        Constant.methodDrinkWater, milliliters);
   }
 
-  void changeAlarmEnabled(bool enabled) {
-    PlatformMessenger.invokeMethod(
-        Constant.methodChangeNotificationEnabled, enabled);
+  Future<void> changeAlarmEnabled(bool enabled) async {
+    await PlatformMessenger.invokeMethod(
+      Constant.methodChangeNotificationEnabled,
+      enabled,
+    );
   }
 
-  void subscribeToDataStore() {
-    PlatformMessenger.invokeMethod(Constant.methodSubscribeToDataStore);
+  Future<void> subscribeToDataStore() async {
+    await PlatformMessenger.invokeMethod(Constant.methodSubscribeToDataStore);
   }
 
-  void setRecommendedMilliliters(int milliliters) {
-    PlatformMessenger.invokeMethod(
-        Constant.methodSetRecommendedMilliliters, milliliters);
+  Future<void> setRecommendedMilliliters(int milliliters) async {
+    await PlatformMessenger.invokeMethod(
+      Constant.methodSetRecommendedMilliliters,
+      milliliters,
+    );
   }
 
-  void clearDataStore() {
-    PlatformMessenger.invokeMethod(Constant.methodClearDataStore);
+  Future<void> clearDataStore() async {
+    await PlatformMessenger.invokeMethod(Constant.methodClearDataStore);
   }
 
-  void close() {
+  void dispose() {
     _waterSettings.close();
   }
 }

@@ -10,13 +10,13 @@ class BottomNavBar extends StatefulWidget {
   final ValueChanged<int> onChanged;
 
   const BottomNavBar({
-    Key? key,
+    super.key,
     required this.currentPage,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
-  _BottomNavBarState createState() => _BottomNavBarState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
@@ -28,26 +28,28 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _move(_item1, 0);
     });
   }
 
   void _move(GlobalKey item, int index) {
-    final renderer = item.currentContext?.findRenderObject()! as RenderBox;
-    final offset = renderer.localToGlobal(Offset.zero);
+    final renderBox = item.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final offset = renderBox.localToGlobal(Offset.zero);
     setState(() {
       _position = offset.dx - (_kBallWidth - _kItemWidth) / 2;
     });
     widget.onChanged(index);
   }
 
-  Future<bool> _preventPop() {
+  Future<bool> _preventPop() async {
     final canPop = widget.currentPage > 0;
     if (canPop) {
       _move(_item1, 0);
     }
-    return Future.value(!canPop);
+    return !canPop;
   }
 
   @override
@@ -68,10 +70,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     AnimatedPositioned(
                       duration: _transitionDuration,
                       curve: Curves.easeInOutSine,
-                      left: _position,
+                      left: _position!,
                       width: _kBallWidth,
                       height: _kBarHeight,
-                      child: _IndicatorBall(),
+                      child: const _IndicatorBall(),
                     ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -107,12 +109,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
 }
 
 class _IndicatorBall extends StatelessWidget {
+  const _IndicatorBall();
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: ShapeDecoration(
-        shape: StadiumBorder(),
-        color: Theme.of(context).indicatorColor,
+        shape: const StadiumBorder(),
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -124,11 +128,11 @@ class _IconButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const _IconButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.onPressed,
     this.isSelected = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

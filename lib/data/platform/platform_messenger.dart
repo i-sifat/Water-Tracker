@@ -5,17 +5,19 @@ import 'package:watertracker/constant/constant.dart';
 
 class PlatformMessenger {
   PlatformMessenger._();
-  static const _platformCahnnel = MethodChannel(Constant.platformChannelName);
 
-  static void invokeMethod(String method, [dynamic arguments]) {
+  static const _platformChannel = MethodChannel(Constant.platformChannelName);
+
+  static Future<void> invokeMethod(String method, [dynamic arguments]) async {
     if (Platform.isAndroid) {
-      _platformCahnnel.invokeMethod(method, arguments);
+      await _platformChannel.invokeMethod<void>(method, arguments);
     }
   }
 
-  static void setMethodCallHandler(Future<dynamic> Function(MethodCall) call) {
+  static void setMethodCallHandler(
+      Future<dynamic> Function(MethodCall) handler) {
     if (Platform.isAndroid) {
-      _platformCahnnel.setMethodCallHandler(call);
+      _platformChannel.setMethodCallHandler(handler);
     }
   }
 }

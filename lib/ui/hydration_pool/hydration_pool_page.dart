@@ -7,23 +7,23 @@ import 'package:watertracker/ui/hydration_pool/remaining_hydration_text.dart';
 import 'package:watertracker/ui/hydration_pool/water_view.dart';
 
 class HydrationPoolPage extends StatefulWidget {
+  const HydrationPoolPage({super.key});
+
   @override
-  _HydrationPoolPageState createState() => _HydrationPoolPageState();
+  State<HydrationPoolPage> createState() => _HydrationPoolPageState();
 }
 
 class _HydrationPoolPageState extends State<HydrationPoolPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
-    );
-
-    _controller.repeat();
+      duration: const Duration(seconds: 2),
+    )..repeat();
   }
 
   @override
@@ -39,7 +39,7 @@ class _HydrationPoolPageState extends State<HydrationPoolPage>
     return Stack(
       children: [
         Align(
-          alignment: Alignment(0.0, -0.1),
+          alignment: const Alignment(0.0, -0.1),
           child: PersonView(animation: _controller),
         ),
         Align(
@@ -50,13 +50,13 @@ class _HydrationPoolPageState extends State<HydrationPoolPage>
           ),
         ),
         Align(
-          alignment: Alignment(0.0, -0.68),
+          alignment: const Alignment(0.0, -0.68),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               HydrationQuantityText(bloc.currentWater),
-              SizedBox(height: 8),
-              RemainingHydrationText(bloc.remainigWater),
+              const SizedBox(height: 8),
+              RemainingHydrationText(bloc.remainingWater),
             ],
           ),
         ),
