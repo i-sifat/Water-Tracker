@@ -5,10 +5,10 @@ class SecondaryButton extends StatelessWidget {
   final String title;
 
   const SecondaryButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.title,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +20,12 @@ class SecondaryButton extends StatelessWidget {
         foregroundColor: MaterialStateProperty.all(theme.primaryColor),
         overlayColor:
             MaterialStateProperty.all(theme.primaryColor.withOpacity(0.06)),
-        padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 16)),
+        padding:
+            MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 16)),
         shape: MaterialStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
       ),
-      child: Text("Cancel"),
+      child: const Text("Cancel"),
     );
   }
 }

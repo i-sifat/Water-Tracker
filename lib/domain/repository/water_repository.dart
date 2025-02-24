@@ -48,7 +48,7 @@ class WaterRepository {
     await PlatformMessenger.invokeMethod(Constant.methodClearDataStore);
   }
 
-  void dispose() {
+  void close() {
     _waterSettings.close();
   }
 }

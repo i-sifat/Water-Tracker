@@ -5,10 +5,10 @@ class PrimaryButton extends StatelessWidget {
   final String title;
 
   const PrimaryButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.title,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,8 @@ class PrimaryButton extends StatelessWidget {
       style: ButtonStyle(
         elevation: MaterialStateProperty.all(0),
         backgroundColor: MaterialStateProperty.all(theme.primaryColor),
-        padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 16)),
+        padding:
+            MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 16)),
         shape: MaterialStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
       ),

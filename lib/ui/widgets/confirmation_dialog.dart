@@ -9,12 +9,12 @@ class ConfirmationDialog extends StatelessWidget {
   final VoidCallback onCancel;
 
   const ConfirmationDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.content,
     required this.onConfirm,
     required this.onCancel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class ConfirmationDialog extends StatelessWidget {
       title: Text(
         title,
         textAlign: TextAlign.center,
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       content: Column(
@@ -33,9 +33,9 @@ class ConfirmationDialog extends StatelessWidget {
             content,
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           PrimaryButton(onPressed: onConfirm, title: "Confirm"),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           SecondaryButton(onPressed: onCancel, title: "Cancel"),
         ],
       ),

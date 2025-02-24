@@ -5,17 +5,19 @@ import 'package:watertracker/ui/widgets/primary_button.dart';
 import 'package:watertracker/ui/widgets/secondary_button.dart';
 
 class ConsumptionDialog extends StatefulWidget {
+  const ConsumptionDialog({super.key});
+
   @override
-  _ConsumptionDialogState createState() => _ConsumptionDialogState();
+  ConsumptionDialogState createState() => ConsumptionDialogState();
 }
 
-class _ConsumptionDialogState extends State<ConsumptionDialog> {
+class ConsumptionDialogState extends State<ConsumptionDialog> {
   final _form = GlobalKey<FormState>();
   String? _text;
 
   String? _validateText(String? value) {
-    if (value == null) {
-      return "2000 ml minimun";
+    if (value == null || value.isEmpty) {
+      return "2000 ml minimum";
     }
 
     final number = int.tryParse(value);
@@ -23,14 +25,14 @@ class _ConsumptionDialogState extends State<ConsumptionDialog> {
       return null;
     }
 
-    return "2000 ml minimun";
+    return "2000 ml minimum";
   }
 
   @override
   Widget build(BuildContext context) {
     final bloc = context.watch<WaterBloc>();
     return AlertDialog(
-      title: Text(
+      title: const Text(
         "Daily consumption",
         textAlign: TextAlign.center,
         style: TextStyle(fontWeight: FontWeight.bold),
@@ -42,11 +44,11 @@ class _ConsumptionDialogState extends State<ConsumptionDialog> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               "Change your daily water consumption goal, in milliliters.",
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             TextFormField(
               maxLength: 4,
               initialValue: bloc.state.recommendedMilliliters.toString(),
@@ -54,26 +56,28 @@ class _ConsumptionDialogState extends State<ConsumptionDialog> {
               onSaved: (value) => _text = value,
               validator: _validateText,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "2000 ml",
                 counterText: "",
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             PrimaryButton(
               onPressed: () {
                 if (_form.currentState?.validate() ?? false) {
                   _form.currentState?.save();
                   FocusScope.of(context).unfocus();
-                  context.read<WaterBloc>().setRecommendedMilliliters(
-                        int.parse(_text!),
-                      );
+                  if (_text != null) {
+                    context.read<WaterBloc>().setRecommendedMilliliters(
+                          int.parse(_text!),
+                        );
+                  }
                   Navigator.of(context).pop();
                 }
               },
               title: "Confirm",
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             SecondaryButton(
               onPressed: () => Navigator.of(context).pop(),
               title: "Cancel",

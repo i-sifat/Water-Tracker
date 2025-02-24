@@ -3,25 +3,25 @@ class WaterSettings {
   final int recommendedMilliliters;
   final bool alarmEnabled;
 
-  WaterSettings({
+  const WaterSettings({
     required this.currentMilliliters,
     required this.recommendedMilliliters,
     required this.alarmEnabled,
   });
 
   factory WaterSettings.initial() {
-    return WaterSettings(
+    return const WaterSettings(
       currentMilliliters: 0,
       recommendedMilliliters: 2000,
       alarmEnabled: true,
     );
   }
 
-  factory WaterSettings.fromMap(Map map) {
+  factory WaterSettings.fromMap(Map<String, dynamic> map) {
     return WaterSettings(
-      currentMilliliters: map["currentMilliliters"],
-      recommendedMilliliters: map["recommendedMilliliters"],
-      alarmEnabled: map["alarmEnabled"],
+      currentMilliliters: map["currentMilliliters"] as int,
+      recommendedMilliliters: map["recommendedMilliliters"] as int,
+      alarmEnabled: map["alarmEnabled"] as bool,
     );
   }
 
