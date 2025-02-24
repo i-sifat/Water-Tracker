@@ -16,14 +16,12 @@ class WaterRepository {
     });
   }
 
-  final _waterSettings =
-      BehaviorSubject<WaterSettings>.seeded(WaterSettings.initial());
+  final _waterSettings = BehaviorSubject<WaterSettings>.seeded(WaterSettings.initial());
 
   Stream<WaterSettings> get waterSettings => _waterSettings.stream;
 
   Future<void> drinkWater(int milliliters) async {
-    await PlatformMessenger.invokeMethod(
-        Constant.methodDrinkWater, milliliters);
+    await PlatformMessenger.invokeMethod(Constant.methodDrinkWater, milliliters);
   }
 
   Future<void> changeAlarmEnabled(bool enabled) async {

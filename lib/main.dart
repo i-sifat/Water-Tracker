@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'app.dart';
+import 'package:watertracker/presentation/app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(App());
+  runApp(const App());
 }

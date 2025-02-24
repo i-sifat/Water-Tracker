@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/resources/app_symbols.dart';
+import 'package:watertracker/core/resources/app_symbols.dart';
 
 class WaterInput {
   final int milliliters;

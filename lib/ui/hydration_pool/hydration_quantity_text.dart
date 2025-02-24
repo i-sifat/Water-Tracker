@@ -9,7 +9,7 @@ class HydrationQuantityText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints.loose(Size.fromWidth(400)),
+      constraints: const BoxConstraints.loose(Size.fromWidth(400)),
       child: TweenAnimationBuilder<double>(
         duration: const Duration(milliseconds: 1000),
         curve: Curves.decelerate,
