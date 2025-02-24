@@ -1,55 +1,47 @@
-import 'package:flutter/material.dart';
-import 'package:watertracker/core/resources/app_symbols.dart';
+// lib/domain/models/water_settings.dart
+class WaterSettings {
+  final int currentMilliliters;
+  final int recommendedMilliliters;
+  final bool alarmEnabled;
 
-class WaterInput {
-  final int milliliters;
-  final IconData icon;
-  final Color backgroundColor;
-
-  const WaterInput({
-    required this.milliliters,
-    required this.icon,
-    required this.backgroundColor,
+  const WaterSettings({
+    required this.currentMilliliters,
+    required this.recommendedMilliliters,
+    required this.alarmEnabled,
   });
 
-  factory WaterInput.small() = _Small;
-  factory WaterInput.regular() = _Regular;
-  factory WaterInput.medium() = _Medium;
-  factory WaterInput.large() = _Large;
-}
+  factory WaterSettings.initial() => const WaterSettings(
+        currentMilliliters: 0,
+        recommendedMilliliters: 2000,
+        alarmEnabled: true,
+      );
 
-class _Small extends WaterInput {
-  const _Small()
-      : super(
-          milliliters: 180,
-          icon: AppSymbols.coffee_cup,
-          backgroundColor: const Color(0xFFF1EEFF),
-        );
-}
+  WaterSettings copyWith({
+    int? currentMilliliters,
+    int? recommendedMilliliters,
+    bool? alarmEnabled,
+  }) {
+    return WaterSettings(
+      currentMilliliters: currentMilliliters ?? this.currentMilliliters,
+      recommendedMilliliters:
+          recommendedMilliliters ?? this.recommendedMilliliters,
+      alarmEnabled: alarmEnabled ?? this.alarmEnabled,
+    );
+  }
 
-class _Regular extends WaterInput {
-  const _Regular()
-      : super(
-          milliliters: 250,
-          icon: AppSymbols.water_glass,
-          backgroundColor: const Color(0xFFF8F8F6),
-        );
-}
+  Map<String, dynamic> toMap() {
+    return {
+      'currentMilliliters': currentMilliliters,
+      'recommendedMilliliters': recommendedMilliliters,
+      'alarmEnabled': alarmEnabled,
+    };
+  }
 
-class _Medium extends WaterInput {
-  const _Medium()
-      : super(
-          milliliters: 500,
-          icon: AppSymbols.water,
-          backgroundColor: const Color(0xFFFFFAEC),
-        );
-}
-
-class _Large extends WaterInput {
-  const _Large()
-      : super(
-          milliliters: 750,
-          icon: AppSymbols.jug,
-          backgroundColor: const Color(0xFFFBE9E3),
-        );
+  factory WaterSettings.fromMap(Map<String, dynamic> map) {
+    return WaterSettings(
+      currentMilliliters: map['currentMilliliters'] as int,
+      recommendedMilliliters: map['recommendedMilliliters'] as int,
+      alarmEnabled: map['alarmEnabled'] as bool,
+    );
+  }
 }
