@@ -24,7 +24,7 @@ class SecondaryButton extends StatelessWidget {
         shape: MaterialStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
       ),
-      child: const Text("Cancel"),
+      child: Text(title),
     );
   }
 }

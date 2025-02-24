@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/ui/widgets/primary_button.dart';
-import 'package:watertracker/ui/widgets/secondary_button.dart';
+import 'package:watertracker/presentation/widgets/primary_button.dart';
+import 'package:watertracker/presentation/widgets/secondary_button.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final String title;

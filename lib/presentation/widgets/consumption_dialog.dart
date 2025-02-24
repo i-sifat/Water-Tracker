@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:watertracker/bloc/water_bloc.dart';
-import 'package:watertracker/ui/widgets/primary_button.dart';
-import 'package:watertracker/ui/widgets/secondary_button.dart';
+import 'package:watertracker/presentation/blocs/water/water_bloc.dart';
+import 'package:watertracker/presentation/widgets/primary_button.dart';
+import 'package:watertracker/presentation/widgets/secondary_button.dart';
 
 class ConsumptionDialog extends StatefulWidget {
   const ConsumptionDialog({super.key});
