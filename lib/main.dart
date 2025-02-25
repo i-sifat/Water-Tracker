@@ -4,6 +4,6 @@ import 'package:watertracker/presentation/app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setupServiceLocator();
+  await setupServiceLocator();
   runApp(const App());
 }

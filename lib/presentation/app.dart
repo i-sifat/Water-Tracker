@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,27 +12,32 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<WaterBloc>(
-          create: (context) => getIt<WaterBloc>(),
-          lazy: false,
-        ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Water Reminder',
-        theme: AppTheme.light,
-        home: const AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            systemNavigationBarColor: Colors.transparent,
-            systemNavigationBarIconBrightness: Brightness.dark,
-            statusBarIconBrightness: Brightness.dark,
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<WaterBloc>(
+              create: (context) => getIt<WaterBloc>(),
+              lazy: false,
+            ),
+          ],
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Water Reminder',
+            theme: AppTheme.light(lightDynamic),
+            darkTheme: AppTheme.dark(darkDynamic),
+            home: const AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                systemNavigationBarColor: Colors.transparent,
+                systemNavigationBarIconBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.dark,
+              ),
+              child: HomePage(),
+            ),
           ),
-          child: HomePage(),
-        ),
-      ),
+        );
+      },
     );
   }
 }

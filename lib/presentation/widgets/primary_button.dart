@@ -12,17 +12,12 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return ElevatedButton(
+    return FilledButton(
       onPressed: onPressed,
-      style: ButtonStyle(
-        elevation: MaterialStateProperty.all(0),
-        backgroundColor: MaterialStateProperty.all(theme.primaryColor),
-        padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 16)),
-        shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Text(title),
       ),
-      child: Text(title),
     );
   }
 }

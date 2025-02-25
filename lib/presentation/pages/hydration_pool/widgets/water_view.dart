@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/resources/app_symbols.dart';
+import 'package:watertracker/presentation/widgets/animated_water_container.dart';
 
 class WaterView extends StatelessWidget {
   final Animation<double> animation;
   final double progress;
+  final bool isLoading;
 
   const WaterView({
     super.key,
     required this.animation,
     required this.progress,
+    this.isLoading = false,
   });
 
   @override
@@ -21,25 +23,9 @@ class WaterView extends StatelessWidget {
           child: child,
         );
       },
-      child: Stack(
-        children: [
-          Icon(
-            AppSymbols.water,
-            size: 300,
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
-          ),
-          ClipRect(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              heightFactor: progress.clamp(0.0, 1.0),
-              child: Icon(
-                AppSymbols.water,
-                size: 300,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-        ],
+      child: AnimatedWaterContainer(
+        progress: progress,
+        isLoading: isLoading,
       ),
     );
   }
