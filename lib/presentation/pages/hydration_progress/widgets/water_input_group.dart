@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:watertracker/core/resources/app_symbols.dart';
 import 'package:watertracker/presentation/blocs/water/water_bloc.dart';
+import 'package:watertracker/presentation/blocs/water/water_event.dart';
 
 class WaterInputGroup extends StatelessWidget {
   const WaterInputGroup({super.key});
@@ -47,7 +48,7 @@ class _WaterInputButton extends StatelessWidget {
       color: theme.unselectedWidgetColor,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: () => context.read<WaterBloc>().drinkWater(milliliters),
+        onTap: () => context.read<WaterBloc>().add(DrinkWater(milliliters)),
         borderRadius: BorderRadius.circular(16),
         child: Container(
           width: 80,

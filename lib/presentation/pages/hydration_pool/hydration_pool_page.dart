@@ -5,6 +5,7 @@ import 'package:watertracker/presentation/pages/hydration_pool/widgets/hydration
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/person_view.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/remaining_hydration_text.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/water_view.dart';
+import 'package:watertracker/presentation/widgets/error_snackbar.dart';
 
 class HydrationPoolPage extends StatefulWidget {
   const HydrationPoolPage({super.key});
@@ -34,33 +35,67 @@ class _HydrationPoolPageState extends State<HydrationPoolPage>
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<WaterBloc>();
+    return BlocListener<WaterBloc, WaterState>(
+      listener: (context, state) {
+        if (state.error != null) {
+          showErrorSnackBar(context, state.error!);
+        }
+      },
+      child: Stack(
+        children: [
+          _buildMainContent(),
+          _buildLoadingIndicator(),
+        ],
+      ),
+    );
+  }
 
-    return Stack(
-      children: [
-        Align(
-          alignment: const Alignment(0.0, -0.1),
-          child: PersonView(animation: _controller),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: WaterView(
-            animation: _controller,
-            progress: bloc.progress,
-          ),
-        ),
-        Align(
-          alignment: const Alignment(0.0, -0.68),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              HydrationQuantityText(bloc.currentWater),
-              const SizedBox(height: 8),
-              RemainingHydrationText(bloc.remainingWater),
-            ],
-          ),
-        ),
-      ],
+  Widget _buildMainContent() {
+    return BlocBuilder<WaterBloc, WaterState>(
+      builder: (context, state) {
+        return Stack(
+          children: [
+            Align(
+              alignment: const Alignment(0.0, -0.1),
+              child: PersonView(animation: _controller),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: WaterView(
+                animation: _controller,
+                progress: context.read<WaterBloc>().progress,
+              ),
+            ),
+            Align(
+              alignment: const Alignment(0.0, -0.68),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  HydrationQuantityText(context.read<WaterBloc>().currentWater),
+                  const SizedBox(height: 8),
+                  RemainingHydrationText(context.read<WaterBloc>().remainingWater),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return BlocBuilder<WaterBloc, WaterState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return Container(
+            color: Colors.black26,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }
