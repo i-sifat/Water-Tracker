@@ -1,33 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
-import 'package:watertracker/presentation/pages/hydration_pool/hydration_pool_page.dart';
-import 'package:watertracker/presentation/pages/hydration_progress/hydration_progress_page.dart';
-import 'package:watertracker/presentation/pages/settings/settings_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:watertracker/presentation/widgets/bottom_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final Widget child;
+
+  const HomePage({
+    super.key,
+    required this.child,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Widget> _pages = [
-    const HydrationPoolPage(),
-    const HydrationProgressPage(),
-    const SettingsPage(),
-  ];
+  static const _routes = {
+    '/': 0,
+    '/progress': 1,
+    '/settings': 2,
+  };
 
-  int _currentPage = 0;
+  static const _paths = {
+    0: '/',
+    1: '/progress',
+    2: '/settings',
+  };
 
-  void _changePage(int index) {
-    if (index == _currentPage) return;
-    setState(() => _currentPage = index);
+  int _getCurrentIndex(BuildContext context) {
+    final location = GoRouterState.of(context).uri.toString();
+    return _routes[location] ?? 0;
+  }
+
+  void _onDestinationSelected(BuildContext context, int index) {
+    final path = _paths[index];
+    if (path != null) {
+      context.go(path);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Scaffold(
       body: Stack(
         children: [
@@ -36,19 +52,17 @@ class _HomePageState extends State<HomePage> {
               child,
               primaryAnimation,
               secondaryAnimation,
-            ) {
-              return FadeThroughTransition(
-                fillColor: Theme.of(context).colorScheme.background,
-                animation: primaryAnimation,
-                secondaryAnimation: secondaryAnimation,
-                child: child,
-              );
-            },
-            child: _pages[_currentPage],
+            ) => FadeThroughTransition(
+              fillColor: colorScheme.background,
+              animation: primaryAnimation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+            child: widget.child,
           ),
           BottomNavBar(
-            currentPage: _currentPage,
-            onChanged: _changePage,
+            currentPage: _getCurrentIndex(context),
+            onChanged: (index) => _onDestinationSelected(context, index),
           ),
         ],
       ),
