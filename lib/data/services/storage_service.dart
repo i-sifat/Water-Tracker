@@ -1,12 +1,13 @@
 import 'dart:convert';
-import 'package:shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/domain/models/water_settings.dart';
 
 class StorageService {
   static const _settingsKey = 'water_settings';
+
   final SharedPreferences _prefs;
 
-  StorageService(this._prefs);
+  const StorageService(this._prefs);
 
   Future<void> saveWaterSettings(WaterSettings settings) async {
     final json = jsonEncode(settings.toMap());
@@ -16,7 +17,7 @@ class StorageService {
   Future<WaterSettings?> loadWaterSettings() async {
     final json = _prefs.getString(_settingsKey);
     if (json == null) return null;
-    
+
     try {
       final map = jsonDecode(json) as Map<String, dynamic>;
       return WaterSettings.fromMap(map);

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:watertracker/core/utils/extensions.dart';
 import 'package:watertracker/presentation/blocs/water/water_bloc.dart';
 import 'package:watertracker/presentation/blocs/water/water_event.dart';
-import 'package:watertracker/presentation/widgets/rolling_switch_button.dart';
+import 'package:watertracker/presentation/blocs/water/water_state.dart';
 import 'package:watertracker/presentation/utils/dialog_utils.dart';
-import 'package:watertracker/core/utils/extensions.dart';
 import 'package:watertracker/presentation/widgets/error_snackbar.dart';
+import 'package:watertracker/presentation/widgets/rolling_switch_button.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -15,8 +16,9 @@ class SettingsPage extends StatelessWidget {
     return SafeArea(
       child: BlocListener<WaterBloc, WaterState>(
         listener: (context, state) {
-          if (state.error != null) {
-            showErrorSnackBar(context, state.error!);
+          final error = state.error;
+          if (error != null) {
+            showErrorSnackBar(context, error);
           }
         },
         child: Stack(
@@ -34,14 +36,17 @@ class SettingsPage extends StatelessWidget {
       builder: (context, state) {
         final theme = Theme.of(context);
         return Padding(
-          padding: const EdgeInsets.only(bottom: 32 + 64 + 40, top: 32.0),
+          padding: const EdgeInsets.only(
+            bottom: 136,
+            top: 32,
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               children: [
                 const SizedBox(width: double.infinity),
                 Text(
-                  "Settings",
+                  'Settings',
                   style: theme.textTheme.headlineMedium,
                 ),
                 const SizedBox(height: 32),
@@ -50,12 +55,13 @@ class SettingsPage extends StatelessWidget {
                   child: Row(
                     children: [
                       const Expanded(
-                        child: Text("Reminders"),
+                        child: Text('Reminders'),
                       ),
                       RollingSwitchButton(
                         value: state.settings.alarmEnabled,
-                        colorOff: theme.colorScheme.error,
-                        onChange: (value) => context.read<WaterBloc>().add(ChangeAlarmEnabled(value)),
+                        onChange: (value) => context
+                            .read<WaterBloc>()
+                            .add(ChangeAlarmEnabled(value)),
                       ),
                     ],
                   ),
@@ -65,7 +71,8 @@ class SettingsPage extends StatelessWidget {
                   onPressed: () => showConsumptionDialog(context),
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.all(
-                        theme.colorScheme.primary.withOpacity(0.06)),
+                      theme.colorScheme.primary.withOpacity(0.06),
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -73,7 +80,7 @@ class SettingsPage extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            "Daily consumption",
+                            'Daily consumption',
                             style: theme.textTheme.bodyMedium,
                           ),
                         ),
@@ -94,14 +101,15 @@ class SettingsPage extends StatelessWidget {
                     onPressed: () => clearDataStore(context),
                     style: ButtonStyle(
                       overlayColor: MaterialStateProperty.all(
-                          theme.colorScheme.error.withOpacity(0.06)),
+                        theme.colorScheme.error.withOpacity(0.06),
+                      ),
                     ),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
-                          "Hard Reset",
+                          'Hard Reset',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.error,
                           ),
@@ -138,14 +146,12 @@ class SettingsPage extends StatelessWidget {
   Future<void> clearDataStore(BuildContext context) async {
     final confirmed = await showConfirmationDialog(
       context,
-      title: "Hard Reset",
-      content:
-          "You are about to reset all the application data. This action cannot be undone.",
+      title: 'Hard Reset',
+      content: 'You are about to reset all the application data. '
+          'This action cannot be undone.',
     );
-    if (confirmed) {
-      if (context.mounted) {
-        context.read<WaterBloc>().add(const ClearDataStore());
-      }
+    if (confirmed && context.mounted) {
+      context.read<WaterBloc>().add(const ClearDataStore());
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:watertracker/core/utils/extensions.dart';
 import 'package:watertracker/presentation/blocs/water/water_bloc.dart';
-import 'package:watertracker/core/utils/num_extension.dart';
 
 class ProgressView extends StatelessWidget {
   const ProgressView({super.key});
@@ -36,7 +36,7 @@ class ProgressView extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'of ${bloc.state.recommendedMilliliters.asMilliliters()}',
+                    'of ${bloc.state.settings.recommendedMilliliters.asMilliliters()}',
                     style: theme.textTheme.bodySmall,
                   ),
                 ],

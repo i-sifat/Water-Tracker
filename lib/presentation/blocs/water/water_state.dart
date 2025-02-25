@@ -13,11 +13,11 @@ abstract class WaterState {
 }
 
 class WaterInitial extends WaterState {
-  const WaterInitial() : super(settings: const WaterSettings.initial());
+  WaterInitial() : super(settings: WaterSettings.initial());
 }
 
 class WaterLoading extends WaterState {
-  const WaterLoading({required super.settings});
+  const WaterLoading({required super.settings}) : super(isLoading: true);
 }
 
 class WaterLoaded extends WaterState {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:watertracker/presentation/blocs/water/water_bloc.dart';
+import 'package:watertracker/presentation/blocs/water/water_state.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/hydration_quantity_text.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/person_view.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/remaining_hydration_text.dart';
@@ -53,27 +54,29 @@ class _HydrationPoolPageState extends State<HydrationPoolPage>
   Widget _buildMainContent() {
     return BlocBuilder<WaterBloc, WaterState>(
       builder: (context, state) {
+        final bloc = context.read<WaterBloc>();
         return Stack(
           children: [
             Align(
-              alignment: const Alignment(0.0, -0.1),
+              alignment: const Alignment(0, -0.1),
               child: PersonView(animation: _controller),
             ),
             Align(
               alignment: Alignment.bottomCenter,
               child: WaterView(
                 animation: _controller,
-                progress: context.read<WaterBloc>().progress,
+                progress: bloc.progress,
+                isLoading: state.isLoading,
               ),
             ),
             Align(
-              alignment: const Alignment(0.0, -0.68),
+              alignment: const Alignment(0, -0.68),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  HydrationQuantityText(context.read<WaterBloc>().currentWater),
+                  HydrationQuantityText(bloc.currentWater),
                   const SizedBox(height: 8),
-                  RemainingHydrationText(context.read<WaterBloc>().remainingWater),
+                  RemainingHydrationText(bloc.remainingWater),
                 ],
               ),
             ),
@@ -87,9 +90,9 @@ class _HydrationPoolPageState extends State<HydrationPoolPage>
     return BlocBuilder<WaterBloc, WaterState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return Container(
+          return const ColoredBox(
             color: Colors.black26,
-            child: const Center(
+            child: Center(
               child: CircularProgressIndicator(),
             ),
           );

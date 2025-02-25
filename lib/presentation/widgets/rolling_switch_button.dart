@@ -1,9 +1,9 @@
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class RollingSwitchButton extends StatefulWidget {
   final bool value;
+  final bool enabled;
   final ValueChanged<bool> onChange;
   final String textOff;
   final String textOn;
@@ -14,9 +14,10 @@ class RollingSwitchButton extends StatefulWidget {
   const RollingSwitchButton({
     super.key,
     required this.value,
+    this.enabled = true,
     required this.onChange,
-    this.textOff = "OFF",
-    this.textOn = "ON",
+    this.textOff = 'OFF',
+    this.textOn = 'ON',
     this.iconOff = Icons.alarm_off_rounded,
     this.iconOn = Icons.alarm_on_rounded,
     this.animationDuration = const Duration(milliseconds: 450),
@@ -67,7 +68,7 @@ class _RollingSwitchState extends State<RollingSwitchButton>
     final colorScheme = theme.colorScheme;
 
     return GestureDetector(
-      onTap: () => widget.onChange(!widget.value),
+      onTap: widget.enabled ? () => widget.onChange(!widget.value) : null,
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
@@ -76,7 +77,8 @@ class _RollingSwitchState extends State<RollingSwitchButton>
             colorScheme.error,
             colorScheme.primary,
             _animation.value,
-          )!;
+          )!
+              .withOpacity(widget.enabled ? 1.0 : 0.5);
 
           return Container(
             width: 130,

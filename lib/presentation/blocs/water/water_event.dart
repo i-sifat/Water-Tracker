@@ -13,8 +13,8 @@ class DrinkWater extends WaterEvent {
 }
 
 class ChangeAlarmEnabled extends WaterEvent {
-  final bool enabled;
-  const ChangeAlarmEnabled(this.enabled);
+  final bool value;
+  const ChangeAlarmEnabled(this.value);
 }
 
 class SetRecommendedMilliliters extends WaterEvent {

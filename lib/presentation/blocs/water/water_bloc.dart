@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:watertracker/core/utils/error_utils.dart';
-import 'package:watertracker/data/repositories/water_repository.dart';
+import 'package:watertracker/domain/models/water_settings.dart';
+import 'package:watertracker/domain/repositories/i_water_repository.dart';
 import 'package:watertracker/presentation/blocs/water/water_event.dart';
 import 'package:watertracker/presentation/blocs/water/water_state.dart';
 
 class WaterBloc extends Bloc<WaterEvent, WaterState> {
-  final WaterRepository _repository;
+  final IWaterRepository _repository;
   StreamSubscription<WaterSettings>? _subscription;
 
-  WaterBloc(this._repository) : super(const WaterInitial()) {
+  WaterBloc(this._repository) : super(WaterInitial()) {
     _subscription = _repository.waterSettings.listen(
       (settings) => add(WaterSettingsUpdated(settings)),
-      onError: (error) => emit(WaterError(
+      onError: (Object error) => emit(WaterError(
         settings: state.settings,
         error: getErrorMessage(error),
       )),
@@ -29,12 +30,13 @@ class WaterBloc extends Bloc<WaterEvent, WaterState> {
   }
 
   int get currentWater => state.settings.currentMilliliters;
-  
+
   int get remainingWater =>
       state.settings.currentMilliliters <= state.settings.recommendedMilliliters
-          ? state.settings.recommendedMilliliters - state.settings.currentMilliliters
+          ? state.settings.recommendedMilliliters -
+              state.settings.currentMilliliters
           : 0;
-          
+
   double get progress =>
       state.settings.currentMilliliters / state.settings.recommendedMilliliters;
 

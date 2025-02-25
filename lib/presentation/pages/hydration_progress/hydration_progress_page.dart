@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:watertracker/presentation/blocs/water/water_bloc.dart';
+import 'package:watertracker/presentation/blocs/water/water_state.dart';
 import 'package:watertracker/presentation/pages/hydration_progress/widgets/progress_view.dart';
 import 'package:watertracker/presentation/pages/hydration_progress/widgets/water_input_group.dart';
 import 'package:watertracker/presentation/widgets/error_snackbar.dart';
@@ -13,19 +14,23 @@ class HydrationProgressPage extends StatelessWidget {
     return SafeArea(
       child: BlocListener<WaterBloc, WaterState>(
         listener: (context, state) {
-          if (state.error != null) {
-            showErrorSnackBar(context, state.error!);
+          final error = state.error;
+          if (error != null) {
+            showErrorSnackBar(context, error);
           }
         },
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 32 + 64 + 40, top: 32.0),
+              padding: const EdgeInsets.only(
+                bottom: 136,
+                top: 32,
+              ),
               child: Column(
                 children: [
                   const SizedBox(width: double.infinity),
                   Text(
-                    "Current Hydration",
+                    'Current Hydration',
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const Expanded(
