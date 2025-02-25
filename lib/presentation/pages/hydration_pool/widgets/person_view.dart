@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:watertracker/core/resources/assets.dart';
 
 class PersonView extends StatelessWidget {
-  final Animation<double> animation;
-
   const PersonView({
-    super.key,
     required this.animation,
+    super.key,
   });
+  final Animation<double> animation;
 
   @override
   Widget build(BuildContext context) {

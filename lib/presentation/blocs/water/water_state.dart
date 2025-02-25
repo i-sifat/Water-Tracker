@@ -1,15 +1,14 @@
 import 'package:watertracker/domain/models/water_settings.dart';
 
 abstract class WaterState {
-  final WaterSettings settings;
-  final String? error;
-  final bool isLoading;
-
   const WaterState({
     required this.settings,
     this.error,
     this.isLoading = false,
   });
+  final WaterSettings settings;
+  final String? error;
+  final bool isLoading;
 }
 
 class WaterInitial extends WaterState {

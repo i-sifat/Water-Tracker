@@ -3,11 +3,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/domain/models/water_settings.dart';
 
 class StorageService {
+  const StorageService(this._prefs);
   static const _settingsKey = 'water_settings';
 
   final SharedPreferences _prefs;
-
-  const StorageService(this._prefs);
 
   Future<void> saveWaterSettings(WaterSettings settings) async {
     final json = jsonEncode(settings.toMap());

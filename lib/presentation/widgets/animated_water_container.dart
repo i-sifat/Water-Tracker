@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:watertracker/core/resources/app_symbols.dart';
 
 class AnimatedWaterContainer extends StatelessWidget {
-  final double progress;
-  final bool isLoading;
-
   const AnimatedWaterContainer({
-    super.key,
     required this.progress,
+    super.key,
     this.isLoading = false,
   });
+  final double progress;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {

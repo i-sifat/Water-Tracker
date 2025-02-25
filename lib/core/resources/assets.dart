@@ -1,3 +1,3 @@
 abstract class Assets {
-  static const person = "assets/Saly-13.png";
+  static const person = 'assets/Saly-13.png';
 }

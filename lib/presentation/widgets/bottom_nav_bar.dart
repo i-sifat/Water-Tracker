@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:watertracker/core/resources/app_symbols.dart';
 
 class BottomNavBar extends StatelessWidget {
+  const BottomNavBar({
+    required this.currentPage,
+    required this.onChanged,
+    super.key,
+  });
   final int currentPage;
   final ValueChanged<int> onChanged;
 
-  const BottomNavBar({
-    super.key,
-    required this.currentPage,
-    required this.onChanged,
-  });
-
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return NavigationBar(
       selectedIndex: currentPage,
       onDestinationSelected: onChanged,
-      destinations: [
+      destinations: const [
         NavigationDestination(
           icon: Icon(AppSymbols.water_drop),
           label: 'Home',

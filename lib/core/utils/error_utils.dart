@@ -1,8 +1,7 @@
 class WaterTrackerException implements Exception {
+  WaterTrackerException(this.message, [this.error]);
   final String message;
   final dynamic error;
-
-  WaterTrackerException(this.message, [this.error]);
 
   @override
   String toString() => message;

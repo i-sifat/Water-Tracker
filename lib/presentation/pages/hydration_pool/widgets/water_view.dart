@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:watertracker/presentation/widgets/animated_water_container.dart';
 
 class WaterView extends StatelessWidget {
+  const WaterView({
+    required this.animation,
+    required this.progress,
+    super.key,
+    this.isLoading = false,
+  });
   final Animation<double> animation;
   final double progress;
   final bool isLoading;
-
-  const WaterView({
-    super.key,
-    required this.animation,
-    required this.progress,
-    this.isLoading = false,
-  });
 
   @override
   Widget build(BuildContext context) {

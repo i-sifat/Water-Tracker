@@ -7,8 +7,6 @@ import 'package:watertracker/domain/models/water_settings.dart';
 import 'package:watertracker/domain/repositories/i_water_repository.dart';
 
 class WaterRepository implements IWaterRepository {
-  final StorageService _storage;
-  
   WaterRepository(this._storage) {
     _initializeSettings();
     PlatformService.setMethodCallHandler((call) async {
@@ -27,8 +25,10 @@ class WaterRepository implements IWaterRepository {
       return null;
     });
   }
+  final StorageService _storage;
 
-  final _waterSettings = BehaviorSubject<WaterSettings>.seeded(WaterSettings.initial());
+  final _waterSettings =
+      BehaviorSubject<WaterSettings>.seeded(WaterSettings.initial());
 
   Future<void> _initializeSettings() async {
     try {
@@ -50,7 +50,10 @@ class WaterRepository implements IWaterRepository {
   Future<void> drinkWater(int milliliters) async {
     try {
       _validateMilliliters(milliliters);
-      await PlatformService.invokeMethod(AppConstants.methodDrinkWater, milliliters);
+      await PlatformService.invokeMethod(
+        AppConstants.methodDrinkWater,
+        milliliters,
+      );
     } catch (e) {
       throw WaterTrackerException('Failed to record water intake', e);
     }
@@ -71,7 +74,9 @@ class WaterRepository implements IWaterRepository {
   @override
   Future<void> subscribeToDataStore() async {
     try {
-      await PlatformService.invokeMethod(AppConstants.methodSubscribeToDataStore);
+      await PlatformService.invokeMethod(
+        AppConstants.methodSubscribeToDataStore,
+      );
     } catch (e) {
       throw WaterTrackerException('Failed to initialize data store', e);
     }
@@ -86,7 +91,10 @@ class WaterRepository implements IWaterRepository {
         milliliters,
       );
     } catch (e) {
-      throw WaterTrackerException('Failed to update recommended water intake', e);
+      throw WaterTrackerException(
+        'Failed to update recommended water intake',
+        e,
+      );
     }
   }
 
@@ -111,10 +119,14 @@ class WaterRepository implements IWaterRepository {
 
   void _validateRecommendedMilliliters(int milliliters) {
     if (milliliters < 2000) {
-      throw WaterTrackerException('Recommended water intake must be at least 2000ml');
+      throw WaterTrackerException(
+        'Recommended water intake must be at least 2000ml',
+      );
     }
     if (milliliters > 5000) {
-      throw WaterTrackerException('Recommended water intake cannot exceed 5000ml');
+      throw WaterTrackerException(
+        'Recommended water intake cannot exceed 5000ml',
+      );
     }
   }
 

@@ -3,18 +3,17 @@ import 'package:watertracker/presentation/widgets/primary_button.dart';
 import 'package:watertracker/presentation/widgets/secondary_button.dart';
 
 class ConfirmationDialog extends StatelessWidget {
-  final String title;
-  final String content;
-  final VoidCallback onConfirm;
-  final VoidCallback onCancel;
-
   const ConfirmationDialog({
-    super.key,
     required this.title,
     required this.content,
     required this.onConfirm,
     required this.onCancel,
+    super.key,
   });
+  final String title;
+  final String content;
+  final VoidCallback onConfirm;
+  final VoidCallback onCancel;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +33,9 @@ class ConfirmationDialog extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
-          PrimaryButton(onPressed: onConfirm, title: "Confirm"),
+          PrimaryButton(onPressed: onConfirm, title: 'Confirm'),
           const SizedBox(height: 10),
-          SecondaryButton(onPressed: onCancel, title: "Cancel"),
+          SecondaryButton(onPressed: onCancel, title: 'Cancel'),
         ],
       ),
     );

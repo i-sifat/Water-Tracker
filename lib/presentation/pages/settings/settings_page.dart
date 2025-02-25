@@ -70,7 +70,7 @@ class SettingsPage extends StatelessWidget {
                 TextButton(
                   onPressed: () => showConsumptionDialog(context),
                   style: ButtonStyle(
-                    overlayColor: MaterialStateProperty.all(
+                    overlayColor: WidgetStateProperty.all(
                       theme.colorScheme.primary.withOpacity(0.06),
                     ),
                   ),
@@ -100,7 +100,7 @@ class SettingsPage extends StatelessWidget {
                   child: TextButton(
                     onPressed: () => clearDataStore(context),
                     style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(
+                      overlayColor: WidgetStateProperty.all(
                         theme.colorScheme.error.withOpacity(0.06),
                       ),
                     ),
@@ -131,9 +131,9 @@ class SettingsPage extends StatelessWidget {
     return BlocBuilder<WaterBloc, WaterState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return Container(
+          return const ColoredBox(
             color: Colors.black26,
-            child: const Center(
+            child: Center(
               child: CircularProgressIndicator(),
             ),
           );

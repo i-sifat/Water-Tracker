@@ -9,8 +9,8 @@ class WaterInputGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 32),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -33,13 +33,12 @@ class WaterInputGroup extends StatelessWidget {
 }
 
 class _WaterInputButton extends StatelessWidget {
-  final IconData icon;
-  final int milliliters;
-
   const _WaterInputButton({
     required this.icon,
     required this.milliliters,
   });
+  final IconData icon;
+  final int milliliters;
 
   @override
   Widget build(BuildContext context) {

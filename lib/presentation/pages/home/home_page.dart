@@ -1,15 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:watertracker/presentation/widgets/bottom_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
-  final Widget child;
-
   const HomePage({
-    super.key,
     required this.child,
+    super.key,
   });
+  final Widget child;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -43,7 +42,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Scaffold(
       body: Stack(
         children: [
@@ -52,8 +51,9 @@ class _HomePageState extends State<HomePage> {
               child,
               primaryAnimation,
               secondaryAnimation,
-            ) => FadeThroughTransition(
-              fillColor: colorScheme.background,
+            ) =>
+                FadeThroughTransition(
+              fillColor: colorScheme.surface,
               animation: primaryAnimation,
               secondaryAnimation: secondaryAnimation,
               child: child,

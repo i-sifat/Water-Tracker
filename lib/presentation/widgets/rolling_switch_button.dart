@@ -2,6 +2,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class RollingSwitchButton extends StatefulWidget {
+  const RollingSwitchButton({
+    required this.value,
+    required this.onChange,
+    super.key,
+    this.enabled = true,
+    this.textOff = 'OFF',
+    this.textOn = 'ON',
+    this.iconOff = Icons.alarm_off_rounded,
+    this.iconOn = Icons.alarm_on_rounded,
+    this.animationDuration = const Duration(milliseconds: 450),
+  });
   final bool value;
   final bool enabled;
   final ValueChanged<bool> onChange;
@@ -10,18 +21,6 @@ class RollingSwitchButton extends StatefulWidget {
   final Duration animationDuration;
   final IconData iconOn;
   final IconData iconOff;
-
-  const RollingSwitchButton({
-    super.key,
-    required this.value,
-    this.enabled = true,
-    required this.onChange,
-    this.textOff = 'OFF',
-    this.textOn = 'ON',
-    this.iconOff = Icons.alarm_off_rounded,
-    this.iconOn = Icons.alarm_on_rounded,
-    this.animationDuration = const Duration(milliseconds: 450),
-  });
 
   @override
   State<RollingSwitchButton> createState() => _RollingSwitchState();

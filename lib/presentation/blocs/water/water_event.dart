@@ -5,23 +5,23 @@ abstract class WaterEvent {
 }
 
 class WaterSettingsUpdated extends WaterEvent {
-  final WaterSettings settings;
   const WaterSettingsUpdated(this.settings);
+  final WaterSettings settings;
 }
 
 class DrinkWater extends WaterEvent {
-  final int milliliters;
   const DrinkWater(this.milliliters);
+  final int milliliters;
 }
 
 class ChangeAlarmEnabled extends WaterEvent {
-  final bool enabled;
   const ChangeAlarmEnabled(this.enabled);
+  final bool enabled;
 }
 
 class SetRecommendedMilliliters extends WaterEvent {
-  final int milliliters;
   const SetRecommendedMilliliters(this.milliliters);
+  final int milliliters;
 }
 
 class ClearDataStore extends WaterEvent {

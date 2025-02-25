@@ -25,7 +25,8 @@ class AppRouter {
     ],
   );
 
-  static Widget _buildErrorPage(BuildContext context, GoRouterState state) => Scaffold(
+  static Widget _buildErrorPage(BuildContext context, GoRouterState state) =>
+      Scaffold(
         body: Center(
           child: Text(
             'Error: ${state.error}',
