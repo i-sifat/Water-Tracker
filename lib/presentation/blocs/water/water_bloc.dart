@@ -1,9 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:watertracker/domain/model/water_input.dart';
-import 'package:watertracker/domain/model/water_settings.dart';
-import 'package:watertracker/domain/repository/water_repository.dart';
+import 'package:watertracker/domain/models/water_settings.dart';
+import 'package:watertracker/data/repositories/water_repository.dart';
 
 class WaterBloc extends Cubit<WaterSettings> {
   WaterBloc(this._repository) : super(WaterSettings.initial()) {
@@ -13,18 +11,18 @@ class WaterBloc extends Cubit<WaterSettings> {
   }
 
   final WaterRepository _repository;
-  StreamSubscription? _subscription;
+  StreamSubscription<WaterSettings>? _subscription;
 
   int get currentWater => state.currentMilliliters;
-  int get remainigWater =>
+  int get remainingWater =>
       state.currentMilliliters <= state.recommendedMilliliters
           ? state.recommendedMilliliters - state.currentMilliliters
           : 0;
   double get progress =>
       state.currentMilliliters / state.recommendedMilliliters;
 
-  Future<void> drinkWater(WaterInput input) async {
-    _repository.drinkWater(input.milliliters);
+  Future<void> drinkWater(int milliliters) async {
+    await _repository.drinkWater(milliliters);
   }
 
   void changeAlarmEnabled(bool enabled) {

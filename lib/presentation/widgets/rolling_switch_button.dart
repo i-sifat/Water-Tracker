@@ -36,7 +36,7 @@ class RollingSwitchButton extends StatefulWidget {
   });
 
   @override
-  _RollingSwitchState createState() => _RollingSwitchState();
+  State<RollingSwitchButton> createState() => _RollingSwitchState();
 }
 
 class _RollingSwitchState extends State<RollingSwitchButton>

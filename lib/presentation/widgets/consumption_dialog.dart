@@ -8,10 +8,10 @@ class ConsumptionDialog extends StatefulWidget {
   const ConsumptionDialog({super.key});
 
   @override
-  ConsumptionDialogState createState() => ConsumptionDialogState();
+  State<ConsumptionDialog> createState() => _ConsumptionDialogState();
 }
 
-class ConsumptionDialogState extends State<ConsumptionDialog> {
+class _ConsumptionDialogState extends State<ConsumptionDialog> {
   final _form = GlobalKey<FormState>();
   String? _text;
 

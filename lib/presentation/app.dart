@@ -1,4 +1,3 @@
-// lib/presentation/app.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,8 +7,10 @@ import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/presentation/blocs/water/water_bloc.dart';
 
 class App extends StatefulWidget {
+  const App({super.key});
+
   @override
-  _AppState createState() => _AppState();
+  State<App> createState() => _AppState();
 }
 
 class _AppState extends State<App> {
@@ -31,7 +32,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
+        BlocProvider<WaterBloc>(
           create: (context) => WaterBloc(_repository),
           lazy: false,
         ),
@@ -40,7 +41,7 @@ class _AppState extends State<App> {
         debugShowCheckedModeBanner: false,
         title: 'Water Reminder',
         theme: AppTheme.light,
-        home: AnnotatedRegion(
+        home: const AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
             systemNavigationBarColor: Colors.transparent,
