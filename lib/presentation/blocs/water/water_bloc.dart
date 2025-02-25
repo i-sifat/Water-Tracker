@@ -13,7 +13,7 @@ class WaterBloc extends Bloc<WaterEvent, WaterState> {
   WaterBloc(this._repository) : super(WaterInitial()) {
     _subscription = _repository.waterSettings.listen(
       (settings) => add(WaterSettingsUpdated(settings)),
-      onError: (Object error) => emit(WaterError(
+      onError: (error) => emit(WaterError(
         settings: state.settings,
         error: getErrorMessage(error),
       )),

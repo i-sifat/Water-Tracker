@@ -1,3 +1,5 @@
+import 'package:watertracker/domain/models/water_settings.dart';
+
 abstract class WaterEvent {
   const WaterEvent();
 }
@@ -13,8 +15,8 @@ class DrinkWater extends WaterEvent {
 }
 
 class ChangeAlarmEnabled extends WaterEvent {
-  final bool value;
-  const ChangeAlarmEnabled(this.value);
+  final bool enabled;
+  const ChangeAlarmEnabled(this.enabled);
 }
 
 class SetRecommendedMilliliters extends WaterEvent {
