@@ -1,16 +1,41 @@
-# watertracker
+# 💧 Water Tracker
 
-A new Flutter project.
+A simple and minimal water reminder app built with Flutter, designed to help you stay hydrated throughout the day.
 
-## Getting Started
+## 🚀 Features
+- Set personalized hydration goals
+- Smart reminders to drink water
+- Intuitive and clean UI
+- Daily water intake tracking
+- Lightweight and efficient
 
-This project is a starting point for a Flutter application.
+## 🔗 Inspiration
+This project was upgraded and inspired by [Water Reminder App](https://github.com/fabirt/water-reminder-app), with improved features and optimizations.
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Built With
+- **Flutter** – Beautiful native apps for iOS & Android
+- **Dart** – Optimized programming language for Flutter
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 📲 Installation
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/i-sifat/Water-Tracker.git
+   ```
+2. Navigate to the project directory:
+   ```sh
+   cd Water-Tracker
+   ```
+3. Install dependencies:
+   ```sh
+   flutter pub get
+   ```
+4. Run the app:
+   ```sh
+   flutter run
+   ```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🤝 Contributing
+Feel free to fork, submit pull requests, or open issues for improvements!
+
+## 📜 License
+This project is open-source and available under the [MIT License](LICENSE).
