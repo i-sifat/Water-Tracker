@@ -8,6 +8,7 @@ class HomePage extends StatefulWidget {
     required this.child,
     super.key,
   });
+  
   final Widget child;
 
   @override
@@ -18,13 +19,17 @@ class _HomePageState extends State<HomePage> {
   static const _routes = {
     '/': 0,
     '/progress': 1,
-    '/settings': 2,
+    '/history': 2,
+    '/stats': 3,
+    '/settings': 4,
   };
 
   static const _paths = {
     0: '/',
     1: '/progress',
-    2: '/settings',
+    2: '/history',
+    3: '/stats',
+    4: '/settings',
   };
 
   int _getCurrentIndex(BuildContext context) {
@@ -60,9 +65,14 @@ class _HomePageState extends State<HomePage> {
             ),
             child: widget.child,
           ),
-          BottomNavBar(
-            currentPage: _getCurrentIndex(context),
-            onChanged: (index) => _onDestinationSelected(context, index),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: BottomNavBar(
+              currentPage: _getCurrentIndex(context),
+              onChanged: (index) => _onDestinationSelected(context, index),
+            ),
           ),
         ],
       ),

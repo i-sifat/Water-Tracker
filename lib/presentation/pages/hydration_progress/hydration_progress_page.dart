@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:watertracker/core/resources/app_colors.dart';
 import 'package:watertracker/presentation/blocs/water/water_bloc.dart';
+import 'package:watertracker/presentation/blocs/water/water_event.dart';
 import 'package:watertracker/presentation/blocs/water/water_state.dart';
 import 'package:watertracker/presentation/pages/hydration_progress/widgets/progress_view.dart';
 import 'package:watertracker/presentation/pages/hydration_progress/widgets/water_input_group.dart';
@@ -31,7 +33,9 @@ class HydrationProgressPage extends StatelessWidget {
                   const SizedBox(width: double.infinity),
                   Text(
                     'Current Hydration',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: AppColors.textHeadline,
+                    ),
                   ),
                   const Expanded(
                     child: ProgressView(),

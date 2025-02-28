@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:watertracker/core/resources/app_colors.dart';
 import 'package:watertracker/presentation/widgets/animated_water_container.dart';
 
 class WaterView extends StatelessWidget {
@@ -8,6 +9,7 @@ class WaterView extends StatelessWidget {
     super.key,
     this.isLoading = false,
   });
+  
   final Animation<double> animation;
   final double progress;
   final bool isLoading;
@@ -22,9 +24,16 @@ class WaterView extends StatelessWidget {
           child: child,
         );
       },
-      child: AnimatedWaterContainer(
-        progress: progress,
-        isLoading: isLoading,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          // Wave animation
+          AnimatedWaterContainer(
+            progress: progress,
+            isLoading: isLoading,
+            color: AppColors.getWaterColor(progress),
+          ),
+        ],
       ),
     );
   }

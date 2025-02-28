@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:watertracker/core/resources/app_colors.dart';
 import 'package:watertracker/presentation/blocs/water/water_bloc.dart';
+import 'package:watertracker/presentation/blocs/water/water_event.dart';
 import 'package:watertracker/presentation/blocs/water/water_state.dart';
+import 'package:watertracker/presentation/pages/hydration_pool/widgets/bubble_animation.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/hydration_quantity_text.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/person_view.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/remaining_hydration_text.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/widgets/water_view.dart';
 import 'package:watertracker/presentation/widgets/error_snackbar.dart';
+import 'package:watertracker/presentation/widgets/floating_add_button.dart';
 
 class HydrationPoolPage extends StatefulWidget {
   const HydrationPoolPage({super.key});
@@ -25,7 +29,7 @@ class _HydrationPoolPageState extends State<HydrationPoolPage>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    )..repeat();
+    )..repeat(reverse: true);
   }
 
   @override
@@ -55,20 +59,31 @@ class _HydrationPoolPageState extends State<HydrationPoolPage>
     return BlocBuilder<WaterBloc, WaterState>(
       builder: (context, state) {
         final bloc = context.read<WaterBloc>();
+        final progress = bloc.progress;
+        
         return Stack(
           children: [
-            Align(
-              alignment: const Alignment(0, -0.1),
-              child: PersonView(animation: _controller),
-            ),
+            // Water view at the bottom
             Align(
               alignment: Alignment.bottomCenter,
               child: WaterView(
                 animation: _controller,
-                progress: bloc.progress,
+                progress: progress,
                 isLoading: state.isLoading,
               ),
             ),
+            
+            // Person view in the middle
+            Align(
+              alignment: const Alignment(0, 0.1),
+              child: PersonView(
+                animation: _controller,
+                isMale: true, // This will be dynamic based on user preference
+                progress: progress,
+              ),
+            ),
+            
+            // Hydration text at the top
             Align(
               alignment: const Alignment(0, -0.68),
               child: Column(
@@ -80,10 +95,38 @@ class _HydrationPoolPageState extends State<HydrationPoolPage>
                 ],
               ),
             ),
+            
+            // Progress percentage
+            Align(
+              alignment: const Alignment(-0.8, 0.7),
+              child: Text(
+                '${(progress * 100).toInt()}%',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: AppColors.darkBlue,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            
+            // Floating add button
+            Align(
+              alignment: const Alignment(0, 0.7),
+              child: FloatingAddButton(
+                onPressed: () => _addWater(context),
+              ),
+            ),
+            
+            // Bubble animation
+            BubbleAnimation(controller: _controller),
           ],
         );
       },
     );
+  }
+
+  void _addWater(BuildContext context) {
+    // Default to adding 250ml of water
+    context.read<WaterBloc>().add(const DrinkWater(250));
   }
 
   Widget _buildLoadingIndicator() {

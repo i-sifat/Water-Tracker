@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:watertracker/presentation/pages/history/history_page.dart';
 import 'package:watertracker/presentation/pages/home/home_page.dart';
 import 'package:watertracker/presentation/pages/hydration_pool/hydration_pool_page.dart';
 import 'package:watertracker/presentation/pages/hydration_progress/hydration_progress_page.dart';
 import 'package:watertracker/presentation/pages/settings/settings_page.dart';
+import 'package:watertracker/presentation/pages/stats/stats_page.dart';
 
 /// Router configuration for the app
 class AppRouter {
@@ -50,6 +52,20 @@ class AppRouter {
           name: 'hydration-progress',
           pageBuilder: (context, state) => const NoTransitionPage(
             child: HydrationProgressPage(),
+          ),
+        ),
+        GoRoute(
+          path: '/history',
+          name: 'history',
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: HistoryPage(),
+          ),
+        ),
+        GoRoute(
+          path: '/stats',
+          name: 'stats',
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: StatsPage(),
           ),
         ),
         GoRoute(
