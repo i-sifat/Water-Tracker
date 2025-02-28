@@ -78,7 +78,7 @@ class WeeklyWaterData {
       );
     }
 
-    final average = daysWithData > 0 ? totalAmount / daysWithData : 0;
+    final average = daysWithData > 0 ? totalAmount / daysWithData : 0.0;
 
     return WeeklyWaterData(
       weekNumber: weekNumber,
