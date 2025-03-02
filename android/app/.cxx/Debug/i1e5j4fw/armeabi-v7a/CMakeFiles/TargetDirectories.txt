@@ -1,0 +1,2 @@
+E:/Flutter_Project/WaterTracker/watertracker/android/app/.cxx/Debug/i1e5j4fw/armeabi-v7a/CMakeFiles/edit_cache.dir
+E:/Flutter_Project/WaterTracker/watertracker/android/app/.cxx/Debug/i1e5j4fw/armeabi-v7a/CMakeFiles/rebuild_cache.dir
