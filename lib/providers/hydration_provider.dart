@@ -2,12 +2,16 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../screens/goal_completion_screen.dart';
+
 enum AvatarOption { male, female }
 
 class HydrationProvider extends ChangeNotifier {
   int _currentIntake = 0;
   int _dailyGoal = 2000; // Default goal (can be customized)
   AvatarOption _selectedAvatar = AvatarOption.male;
+  bool _goalReachedToday = false;
+  DateTime? _lastUpdated;
 
   // Getters
   int get currentIntake => _currentIntake;
@@ -15,6 +19,7 @@ class HydrationProvider extends ChangeNotifier {
   int get remainingIntake => _dailyGoal - _currentIntake;
   double get intakePercentage => _currentIntake / _dailyGoal;
   AvatarOption get selectedAvatar => _selectedAvatar;
+  bool get goalReachedToday => _goalReachedToday;
 
   // Initialize provider
   HydrationProvider() {
@@ -30,6 +35,21 @@ class HydrationProvider extends ChangeNotifier {
         prefs.getString('avatar') == 'female'
             ? AvatarOption.female
             : AvatarOption.male;
+    _goalReachedToday = prefs.getBool('goalReachedToday') ?? false;
+    int? lastUpdatedMillis = prefs.getInt('lastUpdated');
+    _lastUpdated =
+        lastUpdatedMillis != null
+            ? DateTime.fromMillisecondsSinceEpoch(lastUpdatedMillis)
+            : null;
+
+    // Reset goal status if it's a new day
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    if (_lastUpdated == null || _lastUpdated!.isBefore(today)) {
+      _goalReachedToday = false;
+      _currentIntake = 0; // Reset intake for the new day
+    }
+
     notifyListeners();
   }
 
@@ -42,11 +62,14 @@ class HydrationProvider extends ChangeNotifier {
       'avatar',
       _selectedAvatar == AvatarOption.female ? 'female' : 'male',
     );
+    await prefs.setBool('goalReachedToday', _goalReachedToday);
+    await prefs.setInt('lastUpdated', DateTime.now().millisecondsSinceEpoch);
   }
 
-  // Add water intake (renamed from addIntake to addHydration to match your AddHydrationScreen)
+  // Add water intake
   void addHydration(int amount) {
     _currentIntake += amount;
+    checkGoalReached();
     _saveData();
     notifyListeners();
   }
@@ -73,7 +96,21 @@ class HydrationProvider extends ChangeNotifier {
   // Reset intake
   void resetIntake() {
     _currentIntake = 0;
+    _goalReachedToday = false;
     _saveData();
     notifyListeners();
+  }
+
+  // Check if goal is reached and navigate to GoalCompletionScreen
+  void checkGoalReached([BuildContext? context]) {
+    if (_currentIntake >= _dailyGoal && !_goalReachedToday) {
+      _goalReachedToday = true;
+      _saveData();
+      if (context != null) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const GoalCompletionScreen()),
+        );
+      }
+    }
   }
 }

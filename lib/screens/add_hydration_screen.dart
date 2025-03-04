@@ -255,7 +255,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
       height: 75, // Reduced height by 10px
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
