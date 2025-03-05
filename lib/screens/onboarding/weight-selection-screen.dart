@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/screens/home_screen.dart';
 import 'package:watertracker/screens/onboarding/custom-button.dart';
+import 'package:watertracker/screens/onboarding/height-selection-screen.dart';
 
 class WeightSelectionScreen extends StatefulWidget {
   const WeightSelectionScreen({Key? key}) : super(key: key);
@@ -103,6 +103,13 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
       onTap: () {
         setState(() {
           _isKg = unit == 'kg';
+          if (_isKg) {
+            // lbs to kg conversion
+            _weight = _weight * 0.453592;
+          } else {
+            // kg to lbs conversion
+            _weight = _weight / 0.453592;
+          }
         });
       },
       child: Container(

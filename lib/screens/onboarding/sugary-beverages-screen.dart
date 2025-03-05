@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:watertracker/screens/onboarding/custom-button.dart';
+import 'package:watertracker/screens/onboarding/training-frequency-screen.dart';
 import 'package:watertracker/utils/app_colors.dart';
 
 class SugaryBeveragesScreen extends StatefulWidget {
@@ -12,7 +13,7 @@ class SugaryBeveragesScreen extends StatefulWidget {
 class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
   int _selectedOption = 0; // Default to first option
 
-  final List<Map<String, dynamic>> _beverageOptions = [
+  final List<Map<String, Object>> _beverageOptions = [
     {
       'title': 'Almost never',
       'subtitle': 'Never / several times a month',
@@ -82,7 +83,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                         child: Row(
                           children: [
                             Icon(
-                              option['icon'],
+                              option['icon'] as IconData,
                               color:
                                   _selectedOption == index
                                       ? Colors.white
@@ -94,7 +95,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    option['title'],
+                                    option['title'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedOption == index
@@ -105,7 +106,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                                     ),
                                   ),
                                   Text(
-                                    option['subtitle'],
+                                    option['subtitle'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedOption == index
