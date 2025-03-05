@@ -12,17 +12,21 @@ class VegetablesFruitsScreen extends StatefulWidget {
 class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
   int _selectedOption = 0; // Default to first option
 
-  final List<Map<String, dynamic>> _fruitOptions = [
+  final List<Map<String, Object>> _fruitOptions = [
     {
       'title': 'Rarely',
       'subtitle': 'Few times a week',
-      'icon': Icons.local_florist,
+      'icon': Icons.eco,
     },
-    {'title': 'Regularly', 'subtitle': 'Every day', 'icon': Icons.set_meal},
+    {
+      'title': 'Regularly', 
+      'subtitle': 'Every day', 
+      'icon': Icons.set_meal
+    },
     {
       'title': 'Often',
       'subtitle': 'Several per day',
-      'icon': Icons.local_dining,
+      'icon': Icons.restaurant_menu,
     },
   ];
 
@@ -77,7 +81,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                         child: Row(
                           children: [
                             Icon(
-                              option['icon'],
+                              option['icon'] as IconData,
                               color:
                                   _selectedOption == index
                                       ? Colors.white
@@ -89,7 +93,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    option['title'],
+                                    option['title'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedOption == index
@@ -100,7 +104,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                                     ),
                                   ),
                                   Text(
-                                    option['subtitle'],
+                                    option['subtitle'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedOption == index

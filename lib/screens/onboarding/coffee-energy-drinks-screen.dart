@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:watertracker/screens/onboarding/custom-button.dart';
+import 'package:watertracker/screens/onboarding/sugary-beverages-screen.dart';
 import 'package:watertracker/utils/app_colors.dart';
 
 class CoffeeEnergyDrinksScreen extends StatefulWidget {
@@ -13,18 +14,22 @@ class CoffeeEnergyDrinksScreen extends StatefulWidget {
 class _CoffeeEnergyDrinksScreenState extends State<CoffeeEnergyDrinksScreen> {
   int _selectedOption = 0; // Default to first option
 
-  final List<Map<String, dynamic>> _coffeeOptions = [
+  final List<Map<String, Object>> _coffeeOptions = [
     {
       'title': 'Almost never',
       'subtitle': 'Never / several times a month',
-      'icon': Icons.coffee,
+      'icon': Icons.coffee_maker,
     },
     {
       'title': 'Rarely',
       'subtitle': 'Few times a week',
       'icon': Icons.local_cafe,
     },
-    {'title': 'Regularly', 'subtitle': 'Every day', 'icon': Icons.local_drink},
+    {
+      'title': 'Regularly', 
+      'subtitle': 'Every day', 
+      'icon': Icons.local_drink
+    },
     {
       'title': 'Often',
       'subtitle': 'Several per day',
@@ -83,7 +88,7 @@ class _CoffeeEnergyDrinksScreenState extends State<CoffeeEnergyDrinksScreen> {
                         child: Row(
                           children: [
                             Icon(
-                              option['icon'],
+                              option['icon'] as IconData,
                               color:
                                   _selectedOption == index
                                       ? Colors.white
@@ -95,7 +100,7 @@ class _CoffeeEnergyDrinksScreenState extends State<CoffeeEnergyDrinksScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    option['title'],
+                                    option['title'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedOption == index
@@ -106,7 +111,7 @@ class _CoffeeEnergyDrinksScreenState extends State<CoffeeEnergyDrinksScreen> {
                                     ),
                                   ),
                                   Text(
-                                    option['subtitle'],
+                                    option['subtitle'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedOption == index

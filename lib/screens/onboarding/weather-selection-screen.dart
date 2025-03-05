@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:watertracker/screens/onboarding/coffee-energy-drinks-screen.dart';
 import 'package:watertracker/screens/onboarding/custom-button.dart';
 import 'package:watertracker/utils/app_colors.dart';
 
@@ -12,11 +13,11 @@ class WeatherSelectionScreen extends StatefulWidget {
 class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
   int _selectedWeather = 1; // Default to middle option
 
-  final List<Map<String, dynamic>> _weatherOptions = [
+  final List<Map<String, Object>> _weatherOptions = [
     {
       'title': 'Cold',
       'subtitle': 'Few sunny days, rainy',
-      'icon': Icons.cloudy_snowing,
+      'icon': Icons.ac_unit,
     },
     {
       'title': 'Normal',
@@ -78,7 +79,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
                         child: Row(
                           children: [
                             Icon(
-                              option['icon'],
+                              option['icon'] as IconData,
                               color:
                                   _selectedWeather == index
                                       ? Colors.white
@@ -90,7 +91,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    option['title'],
+                                    option['title'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedWeather == index
@@ -101,7 +102,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
                                     ),
                                   ),
                                   Text(
-                                    option['subtitle'],
+                                    option['subtitle'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedWeather == index

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:watertracker/screens/onboarding/custom-button.dart';
+import 'package:watertracker/screens/onboarding/vegetables-fruits-screen.dart';
 import 'package:watertracker/utils/app_colors.dart';
 
 class TrainingFrequencyScreen extends StatefulWidget {
@@ -13,8 +14,12 @@ class TrainingFrequencyScreen extends StatefulWidget {
 class _TrainingFrequencyScreenState extends State<TrainingFrequencyScreen> {
   int _selectedFrequency = 1; // Default to middle option
 
-  final List<Map<String, dynamic>> _frequencyOptions = [
-    {'title': 'Rarely', 'subtitle': 'No workouts', 'icon': Icons.sports_soccer},
+  final List<Map<String, Object>> _frequencyOptions = [
+    {
+      'title': 'Rarely',
+      'subtitle': 'No workouts',
+      'icon': Icons.sports_soccer,
+    },
     {
       'title': 'Regularly',
       'subtitle': '2-3 times a week',
@@ -23,7 +28,7 @@ class _TrainingFrequencyScreenState extends State<TrainingFrequencyScreen> {
     {
       'title': 'Often',
       'subtitle': 'Almost every day',
-      'icon': Icons.sports_gym,
+      'icon': Icons.sports,
     },
   ];
 
@@ -78,7 +83,7 @@ class _TrainingFrequencyScreenState extends State<TrainingFrequencyScreen> {
                         child: Row(
                           children: [
                             Icon(
-                              option['icon'],
+                              option['icon'] as IconData,
                               color:
                                   _selectedFrequency == index
                                       ? Colors.white
@@ -90,7 +95,7 @@ class _TrainingFrequencyScreenState extends State<TrainingFrequencyScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    option['title'],
+                                    option['title'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedFrequency == index
@@ -101,7 +106,7 @@ class _TrainingFrequencyScreenState extends State<TrainingFrequencyScreen> {
                                     ),
                                   ),
                                   Text(
-                                    option['subtitle'],
+                                    option['subtitle'] as String,
                                     style: TextStyle(
                                       color:
                                           _selectedFrequency == index
