@@ -36,3 +36,5 @@ flutter:
   assets:
     - assets/avatars/
     - assets/navbaricons/
+    - assets/onboarding_elements/
+
