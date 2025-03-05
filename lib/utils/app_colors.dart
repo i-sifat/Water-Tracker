@@ -29,6 +29,11 @@ class AppColors {
   static const Color selectedWeekBackground = Color(0xFF323062);
   static const Color unselectedWeekBackground = Colors.white;
 
+  // Gender selection colors
+  static const Color genderUnselected = Color(0xFFE4E4E4);
+  static const Color genderSelected = Color(0xFF7671FF);
+  static const Color preferNotToAnswer = Color(0xFFF3F1FF);
+
   // Tab indicator color
   static const Color activeTabIndicator = Color(0xFF323062);
 

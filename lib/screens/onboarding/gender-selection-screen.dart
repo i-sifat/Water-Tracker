@@ -1,34 +1,89 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/screens/onboarding/age-selection-screen.dart';
-import 'package:watertracker/screens/onboarding/custom-button.dart';
+import 'package:watertracker/utils/app_colors.dart';
+import 'package:watertracker/widgets/primary_button.dart';
 
 class GenderSelectionScreen extends StatefulWidget {
   const GenderSelectionScreen({Key? key}) : super(key: key);
 
   @override
-  _GenderSelectionScreenState createState() => _GenderSelectionScreenState();
+  State<GenderSelectionScreen> createState() => _GenderSelectionScreenState();
 }
 
 class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
   String? _selectedGender;
 
+  Future<void> _saveGender() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      'selected_gender',
+      _selectedGender ?? 'not_specified',
+    );
+  }
+
+  void _handleContinue() {
+    if (_selectedGender != null) {
+      _saveGender().then((_) {
+        if (mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const AgeSelectionScreen()),
+          );
+        }
+      });
+    }
+  }
+
+  void _handlePreferNotToAnswer() {
+    setState(() => _selectedGender = 'not_specified');
+    _handleContinue();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text('Assessment'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4.0),
-          child: LinearProgressIndicator(
-            value: 2 / 17, // Second step of 17
-            backgroundColor: Colors.grey[300],
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8E97FD)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.only(left: 16),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.textHeadline),
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ),
+        title: const Text(
+          'Assessment',
+          style: TextStyle(
+            color: AppColors.textHeadline,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              '2 of 17',
+              style: TextStyle(
+                color: AppColors.textHeadline,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -38,115 +93,142 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
             const Text(
               'Select your Gender',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: AppColors.textHeadline,
+                height: 1.2,
               ),
-              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 40),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildGenderOption(
-                  icon: Icons.male,
-                  text: 'I am Male',
-                  color:
-                      _selectedGender == 'male'
-                          ? const Color(0xFF8E97FD)
-                          : Colors.grey.shade200,
-                  textColor:
-                      _selectedGender == 'male' ? Colors.white : Colors.black,
-                  onTap: () => setState(() => _selectedGender = 'male'),
+                Expanded(
+                  child: _buildGenderOption(
+                    'male',
+                    'assets/onboarding_elements/onboarding_maleavater_icon.svg',
+                    'I am Male',
+                    Icons.male,
+                  ),
                 ),
                 const SizedBox(width: 16),
-                _buildGenderOption(
-                  icon: Icons.female,
-                  text: 'I am Female',
-                  color:
-                      _selectedGender == 'female'
-                          ? const Color(0xFF8E97FD)
-                          : Colors.grey.shade200,
-                  textColor:
-                      _selectedGender == 'female' ? Colors.white : Colors.black,
-                  onTap: () => setState(() => _selectedGender = 'female'),
+                Expanded(
+                  child: _buildGenderOption(
+                    'female',
+                    'assets/onboarding_elements/onboarding_femaleavater_icon.svg',
+                    'I am Female',
+                    Icons.female,
+                  ),
                 ),
               ],
             ),
             const Spacer(),
             TextButton(
-              onPressed: () {
-                // Handle "Prefer not to answer"
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const AgeSelectionScreen(),
-                  ),
-                );
-              },
-              child: const Text(
-                'Prefer not to answer',
-                style: TextStyle(
-                  color: Colors.grey,
-                  decoration: TextDecoration.underline,
+              onPressed: _handlePreferNotToAnswer,
+              style: TextButton.styleFrom(
+                backgroundColor: AppColors.preferNotToAnswer,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Prefer not to answer',
+                    style: TextStyle(
+                      color: AppColors.genderSelected,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(Icons.close, size: 20, color: AppColors.genderSelected),
+                ],
               ),
             ),
             const SizedBox(height: 16),
-            CustomButton(
+            PrimaryButton(
               text: 'Continue',
-              isEnabled: _selectedGender != null,
-              onPressed:
-                  _selectedGender != null
-                      ? () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const AgeSelectionScreen(),
-                          ),
-                        );
-                      }
-                      : null,
+              onPressed: _selectedGender != null ? _handleContinue : () {},
+              isDisabled: _selectedGender == null,
+              rightIcon: const Icon(
+                Icons.arrow_forward,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
+            const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildGenderOption({
-    required IconData icon,
-    required String text,
-    required Color color,
-    required Color textColor,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildGenderOption(
+    String gender,
+    String avatarAsset,
+    String label,
+    IconData icon,
+  ) {
+    final isSelected = _selectedGender == gender;
+
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => setState(() => _selectedGender = gender),
       child: Container(
-        width: 150,
         height: 200,
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color:
+                isSelected
+                    ? AppColors.genderSelected.withOpacity(0.25)
+                    : Colors.grey.shade200,
+            width: isSelected ? 2 : 1,
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 64, color: textColor),
-            const SizedBox(height: 16),
-            Text(
-              text,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            Container(
+              width: 120,
+              height: 120,
+              margin: const EdgeInsets.only(bottom: 16),
+              child: SvgPicture.asset(
+                avatarAsset,
+                colorFilter: ColorFilter.mode(
+                  isSelected
+                      ? AppColors.genderSelected
+                      : AppColors.genderUnselected,
+                  BlendMode.srcIn,
+                ),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: 20,
+                  color:
+                      isSelected
+                          ? AppColors.genderSelected
+                          : AppColors.textSubtitle,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color:
+                        isSelected
+                            ? AppColors.genderSelected
+                            : AppColors.textSubtitle,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
