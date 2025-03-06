@@ -1,106 +1,184 @@
 import 'package:flutter/material.dart';
-import 'weight-selection-screen.dart';
-import 'custom-button.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/screens/onboarding/weight-selection-screen.dart';
+import 'package:watertracker/utils/app_colors.dart';
 
 class AgeSelectionScreen extends StatefulWidget {
-  const AgeSelectionScreen({Key? key}) : super(key: key);
+  const AgeSelectionScreen({super.key});
 
   @override
-  _AgeSelectionScreenState createState() => _AgeSelectionScreenState();
+  State<AgeSelectionScreen> createState() => _AgeSelectionScreenState();
 }
 
 class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
-  final List<int> _ages = [17, 18, 19, 20, 21];
-  int? _selectedAge;
+  late final FixedExtentScrollController _scrollController;
+  late final List<int> _ages;
+  int _selectedAge = 19; // Default selected age
+
+  @override
+  void initState() {
+    super.initState();
+    _ages = List.generate(100, (index) => index + 1);
+    _scrollController = FixedExtentScrollController(
+      initialItem: _ages.indexOf(_selectedAge),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveAge() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('user_age', _selectedAge);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text('Assessment'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4.0),
-          child: LinearProgressIndicator(
-            value: 3 / 17, // Third step of 17
-            backgroundColor: Colors.grey[300],
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8E97FD)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.only(left: 16),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF323062)),
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ),
+        title: const Text(
+          'Assessment',
+          style: TextStyle(
+            color: Color(0xFF323062),
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              '3 of 17',
+              style: TextStyle(
+                color: Color(0xFF323062),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(24, 40, 24, 60),
+            child: Text(
               "What's your Age?",
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF323062),
               ),
-              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
-            Expanded(
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _ages.length,
-                itemBuilder: (context, index) {
-                  final age = _ages[index];
-                  final isSelected = _selectedAge == age;
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                ListWheelScrollView(
+                  controller: _scrollController,
+                  itemExtent: 80,
+                  diameterRatio: 2.5,
+                  perspective: 0.002,
+                  physics: const FixedExtentScrollPhysics(),
+                  onSelectedItemChanged: (index) {
+                    setState(() => _selectedAge = _ages[index]);
+                    HapticFeedback.lightImpact();
+                  },
+                  children:
+                      _ages.map((age) {
+                        final isSelected = age == _selectedAge;
+                        final isFarFromSelected =
+                            (age - _selectedAge).abs() > 1;
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedAge = age;
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(
-                        color:
-                            isSelected
-                                ? const Color(0xFF8E97FD)
-                                : Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        '$age',
-                        style: TextStyle(
-                          fontSize: isSelected ? 24 : 18,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : Colors.black,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 24),
-            CustomButton(
-              text: 'Continue',
-              isEnabled: _selectedAge != null,
-              onPressed:
-                  _selectedAge != null
-                      ? () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const WeightSelectionScreen(),
+                        return Center(
+                          child: Text(
+                            age.toString(),
+                            style: TextStyle(
+                              fontSize: isSelected ? 48 : 32,
+                              fontWeight: FontWeight.w600,
+                              color:
+                                  isSelected
+                                      ? Colors.white
+                                      : isFarFromSelected
+                                      ? Colors.grey.shade300
+                                      : const Color(0xFF323062),
+                            ),
                           ),
                         );
-                      }
-                      : null,
+                      }).toList(),
+                ),
+                // Selection indicator
+                Center(
+                  child: Container(
+                    height: 80,
+                    margin: const EdgeInsets.symmetric(horizontal: 80),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF7671FF),
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
+            child: ElevatedButton(
+              onPressed: () {
+                _saveAge().then((_) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const WeightSelectionScreen(),
+                    ),
+                  );
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF7671FF),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                minimumSize: const Size(double.infinity, 56),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Continue',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(Icons.arrow_forward, size: 20),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
