@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/screens/onboarding/height-selection-screen.dart';
 import 'package:watertracker/utils/app_colors.dart';
+import 'package:watertracker/widgets/custom_ruler_picker.dart';
 import 'package:watertracker/widgets/primary_button.dart';
-import 'package:simple_ruler_picker/simple_ruler_picker.dart';
 
 class WeightSelectionScreen extends StatefulWidget {
-  const WeightSelectionScreen({Key? key}) : super(key: key);
+  const WeightSelectionScreen({super.key});
 
   @override
   State<WeightSelectionScreen> createState() => _WeightSelectionScreenState();
@@ -25,40 +25,28 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     _loadSavedWeight();
   }
 
-  // Load saved weight if available
   Future<void> _loadSavedWeight() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedWeight = prefs.getDouble('user_weight');
-    final savedUnit = prefs.getBool('weight_unit_is_kg');
-
-    if (savedWeight != null) {
-      setState(() {
-        _weight = savedWeight;
-      });
-    }
-
-    if (savedUnit != null) {
-      setState(() {
-        _isKg = savedUnit;
-      });
-    }
+    setState(() {
+      _weight = prefs.getDouble('user_weight') ?? 65.0;
+      _isKg = prefs.getBool('weight_unit_is_kg') ?? true;
+    });
   }
 
-  // Save weight and unit selection
   Future<void> _saveWeight() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('user_weight', _weight);
     await prefs.setBool('weight_unit_is_kg', _isKg);
   }
 
-  // Convert weight between kg and lbs
-  void _convertWeight() {
-    if (_isKg) {
-      // Convert lbs to kg
-      _weight = (_weight / 2.20462).clamp(_minWeight, _maxWeight);
-    } else {
-      // Convert kg to lbs
-      _weight = (_weight * 2.20462).clamp(_minWeight, _maxWeight);
+  void _handleUnitChange(bool isKg) {
+    if (_isKg != isKg) {
+      setState(() {
+        _isKg = isKg;
+        // Convert weight when switching units
+        _weight = isKg ? _weight / 2.20462 : _weight * 2.20462;
+      });
+      HapticFeedback.selectionClick();
     }
   }
 
@@ -76,11 +64,11 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColors.darkBlue),
+            icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        title: Text(
+        title: const Text(
           'Assessment',
           style: TextStyle(
             color: AppColors.darkBlue,
@@ -96,7 +84,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
+            child: const Text(
               '4 of 17',
               style: TextStyle(
                 color: AppColors.darkBlue,
@@ -116,13 +104,13 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-                  // Title
-                  Text(
+                  const Text(
                     "What's your current\nweight right now?",
                     style: TextStyle(
+                      fontFamily: 'Nunito',
                       fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textHeadline,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.darkBlue,
                       height: 1.2,
                     ),
                     textAlign: TextAlign.center,
@@ -130,13 +118,19 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                   const SizedBox(height: 50),
 
                   // Unit selection buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildUnitButton('kg', true),
-                      const SizedBox(width: 16),
-                      _buildUnitButton('lbs', false),
-                    ],
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildUnitButton('kg', true),
+                        const SizedBox(width: 8),
+                        _buildUnitButton('lbs', false),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 60),
 
@@ -148,9 +142,10 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                     children: [
                       Text(
                         _weight.toStringAsFixed(0),
-                        style: TextStyle(
-                          fontSize: 72,
-                          fontWeight: FontWeight.w600,
+                        style: const TextStyle(
+                          fontFamily: 'Nunito',
+                          fontSize: 89,
+                          fontWeight: FontWeight.w800,
                           color: AppColors.darkBlue,
                         ),
                       ),
@@ -158,6 +153,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                       Text(
                         _isKg ? 'kg' : 'lbs',
                         style: TextStyle(
+                          fontFamily: 'Nunito',
                           fontSize: 24,
                           fontWeight: FontWeight.w400,
                           color: Colors.grey.shade400,
@@ -167,14 +163,22 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Simple Ruler Picker
-                  _buildSimpleRulerPicker(),
+                  // Custom ruler picker
+                  CustomRulerPicker(
+                    value: _weight,
+                    minValue: _isKg ? 1.0 : 2.2,
+                    maxValue: _isKg ? 150.0 : 330.0,
+                    isKg: _isKg,
+                    onValueChanged: (value) {
+                      setState(() => _weight = value);
+                    },
+                  ),
                 ],
               ),
             ),
           ),
 
-          // Continue button using PrimaryButton component
+          // Continue button
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
             child: PrimaryButton(
@@ -200,21 +204,13 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     final bool isSelected = (isKg && _isKg) || (!isKg && !_isKg);
 
     return GestureDetector(
-      onTap: () {
-        if ((isKg && !_isKg) || (!isKg && _isKg)) {
-          setState(() {
-            _isKg = isKg;
-            _convertWeight();
-          });
-          HapticFeedback.lightImpact();
-        }
-      },
+      onTap: () => _handleUnitChange(isKg),
       child: Container(
-        width: 120,
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        width: 80,
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.darkBlue : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(28),
+          color: isSelected ? AppColors.lightBlue : Colors.transparent,
+          borderRadius: BorderRadius.circular(24),
         ),
         child: Text(
           unit,
@@ -225,40 +221,6 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
           ),
           textAlign: TextAlign.center,
         ),
-      ),
-    );
-  }
-
-  Widget _buildSimpleRulerPicker() {
-    // Calculate weight range based on unit
-    final double min = _isKg ? 40.0 : 88.0;
-    final double max = _isKg ? 150.0 : 330.0;
-
-    return Container(
-      height: 150,
-      width: double.infinity,
-      child: SimpleRulerPicker(
-        value: _weight,
-        minValue: min,
-        maxValue: max,
-        onValueChange: (value) {
-          setState(() {
-            _weight = value;
-          });
-          HapticFeedback.selectionClick();
-        },
-        activeLineColor: AppColors.lightBlue,
-        indicatorColor: AppColors.lightBlue,
-        indicatorWidth: 3,
-        lineColor: Colors.grey.shade300,
-        textStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
-        showLabel: (i) => i % (_isKg ? 5 : 10) == 0,
-        interval: 1,
-        longLineInterval: _isKg ? 5 : 10,
-        shortLineInterval: 1,
-        longLineHeight: 40,
-        shortLineHeight: 20,
-        initialValue: _weight,
       ),
     );
   }
