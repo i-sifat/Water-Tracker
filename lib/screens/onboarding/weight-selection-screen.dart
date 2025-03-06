@@ -16,8 +16,8 @@ class WeightSelectionScreen extends StatefulWidget {
 class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
   bool _isKg = true;
   double _weight = 65.0;
-  final double _minWeight = 40.0;
-  final double _maxWeight = 150.0;
+  final double _minWeightKg = 1.0;
+  final double _maxWeightKg = 150.0;
 
   @override
   void initState() {
@@ -27,10 +27,22 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
 
   Future<void> _loadSavedWeight() async {
     final prefs = await SharedPreferences.getInstance();
+    final savedUnit = prefs.getBool('weight_unit_is_kg') ?? true;
+    final savedWeight = prefs.getDouble('user_weight') ?? 65.0;
+
     setState(() {
-      _weight = prefs.getDouble('user_weight') ?? 65.0;
-      _isKg = prefs.getBool('weight_unit_is_kg') ?? true;
+      _isKg = savedUnit;
+      _weight = _clampWeight(savedWeight, savedUnit);
     });
+  }
+
+  double _convertKgToLbs(double kg) => kg * 2.20462;
+  double _convertLbsToKg(double lbs) => lbs / 2.20462;
+
+  double _clampWeight(double value, bool isKg) {
+    final min = isKg ? _minWeightKg : _convertKgToLbs(_minWeightKg);
+    final max = isKg ? _maxWeightKg : _convertKgToLbs(_maxWeightKg);
+    return value.clamp(min, max);
   }
 
   Future<void> _saveWeight() async {
@@ -40,18 +52,25 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
   }
 
   void _handleUnitChange(bool isKg) {
-    if (_isKg != isKg) {
-      setState(() {
-        _isKg = isKg;
-        // Convert weight when switching units
-        _weight = isKg ? _weight / 2.20462 : _weight * 2.20462;
-      });
-      HapticFeedback.selectionClick();
-    }
+    if (_isKg == isKg) return;
+
+    setState(() {
+      // Convert weight directly between units
+      final newWeight =
+          _isKg ? _convertKgToLbs(_weight) : _convertLbsToKg(_weight);
+
+      // Apply clamping after conversion
+      _weight = _clampWeight(newWeight, isKg);
+      _isKg = isKg;
+    });
+    HapticFeedback.selectionClick();
   }
 
   @override
   Widget build(BuildContext context) {
+    final minValue = _isKg ? _minWeightKg : _convertKgToLbs(_minWeightKg);
+    final maxValue = _isKg ? _maxWeightKg : _convertKgToLbs(_maxWeightKg);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -117,7 +136,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                   ),
                   const SizedBox(height: 50),
 
-                  // Unit selection buttons
+                  // Unit selection toggle
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,
@@ -141,7 +160,9 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                     textBaseline: TextBaseline.alphabetic,
                     children: [
                       Text(
-                        _weight.toStringAsFixed(0),
+                        _isKg
+                            ? _weight.toStringAsFixed(1)
+                            : _weight.round().toString(),
                         style: const TextStyle(
                           fontFamily: 'Nunito',
                           fontSize: 89,
@@ -163,11 +184,11 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Custom ruler picker
+                  // Ruler picker
                   CustomRulerPicker(
                     value: _weight,
-                    minValue: _isKg ? 1.0 : 2.2,
-                    maxValue: _isKg ? 150.0 : 330.0,
+                    minValue: minValue,
+                    maxValue: maxValue,
                     isKg: _isKg,
                     onValueChanged: (value) {
                       setState(() => _weight = value);
@@ -201,7 +222,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
   }
 
   Widget _buildUnitButton(String unit, bool isKg) {
-    final bool isSelected = (isKg && _isKg) || (!isKg && !_isKg);
+    final bool isSelected = _isKg == isKg;
 
     return GestureDetector(
       onTap: () => _handleUnitChange(isKg),

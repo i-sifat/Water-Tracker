@@ -25,32 +25,45 @@ class CustomRulerPicker extends StatefulWidget {
 
 class _CustomRulerPickerState extends State<CustomRulerPicker> {
   late ScrollController _scrollController;
-  final double _itemExtent = 15; // Reduced spacing between marks
-  late int _selectedIndex;
+  final double _itemExtent = 17.0;
+  bool _isScrolling = false;
 
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.value.round() - widget.minValue.round();
-    _scrollController = ScrollController(
-      initialScrollOffset: _selectedIndex * _itemExtent,
-    );
-
+    // Calculate initial scroll position based on precise value
+    final initialOffset = (widget.value - widget.minValue) * _itemExtent;
+    _scrollController = ScrollController(initialScrollOffset: initialOffset);
     _scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
-    final newIndex = (_scrollController.offset / _itemExtent).round();
-    if (newIndex != _selectedIndex) {
-      setState(() {
-        _selectedIndex = newIndex;
-        final newValue = (widget.minValue + _selectedIndex).clamp(
-          widget.minValue,
-          widget.maxValue,
+    if (!_isScrolling) _isScrolling = true;
+
+    // Snap to nearest integer value for lbs, 1 decimal for kg
+    final rawIndex = _scrollController.offset / _itemExtent;
+    final snappedIndex = widget.isKg ? rawIndex : rawIndex.roundToDouble();
+    final newValue = (widget.minValue + snappedIndex).clamp(
+      widget.minValue,
+      widget.maxValue,
+    );
+
+    if (newValue != widget.value) {
+      widget.onValueChanged(newValue);
+      _provideHapticFeedback();
+    }
+
+    // Magnetic snap when scrolling ends
+    if (!_scrollController.position.isScrollingNotifier.value) {
+      _isScrolling = false;
+      final targetOffset = (newValue - widget.minValue) * _itemExtent;
+      if (_scrollController.offset != targetOffset) {
+        _scrollController.animateTo(
+          targetOffset,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
         );
-        widget.onValueChanged(newValue);
-        _provideHapticFeedback();
-      });
+      }
     }
   }
 
@@ -70,23 +83,28 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final totalItems = (widget.maxValue - widget.minValue).round() + 1;
+    // Ensure integer values for lbs, decimal for kg
+    final adjustedMin =
+        widget.isKg ? widget.minValue : widget.minValue.roundToDouble();
+    final adjustedMax =
+        widget.isKg ? widget.maxValue : widget.maxValue.roundToDouble();
+    final totalItems = (adjustedMax - adjustedMin).round() + 1;
 
     return Stack(
       alignment: Alignment.center,
       children: [
         // Center indicator line
         Container(
-          width: 10,
-          height: 130,
+          width: 4,
+          height: 160,
           decoration: BoxDecoration(
             color: AppColors.lightBlue,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(2),
           ),
         ),
 
         SizedBox(
-          height: 120,
+          height: 160,
           child: ShaderMask(
             shaderCallback: (Rect bounds) {
               return LinearGradient(
@@ -109,38 +127,27 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
               itemExtent: _itemExtent,
               itemCount: totalItems,
               itemBuilder: (context, index) {
-                final value = widget.minValue + index;
-                final isSelected = index == _selectedIndex;
-                final showNumber = value % (widget.isKg ? 5 : 10) == 0;
-                final isHalfMark = value % (widget.isKg ? 1 : 2) == 0;
+                final value = adjustedMin + index;
+                final isSelected =
+                    (value - widget.value).abs() < (widget.isKg ? 0.05 : 0.5);
+                final showNumber =
+                    widget.isKg ? value % 5 == 0 : value % 10 == 0;
 
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       width: 2,
-                      height: showNumber ? 50 : (isHalfMark ? 35 : 15),
+                      height: showNumber ? 80 : (value % 1 == 0 ? 60 : 40),
                       decoration: BoxDecoration(
                         color:
                             isSelected
                                 ? AppColors.lightBlue
-                                : Colors.grey.withOpacity(0.3),
+                                : Colors.grey.withOpacity(0.5),
                         borderRadius: BorderRadius.circular(1),
                       ),
                     ),
-                    if (showNumber) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        value.round().toString(),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color:
-                              isSelected
-                                  ? AppColors.lightBlue
-                                  : Colors.grey.withOpacity(0.5),
-                        ),
-                      ),
-                    ],
+                    if (showNumber) ...[const SizedBox(height: 8)],
                   ],
                 );
               },
