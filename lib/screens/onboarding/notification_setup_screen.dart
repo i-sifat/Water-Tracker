@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/utils/app_colors.dart';
 import 'package:watertracker/widgets/primary_button.dart';
+import 'package:watertracker/screens/onboarding/compile_data_screen.dart';
 
 class NotificationSetupScreen extends StatefulWidget {
   const NotificationSetupScreen({super.key});
@@ -28,10 +29,9 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
 
   void _handleContinue() {
     _saveNotificationPreferences().then((_) {
-      // Navigate to the next screen
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(builder: (context) => const NextScreen()),
-      // );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const CompileDataScreen()),
+      );
     });
   }
 

@@ -4,17 +4,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
+  final Color? backgroundColor;
 
   const CustomBottomNavigationBar({
     Key? key,
     required this.selectedIndex,
     required this.onItemTapped,
+    this.backgroundColor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(color: Colors.white),
+      decoration: BoxDecoration(color: backgroundColor ?? Colors.white),
       child: SafeArea(
         child: SizedBox(
           height: 60,
@@ -57,7 +59,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
     required String selectedIconPath,
     required String unselectedIconPath,
   }) {
-    // Determine if this item is selected
     bool isSelected = selectedIndex == index;
 
     return GestureDetector(
