@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Text colors
-  static const Color textHeadline = Color(0xFF323062);
+  static const Color textHeadline = Color(0xFF313A34);
   static const Color textSubtitle = Color(0xFFC2C1D0);
   static const Color assessmentText = Color(0xFF313A34);
   static const Color buttonText = Colors.white;

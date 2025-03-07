@@ -1,9 +1,12 @@
+// lib/features/onboarding/screens/welcome_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:watertracker/features/home/home_screen.dart';
-import 'package:watertracker/features/onboarding/screens/goal_selection_screen.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/features/home/home_screen.dart';
+import 'package:watertracker/features/onboarding/screens/goal_selection_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -26,17 +29,7 @@ class WelcomeScreen extends StatelessWidget {
                   color: AppColors.lightBlue.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    'assets/onboarding_elements/onboarding_bee_icon.svg',
-                    width: 40,
-                    height: 40,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.lightBlue,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
+                child: const Center(child: Icon(Icons.water_drop)),
               ),
               const SizedBox(height: 40),
 
@@ -44,46 +37,46 @@ class WelcomeScreen extends StatelessWidget {
               const Text(
                 'Welcome to the\nHydration Tracker App',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  height: 1.3,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textHeadline,
-                  fontFamily: 'nunito',
-                ),
+                style: AppTypography.welcomeHeadline,
               ),
               const SizedBox(height: 12),
 
               // Subtitle
               Text(
                 'Your intelligent hydration solutions.',
-                style: TextStyle(
-                  fontSize: 16,
+                style: AppTypography.subtitle.copyWith(
                   color: AppColors.textSubtitle,
-                  fontFamily: 'nunito',
                 ),
               ),
               const SizedBox(height: 40),
 
               // Illustration
               SvgPicture.asset(
-                'assets/onboarding_elements/onboarding_bee_icon.svg',
+                'assets/images/icons/onboarding_elements/onboarding_bee_icon.svg',
                 width: 240,
                 height: 240,
               ),
               const Spacer(),
 
               // Get Started Button
-              PrimaryButton(
-                text: 'Get Started',
-                rightIcon: const Icon(Icons.arrow_forward, size: 20),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const GoalSelectionScreen(),
-                    ),
-                  );
-                },
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 80),
+                child: PrimaryButton(
+                  text: 'Start Calculating',
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const GoalSelectionScreen(),
+                      ),
+                    );
+                  },
+                  backgroundColor: const Color(0xFF7671FF),
+                  rightIcon: const Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -102,7 +95,8 @@ class WelcomeScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     decoration: TextDecoration.underline,
-                    fontFamily: 'nunito',
+                    fontFamily: 'Nunito',
+                    color: Color(0xFF7671FF),
                   ),
                 ),
               ),
