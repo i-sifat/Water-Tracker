@@ -3,14 +3,13 @@ import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 
 class ContinueButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final bool isDisabled;
-
   const ContinueButton({
-    super.key,
     required this.onPressed,
+    super.key,
     this.isDisabled = false,
   });
+  final VoidCallback onPressed;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +24,12 @@ class ContinueButton extends StatelessWidget {
         minimumSize: const Size(double.infinity, 56),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       ),
-      child: Row(
+      child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text('Continue', style: AppTypography.buttonText),
-          const SizedBox(width: 8),
-          const Icon(
-            Icons.arrow_forward,
-            color: AppColors.buttonText,
-            size: 20,
-          ),
+          SizedBox(width: 8),
+          Icon(Icons.arrow_forward, color: AppColors.buttonText, size: 20),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/features/onboarding/screens/pregnancy_status_screen.dart';
 import 'package:watertracker/features/onboarding/screens/exercise_frequency_screen.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
@@ -57,7 +58,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBar,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -66,19 +67,11 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
+            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        title: const Text(
-          'Assessment',
-          style: TextStyle(
-            color: AppColors.darkBlue,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Nunito',
-          ),
-        ),
+        title: const Text('Assessment', style: AppTypography.subtitle),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
@@ -88,12 +81,11 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
-              '4 of 17',
+              '7 of 10',
               style: TextStyle(
-                color: AppColors.darkBlue,
+                color: AppColors.pageCounter,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'Nunito',
               ),
             ),
           ),
@@ -109,7 +101,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w800,
-                color: AppColors.darkBlue,
+                color: AppColors.assessmentText,
                 height: 1.2,
                 fontFamily: 'Nunito',
               ),
@@ -119,7 +111,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
               'Select which whats your habit.',
               style: TextStyle(
                 fontSize: 18,
-                color: AppColors.textSubtitle,
+                color: AppColors.pageCounter,
                 fontWeight: FontWeight.w400,
                 fontFamily: 'Nunito',
               ),

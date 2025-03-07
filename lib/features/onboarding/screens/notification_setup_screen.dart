@@ -49,14 +49,14 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
+            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
         title: const Text(
           'Notification Setup',
           style: TextStyle(
-            color: AppColors.darkBlue,
+            color: AppColors.assessmentText,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -67,27 +67,21 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Image.asset(
-                'assets/notification_setup.png',
-                height: 200,
-                fit: BoxFit.contain,
-              ),
-            ),
+            Center(),
             const SizedBox(height: 32),
             const Text(
               'Notification Setup',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w800,
-                color: AppColors.darkBlue,
+                color: AppColors.assessmentText,
                 height: 1.2,
                 fontFamily: 'Nunito',
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Choose which notification you\'d like to setup.',
+              "Choose which notification you'd like to setup.",
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -96,25 +90,12 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
             ),
             const SizedBox(height: 32),
             _buildNotificationOption(
-              'Appointment Notification',
+              'App Notification',
               'appointment',
               const Color(0xFFFFE8E8),
               '📅',
             ),
-            const SizedBox(height: 16),
-            _buildNotificationOption(
-              'Doctor Notification',
-              'doctor',
-              const Color(0xFFFFF8BB),
-              '👨‍⚕️',
-            ),
-            const SizedBox(height: 16),
-            _buildNotificationOption(
-              'AI Chatbot Notification',
-              'chatbot',
-              const Color(0xFFDAFFC7),
-              '🤖',
-            ),
+
             const Spacer(),
             PrimaryButton(
               text: 'Continue',

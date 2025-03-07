@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
-import 'package:watertracker/features/onboarding/screens/weight_selection_screen.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/screens/weight_selection_screen.dart';
 
 class AgeSelectionScreen extends StatefulWidget {
   const AgeSelectionScreen({super.key});
@@ -19,11 +19,11 @@ class AgeSelectionScreen extends StatefulWidget {
 class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   late final FixedExtentScrollController _scrollController;
   late final List<int> _ages;
-  int _selectedAge = 19;
+  int _selectedAge = 45;
 
-  final double _maxFontSize = 64.0;
-  final double _minFontSize = 32.0;
-  final double _itemExtent = 80.0;
+  final double _maxFontSize = 64;
+  final double _minFontSize = 32;
+  final double _itemExtent = 80;
 
   @override
   void initState() {
@@ -61,7 +61,9 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.white,
+
+      // In AgeSelectionScreen's build method, update the AppBar:
       appBar: AppBar(
         backgroundColor: AppColors.appBar,
         elevation: 0,
@@ -73,16 +75,10 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
           ),
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-            onPressed: () {
-              context.read<OnboardingProvider>().previousPage();
-              Navigator.of(context).pop();
-            },
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        title: const Text(
-          'Assessment',
-          style: AppTypography.subtitle,
-        ),
+        title: const Text('Assessment', style: AppTypography.subtitle),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
@@ -91,9 +87,13 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
-              context.watch<OnboardingProvider>().pageCounter,
-              style: AppTypography.subtitle,
+            child: const Text(
+              '3 of 10',
+              style: TextStyle(
+                color: AppColors.pageCounter,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -102,10 +102,7 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
         children: [
           const Padding(
             padding: EdgeInsets.fromLTRB(24, 40, 24, 60),
-            child: Text(
-              "What's your Age?",
-              style: AppTypography.headline,
-            ),
+            child: Text("What's your Age?", style: AppTypography.headline),
           ),
           Expanded(
             child: Stack(
@@ -113,10 +110,13 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
               children: [
                 Container(
                   height: _itemExtent,
-                  margin: const EdgeInsets.symmetric(horizontal: 80),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 120,
+                    // vertical: 50,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.selectedBorder,
-                    borderRadius: BorderRadius.circular(40),
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 AgeSelectionWheel(
@@ -196,8 +196,8 @@ class AgeSelectionWheel extends StatelessWidget {
       child: ListWheelScrollView.useDelegate(
         controller: scrollController,
         itemExtent: itemExtent,
-        perspective: 0.002,
-        diameterRatio: 1.8,
+        perspective: 0.001,
+        diameterRatio: 1.3,
         physics: const FixedExtentScrollPhysics(),
         onSelectedItemChanged: onSelectedItemChanged,
         childDelegate: ListWheelChildBuilderDelegate(

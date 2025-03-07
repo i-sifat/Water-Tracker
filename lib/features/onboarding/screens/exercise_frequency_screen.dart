@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/features/onboarding/screens/vegetable_intake_screen.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/primary_button.dart';
@@ -34,7 +35,7 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBar,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -43,18 +44,11 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
+            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        title: const Text(
-          'Assessment',
-          style: TextStyle(
-            color: AppColors.darkBlue,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: const Text('Assessment', style: AppTypography.subtitle),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
@@ -64,9 +58,9 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
-              '6 of 17',
+              '5 of 10',
               style: TextStyle(
-                color: AppColors.darkBlue,
+                color: AppColors.pageCounter,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -78,7 +72,6 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
         children: [
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
                 const Text(
@@ -87,28 +80,27 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                     fontFamily: 'Nunito',
                     fontSize: 36,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.darkBlue,
+                    color: AppColors.assessmentText,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  "How frequent do you take exercise?",
+                  'How frequent do you take exercise?',
                   style: TextStyle(
                     fontSize: 18,
-                    color: AppColors.darkBlue,
+                    color: AppColors.pageCounter,
                     fontWeight: FontWeight.w400,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 100),
 
                 // Fitness equipment illustration
                 SizedBox(
-                  height: 160,
+                  height: 300,
+                  width: double.infinity,
                   child: SvgPicture.asset(
-                    'assets/onboarding_elements/trainning_icon.svg',
-                    fit: BoxFit.contain,
+                    'assets/images/icons/onboarding_elements/trainning_icon.svg',
                   ),
                 ),
 

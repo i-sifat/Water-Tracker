@@ -23,12 +23,12 @@ class PreferNotToAnswerButton extends StatelessWidget {
           Text(
             'Prefer not to answer',
             style: AppTypography.buttonText.copyWith(
-              color: AppColors.selectedBorder,
+              color: AppColors.pageCounter,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(width: 8),
-          Icon(Icons.close, size: 20, color: AppColors.selectedBorder),
+          Icon(Icons.close, size: 20, color: AppColors.pageCounter),
         ],
       ),
     );

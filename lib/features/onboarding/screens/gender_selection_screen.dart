@@ -77,10 +77,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
           ),
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-            onPressed: () {
-              context.read<OnboardingProvider>().previousPage();
-              Navigator.of(context).pop();
-            },
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ),
         title: const Text('Assessment', style: AppTypography.subtitle),
@@ -92,9 +89,13 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
-              context.watch<OnboardingProvider>().pageCounter,
-              style: AppTypography.subtitle,
+            child: const Text(
+              '2 of 10',
+              style: TextStyle(
+                color: AppColors.pageCounter,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
