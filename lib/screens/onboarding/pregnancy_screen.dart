@@ -1,55 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/screens/onboarding/pregnancy_screen.dart';
-import 'package:watertracker/screens/onboarding/training-frequency-screen.dart';
+import 'package:watertracker/screens/onboarding/weather-selection-screen.dart';
 import 'package:watertracker/utils/app_colors.dart';
 import 'package:watertracker/widgets/primary_button.dart';
 
-class SugaryBeveragesScreen extends StatefulWidget {
-  const SugaryBeveragesScreen({Key? key}) : super(key: key);
+class PregnancyScreen extends StatefulWidget {
+  const PregnancyScreen({super.key});
 
   @override
-  State<SugaryBeveragesScreen> createState() => _SugaryBeveragesScreenState();
+  State<PregnancyScreen> createState() => _PregnancyScreenState();
 }
 
-class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
-  String _selectedFrequency = '';
+class _PregnancyScreenState extends State<PregnancyScreen> {
+  String? _selectedOption;
 
-  final List<Map<String, dynamic>> _frequencies = [
+  final List<Map<String, String>> _options = [
     {
-      'title': 'Almost never',
-      'subtitle': 'Never / several times a month',
-      'icon': 'assets/onboarding_elements/select_your_goal_icons/Frame-1.svg',
-      'value': 'almost_never',
-      'iconBgColor': const Color(0xFFF2F2F2),
-    },
-    {
-      'title': 'Rarely',
+      'title': 'Pregnancy',
       'subtitle': 'Few times a week',
-      'icon': 'assets/onboarding_elements/select_your_goal_icons/Frame-2.svg',
-      'value': 'rarely',
-      'iconBgColor': const Color(0xFFE9D9FF),
+      'value': 'pregnancy',
+      'icon': '🤰',
     },
     {
-      'title': 'Regularly',
-      'subtitle': 'Every day',
-      'icon': 'assets/onboarding_elements/select_your_goal_icons/Frame-3.svg',
-      'value': 'regularly',
-      'iconBgColor': const Color(0xFFE4F0FF),
-    },
-    {
-      'title': 'Often',
+      'title': 'Breastfeeding',
       'subtitle': 'Several per day',
-      'icon': 'assets/onboarding_elements/select_your_goal_icons/Frame-4.svg',
-      'value': 'often',
-      'iconBgColor': const Color(0xFFFFF8E5),
+      'value': 'breastfeeding',
+      'icon': '🍼',
     },
   ];
 
-  Future<void> _saveFrequency() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('sugary_beverages_frequency', _selectedFrequency);
+  Future<void> _saveSelection() async {
+    if (_selectedOption != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('pregnancy_status', _selectedOption!);
+    }
+  }
+
+  void _handleContinue() {
+    _saveSelection().then((_) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const WeatherSelectionScreen()),
+      );
+    });
+  }
+
+  void _handlePreferNotToAnswer() {
+    setState(() => _selectedOption = 'none');
+    _handleContinue();
   }
 
   @override
@@ -76,7 +73,6 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
             color: AppColors.darkBlue,
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Nunito',
           ),
         ),
         actions: [
@@ -93,7 +89,6 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                 color: AppColors.darkBlue,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'Nunito',
               ),
             ),
           ),
@@ -105,74 +100,69 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Sugary Beverages',
+              'Pregnancy/Breast\nfeed',
               style: TextStyle(
-                fontSize: 32,
+                fontSize: 36,
                 fontWeight: FontWeight.w800,
                 color: AppColors.darkBlue,
                 height: 1.2,
                 fontFamily: 'Nunito',
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             Text(
               'Select which whats your habit.',
               style: TextStyle(
                 fontSize: 18,
-                color: AppColors.textSubtitle,
+                color: Colors.grey[600],
                 fontWeight: FontWeight.w400,
-                fontFamily: 'Nunito',
               ),
             ),
             const SizedBox(height: 32),
             Expanded(
               child: ListView.separated(
-                itemCount: _frequencies.length,
+                itemCount: _options.length,
                 separatorBuilder:
                     (context, index) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
-                  final frequency = _frequencies[index];
-                  final isSelected = _selectedFrequency == frequency['value'];
+                  final option = _options[index];
+                  final isSelected = _selectedOption == option['value'];
 
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        _selectedFrequency = frequency['value'] as String;
+                        _selectedOption = option['value'];
                       });
                     },
                     child: Container(
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color:
                               isSelected
-                                  ? AppColors.lightBlue.withOpacity(0.25)
+                                  ? const Color(0xFFDAFFC7)
                                   : Colors.grey.shade200,
                           width: isSelected ? 2 : 1,
                         ),
                       ),
-                      padding: const EdgeInsets.all(16),
                       child: Row(
                         children: [
                           Container(
-                            width: 48,
-                            height: 48,
+                            width: 56,
+                            height: 56,
                             decoration: BoxDecoration(
-                              color: frequency['iconBgColor'] as Color,
-                              borderRadius: BorderRadius.circular(12),
+                              color:
+                                  isSelected
+                                      ? const Color(0xFFDAFFC7)
+                                      : Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(16),
                             ),
                             child: Center(
-                              child: SvgPicture.asset(
-                                frequency['icon'] as String,
-                                width: 24,
-                                height: 24,
-                                colorFilter: ColorFilter.mode(
-                                  isSelected
-                                      ? AppColors.lightBlue
-                                      : AppColors.darkBlue.withOpacity(0.5),
-                                  BlendMode.srcIn,
-                                ),
+                              child: Text(
+                                option['icon']!,
+                                style: const TextStyle(fontSize: 24),
                               ),
                             ),
                           ),
@@ -182,23 +172,22 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  frequency['title'] as String,
+                                  option['title']!,
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.w600,
                                     color:
                                         isSelected
-                                            ? AppColors.lightBlue
+                                            ? const Color(0xFF7FB364)
                                             : AppColors.darkBlue,
-                                    fontFamily: 'Nunito',
                                   ),
                                 ),
+                                const SizedBox(height: 4),
                                 Text(
-                                  frequency['subtitle'] as String,
+                                  option['subtitle']!,
                                   style: TextStyle(
-                                    fontSize: 14,
-                                    color: AppColors.textSubtitle,
-                                    fontFamily: 'Nunito',
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
                                   ),
                                 ),
                               ],
@@ -211,23 +200,38 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: _handlePreferNotToAnswer,
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFFF3F1FF),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                minimumSize: const Size(double.infinity, 56),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Prefer not to answer',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(Icons.close, size: 20, color: Colors.grey[600]),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
             PrimaryButton(
               text: 'Continue',
-              onPressed:
-                  _selectedFrequency.isNotEmpty
-                      ? () async {
-                        await _saveFrequency();
-                        if (mounted) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const PregnancyScreen(),
-                            ),
-                          );
-                        }
-                      }
-                      : () {},
-              isDisabled: _selectedFrequency.isEmpty,
+              onPressed: _selectedOption != null ? _handleContinue : () {},
+              isDisabled: _selectedOption == null,
               rightIcon: const Icon(
                 Icons.arrow_forward,
                 color: Colors.white,
