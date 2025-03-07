@@ -49,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                   height: 1.3,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textHeadline,
-                  fontFamily: 'Poppins',
+                  fontFamily: 'nunito',
                 ),
               ),
               const SizedBox(height: 12),
@@ -60,7 +60,7 @@ class WelcomeScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   color: AppColors.textSubtitle,
-                  fontFamily: 'Poppins',
+                  fontFamily: 'nunito',
                 ),
               ),
               const SizedBox(height: 40),
@@ -102,7 +102,7 @@ class WelcomeScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     decoration: TextDecoration.underline,
-                    fontFamily: 'Poppins',
+                    fontFamily: 'nunito',
                   ),
                 ),
               ),

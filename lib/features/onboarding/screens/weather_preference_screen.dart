@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/features/onboarding/screens/notification_setup_screen.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 
 class WeatherSelectionScreen extends StatefulWidget {
   const WeatherSelectionScreen({super.key});
@@ -19,9 +22,24 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
   );
 
   final List<Map<String, dynamic>> _weatherOptions = [
-    {'title': 'Cold', 'icon': Icons.ac_unit, 'value': 'cold'},
-    {'title': 'Normal', 'icon': Icons.thermostat, 'value': 'normal'},
-    {'title': 'Hot', 'icon': Icons.wb_sunny, 'value': 'hot'},
+    {
+      'title': 'Cold',
+      'icon': Icons.ac_unit,
+      'value': 'cold',
+      'description': 'Below 20°C',
+    },
+    {
+      'title': 'Normal',
+      'icon': Icons.thermostat,
+      'value': 'normal',
+      'description': '20-25°C',
+    },
+    {
+      'title': 'Hot',
+      'icon': Icons.wb_sunny,
+      'value': 'hot',
+      'description': 'Above 25°C',
+    },
   ];
 
   @override
@@ -39,6 +57,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
 
   void _handleContinue() {
     _saveWeather().then((_) {
+      context.read<OnboardingProvider>().nextPage();
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => const NotificationSetupScreen(),
@@ -50,9 +69,9 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBar,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -61,18 +80,14 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
-            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
+            onPressed: () {
+              context.read<OnboardingProvider>().previousPage();
+              Navigator.of(context).pop();
+            },
           ),
         ),
-        title: const Text(
-          'Assessment',
-          style: TextStyle(
-            color: AppColors.darkBlue,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: const Text('Assessment', style: AppTypography.subtitle),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
@@ -81,13 +96,9 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              '16 of 17',
-              style: TextStyle(
-                color: AppColors.darkBlue,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Text(
+              context.watch<OnboardingProvider>().pageCounter,
+              style: AppTypography.subtitle,
             ),
           ),
         ],
@@ -97,24 +108,11 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "What's the Weather?",
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.w800,
-                color: AppColors.darkBlue,
-                height: 1.2,
-                fontFamily: 'Nunito',
-              ),
-            ),
+            const Text("What's the Weather?", style: AppTypography.headline),
             const SizedBox(height: 16),
             Text(
-              'Please select your current mood.',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w400,
-              ),
+              'Select your current weather condition.',
+              style: AppTypography.subtitle,
             ),
             const Spacer(),
             SizedBox(
@@ -125,28 +123,33 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
                 onPageChanged: (index) {
                   setState(() {
                     _selectedWeather =
-                        _weatherOptions[index]['value'] as String?;
+                        _weatherOptions[index]['value'] as String;
                   });
                 },
                 itemBuilder: (context, index) {
                   final weather = _weatherOptions[index];
-                  final isSelected =
-                      _selectedWeather == weather['value'] as String?;
+                  final isSelected = _selectedWeather == weather['value'];
 
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.darkBlue : Colors.grey[200],
+                      color:
+                          isSelected
+                              ? AppColors.selectedBorder
+                              : AppColors.boxIconBackground,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          weather['icon'] as IconData?,
+                          weather['icon'] as IconData,
                           size: 80,
-                          color: isSelected ? Colors.white : Colors.grey[500],
+                          color:
+                              isSelected
+                                  ? Colors.white
+                                  : AppColors.assessmentText,
                         ),
                         const SizedBox(height: 20),
                         Text(
@@ -154,7 +157,21 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w600,
-                            color: isSelected ? Colors.white : Colors.grey[700],
+                            color:
+                                isSelected
+                                    ? Colors.white
+                                    : AppColors.assessmentText,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          weather['description'] as String,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color:
+                                isSelected
+                                    ? Colors.white70
+                                    : AppColors.textSubtitle,
                           ),
                         ),
                       ],
@@ -164,16 +181,11 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
               ),
             ),
             const Spacer(),
-            PrimaryButton(
-              text: 'Continue',
+            ContinueButton(
               onPressed: _selectedWeather != null ? _handleContinue : () {},
               isDisabled: _selectedWeather == null,
-              rightIcon: const Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-                size: 20,
-              ),
             ),
+            const SizedBox(height: 24),
           ],
         ),
       ),

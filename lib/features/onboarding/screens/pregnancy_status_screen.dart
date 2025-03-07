@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/onboarding/screens/weather_preference_screen.dart';
-import 'package:watertracker/core/constants/colors.dart';
+
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/widgets/large_selection_box.dart';
 import 'package:watertracker/core/widgets/prefer_not_to_answer_button.dart';
@@ -127,7 +128,7 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
             PreferNotToAnswerButton(onPressed: _handlePreferNotToAnswer),
             const SizedBox(height: 16),
             ContinueButton(
-              onPressed: _selectedOption != null ? _handleContinue : null,
+              onPressed: _selectedOption != null ? _handleContinue : () {},
               isDisabled: _selectedOption == null,
             ),
           ],

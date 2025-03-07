@@ -115,7 +115,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                           );
                         }
                       }
-                      : null,
+                      : () {},
               isDisabled: _selectedFrequency.isEmpty,
             ),
           ],

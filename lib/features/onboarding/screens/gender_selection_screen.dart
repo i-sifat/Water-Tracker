@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/features/onboarding/screens/age_selection_screen.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/widgets/large_selection_box.dart';
+import 'package:watertracker/core/widgets/prefer_not_to_answer_button.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 
 class GenderSelectionScreen extends StatefulWidget {
   const GenderSelectionScreen({Key? key}) : super(key: key);
@@ -15,18 +20,35 @@ class GenderSelectionScreen extends StatefulWidget {
 class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
   String? _selectedGender;
 
+  final List<Map<String, String>> _genderOptions = [
+    {
+      'value': 'male',
+      'title': 'I am Male',
+      'subtitle': 'Select if you identify as male',
+      'icon':
+          'assets/images/icons/onboarding_elements/onboarding_maleavater_icon.svg',
+    },
+    {
+      'value': 'female',
+      'title': 'I am Female',
+      'subtitle': 'Select if you identify as female',
+      'icon':
+          'assets/images/icons/onboarding_elements/onboarding_femaleavater_icon.svg',
+    },
+  ];
+
   Future<void> _saveGender() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      'selected_gender',
-      _selectedGender ?? 'not_specified',
-    );
+    if (_selectedGender != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selected_gender', _selectedGender!);
+    }
   }
 
   void _handleContinue() {
     if (_selectedGender != null) {
       _saveGender().then((_) {
         if (mounted) {
+          context.read<OnboardingProvider>().nextPage();
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const AgeSelectionScreen()),
           );
@@ -43,9 +65,9 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBar,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -54,18 +76,14 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textHeadline),
-            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
+            onPressed: () {
+              context.read<OnboardingProvider>().previousPage();
+              Navigator.of(context).pop();
+            },
           ),
         ),
-        title: const Text(
-          'Assessment',
-          style: TextStyle(
-            color: AppColors.textHeadline,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: const Text('Assessment', style: AppTypography.subtitle),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
@@ -74,13 +92,9 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              '2 of 17',
-              style: TextStyle(
-                color: AppColors.textHeadline,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Text(
+              context.watch<OnboardingProvider>().pageCounter,
+              style: AppTypography.subtitle,
             ),
           ),
         ],
@@ -88,147 +102,41 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Select your Gender',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textHeadline,
-                height: 1.2,
-              ),
-            ),
+            const Text('Select your Gender', style: AppTypography.headline),
             const SizedBox(height: 40),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildGenderOption(
-                    'male',
-                    'assets/onboarding_elements/onboarding_maleavater_icon.svg',
-                    'I am Male',
-                    Icons.male,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildGenderOption(
-                    'female',
-                    'assets/onboarding_elements/onboarding_femaleavater_icon.svg',
-                    'I am Female',
-                    Icons.female,
-                  ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            TextButton(
-              onPressed: _handlePreferNotToAnswer,
-              style: TextButton.styleFrom(
-                backgroundColor: AppColors.preferNotToAnswer,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Prefer not to answer',
-                    style: TextStyle(
-                      color: AppColors.genderSelected,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+            Expanded(
+              child: ListView.separated(
+                itemCount: _genderOptions.length,
+                separatorBuilder:
+                    (context, index) => const SizedBox(height: 16),
+                itemBuilder: (context, index) {
+                  final option = _genderOptions[index];
+                  return LargeSelectionBox(
+                    title: option['title']!,
+                    subtitle: option['subtitle']!,
+                    icon: SvgPicture.asset(
+                      option['icon']!,
+                      width: 32,
+                      height: 32,
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(Icons.close, size: 20, color: AppColors.genderSelected),
-                ],
+                    isSelected: _selectedGender == option['value'],
+                    onTap: () {
+                      setState(() {
+                        _selectedGender = option['value'];
+                      });
+                    },
+                  );
+                },
               ),
             ),
             const SizedBox(height: 16),
-            PrimaryButton(
-              text: 'Continue',
+            PreferNotToAnswerButton(onPressed: _handlePreferNotToAnswer),
+            const SizedBox(height: 16),
+            ContinueButton(
               onPressed: _selectedGender != null ? _handleContinue : () {},
               isDisabled: _selectedGender == null,
-              rightIcon: const Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGenderOption(
-    String gender,
-    String avatarAsset,
-    String label,
-    IconData icon,
-  ) {
-    final isSelected = _selectedGender == gender;
-
-    return GestureDetector(
-      onTap: () => setState(() => _selectedGender = gender),
-      child: Container(
-        height: 200,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color:
-                isSelected
-                    ? AppColors.genderSelected.withOpacity(0.25)
-                    : Colors.grey.shade200,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              margin: const EdgeInsets.only(bottom: 16),
-              child: SvgPicture.asset(
-                avatarAsset,
-                colorFilter: ColorFilter.mode(
-                  isSelected
-                      ? AppColors.genderSelected
-                      : AppColors.genderUnselected,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  size: 20,
-                  color:
-                      isSelected
-                          ? AppColors.genderSelected
-                          : AppColors.textSubtitle,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color:
-                        isSelected
-                            ? AppColors.genderSelected
-                            : AppColors.textSubtitle,
-                  ),
-                ),
-              ],
             ),
           ],
         ),
