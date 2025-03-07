@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/constants/colors.dart';
 import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 
 class ContinueButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -23,17 +23,12 @@ class ContinueButton extends StatelessWidget {
         disabledForegroundColor: Colors.grey[500],
         elevation: 0,
         minimumSize: const Size(double.infinity, 56),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Continue',
-            style: AppTypography.buttonText,
-          ),
+          Text('Continue', style: AppTypography.buttonText),
           const SizedBox(width: 8),
           const Icon(
             Icons.arrow_forward,

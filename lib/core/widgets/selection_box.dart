@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/constants/colors.dart';
 import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 
 class SelectionBox extends StatelessWidget {
   final String title;
@@ -30,7 +30,10 @@ class SelectionBox extends StatelessWidget {
           color: isSelected ? AppColors.selectedShade : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.selectedBorder : AppColors.unselectedBorder,
+            color:
+                isSelected
+                    ? AppColors.selectedBorder
+                    : AppColors.unselectedBorder,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -57,7 +60,10 @@ class SelectionBox extends StatelessWidget {
                       title,
                       style: AppTypography.headline.copyWith(
                         fontSize: 18,
-                        color: isSelected ? AppColors.selectedBorder : AppColors.assessmentText,
+                        color:
+                            isSelected
+                                ? AppColors.selectedBorder
+                                : AppColors.assessmentText,
                       ),
                     ),
                     const SizedBox(height: 4),

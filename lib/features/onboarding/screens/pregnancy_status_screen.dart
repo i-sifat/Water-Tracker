@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/features/onboarding/screens/weather_preference_screen.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/core/constants/colors.dart';
+import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/widgets/large_selection_box.dart';
+import 'package:watertracker/core/widgets/prefer_not_to_answer_button.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 
 class PregnancyScreen extends StatefulWidget {
   const PregnancyScreen({super.key});
@@ -38,6 +43,7 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
 
   void _handleContinue() {
     _saveSelection().then((_) {
+      context.read<OnboardingProvider>().nextPage();
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const WeatherSelectionScreen()),
       );
@@ -52,9 +58,9 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBar,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -63,18 +69,14 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
-            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
+            onPressed: () {
+              context.read<OnboardingProvider>().previousPage();
+              Navigator.of(context).pop();
+            },
           ),
         ),
-        title: const Text(
-          'Assessment',
-          style: TextStyle(
-            color: AppColors.darkBlue,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: const Text('Assessment', style: AppTypography.subtitle),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
@@ -83,13 +85,9 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              '4 of 17',
-              style: TextStyle(
-                color: AppColors.darkBlue,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Text(
+              context.watch<OnboardingProvider>().pageCounter,
+              style: AppTypography.subtitle,
             ),
           ),
         ],
@@ -99,26 +97,8 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Pregnancy/Breast\nfeed',
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.w800,
-                color: AppColors.darkBlue,
-                height: 1.2,
-                fontFamily: 'Nunito',
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Select which whats your habit.',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            const SizedBox(height: 32),
+            const Text('Pregnancy/Breast\nfeed', style: AppTypography.headline),
+            const SizedBox(height: 40),
             Expanded(
               child: ListView.separated(
                 itemCount: _options.length,
@@ -126,117 +106,29 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
                     (context, index) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
                   final option = _options[index];
-                  final isSelected = _selectedOption == option['value'];
-
-                  return GestureDetector(
+                  return LargeSelectionBox(
+                    title: option['title']!,
+                    subtitle: option['subtitle']!,
+                    icon: Text(
+                      option['icon']!,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                    isSelected: _selectedOption == option['value'],
                     onTap: () {
                       setState(() {
                         _selectedOption = option['value'];
                       });
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color:
-                              isSelected
-                                  ? const Color(0xFFDAFFC7)
-                                  : Colors.grey.shade200,
-                          width: isSelected ? 2 : 1,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color:
-                                  isSelected
-                                      ? const Color(0xFFDAFFC7)
-                                      : Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Center(
-                              child: Text(
-                                option['icon']!,
-                                style: const TextStyle(fontSize: 24),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  option['title']!,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        isSelected
-                                            ? const Color(0xFF7FB364)
-                                            : AppColors.darkBlue,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  option['subtitle']!,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   );
                 },
               ),
             ),
             const SizedBox(height: 16),
-            TextButton(
-              onPressed: _handlePreferNotToAnswer,
-              style: TextButton.styleFrom(
-                backgroundColor: const Color(0xFFF3F1FF),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                minimumSize: const Size(double.infinity, 56),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Prefer not to answer',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(Icons.close, size: 20, color: Colors.grey[600]),
-                ],
-              ),
-            ),
+            PreferNotToAnswerButton(onPressed: _handlePreferNotToAnswer),
             const SizedBox(height: 16),
-            PrimaryButton(
-              text: 'Continue',
-              onPressed: _selectedOption != null ? _handleContinue : () {},
+            ContinueButton(
+              onPressed: _selectedOption != null ? _handleContinue : null,
               isDisabled: _selectedOption == null,
-              rightIcon: const Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-                size: 20,
-              ),
             ),
           ],
         ),

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/constants/colors.dart';
 import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 
 class PreferNotToAnswerButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const PreferNotToAnswerButton({
-    super.key,
-    required this.onPressed,
-  });
+  const PreferNotToAnswerButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +14,7 @@ class PreferNotToAnswerButton extends StatelessWidget {
       style: TextButton.styleFrom(
         backgroundColor: const Color(0xFFF3F1FF),
         padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         minimumSize: const Size(double.infinity, 56),
       ),
       child: Row(
@@ -33,11 +28,7 @@ class PreferNotToAnswerButton extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Icon(
-            Icons.close,
-            size: 20,
-            color: AppColors.selectedBorder,
-          ),
+          Icon(Icons.close, size: 20, color: AppColors.selectedBorder),
         ],
       ),
     );

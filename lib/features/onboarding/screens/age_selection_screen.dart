@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 import 'package:watertracker/features/onboarding/screens/weight_selection_screen.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 
 class AgeSelectionScreen extends StatefulWidget {
   const AgeSelectionScreen({super.key});
@@ -15,16 +19,11 @@ class AgeSelectionScreen extends StatefulWidget {
 class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   late final FixedExtentScrollController _scrollController;
   late final List<int> _ages;
-  int _selectedAge = 19; // Default selected age
+  int _selectedAge = 19;
 
-  // Constants for better readability and adjustability
   final double _maxFontSize = 64.0;
   final double _minFontSize = 32.0;
   final double _itemExtent = 80.0;
-  final Color _highlightColor = const Color(0xFF7671FF);
-  final Color _selectedTextColor = Colors.white;
-  final Color _unselectedTextColor = const Color(0xFF323062);
-  final Color _farTextColor = Colors.grey.shade300;
 
   @override
   void initState() {
@@ -46,7 +45,6 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
     await prefs.setInt('user_age', _selectedAge);
   }
 
-  // Trigger vibration when the selected age changes
   void _handleSelectionChange(int index) {
     if (_ages[index] != _selectedAge) {
       setState(() => _selectedAge = _ages[index]);
@@ -63,9 +61,9 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBar,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -74,17 +72,16 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF323062)),
-            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
+            onPressed: () {
+              context.read<OnboardingProvider>().previousPage();
+              Navigator.of(context).pop();
+            },
           ),
         ),
         title: const Text(
           'Assessment',
-          style: TextStyle(
-            color: Color(0xFF323062),
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTypography.subtitle,
         ),
         actions: [
           Container(
@@ -94,13 +91,9 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              '3 of 17',
-              style: TextStyle(
-                color: Color(0xFF323062),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Text(
+              context.watch<OnboardingProvider>().pageCounter,
+              style: AppTypography.subtitle,
             ),
           ),
         ],
@@ -111,36 +104,30 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
             padding: EdgeInsets.fromLTRB(24, 40, 24, 60),
             child: Text(
               "What's your Age?",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF323062),
-              ),
+              style: AppTypography.headline,
             ),
           ),
           Expanded(
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Fixed center selection indicator (behind the wheel)
                 Container(
                   height: _itemExtent,
                   margin: const EdgeInsets.symmetric(horizontal: 80),
                   decoration: BoxDecoration(
-                    color: _highlightColor,
+                    color: AppColors.selectedBorder,
                     borderRadius: BorderRadius.circular(40),
                   ),
                 ),
-                // The customized wheel widget that scrolls over the fixed container
                 AgeSelectionWheel(
                   scrollController: _scrollController,
                   ages: _ages,
                   selectedAge: _selectedAge,
                   itemExtent: _itemExtent,
-                  highlightColor: _highlightColor,
-                  selectedTextColor: _selectedTextColor,
-                  unselectedTextColor: _unselectedTextColor,
-                  farTextColor: _farTextColor,
+                  highlightColor: AppColors.selectedBorder,
+                  selectedTextColor: AppColors.buttonText,
+                  unselectedTextColor: AppColors.assessmentText,
+                  farTextColor: Colors.grey.shade300,
                   maxFontSize: _maxFontSize,
                   minFontSize: _minFontSize,
                   onSelectedItemChanged: _handleSelectionChange,
@@ -150,9 +137,10 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
-            child: ElevatedButton(
+            child: ContinueButton(
               onPressed: () {
                 _saveAge().then((_) {
+                  context.read<OnboardingProvider>().nextPage();
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const WeightSelectionScreen(),
@@ -160,26 +148,6 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
                   );
                 });
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _highlightColor,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Continue',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(width: 8),
-                  Icon(Icons.arrow_forward, size: 20),
-                ],
-              ),
             ),
           ),
         ],
@@ -188,7 +156,6 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   }
 }
 
-// Custom wheel widget that implements advanced styling and animations
 class AgeSelectionWheel extends StatelessWidget {
   final FixedExtentScrollController scrollController;
   final List<int> ages;
@@ -221,10 +188,8 @@ class AgeSelectionWheel extends StatelessWidget {
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
-        // We're just using this to rebuild on scroll for animated transitions
         if (notification is ScrollUpdateNotification) {
-          // This doesn't need to do anything specific
-          // The rebuild handles the animations
+          // This rebuild handles the animations
         }
         return false;
       },
@@ -239,22 +204,18 @@ class AgeSelectionWheel extends StatelessWidget {
           childCount: ages.length,
           builder: (context, index) {
             final age = ages[index];
-            // Calculate distance from center for animated scaling
             final distanceFromCenter =
                 (scrollController.hasClients
                         ? scrollController.selectedItem - index
                         : 0)
                     .abs();
 
-            // Calculate the scaled font size based on distance from center
-            // We use a non-linear scaling that decreases faster as we move away
             final fontSize =
                 distanceFromCenter <= 2
                     ? maxFontSize -
                         (distanceFromCenter * (maxFontSize - minFontSize) / 2)
                     : minFontSize;
 
-            // Determine text color based on distance
             final color =
                 distanceFromCenter == 0
                     ? selectedTextColor
@@ -262,7 +223,6 @@ class AgeSelectionWheel extends StatelessWidget {
                     ? unselectedTextColor
                     : farTextColor;
 
-            // Apply fade in/out animation for smooth transitions
             final opacity =
                 distanceFromCenter > 5
                     ? 0.5
@@ -270,7 +230,6 @@ class AgeSelectionWheel extends StatelessWidget {
                     ? 0.7
                     : 1.0;
 
-            // Calculate font weight based on distance
             final fontWeight =
                 distanceFromCenter == 0
                     ? FontWeight.w700

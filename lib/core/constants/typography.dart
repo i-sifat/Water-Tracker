@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/constants/colors.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 
 class AppTypography {
   static const TextStyle headline = TextStyle(

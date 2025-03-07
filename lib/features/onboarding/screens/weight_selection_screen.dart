@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/features/onboarding/screens/exercise_frequency_screen.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/core/widgets/custom_ruler_picker.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/screens/exercise_frequency_screen.dart';
 
 class WeightSelectionScreen extends StatefulWidget {
   const WeightSelectionScreen({super.key});
@@ -55,11 +58,8 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     if (_isKg == isKg) return;
 
     setState(() {
-      // Convert weight directly between units
       final newWeight =
           _isKg ? _convertKgToLbs(_weight) : _convertLbsToKg(_weight);
-
-      // Apply clamping after conversion
       _weight = _clampWeight(newWeight, isKg);
       _isKg = isKg;
     });
@@ -72,9 +72,9 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     final maxValue = _isKg ? _maxWeightKg : _convertKgToLbs(_maxWeightKg);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBar,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -83,18 +83,14 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
-            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
+            onPressed: () {
+              context.read<OnboardingProvider>().previousPage();
+              Navigator.of(context).pop();
+            },
           ),
         ),
-        title: const Text(
-          'Assessment',
-          style: TextStyle(
-            color: AppColors.darkBlue,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: const Text('Assessment', style: AppTypography.subtitle),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
@@ -103,13 +99,9 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              '4 of 17',
-              style: TextStyle(
-                color: AppColors.darkBlue,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Text(
+              context.watch<OnboardingProvider>().pageCounter,
+              style: AppTypography.subtitle,
             ),
           ),
         ],
@@ -125,18 +117,11 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                   const SizedBox(height: 40),
                   const Text(
                     "What's your current\nweight right now?",
-                    style: TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.darkBlue,
-                      height: 1.2,
-                    ),
+                    style: AppTypography.headline,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 50),
 
-                  // Unit selection toggle
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,
@@ -153,7 +138,6 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                   ),
                   const SizedBox(height: 60),
 
-                  // Weight display
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -163,28 +147,17 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                         _isKg
                             ? _weight.toStringAsFixed(1)
                             : _weight.round().toString(),
-                        style: const TextStyle(
-                          fontFamily: 'Nunito',
-                          fontSize: 89,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.darkBlue,
-                        ),
+                        style: AppTypography.headline.copyWith(fontSize: 89),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         _isKg ? 'kg' : 'lbs',
-                        style: TextStyle(
-                          fontFamily: 'Nunito',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade400,
-                        ),
+                        style: AppTypography.subtitle.copyWith(fontSize: 24),
                       ),
                     ],
                   ),
                   const SizedBox(height: 40),
 
-                  // Ruler picker
                   CustomRulerPicker(
                     value: _weight,
                     minValue: minValue,
@@ -199,13 +172,12 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
             ),
           ),
 
-          // Continue button
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
-            child: PrimaryButton(
-              text: 'Continue',
+            child: ContinueButton(
               onPressed: () {
                 _saveWeight().then((_) {
+                  context.read<OnboardingProvider>().nextPage();
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const FitnessLevelScreen(),
@@ -213,7 +185,6 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                   );
                 });
               },
-              rightIcon: const Icon(Icons.arrow_forward, size: 20),
             ),
           ),
         ],
@@ -230,13 +201,13 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
         width: 80,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.lightBlue : Colors.transparent,
+          color: isSelected ? AppColors.selectedBorder : Colors.transparent,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Text(
           unit,
           style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.darkBlue,
+            color: isSelected ? Colors.white : AppColors.assessmentText,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/core/widgets/selection_box.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/sugary_drinks_screen.dart';
 
 class VegetablesFruitsScreen extends StatefulWidget {
@@ -30,9 +34,9 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBar,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -41,18 +45,14 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
-            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
+            onPressed: () {
+              context.read<OnboardingProvider>().previousPage();
+              Navigator.of(context).pop();
+            },
           ),
         ),
-        title: const Text(
-          'Assessment',
-          style: TextStyle(
-            color: AppColors.darkBlue,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: const Text('Assessment', style: AppTypography.subtitle),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
@@ -61,13 +61,9 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              '4 of 17',
-              style: TextStyle(
-                color: AppColors.darkBlue,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Text(
+              context.watch<OnboardingProvider>().pageCounter,
+              style: AppTypography.subtitle,
             ),
           ),
         ],
@@ -77,16 +73,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Vegetables',
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.w800,
-                color: AppColors.darkBlue,
-                height: 1.2,
-                fontFamily: 'Nunito',
-              ),
-            ),
+            const Text('Vegetables', style: AppTypography.headline),
             const SizedBox(height: 40),
             Expanded(
               child: ListView.separated(
@@ -95,95 +82,31 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                     (context, index) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
                   final frequency = _frequencies[index];
-                  final isSelected = _selectedFrequency == frequency['title'];
-
-                  return GestureDetector(
+                  return SelectionBox(
+                    title: frequency['title']!,
+                    subtitle: frequency['subtitle']!,
+                    icon: Text(
+                      frequency['icon']!,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                    isSelected: _selectedFrequency == frequency['title'],
                     onTap: () {
                       setState(() {
                         _selectedFrequency = frequency['title']!;
                       });
                     },
-                    child: Container(
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color:
-                            isSelected
-                                ? AppColors.lightBlue.withOpacity(0.1)
-                                : Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color:
-                              isSelected
-                                  ? AppColors.lightBlue
-                                  : Colors.grey.shade200,
-                          width: isSelected ? 2 : 1,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color:
-                                    isSelected
-                                        ? AppColors.lightBlue.withOpacity(0.1)
-                                        : Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  frequency['icon']!,
-                                  style: const TextStyle(fontSize: 24),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    frequency['title']!,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color:
-                                          isSelected
-                                              ? AppColors.lightBlue
-                                              : AppColors.darkBlue,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    frequency['subtitle']!,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   );
                 },
               ),
             ),
             const SizedBox(height: 24),
-            PrimaryButton(
-              text: 'Continue',
+            ContinueButton(
               onPressed:
                   _selectedFrequency.isNotEmpty
                       ? () async {
                         await _saveFrequency();
                         if (mounted) {
+                          context.read<OnboardingProvider>().nextPage();
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder:
@@ -192,10 +115,8 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                           );
                         }
                       }
-                      : () {},
-
+                      : null,
               isDisabled: _selectedFrequency.isEmpty,
-              rightIcon: const Icon(Icons.arrow_forward, size: 20),
             ),
           ],
         ),
