@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/screens/onboarding/height-selection-screen.dart';
+import 'package:watertracker/screens/onboarding/training-frequency-screen.dart';
 import 'package:watertracker/utils/app_colors.dart';
 import 'package:watertracker/widgets/custom_ruler_picker.dart';
 import 'package:watertracker/widgets/primary_button.dart';
@@ -208,7 +209,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                 _saveWeight().then((_) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const HeightSelectionScreen(),
+                      builder: (context) => const FitnessLevelScreen(),
                     ),
                   );
                 });
