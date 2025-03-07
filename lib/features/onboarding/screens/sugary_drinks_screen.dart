@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/features/onboarding/screens/pregnancy_status_screen.dart';
-import 'package:watertracker/features/onboarding/screens/exercise_frequency_screen.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/core/widgets/selection_box.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 
 class SugaryBeveragesScreen extends StatefulWidget {
   const SugaryBeveragesScreen({Key? key}) : super(key: key);
@@ -56,7 +58,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.appBar,
         elevation: 0,
@@ -80,13 +82,9 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              '7 of 10',
-              style: TextStyle(
-                color: AppColors.pageCounter,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Text(
+              context.watch<OnboardingProvider>().pageCounter,
+              style: AppTypography.subtitle,
             ),
           ),
         ],
@@ -96,19 +94,10 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Sugary Beverages',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.w800,
-                color: AppColors.assessmentText,
-                height: 1.2,
-                fontFamily: 'Nunito',
-              ),
-            ),
+            const Text('Sugary Beverages', style: AppTypography.headline),
             const SizedBox(height: 8),
             Text(
-              'Select which whats your habit.',
+              'Select your habit.',
               style: TextStyle(
                 fontSize: 18,
                 color: AppColors.pageCounter,
@@ -126,91 +115,48 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                   final frequency = _frequencies[index];
                   final isSelected = _selectedFrequency == frequency['value'];
 
-                  return GestureDetector(
+                  return SelectionBox(
+                    title: frequency['title'] as String,
+                    subtitle: frequency['subtitle'] as String,
+                    icon: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: frequency['iconBgColor'] as Color,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          frequency['icon'] as String,
+                          width: 24,
+                          height: 24,
+                          colorFilter: ColorFilter.mode(
+                            isSelected
+                                ? AppColors.selectedBorder
+                                : AppColors.unselectedBorder,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    ),
+                    isSelected: isSelected,
                     onTap: () {
                       setState(() {
                         _selectedFrequency = frequency['value'] as String;
                       });
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color:
-                              isSelected
-                                  ? AppColors.lightBlue.withOpacity(0.25)
-                                  : Colors.grey.shade200,
-                          width: isSelected ? 2 : 1,
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: frequency['iconBgColor'] as Color,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                frequency['icon'] as String,
-                                width: 24,
-                                height: 24,
-                                colorFilter: ColorFilter.mode(
-                                  isSelected
-                                      ? AppColors.lightBlue
-                                      : AppColors.darkBlue.withOpacity(0.5),
-                                  BlendMode.srcIn,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  frequency['title'] as String,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        isSelected
-                                            ? AppColors.lightBlue
-                                            : AppColors.darkBlue,
-                                    fontFamily: 'Nunito',
-                                  ),
-                                ),
-                                Text(
-                                  frequency['subtitle'] as String,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: AppColors.textSubtitle,
-                                    fontFamily: 'Nunito',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   );
                 },
               ),
             ),
             const SizedBox(height: 24),
-            PrimaryButton(
-              text: 'Continue',
+            ContinueButton(
               onPressed:
                   _selectedFrequency.isNotEmpty
                       ? () async {
                         await _saveFrequency();
                         if (mounted) {
+                          context.read<OnboardingProvider>().nextPage();
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => const PregnancyScreen(),
@@ -220,11 +166,6 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                       }
                       : () {},
               isDisabled: _selectedFrequency.isEmpty,
-              rightIcon: const Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-                size: 20,
-              ),
             ),
           ],
         ),

@@ -100,7 +100,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
             PrimaryButton(
               text: 'Continue',
               onPressed: _handleContinue,
-              backgroundColor: const Color(0xFF7FB364),
+              backgroundColor: AppColors.selectedBorder,
               rightIcon: const Icon(
                 Icons.arrow_forward,
                 color: Colors.white,
@@ -157,8 +157,8 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
                 _notifications[key] = value;
               });
             },
-            activeColor: const Color(0xFF7FB364),
-            activeTrackColor: const Color(0xFFDAFFC7),
+            activeColor: AppColors.selectedBorder,
+            activeTrackColor: AppColors.preferNotToAnswer,
           ),
         ],
       ),
