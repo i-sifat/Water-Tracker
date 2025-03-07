@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
-import 'package:watertracker/screens/onboarding/weight-selection-screen.dart';
-import 'package:watertracker/utils/app_colors.dart';
+import 'package:watertracker/features/onboarding/screens/weight_selection_screen.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 
 class AgeSelectionScreen extends StatefulWidget {
   const AgeSelectionScreen({super.key});

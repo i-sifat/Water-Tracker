@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/screens/onboarding/pregnancy_screen.dart';
-import 'package:watertracker/screens/onboarding/training-frequency-screen.dart';
-import 'package:watertracker/utils/app_colors.dart';
-import 'package:watertracker/widgets/primary_button.dart';
+import 'package:watertracker/features/onboarding/screens/pregnancy_status_screen.dart';
+import 'package:watertracker/features/onboarding/screens/exercise_frequency_screen.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/primary_button.dart';
 
 class SugaryBeveragesScreen extends StatefulWidget {
   const SugaryBeveragesScreen({Key? key}) : super(key: key);

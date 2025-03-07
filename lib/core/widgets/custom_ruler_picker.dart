@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vibration/vibration.dart';
-import 'package:watertracker/utils/app_colors.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 
 class CustomRulerPicker extends StatefulWidget {
   final double value;

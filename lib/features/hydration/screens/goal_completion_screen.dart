@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:watertracker/screens/history_screen.dart';
-import 'package:watertracker/utils/app_colors.dart';
+import 'package:watertracker/features/history/history_screen.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 
 class GoalCompletionScreen extends StatefulWidget {
   const GoalCompletionScreen({super.key});

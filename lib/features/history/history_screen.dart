@@ -1,11 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/providers/hydration_provider.dart';
-import 'package:watertracker/utils/app_colors.dart';
-import 'package:watertracker/widgets/custom_bottom_navigation_bar.dart';
-import 'package:watertracker/screens/add_hydration_screen.dart';
-import 'package:watertracker/screens/home_screen.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
+import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
+import 'package:watertracker/features/home/home_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HistoryScreen extends StatefulWidget {

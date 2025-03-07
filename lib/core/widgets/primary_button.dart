@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/utils/app_colors.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;

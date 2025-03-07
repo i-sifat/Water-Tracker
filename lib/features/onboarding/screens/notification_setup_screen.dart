@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/utils/app_colors.dart';
-import 'package:watertracker/widgets/primary_button.dart';
-import 'package:watertracker/screens/onboarding/compile_data_screen.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/features/onboarding/screens/data_summary_screen.dart';
 
 class NotificationSetupScreen extends StatefulWidget {
   const NotificationSetupScreen({super.key});

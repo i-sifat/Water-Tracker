@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/screens/home_screen.dart';
-import 'package:watertracker/utils/app_colors.dart';
+import 'package:watertracker/features/home/home_screen.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/providers/hydration_provider.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 
 class CompileDataScreen extends StatefulWidget {
   const CompileDataScreen({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/utils/app_colors.dart';
-import 'package:watertracker/widgets/primary_button.dart';
-import 'package:watertracker/screens/onboarding/sugary-beverages-screen.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/features/onboarding/screens/sugary_drinks_screen.dart';
 
 class VegetablesFruitsScreen extends StatefulWidget {
   const VegetablesFruitsScreen({Key? key}) : super(key: key);

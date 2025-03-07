@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/providers/hydration_provider.dart';
-import 'package:watertracker/screens/onboarding/welcome_screen.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/features/onboarding/screens/welcome_screen.dart';
 
 void main() {
   runApp(const MyApp());

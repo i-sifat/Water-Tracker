@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/providers/hydration_provider.dart';
-import 'package:watertracker/screens/add_hydration_screen.dart';
-import 'package:watertracker/screens/history_screen.dart';
-import 'package:watertracker/utils/app_colors.dart';
-import 'package:watertracker/widgets/custom_bottom_navigation_bar.dart';
-import 'package:watertracker/widgets/water_animation.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
+import 'package:watertracker/features/history/history_screen.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
+import 'package:watertracker/core/widgets/water_animation.dart';
 import 'dart:async';
 
 class HomeScreen extends StatefulWidget {

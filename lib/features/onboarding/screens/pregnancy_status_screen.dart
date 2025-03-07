@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/screens/onboarding/weather-selection-screen.dart';
-import 'package:watertracker/utils/app_colors.dart';
-import 'package:watertracker/widgets/primary_button.dart';
+import 'package:watertracker/features/onboarding/screens/weather_preference_screen.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/primary_button.dart';
 
 class PregnancyScreen extends StatefulWidget {
   const PregnancyScreen({super.key});

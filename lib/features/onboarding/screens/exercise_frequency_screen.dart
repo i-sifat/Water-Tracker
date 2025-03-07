@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/screens/onboarding/vegetables-fruits-screen.dart';
-import 'package:watertracker/utils/app_colors.dart';
-import 'package:watertracker/widgets/primary_button.dart';
+import 'package:watertracker/features/onboarding/screens/vegetable_intake_screen.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/primary_button.dart';
 
 class FitnessLevelScreen extends StatefulWidget {
   const FitnessLevelScreen({Key? key}) : super(key: key);

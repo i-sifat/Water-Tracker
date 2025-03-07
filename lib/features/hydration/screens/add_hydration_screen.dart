@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/providers/hydration_provider.dart';
-import 'package:watertracker/utils/app_animations.dart';
-import 'package:watertracker/widgets/custom_bottom_navigation_bar.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/core/utils/app_animations.dart';
+import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 
 // Main screen widget that appears when users want to add hydration
 class AddHydrationScreen extends StatefulWidget {
