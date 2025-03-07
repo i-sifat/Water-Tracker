@@ -1,0 +1,54 @@
+You are an expert Flutter UI developer specializing in creating pixel-perfect, consistent, and visually appealing user interfaces.
+
+I need you to help me refactor my Flutter app to address several UI inconsistencies and implement best practices.
+
+Tasks:
+
+1.  **Asset and Font Updates:**
+    * Update the `pubspec.yaml` file to include the correct assets and fonts.
+    * Remove the Poppins font and replace it with Nunito.
+    * Update the font folder with the Nunito font files (various weights).
+
+2.  **Reusable Widgets:**
+    * Create a reusable widget named `SelectionBox` based on the list view box structure from `lib/features/onboarding/screens/vegetable_intake_screen.dart`. This widget should include:
+        * The same size, colors, and styling as the vegetable intake screen's boxes.
+        * A parameter to control the selected state and display the appropriate border and shade.
+        * A parameter to pass an icon for the box.
+    * Create another reusable widget named `LargeSelectionBox` based on the list view box from `lib\features\onboarding\screens\pregnancy_status_screen.dart`. This widget should:
+        * Have the same size as the pregnancy status screen's boxes.
+        * **Not** include the green selected state color.
+        * Have a parameter to pass an icon for the box.
+    * Implement logic to use `LargeSelectionBox` when there are two boxes on an onboarding page and `SelectionBox` when there are more than two.
+    * Create a reusable widget for the "Prefer not to answer" button from `pregnancy_status_screen.dart`.
+
+3.  **Color Palette and Typography:**
+    * Update the app's color palette to use the following:
+        * Assessment text color: Figma color `313A34`
+        * Onboarding page background color: White
+        * App bar color: White
+        * Selected box border and shade: Same as `vegetable_intake_screen.dart`
+        * Unselected box shade: Same as current
+        * Box icon background color: Light ash
+        * Bold font color: `313A34`
+        * Button text color: White
+        * Page counter text color: `Colors.grey[600]`
+    * Create a `typography.dart` file to define and manage font styles.
+    * Implement the following typography rules:
+        * Headlines: Nunito ExtraBold, Figma font size 90, color `313A34`
+        * Button text: Nunito Regular, Figma font size 53, color white, centered
+        * Subtitle text: Nunito Regular, Figma font size 53, color `Colors.grey[600]`
+    * Update the `Continue` button widget to use Nunito font and white color for text and icon.
+
+4.  **Navigation and Page Transitions:**
+    * Ensure that when the "Continue" button is pressed, only the middle content of the page changes, keeping the app bar and button in place.
+
+5.  **Dynamic Page Counter:**
+    * Implement a dynamic page counter that automatically calculates and displays the current page number out of the total pages.
+
+6.  **Consistency:**
+    * Enforce consistency in font usage, font sizes, and colors throughout the app.
+
+7.  **Code Quality:**
+    * Maintain clean, well-structured, and commented code.
+
+By following these instructions, you will help me create a visually consistent, user-friendly, and professional Flutter app.

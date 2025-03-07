@@ -18,8 +18,24 @@ class MyApp extends StatelessWidget {
         title: 'Water Tracker',
         theme: ThemeData(
           primarySwatch: Colors.blue,
-          fontFamily:
-              'Poppins', // Make sure you have this font or replace with your app font
+          fontFamily: 'Nunito', // Updated to Nunito
+          textTheme: const TextTheme(
+            displayLarge: TextStyle(fontFamily: 'Nunito'),
+            displayMedium: TextStyle(fontFamily: 'Nunito'),
+            displaySmall: TextStyle(fontFamily: 'Nunito'),
+            headlineLarge: TextStyle(fontFamily: 'Nunito'),
+            headlineMedium: TextStyle(fontFamily: 'Nunito'),
+            headlineSmall: TextStyle(fontFamily: 'Nunito'),
+            titleLarge: TextStyle(fontFamily: 'Nunito'),
+            titleMedium: TextStyle(fontFamily: 'Nunito'),
+            titleSmall: TextStyle(fontFamily: 'Nunito'),
+            bodyLarge: TextStyle(fontFamily: 'Nunito'),
+            bodyMedium: TextStyle(fontFamily: 'Nunito'),
+            bodySmall: TextStyle(fontFamily: 'Nunito'),
+            labelLarge: TextStyle(fontFamily: 'Nunito'),
+            labelMedium: TextStyle(fontFamily: 'Nunito'),
+            labelSmall: TextStyle(fontFamily: 'Nunito'),
+          ),
         ),
         home: const WelcomeScreen(),
       ),
