@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
-import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/welcome_screen.dart';
 
 void main() {
@@ -14,10 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => HydrationProvider()),
-        ChangeNotifierProvider(create: (_) => OnboardingProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => HydrationProvider())],
       child: MaterialApp(
         title: 'Water Tracker',
         theme: ThemeData(

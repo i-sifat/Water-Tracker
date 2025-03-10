@@ -6,7 +6,7 @@ import 'package:vibration/vibration.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/continue_button.dart';
-import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+
 import 'package:watertracker/features/onboarding/screens/weight_selection_screen.dart';
 
 class AgeSelectionScreen extends StatefulWidget {

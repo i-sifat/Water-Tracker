@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/features/onboarding/screens/notification_setup_screen.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/continue_button.dart';
-import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/screens/notification_setup_screen.dart';
 
 class WeatherSelectionScreen extends StatefulWidget {
   const WeatherSelectionScreen({super.key});
@@ -41,30 +40,6 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
       'description': 'Above 25°C',
     },
   ];
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _saveWeather() async {
-    if (_selectedWeather != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('weather_preference', _selectedWeather!);
-    }
-  }
-
-  void _handleContinue() {
-    _saveWeather().then((_) {
-      context.read<OnboardingProvider>().nextPage();
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const NotificationSetupScreen(),
-        ),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,5 +166,29 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _handleContinue() {
+    _saveWeather().then((_) {
+      context.read<OnboardingProvider>().nextPage();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const NotificationSetupScreen(),
+        ),
+      );
+    });
+  }
+
+  Future<void> _saveWeather() async {
+    if (_selectedWeather != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('weather_preference', _selectedWeather!);
+    }
   }
 }

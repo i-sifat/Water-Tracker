@@ -6,7 +6,6 @@ import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/core/widgets/custom_ruler_picker.dart';
-import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/exercise_frequency_screen.dart';
 
 class WeightSelectionScreen extends StatefulWidget {
@@ -18,9 +17,9 @@ class WeightSelectionScreen extends StatefulWidget {
 
 class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
   bool _isKg = true;
-  double _weight = 65.0;
-  final double _minWeightKg = 1.0;
-  final double _maxWeightKg = 150.0;
+  double _weight = 65;
+  final double _minWeightKg = 1;
+  final double _maxWeightKg = 150;
 
   @override
   void initState() {
