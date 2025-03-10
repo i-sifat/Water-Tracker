@@ -17,6 +17,7 @@ class GoalSelectionScreen extends StatefulWidget {
 
 class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
   final Set<int> _selectedGoals = {};
+  bool _isSaving = false;
 
   final List<Map<String, dynamic>> _goals = [
     {
@@ -56,26 +57,46 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
     },
   ];
 
-  Future<void> _saveGoals() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(
-      'selected_goals',
-      _selectedGoals.map((index) => _goals[index]['text'] as String).toList(),
-    );
-  }
+  void _handleContinue() async {
+    if (_isSaving || _selectedGoals.isEmpty) return;
 
-  void _handleContinue() {
-    if (_selectedGoals.isNotEmpty) {
-      _saveGoals().then((_) {
-        if (mounted) {
-          context.read<OnboardingProvider>().nextPage();
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const GenderSelectionScreen(),
-            ),
-          );
-        }
-      });
+    setState(() => _isSaving = true);
+
+    try {
+      // Initialize SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+
+      // Map selected goals to their text values
+      final selectedGoalTexts =
+          _selectedGoals
+              .map((index) => _goals[index]['text'] as String)
+              .toList();
+
+      // Save the selected goals as a string list
+      await prefs.setStringList('selected_goals', selectedGoalTexts);
+
+      // Navigate to the next screen
+      if (!mounted) return;
+
+      context.read<OnboardingProvider>().nextPage();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const GenderSelectionScreen()),
+      );
+    } catch (e) {
+      // Log detailed error for debugging
+      debugPrint('Error saving goals: $e');
+
+      // Show error message to the user
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save goals: ${e.toString()}')),
+        );
+      }
+    } finally {
+      // Reset the saving state
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
     }
   }
 
@@ -224,8 +245,12 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
             ),
             const SizedBox(height: 24),
             ContinueButton(
-              onPressed: _selectedGoals.isNotEmpty ? _handleContinue : () {},
-              isDisabled: _selectedGoals.isEmpty,
+              onPressed: () {
+                if (_selectedGoals.isNotEmpty) {
+                  _handleContinue();
+                }
+              },
+              isDisabled: _selectedGoals.isEmpty || _isSaving,
             ),
           ],
         ),

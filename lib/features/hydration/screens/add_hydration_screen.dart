@@ -181,7 +181,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
           ),
         ),
         child: Text(
-          "$amount ml",
+          '$amount ml',
           style: TextStyle(
             fontSize: 20, // Reduced text size from 24 to 20
             fontWeight: FontWeight.w600,
@@ -225,7 +225,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
               children: [
                 // Percentage display
                 Text(
-                  "${(hydrationProvider.intakePercentage * 100).toStringAsFixed(0)}%",
+                  '${(hydrationProvider.intakePercentage * 100).toStringAsFixed(0)}%',
                   style: TextStyle(
                     fontSize: 60,
                     fontWeight: FontWeight.bold,
@@ -236,7 +236,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
                 const SizedBox(height: 5),
                 // Current intake display
                 Text(
-                  "${hydrationProvider.currentIntake} ml",
+                  '${hydrationProvider.currentIntake} ml',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w500,
