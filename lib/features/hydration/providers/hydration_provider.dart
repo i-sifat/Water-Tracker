@@ -1,6 +1,7 @@
 // lib/providers/hydration_provider.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/core/utils/water_intake_calculator.dart';
 
 import '../screens/goal_completion_screen.dart';
 
@@ -8,7 +9,7 @@ enum AvatarOption { male, female }
 
 class HydrationProvider extends ChangeNotifier {
   int _currentIntake = 0;
-  int _dailyGoal = 2000; // Default goal (can be customized)
+  int _dailyGoal = 2000; // Default goal (will be updated by calculator)
   AvatarOption _selectedAvatar = AvatarOption.male;
   bool _goalReachedToday = false;
   DateTime? _lastUpdated;
@@ -30,7 +31,7 @@ class HydrationProvider extends ChangeNotifier {
   Future<void> loadData() async {
     final prefs = await SharedPreferences.getInstance();
     _currentIntake = prefs.getInt('currentIntake') ?? 0;
-    _dailyGoal = prefs.getInt('dailyGoal') ?? 2000;
+    _dailyGoal = prefs.getInt('dailyGoal') ?? await calculateDailyGoal();
     _selectedAvatar =
         prefs.getString('avatar') == 'female'
             ? AvatarOption.female
@@ -51,6 +52,11 @@ class HydrationProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  // Calculate daily goal using the calculator
+  Future<int> calculateDailyGoal() async {
+    return await WaterIntakeCalculator.calculateWaterIntake();
   }
 
   // Save data to SharedPreferences
