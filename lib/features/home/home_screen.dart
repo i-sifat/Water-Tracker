@@ -1,81 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
-import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
-import 'package:watertracker/features/history/history_screen.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 import 'package:watertracker/core/widgets/water_animation.dart';
-import 'dart:async';
+import 'package:watertracker/features/history/history_screen.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-
-  late final List<Widget> _widgetOptions;
-
-  @override
-  void initState() {
-    super.initState();
-    _widgetOptions = <Widget>[
-      const HomeScreenContent(),
-      const AddHydrationScreenContent(),
-      const HistoryScreenContent(selectedWeekIndex: 0),
-    ];
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      if (index == 0) {
-        Provider.of<HydrationProvider>(context, listen: false).loadData();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final hydrationProvider = Provider.of<HydrationProvider>(context);
-
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Water animation that covers the entire screen
-          Positioned.fill(
-            child: WaterAnimation(
-              progress: hydrationProvider.intakePercentage,
-              waterColor: AppColors.waterFull,
-              backgroundColor: AppColors.waterLow,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-            ),
-          ),
-
-          // Main content
-          Center(child: _widgetOptions.elementAt(_selectedIndex)),
-
-          // Custom navigation bar with transparent background
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: CustomBottomNavigationBar(
-              selectedIndex: _selectedIndex,
-              onItemTapped: _onItemTapped,
-              backgroundColor: Colors.transparent,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class HomeScreenContent extends StatefulWidget {
@@ -200,5 +139,67 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
         ],
       ),
     );
+  }
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+
+  late final List<Widget> _widgetOptions;
+
+  @override
+  Widget build(BuildContext context) {
+    final hydrationProvider = Provider.of<HydrationProvider>(context);
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Water animation that covers the entire screen
+          Positioned.fill(
+            child: WaterAnimation(
+              progress: hydrationProvider.intakePercentage,
+              waterColor: AppColors.waterFull,
+              backgroundColor: AppColors.waterLow,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+            ),
+          ),
+
+          // Main content
+          Center(child: _widgetOptions.elementAt(_selectedIndex)),
+
+          // Custom navigation bar with transparent background
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: CustomBottomNavigationBar(
+              selectedIndex: _selectedIndex,
+              onItemTapped: _onItemTapped,
+              backgroundColor: Colors.transparent,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _widgetOptions = <Widget>[
+      const HomeScreenContent(),
+      const AddHydrationScreenContent(),
+      const HistoryScreenContent(selectedWeekIndex: 0),
+    ];
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 0) {
+        Provider.of<HydrationProvider>(context, listen: false).loadData();
+      }
+    });
   }
 }

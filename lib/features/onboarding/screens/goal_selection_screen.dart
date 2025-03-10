@@ -9,7 +9,7 @@ import 'package:watertracker/features/onboarding/providers/onboarding_provider.d
 import 'package:watertracker/features/onboarding/screens/gender_selection_screen.dart';
 
 class GoalSelectionScreen extends StatefulWidget {
-  const GoalSelectionScreen({Key? key}) : super(key: key);
+  const GoalSelectionScreen({super.key});
 
   @override
   State<GoalSelectionScreen> createState() => _GoalSelectionScreenState();
@@ -114,7 +114,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

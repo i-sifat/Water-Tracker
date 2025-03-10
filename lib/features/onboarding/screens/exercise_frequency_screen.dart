@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
-import 'package:watertracker/features/onboarding/screens/vegetable_intake_screen.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/features/onboarding/screens/vegetable_intake_screen.dart';
 
 class FitnessLevelScreen extends StatefulWidget {
   const FitnessLevelScreen({Key? key}) : super(key: key);
@@ -16,19 +16,6 @@ class FitnessLevelScreen extends StatefulWidget {
 
 class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
   int _selectedLevel = 0;
-
-  Future<void> _saveFitnessLevel() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('fitness_level', _selectedLevel);
-  }
-
-  void _handleContinue() {
-    _saveFitnessLevel().then((_) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const VegetablesFruitsScreen()),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +181,7 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            "Frequent",
+                            'Frequent',
                             style: TextStyle(
                               color:
                                   _selectedLevel == 0
@@ -217,7 +204,7 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                             ),
                             child: const Center(
                               child: Text(
-                                "?",
+                                '?',
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 12,
@@ -229,7 +216,7 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                         ],
                       ),
                       Text(
-                        "2-3x Weekly",
+                        '2-3x Weekly',
                         style: TextStyle(
                           color:
                               _selectedLevel == 2
@@ -263,5 +250,18 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
         ],
       ),
     );
+  }
+
+  void _handleContinue() {
+    _saveFitnessLevel().then((_) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const VegetablesFruitsScreen()),
+      );
+    });
+  }
+
+  Future<void> _saveFitnessLevel() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('fitness_level', _selectedLevel);
   }
 }

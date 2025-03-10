@@ -1,12 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
-import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
 import 'package:watertracker/features/home/home_screen.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -15,38 +15,10 @@ class HistoryScreen extends StatefulWidget {
   State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> {
-  int _selectedIndex = 2;
-  int selectedWeekIndex = 1; // Start with week 2 selected as shown in the image
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    const HomeScreenContent(),
-    const AddHydrationScreenContent(),
-    HistoryScreenContent(selectedWeekIndex: 1), // Default to week 2
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
-    );
-  }
-}
-
 class HistoryScreenContent extends StatefulWidget {
-  final int selectedWeekIndex;
+  const HistoryScreenContent({required this.selectedWeekIndex, super.key});
 
-  const HistoryScreenContent({super.key, required this.selectedWeekIndex});
+  final int selectedWeekIndex;
 
   @override
   State<HistoryScreenContent> createState() => _HistoryScreenContentState();
@@ -57,6 +29,32 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   late int _selectedWeekIndex;
   late AnimationController _animationController;
   late Animation<double> _barAnimation;
+
+  @override
+  Widget build(BuildContext context) {
+    final hydrationProvider = Provider.of<HydrationProvider>(context);
+
+    // Sample data for visualization
+    final weeklyData = <double>[1.45, 1.45, 1.45, 1.45, 1.45, 1.45, 1.45];
+    const averageIntake = 1.84;
+
+    return SafeArea(
+      child: Column(
+        children: [
+          _buildHeader(),
+          _buildWeekSelector(),
+          const SizedBox(height: 40),
+          _buildAverageCard(averageIntake, weeklyData),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -77,130 +75,6 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 
     // Start animation when page is loaded
     _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final hydrationProvider = Provider.of<HydrationProvider>(context);
-
-    // Sample data for visualization
-    final List<double> weeklyData = [1.45, 1.45, 1.45, 1.45, 1.45, 1.45, 1.45];
-    final averageIntake = 1.84;
-
-    return SafeArea(
-      child: Column(
-        children: [
-          _buildHeader(),
-          _buildWeekSelector(),
-          const SizedBox(height: 40),
-          _buildAverageCard(averageIntake, weeklyData),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "History",
-            style: TextStyle(
-              color: AppColors.textHeadline,
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Inter',
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.add, color: AppColors.darkBlue),
-              onPressed: () {
-                // Add functionality
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWeekSelector() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: List.generate(4, (index) {
-          final weekNum = index + 1;
-          final isSelected = _selectedWeekIndex == index;
-
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedWeekIndex = index;
-                // Restart animation when changing weeks
-                _animationController.reset();
-                _animationController.forward();
-              });
-            },
-            child: Container(
-              width: 80,
-              height: 50,
-              decoration: BoxDecoration(
-                color:
-                    isSelected
-                        ? AppColors.selectedWeekBackground
-                        : AppColors.unselectedWeekBackground,
-                borderRadius: BorderRadius.circular(30),
-                border:
-                    !isSelected
-                        ? Border.all(color: Colors.grey.shade200)
-                        : null,
-                boxShadow:
-                    isSelected
-                        ? [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                        : null,
-              ),
-              child: Center(
-                child: Text(
-                  "week $weekNum",
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : AppColors.textHeadline,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
   }
 
   Widget _buildAverageCard(double averageIntake, List<double> weeklyData) {
@@ -235,8 +109,8 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "average",
+                  const Text(
+                    'average',
                     style: TextStyle(
                       color: AppColors.textSubtitle,
                       fontSize: 16,
@@ -244,8 +118,8 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                     ),
                   ),
                   Text(
-                    "$averageIntake L",
-                    style: TextStyle(
+                    '$averageIntake L',
+                    style: const TextStyle(
                       color: AppColors.textHeadline,
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -293,20 +167,14 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                           reservedSize: 30,
                         ),
                       ),
-                      leftTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
+                      leftTitles: const AxisTitles(),
+                      topTitles: const AxisTitles(),
+                      rightTitles: const AxisTitles(),
                     ),
                     borderData: FlBorderData(show: false),
                     gridData: const FlGridData(show: false),
                     alignment: BarChartAlignment.spaceAround,
-                    maxY: 2.0,
+                    maxY: 2,
                     barTouchData: BarTouchData(
                       enabled: true,
                       touchTooltipData: BarTouchTooltipData(
@@ -363,12 +231,139 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             borderSide:
                 isActive
                     ? BorderSide.none
-                    : const BorderSide(color: Colors.grey, width: 1),
+                    : const BorderSide(color: Colors.grey),
           ),
         ],
         showingTooltipIndicators:
             isActive ? [0] : [], // Show tooltips only for active bars
       );
+    });
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'History',
+            style: TextStyle(
+              color: AppColors.textHeadline,
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Inter',
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.add, color: AppColors.darkBlue),
+              onPressed: () {
+                // Add functionality
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeekSelector() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(4, (index) {
+          final weekNum = index + 1;
+          final isSelected = _selectedWeekIndex == index;
+
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedWeekIndex = index;
+                // Restart animation when changing weeks
+                _animationController
+                  ..reset()
+                  ..forward();
+              });
+            },
+            child: Container(
+              width: 80,
+              height: 50,
+              decoration: BoxDecoration(
+                color:
+                    isSelected
+                        ? AppColors.selectedWeekBackground
+                        : AppColors.unselectedWeekBackground,
+                borderRadius: BorderRadius.circular(30),
+                border:
+                    !isSelected
+                        ? Border.all(color: Colors.grey.shade200)
+                        : null,
+                boxShadow:
+                    isSelected
+                        ? [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                        : null,
+              ),
+              child: Center(
+                child: Text(
+                  "week $weekNum",
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : AppColors.textHeadline,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+  static final List<Widget> _widgetOptions = <Widget>[
+    const HomeScreenContent(),
+    const AddHydrationScreenContent(),
+    HistoryScreenContent(selectedWeekIndex: 1), // Default to week 2
+  ];
+  int _selectedIndex = 2;
+
+  int selectedWeekIndex = 1; // Start with week 2 selected as shown in the image
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
     });
   }
 }

@@ -53,15 +53,15 @@ class _WaterAnimationState extends State<WaterAnimation>
 
   void _generateBubbles() {
     // Create initial set of bubbles
-    int bubbleCount = 15 + random.nextInt(10);
+    final bubbleCount = 15 + random.nextInt(10);
 
-    for (int i = 0; i < bubbleCount; i++) {
+    for (var i = 0; i < bubbleCount; i++) {
       bubbles.add(_createBubble());
     }
   }
 
   void _addNewBubbles(int count) {
-    for (int i = 0; i < count; i++) {
+    for (var i = 0; i < count; i++) {
       bubbles.add(_createBubble(forceBottom: true));
     }
 
@@ -75,7 +75,7 @@ class _WaterAnimationState extends State<WaterAnimation>
 
   Bubble _createBubble({bool forceBottom = false}) {
     // If forceBottom is true, create bubble at the bottom of the screen
-    double startY =
+    final startY =
         forceBottom
             ? widget.height +
                 (random.nextDouble() * 20) // Start just below screen
@@ -126,7 +126,7 @@ class _WaterAnimationState extends State<WaterAnimation>
   }
 
   void _updateBubblePositions() {
-    for (var bubble in bubbles) {
+    for (final bubble in bubbles) {
       if (bubble.active) {
         // Calculate new position based on animation frame
         bubble.currentY -=
@@ -137,13 +137,6 @@ class _WaterAnimationState extends State<WaterAnimation>
 }
 
 class Bubble {
-  double x;
-  double y; // Original y position
-  double currentY; // Current y position for animation
-  double radius;
-  double speed;
-  bool active;
-
   Bubble({
     required this.x,
     required this.y,
@@ -152,15 +145,15 @@ class Bubble {
     required this.speed,
     required this.active,
   });
+  double x;
+  double y; // Original y position
+  double currentY; // Current y position for animation
+  double radius;
+  double speed;
+  bool active;
 }
 
 class WaterLevelPainter extends CustomPainter {
-  final double progress;
-  final Color waterColor;
-  final Color backgroundColor;
-  final double animationValue;
-  final List<Bubble> bubbles;
-
   WaterLevelPainter({
     required this.progress,
     required this.waterColor,
@@ -168,6 +161,11 @@ class WaterLevelPainter extends CustomPainter {
     required this.animationValue,
     required this.bubbles,
   });
+  final double progress;
+  final Color waterColor;
+  final Color backgroundColor;
+  final double animationValue;
+  final List<Bubble> bubbles;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -185,16 +183,15 @@ class WaterLevelPainter extends CustomPainter {
     canvas.saveLayer(Rect.fromLTWH(0, 0, size.width, size.height), Paint());
 
     // Draw water waves
-    final wavePath = Path();
-
-    // Start at the bottom left
-    wavePath.moveTo(0, size.height);
-
-    // Create the left vertical line up to the water level
-    wavePath.lineTo(0, waterLevel);
+    final wavePath =
+        Path()
+          // Start at the bottom left
+          ..moveTo(0, size.height)
+          // Create the left vertical line up to the water level
+          ..lineTo(0, waterLevel);
 
     // Create wavy pattern
-    final waveHeight = 15.0;
+    const waveHeight = 15.0;
     final waveWidth = size.width / 2;
 
     // First wave peak
@@ -204,28 +201,27 @@ class WaterLevelPainter extends CustomPainter {
     final wave2Offset = sin((animationValue * 2 * pi) + pi / 2) * 5;
 
     // Draw first wave
-    wavePath.cubicTo(
-      waveWidth * 0.33,
-      waterLevel - waveHeight + wave1Offset,
-      waveWidth * 0.66,
-      waterLevel + waveHeight + wave2Offset,
-      waveWidth,
-      waterLevel + wave1Offset,
-    );
-
-    // Draw second wave
-    wavePath.cubicTo(
-      waveWidth * 1.33,
-      waterLevel - waveHeight + wave2Offset,
-      waveWidth * 1.66,
-      waterLevel + waveHeight + wave1Offset,
-      size.width,
-      waterLevel + wave2Offset,
-    );
-
-    // Connect to bottom right and close the path
-    wavePath.lineTo(size.width, size.height);
-    wavePath.close();
+    wavePath
+      ..cubicTo(
+        waveWidth * 0.33,
+        waterLevel - waveHeight + wave1Offset,
+        waveWidth * 0.66,
+        waterLevel + waveHeight + wave2Offset,
+        waveWidth,
+        waterLevel + wave1Offset,
+      )
+      // Draw second wave
+      ..cubicTo(
+        waveWidth * 1.33,
+        waterLevel - waveHeight + wave2Offset,
+        waveWidth * 1.66,
+        waterLevel + waveHeight + wave1Offset,
+        size.width,
+        waterLevel + wave2Offset,
+      )
+      // Connect to bottom right and close the path
+      ..lineTo(size.width, size.height)
+      ..close();
 
     // Draw the water
     canvas.drawPath(wavePath, waterPaint);
@@ -236,7 +232,7 @@ class WaterLevelPainter extends CustomPainter {
           ..color = Colors.white.withOpacity(0.6)
           ..style = PaintingStyle.fill;
 
-    for (var bubble in bubbles) {
+    for (final bubble in bubbles) {
       // Only draw bubbles that are below the water level and within the screen
       if (bubble.active &&
           bubble.currentY >= waterLevel &&

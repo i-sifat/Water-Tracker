@@ -16,6 +16,108 @@ class AgeSelectionScreen extends StatefulWidget {
   State<AgeSelectionScreen> createState() => _AgeSelectionScreenState();
 }
 
+class AgeSelectionWheel extends StatelessWidget {
+  const AgeSelectionWheel({
+    required this.scrollController,
+    required this.ages,
+    required this.selectedAge,
+    required this.itemExtent,
+    required this.highlightColor,
+    required this.selectedTextColor,
+    required this.unselectedTextColor,
+    required this.farTextColor,
+    required this.maxFontSize,
+    required this.minFontSize,
+    required this.onSelectedItemChanged,
+    super.key,
+  });
+  final FixedExtentScrollController scrollController;
+  final List<int> ages;
+  final int selectedAge;
+  final double itemExtent;
+  final Color highlightColor;
+  final Color selectedTextColor;
+  final Color unselectedTextColor;
+  final Color farTextColor;
+  final double maxFontSize;
+  final double minFontSize;
+
+  final Function(int) onSelectedItemChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification is ScrollUpdateNotification) {
+          // This rebuild handles the animations
+        }
+        return false;
+      },
+      child: ListWheelScrollView.useDelegate(
+        controller: scrollController,
+        itemExtent: itemExtent,
+        perspective: 0.001,
+        diameterRatio: 1.3,
+        physics: const FixedExtentScrollPhysics(),
+        onSelectedItemChanged: onSelectedItemChanged,
+        childDelegate: ListWheelChildBuilderDelegate(
+          childCount: ages.length,
+          builder: (context, index) {
+            final age = ages[index];
+            final distanceFromCenter =
+                (scrollController.hasClients
+                        ? scrollController.selectedItem - index
+                        : 0)
+                    .abs();
+
+            final fontSize =
+                distanceFromCenter <= 2
+                    ? maxFontSize -
+                        (distanceFromCenter * (maxFontSize - minFontSize) / 2)
+                    : minFontSize;
+
+            final color =
+                distanceFromCenter == 0
+                    ? selectedTextColor
+                    : distanceFromCenter <= 2
+                    ? unselectedTextColor
+                    : farTextColor;
+
+            final opacity =
+                distanceFromCenter > 5
+                    ? 0.5
+                    : distanceFromCenter > 3
+                    ? 0.7
+                    : 1.0;
+
+            final fontWeight =
+                distanceFromCenter == 0
+                    ? FontWeight.w700
+                    : distanceFromCenter <= 1
+                    ? FontWeight.w600
+                    : FontWeight.w500;
+
+            return Center(
+              child: AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 150),
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: fontWeight,
+                  color: color,
+                ),
+                child: Opacity(
+                  opacity: opacity,
+                  child: Text(age.toString(), textAlign: TextAlign.center),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   late final FixedExtentScrollController _scrollController;
   late final List<int> _ages;
@@ -24,39 +126,6 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   final double _maxFontSize = 64;
   final double _minFontSize = 32;
   final double _itemExtent = 80;
-
-  @override
-  void initState() {
-    super.initState();
-    _ages = List.generate(100, (index) => index + 1);
-    _scrollController = FixedExtentScrollController(
-      initialItem: _ages.indexOf(_selectedAge),
-    );
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _saveAge() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('user_age', _selectedAge);
-  }
-
-  void _handleSelectionChange(int index) {
-    if (_ages[index] != _selectedAge) {
-      setState(() => _selectedAge = _ages[index]);
-      Vibration.hasVibrator().then((hasVibrator) {
-        if (hasVibrator ?? false) {
-          Vibration.vibrate(duration: 25, amplitude: 50);
-        } else {
-          HapticFeedback.lightImpact();
-        }
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,106 +223,37 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
       ),
     );
   }
-}
-
-class AgeSelectionWheel extends StatelessWidget {
-  final FixedExtentScrollController scrollController;
-  final List<int> ages;
-  final int selectedAge;
-  final double itemExtent;
-  final Color highlightColor;
-  final Color selectedTextColor;
-  final Color unselectedTextColor;
-  final Color farTextColor;
-  final double maxFontSize;
-  final double minFontSize;
-  final Function(int) onSelectedItemChanged;
-
-  const AgeSelectionWheel({
-    super.key,
-    required this.scrollController,
-    required this.ages,
-    required this.selectedAge,
-    required this.itemExtent,
-    required this.highlightColor,
-    required this.selectedTextColor,
-    required this.unselectedTextColor,
-    required this.farTextColor,
-    required this.maxFontSize,
-    required this.minFontSize,
-    required this.onSelectedItemChanged,
-  });
 
   @override
-  Widget build(BuildContext context) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (notification) {
-        if (notification is ScrollUpdateNotification) {
-          // This rebuild handles the animations
-        }
-        return false;
-      },
-      child: ListWheelScrollView.useDelegate(
-        controller: scrollController,
-        itemExtent: itemExtent,
-        perspective: 0.001,
-        diameterRatio: 1.3,
-        physics: const FixedExtentScrollPhysics(),
-        onSelectedItemChanged: onSelectedItemChanged,
-        childDelegate: ListWheelChildBuilderDelegate(
-          childCount: ages.length,
-          builder: (context, index) {
-            final age = ages[index];
-            final distanceFromCenter =
-                (scrollController.hasClients
-                        ? scrollController.selectedItem - index
-                        : 0)
-                    .abs();
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
-            final fontSize =
-                distanceFromCenter <= 2
-                    ? maxFontSize -
-                        (distanceFromCenter * (maxFontSize - minFontSize) / 2)
-                    : minFontSize;
-
-            final color =
-                distanceFromCenter == 0
-                    ? selectedTextColor
-                    : distanceFromCenter <= 2
-                    ? unselectedTextColor
-                    : farTextColor;
-
-            final opacity =
-                distanceFromCenter > 5
-                    ? 0.5
-                    : distanceFromCenter > 3
-                    ? 0.7
-                    : 1.0;
-
-            final fontWeight =
-                distanceFromCenter == 0
-                    ? FontWeight.w700
-                    : distanceFromCenter <= 1
-                    ? FontWeight.w600
-                    : FontWeight.w500;
-
-            return Center(
-              child: AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 150),
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: fontWeight,
-                  color: color,
-                ),
-                child: Opacity(
-                  opacity: opacity,
-                  child: Text(age.toString(), textAlign: TextAlign.center),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
+  @override
+  void initState() {
+    super.initState();
+    _ages = List.generate(100, (index) => index + 1);
+    _scrollController = FixedExtentScrollController(
+      initialItem: _ages.indexOf(_selectedAge),
     );
+  }
+
+  void _handleSelectionChange(int index) {
+    if (_ages[index] != _selectedAge) {
+      setState(() => _selectedAge = _ages[index]);
+      Vibration.hasVibrator().then((hasVibrator) {
+        if (hasVibrator ?? false) {
+          Vibration.vibrate(duration: 25, amplitude: 50);
+        } else {
+          HapticFeedback.lightImpact();
+        }
+      });
+    }
+  }
+
+  Future<void> _saveAge() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('user_age', _selectedAge);
   }
 }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class OnboardingProvider extends ChangeNotifier {
   static const int totalPages = 10;
-  final PageController pageController = PageController(initialPage: 0);
+  final PageController pageController = PageController();
   int _currentPage = 1;
 
   int get currentPage => _currentPage;

@@ -3,9 +3,8 @@ import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 
 class PreferNotToAnswerButton extends StatelessWidget {
+  const PreferNotToAnswerButton({required this.onPressed, super.key});
   final VoidCallback onPressed;
-
-  const PreferNotToAnswerButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

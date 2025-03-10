@@ -2,17 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 
 class PrimaryButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-  final bool isLoading;
-  final bool isDisabled;
-  final Color? backgroundColor;
-  final Color? textColor;
-  final double? width;
-  final double height;
-  final Widget? rightIcon;
-  final EdgeInsets? margin;
-
   const PrimaryButton({
     required this.text,
     required this.onPressed,
@@ -26,6 +15,16 @@ class PrimaryButton extends StatelessWidget {
     this.margin,
     super.key,
   });
+  final String text;
+  final VoidCallback onPressed;
+  final bool isLoading;
+  final bool isDisabled;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final double? width;
+  final double height;
+  final Widget? rightIcon;
+  final EdgeInsets? margin;
 
   @override
   Widget build(BuildContext context) {

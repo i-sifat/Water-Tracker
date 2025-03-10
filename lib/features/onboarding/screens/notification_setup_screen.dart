@@ -22,7 +22,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
 
   Future<void> _saveNotificationPreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    for (var entry in _notifications.entries) {
+    for (final entry in _notifications.entries) {
       await prefs.setBool('notification_${entry.key}', entry.value);
     }
   }

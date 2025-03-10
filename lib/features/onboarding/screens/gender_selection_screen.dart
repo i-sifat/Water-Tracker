@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/features/onboarding/screens/age_selection_screen.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/core/widgets/large_selection_box.dart';
 import 'package:watertracker/core/widgets/prefer_not_to_answer_button.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/screens/age_selection_screen.dart';
 
 class GenderSelectionScreen extends StatefulWidget {
-  const GenderSelectionScreen({Key? key}) : super(key: key);
+  const GenderSelectionScreen({super.key});
 
   @override
   State<GenderSelectionScreen> createState() => _GenderSelectionScreenState();
@@ -36,31 +36,6 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
           'assets/images/icons/onboarding_elements/onboarding_femaleavater_icon.svg',
     },
   ];
-
-  Future<void> _saveGender() async {
-    if (_selectedGender != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('selected_gender', _selectedGender!);
-    }
-  }
-
-  void _handleContinue() {
-    if (_selectedGender != null) {
-      _saveGender().then((_) {
-        if (mounted) {
-          context.read<OnboardingProvider>().nextPage();
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const AgeSelectionScreen()),
-          );
-        }
-      });
-    }
-  }
-
-  void _handlePreferNotToAnswer() {
-    setState(() => _selectedGender = 'not_specified');
-    _handleContinue();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +76,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -143,5 +118,30 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
         ),
       ),
     );
+  }
+
+  void _handleContinue() {
+    if (_selectedGender != null) {
+      _saveGender().then((_) {
+        if (mounted) {
+          context.read<OnboardingProvider>().nextPage();
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const AgeSelectionScreen()),
+          );
+        }
+      });
+    }
+  }
+
+  void _handlePreferNotToAnswer() {
+    setState(() => _selectedGender = 'not_specified');
+    _handleContinue();
+  }
+
+  Future<void> _saveGender() async {
+    if (_selectedGender != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selected_gender', _selectedGender!);
+    }
   }
 }

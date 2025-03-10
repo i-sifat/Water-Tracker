@@ -1,18 +1,21 @@
-// lib/providers/hydration_provider.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/utils/water_intake_calculator.dart';
-
-import '../screens/goal_completion_screen.dart';
+import 'package:watertracker/features/hydration/screens/goal_completion_screen.dart';
 
 enum AvatarOption { male, female }
 
 class HydrationProvider extends ChangeNotifier {
+  // Initialize provider
+  HydrationProvider() {
+    loadData();
+  }
   int _currentIntake = 0;
   int _dailyGoal = 2000; // Default goal (will be updated by calculator)
   AvatarOption _selectedAvatar = AvatarOption.male;
   bool _goalReachedToday = false;
   DateTime? _lastUpdated;
+  bool _isInitialized = false;
 
   // Getters
   int get currentIntake => _currentIntake;
@@ -21,23 +24,26 @@ class HydrationProvider extends ChangeNotifier {
   double get intakePercentage => _currentIntake / _dailyGoal;
   AvatarOption get selectedAvatar => _selectedAvatar;
   bool get goalReachedToday => _goalReachedToday;
-
-  // Initialize provider
-  HydrationProvider() {
-    loadData();
-  }
+  bool get isInitialized => _isInitialized;
 
   // Load data from SharedPreferences
   Future<void> loadData() async {
+    if (_isInitialized) return; // Prevent multiple initializations
+
     final prefs = await SharedPreferences.getInstance();
+
+    // Calculate daily goal first
+    _dailyGoal = await calculateDailyGoal();
+
+    // Then load other data
     _currentIntake = prefs.getInt('currentIntake') ?? 0;
-    _dailyGoal = prefs.getInt('dailyGoal') ?? await calculateDailyGoal();
     _selectedAvatar =
         prefs.getString('avatar') == 'female'
             ? AvatarOption.female
             : AvatarOption.male;
     _goalReachedToday = prefs.getBool('goalReachedToday') ?? false;
-    int? lastUpdatedMillis = prefs.getInt('lastUpdated');
+
+    final lastUpdatedMillis = prefs.getInt('lastUpdated');
     _lastUpdated =
         lastUpdatedMillis != null
             ? DateTime.fromMillisecondsSinceEpoch(lastUpdatedMillis)
@@ -49,14 +55,18 @@ class HydrationProvider extends ChangeNotifier {
     if (_lastUpdated == null || _lastUpdated!.isBefore(today)) {
       _goalReachedToday = false;
       _currentIntake = 0; // Reset intake for the new day
+      await _saveData(); // Save the reset values
     }
 
+    _isInitialized = true;
     notifyListeners();
   }
 
   // Calculate daily goal using the calculator
   Future<int> calculateDailyGoal() async {
-    return await WaterIntakeCalculator.calculateWaterIntake();
+    final calculatedGoal = await WaterIntakeCalculator.calculateWaterIntake();
+    debugPrint('Calculated water intake goal: $calculatedGoal ml');
+    return calculatedGoal;
   }
 
   // Save data to SharedPreferences
@@ -86,9 +96,9 @@ class HydrationProvider extends ChangeNotifier {
   }
 
   // Set daily goal
-  void setDailyGoal(int goal) {
+  Future<void> setDailyGoal(int goal) async {
     _dailyGoal = goal;
-    _saveData();
+    await _saveData();
     notifyListeners();
   }
 

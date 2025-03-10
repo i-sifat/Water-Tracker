@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/core/utils/app_animations.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 
 // Main screen widget that appears when users want to add hydration
 class AddHydrationScreen extends StatefulWidget {
@@ -10,43 +10,6 @@ class AddHydrationScreen extends StatefulWidget {
 
   @override
   _AddHydrationScreenState createState() => _AddHydrationScreenState();
-}
-
-class _AddHydrationScreenState extends State<AddHydrationScreen> {
-  // Current selected index for the bottom navigation
-  int _selectedIndex = 1;
-
-  // List of screens corresponding to each navigation item
-  static final List<Widget> _widgetOptions = <Widget>[
-    const Placeholder(), // Home screen content (placeholder for now)
-    const AddHydrationScreenContent(), // Current screen content
-    const Placeholder(), // History screen content (placeholder for now)
-  ];
-
-  // Function to update the selected navigation index
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Basic scaffold structure for the screen
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: _widgetOptions.elementAt(
-          _selectedIndex,
-        ), // Show selected screen content
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
-    );
-  }
 }
 
 // Content widget specifically for the Add Hydration screen
@@ -64,25 +27,10 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
   late HydrationAnimations animations;
 
   @override
-  void initState() {
-    super.initState();
-
-    // Initialize the animations
-    animations = HydrationAnimations(vsync: this);
-    animations.startAnimations(); // Start animations when screen loads
-  }
-
-  @override
-  void dispose() {
-    animations.dispose(); // Clean up animation resources
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     // Access the hydration data from the provider
     final hydrationProvider = Provider.of<HydrationProvider>(context);
-    final Color darkBlueColor = const Color(0xFF323062);
+    const darkBlueColor = Color(0xFF323062);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -173,74 +121,19 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
     );
   }
 
-  // Widget to build the circular progress indicator showing hydration stats
-  Widget _buildProgressCircle(
-    HydrationProvider hydrationProvider,
-    Color darkBlueColor,
-  ) {
-    return Center(
-      child: Container(
-        width: 250,
-        height: 250,
-        margin: const EdgeInsets.only(bottom: 40),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Circular progress indicator
-            SizedBox(
-              width: 250,
-              height: 250,
-              child: CircularProgressIndicator(
-                value: hydrationProvider.intakePercentage,
-                strokeWidth: 15,
-                backgroundColor: Colors.grey.shade200,
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color(0xFF918DFE), // Purple color
-                ),
-              ),
-            ),
-            // Text information in the center of the circle
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Percentage display
-                Text(
-                  "${(hydrationProvider.intakePercentage * 100).toStringAsFixed(0)}%",
-                  style: TextStyle(
-                    fontSize: 60,
-                    fontWeight: FontWeight.bold,
-                    color: darkBlueColor,
-                    fontFamily: 'Inter',
-                  ),
-                ),
-                const SizedBox(height: 5),
-                // Current intake display
-                Text(
-                  "${hydrationProvider.currentIntake} ml",
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w500,
-                    color: darkBlueColor,
-                    fontFamily: 'Inter',
-                  ),
-                ),
-                const SizedBox(height: 5),
-                // Remaining intake display
-                Text(
-                  "-${hydrationProvider.remainingIntake} ml",
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF7F8192),
-                    fontFamily: 'Inter',
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+  @override
+  void dispose() {
+    animations.dispose(); // Clean up animation resources
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize the animations
+    animations = HydrationAnimations(vsync: this);
+    animations.startAnimations(); // Start animations when screen loads
   }
 
   // Widget to build each water amount button
@@ -298,5 +191,112 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
         ),
       ),
     );
+  }
+
+  // Widget to build the circular progress indicator showing hydration stats
+  Widget _buildProgressCircle(
+    HydrationProvider hydrationProvider,
+    Color darkBlueColor,
+  ) {
+    return Center(
+      child: Container(
+        width: 250,
+        height: 250,
+        margin: const EdgeInsets.only(bottom: 40),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Circular progress indicator
+            SizedBox(
+              width: 250,
+              height: 250,
+              child: CircularProgressIndicator(
+                value: hydrationProvider.intakePercentage,
+                strokeWidth: 15,
+                backgroundColor: Colors.grey.shade200,
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFF918DFE), // Purple color
+                ),
+              ),
+            ),
+            // Text information in the center of the circle
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Percentage display
+                Text(
+                  "${(hydrationProvider.intakePercentage * 100).toStringAsFixed(0)}%",
+                  style: TextStyle(
+                    fontSize: 60,
+                    fontWeight: FontWeight.bold,
+                    color: darkBlueColor,
+                    fontFamily: 'Inter',
+                  ),
+                ),
+                const SizedBox(height: 5),
+                // Current intake display
+                Text(
+                  "${hydrationProvider.currentIntake} ml",
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w500,
+                    color: darkBlueColor,
+                    fontFamily: 'Inter',
+                  ),
+                ),
+                const SizedBox(height: 5),
+                // Remaining intake display
+                Text(
+                  '-${hydrationProvider.remainingIntake} ml',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF7F8192),
+                    fontFamily: 'Inter',
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AddHydrationScreenState extends State<AddHydrationScreen> {
+  // List of screens corresponding to each navigation item
+  static final List<Widget> _widgetOptions = <Widget>[
+    const Placeholder(), // Home screen content (placeholder for now)
+    const AddHydrationScreenContent(), // Current screen content
+    const Placeholder(), // History screen content (placeholder for now)
+  ];
+
+  // Current selected index for the bottom navigation
+  int _selectedIndex = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    // Basic scaffold structure for the screen
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: _widgetOptions.elementAt(
+          _selectedIndex,
+        ), // Show selected screen content
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
+    );
+  }
+
+  // Function to update the selected navigation index
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }

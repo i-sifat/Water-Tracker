@@ -4,20 +4,20 @@ import 'package:vibration/vibration.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 
 class CustomRulerPicker extends StatefulWidget {
-  final double value;
-  final double minValue;
-  final double maxValue;
-  final ValueChanged<double> onValueChanged;
-  final bool isKg;
-
   const CustomRulerPicker({
-    super.key,
     required this.value,
     required this.minValue,
     required this.maxValue,
     required this.onValueChanged,
     required this.isKg,
+    super.key,
   });
+  final double value;
+  final double minValue;
+  final double maxValue;
+  final ValueChanged<double> onValueChanged;
+
+  final bool isKg;
 
   @override
   State<CustomRulerPicker> createState() => _CustomRulerPickerState();
@@ -25,61 +25,8 @@ class CustomRulerPicker extends StatefulWidget {
 
 class _CustomRulerPickerState extends State<CustomRulerPicker> {
   late ScrollController _scrollController;
-  final double _itemExtent = 17.0;
+  final double _itemExtent = 17;
   bool _isScrolling = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Calculate initial scroll position based on precise value
-    final initialOffset = (widget.value - widget.minValue) * _itemExtent;
-    _scrollController = ScrollController(initialScrollOffset: initialOffset);
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    if (!_isScrolling) _isScrolling = true;
-
-    // Snap to nearest integer value for lbs, 1 decimal for kg
-    final rawIndex = _scrollController.offset / _itemExtent;
-    final snappedIndex = widget.isKg ? rawIndex : rawIndex.roundToDouble();
-    final newValue = (widget.minValue + snappedIndex).clamp(
-      widget.minValue,
-      widget.maxValue,
-    );
-
-    if (newValue != widget.value) {
-      widget.onValueChanged(newValue);
-      _provideHapticFeedback();
-    }
-
-    // Magnetic snap when scrolling ends
-    if (!_scrollController.position.isScrollingNotifier.value) {
-      _isScrolling = false;
-      final targetOffset = (newValue - widget.minValue) * _itemExtent;
-      if (_scrollController.offset != targetOffset) {
-        _scrollController.animateTo(
-          targetOffset,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutCubic,
-        );
-      }
-    }
-  }
-
-  Future<void> _provideHapticFeedback() async {
-    if (await Vibration.hasVibrator() ?? false) {
-      Vibration.vibrate(duration: 20, amplitude: 40);
-    } else {
-      HapticFeedback.selectionClick();
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,8 +55,6 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
           child: ShaderMask(
             shaderCallback: (Rect bounds) {
               return LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
                 colors: [
                   Colors.white.withOpacity(0.1),
                   Colors.white,
@@ -156,5 +101,58 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Calculate initial scroll position based on precise value
+    final initialOffset = (widget.value - widget.minValue) * _itemExtent;
+    _scrollController = ScrollController(initialScrollOffset: initialOffset);
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_isScrolling) _isScrolling = true;
+
+    // Snap to nearest integer value for lbs, 1 decimal for kg
+    final rawIndex = _scrollController.offset / _itemExtent;
+    final snappedIndex = widget.isKg ? rawIndex : rawIndex.roundToDouble();
+    final newValue = (widget.minValue + snappedIndex).clamp(
+      widget.minValue,
+      widget.maxValue,
+    );
+
+    if (newValue != widget.value) {
+      widget.onValueChanged(newValue);
+      _provideHapticFeedback();
+    }
+
+    // Magnetic snap when scrolling ends
+    if (!_scrollController.position.isScrollingNotifier.value) {
+      _isScrolling = false;
+      final targetOffset = (newValue - widget.minValue) * _itemExtent;
+      if (_scrollController.offset != targetOffset) {
+        _scrollController.animateTo(
+          targetOffset,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    }
+  }
+
+  Future<void> _provideHapticFeedback() async {
+    if (await Vibration.hasVibrator() ?? false) {
+      await Vibration.vibrate(duration: 20, amplitude: 40);
+    } else {
+      await HapticFeedback.selectionClick();
+    }
   }
 }

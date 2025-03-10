@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:watertracker/features/history/history_screen.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/features/history/history_screen.dart';
 
 class GoalCompletionScreen extends StatefulWidget {
   const GoalCompletionScreen({super.key});
@@ -117,7 +117,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
 
 // Alternative implementation with Lottie animation
 class GoalCompletionScreenWithLottie extends StatefulWidget {
-  const GoalCompletionScreenWithLottie({Key? key}) : super(key: key);
+  const GoalCompletionScreenWithLottie({super.key});
 
   @override
   State<GoalCompletionScreenWithLottie> createState() =>
@@ -138,7 +138,7 @@ class _GoalCompletionScreenWithLottieState
           children: [
             const Spacer(flex: 2),
             // Celebration text
-            Text(
+            const Text(
               "You've reached\nour goal!",
               textAlign: TextAlign.center,
               style: TextStyle(

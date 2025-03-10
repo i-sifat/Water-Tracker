@@ -1,77 +1,40 @@
 // lib/widgets/water_level_painter.dart
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-class WaterLevelAnimation extends StatefulWidget {
-  final double progress;
-  final Color waterColor;
-  final Color backgroundColor;
-  final double width;
-  final double height;
+import 'package:flutter/material.dart';
 
+class WaterLevelAnimation extends StatefulWidget {
   const WaterLevelAnimation({
-    Key? key,
     required this.progress,
     required this.waterColor,
     required this.backgroundColor,
     required this.width,
     required this.height,
-  }) : super(key: key);
+    super.key,
+  });
+  final double progress;
+  final Color waterColor;
+  final Color backgroundColor;
+  final double width;
+
+  final double height;
 
   @override
   State<WaterLevelAnimation> createState() => _WaterLevelAnimationState();
 }
 
-class _WaterLevelAnimationState extends State<WaterLevelAnimation>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return CustomPaint(
-          size: Size(widget.width, widget.height),
-          painter: WaterLevelPainter(
-            progress: widget.progress,
-            waterColor: widget.waterColor,
-            backgroundColor: widget.backgroundColor,
-            animationValue: _controller.value,
-          ),
-        );
-      },
-    );
-  }
-}
-
 class WaterLevelPainter extends CustomPainter {
-  final double progress;
-  final Color waterColor;
-  final Color backgroundColor;
-  final double animationValue;
-
   WaterLevelPainter({
     required this.progress,
     required this.waterColor,
     required this.backgroundColor,
     required this.animationValue,
   });
+  final double progress;
+  final Color waterColor;
+  final Color backgroundColor;
+
+  final double animationValue;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -171,5 +134,43 @@ class WaterLevelPainter extends CustomPainter {
         oldDelegate.animationValue != animationValue ||
         oldDelegate.waterColor != waterColor ||
         oldDelegate.backgroundColor != backgroundColor;
+  }
+}
+
+class _WaterLevelAnimationState extends State<WaterLevelAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          size: Size(widget.width, widget.height),
+          painter: WaterLevelPainter(
+            progress: widget.progress,
+            waterColor: widget.waterColor,
+            backgroundColor: widget.backgroundColor,
+            animationValue: _controller.value,
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
   }
 }
