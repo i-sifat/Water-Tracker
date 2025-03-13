@@ -7,7 +7,6 @@ import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/core/widgets/large_selection_box.dart';
 import 'package:watertracker/core/widgets/prefer_not_to_answer_button.dart';
-
 import 'package:watertracker/features/onboarding/screens/age_selection_screen.dart';
 
 class GenderSelectionScreen extends StatefulWidget {
@@ -124,7 +123,6 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
     if (_selectedGender != null) {
       _saveGender().then((_) {
         if (mounted) {
-          // Removed: context.read<OnboardingProvider>().nextPage();
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const AgeSelectionScreen()),
           );

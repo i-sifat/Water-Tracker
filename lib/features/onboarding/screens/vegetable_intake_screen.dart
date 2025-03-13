@@ -106,7 +106,6 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                       ? () async {
                         await _saveFrequency();
                         if (mounted) {
-                          // context.read<OnboardingProvider>().nextPage();
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder:
