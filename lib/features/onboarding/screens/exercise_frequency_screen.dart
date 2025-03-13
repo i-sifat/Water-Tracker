@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/features/onboarding/screens/vegetable_intake_screen.dart';
 
 class FitnessLevelScreen extends StatefulWidget {
@@ -241,10 +241,16 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
           // Continue button
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-            child: PrimaryButton(
-              text: 'Continue',
-              onPressed: _handleContinue,
-              rightIcon: const Icon(Icons.arrow_forward, size: 20),
+            child: ContinueButton(
+              onPressed: () {
+                _saveFitnessLevel().then((_) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const VegetablesFruitsScreen(),
+                    ),
+                  );
+                });
+              },
             ),
           ),
         ],

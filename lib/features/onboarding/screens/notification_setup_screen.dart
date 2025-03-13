@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/services/notification_service.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/features/onboarding/screens/data_summary_screen.dart';
 
 class NotificationSetupScreen extends StatefulWidget {
@@ -179,15 +179,18 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
               ),
             ),
             const Spacer(),
-            PrimaryButton(
-              text: 'Continue',
-              onPressed: _handleContinue,
-              backgroundColor: AppColors.selectedBorder,
-              rightIcon: const Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-                size: 20,
-              ),
+            ContinueButton(
+              onPressed: () async {
+                await _requestNotificationPermission();
+                await _saveNotificationPreferences();
+                if (mounted) {
+                  await Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const CompileDataScreen(),
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),

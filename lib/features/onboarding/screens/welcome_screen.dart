@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
+
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/onboarding/screens/goal_selection_screen.dart';
 
@@ -67,8 +68,7 @@ class WelcomeScreen extends StatelessWidget {
               // Get Started Button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 80),
-                child: PrimaryButton(
-                  text: 'Start Calculating',
+                child: ContinueButton(
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -76,12 +76,6 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  backgroundColor: AppColors.waterFull,
-                  rightIcon: const Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                    size: 20,
-                  ),
                 ),
               ),
               const SizedBox(height: 50),

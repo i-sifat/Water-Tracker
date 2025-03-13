@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lottie/lottie.dart';
-import 'package:watertracker/core/constants/typography.dart';
+
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/primary_button.dart';
+import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/features/history/history_screen.dart';
-import 'package:watertracker/features/home/home_screen.dart';
 
 class GoalCompletionScreen extends StatefulWidget {
   const GoalCompletionScreen({super.key});
@@ -89,8 +86,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
             const SizedBox(height: 40),
 
             // Continue button
-            PrimaryButton(
-              text: 'Continue',
+            ContinueButton(
               onPressed: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute<void>(
@@ -100,7 +96,6 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
                   ),
                 );
               },
-              width: 200,
             ),
             const Spacer(flex: 3),
           ],
