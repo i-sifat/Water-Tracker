@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/utils/water_intake_calculator.dart';
 import 'package:watertracker/features/home/home_screen.dart';
@@ -97,8 +98,77 @@ class _CompileDataScreenState extends State<CompileDataScreen>
   @override
   void initState() {
     super.initState();
-    _initializeBubbles();
-    _calculateUserData();
+    _initializeAnimations();
+    _startAnimations();
+  }
+
+  void _initializeAnimations() {
+    _bubbleControllers = List.generate(
+      8,
+      (index) => AnimationController(
+        vsync: this,
+        duration: Duration(seconds: 2 + index),
+      ),
+    );
+
+    _bubbleAnimations = _bubbleControllers.map((controller) {
+      return Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(
+        CurvedAnimation(
+          parent: controller,
+          curve: Curves.linear,
+        ),
+      );
+    }).toList();
+
+    // Initialize bubble positions
+    // We need to use a post-frame callback to access MediaQuery safely
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      
+      final screenWidth = MediaQuery.of(context).size.width;
+      final screenHeight = MediaQuery.of(context).size.height;
+
+      setState(() {
+        for (int i = 0; i < 8; i++) {
+          _bubblePositions.add(
+            Offset(
+              _random.nextDouble() * screenWidth,
+              screenHeight + _random.nextDouble() * 100,
+            ),
+          );
+        }
+      });
+    });
+  }
+
+  void _startAnimations() {
+    // Start all bubble animations
+    for (final controller in _bubbleControllers) {
+      controller.repeat();
+    }
+
+    // Calculate water intake and save onboarding status after a delay
+    Future.delayed(const Duration(seconds: 2), () async {
+      await _calculateUserData();
+      await _saveOnboardingStatus();
+
+      if (!mounted) return;
+
+      // Navigate to home screen
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    });
+  }
+
+  Future<void> _saveOnboardingStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboarding_completed', true);
   }
 
   Future<void> _calculateUserData() async {
@@ -112,16 +182,6 @@ class _CompileDataScreenState extends State<CompileDataScreen>
       // Update provider with calculated intake
       final provider = Provider.of<HydrationProvider>(context, listen: false);
       await provider.setDailyGoal(calculatedIntake);
-
-      // Wait for animation
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (!mounted) return;
-
-      // Navigate to home screen
-      await Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
     } catch (e) {
       debugPrint('Error calculating water intake: $e');
       // Handle error appropriately
@@ -137,30 +197,5 @@ class _CompileDataScreenState extends State<CompileDataScreen>
     }
   }
 
-  void _initializeBubbles() {
-    _bubbleControllers = List.generate(
-      8,
-      (index) => AnimationController(
-        duration: Duration(milliseconds: 1500 + _random.nextInt(1000)),
-        vsync: this,
-      ),
-    );
 
-    _bubbleAnimations =
-        _bubbleControllers.map((controller) {
-          return Tween<double>(begin: 0, end: 1).animate(
-            CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-          );
-        }).toList();
-
-    for (int i = 0; i < 8; i++) {
-      _bubblePositions.add(
-        Offset(_random.nextDouble() * 300, _random.nextDouble() * 300),
-      );
-    }
-
-    for (var controller in _bubbleControllers) {
-      controller.repeat(reverse: true);
-    }
-  }
 }
