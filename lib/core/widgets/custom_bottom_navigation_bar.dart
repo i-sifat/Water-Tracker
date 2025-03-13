@@ -41,7 +41,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
               _buildNavItem(
                 context: context,
                 index: 2,
-                selectedIconPath: 'assets/images/icons/navbar/options-selected.svg',
+                selectedIconPath:
+                    'assets/images/icons/navbar/options-selected.svg',
                 unselectedIconPath:
                     'assets/images/icons/navbar/options-nonselected.svg',
               ),
