@@ -25,8 +25,7 @@ class HydrationProvider extends ChangeNotifier {
   AvatarOption get selectedAvatar => _selectedAvatar;
   bool get goalReachedToday => _goalReachedToday;
   bool get isInitialized => _isInitialized;
-
-  get hasReachedDailyGoal => null;
+  bool get hasReachedDailyGoal => _currentIntake >= _dailyGoal;
 
   // Load data from SharedPreferences
   Future<void> loadData() async {
@@ -86,23 +85,51 @@ class HydrationProvider extends ChangeNotifier {
 
   // Add water intake
   void addHydration(int amount, [BuildContext? context]) {
+    if (_goalReachedToday) {
+      if (context != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Daily water intake goal already achieved!'),
+            backgroundColor: Color(0xFF323062),
+          ),
+        );
+      }
+      return;
+    }
+
     // Calculate what the new total would be
     final newTotal = _currentIntake + amount;
 
     // Only add the amount if it wouldn't exceed the daily goal
     if (newTotal <= _dailyGoal) {
       _currentIntake = newTotal;
-      checkGoalReached(context);
+      if (_currentIntake >= _dailyGoal) {
+        _goalReachedToday = true;
+        if (context != null) {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => const GoalCompletionScreen(),
+            ),
+          );
+        }
+      }
       _saveData();
       notifyListeners();
     } else {
-      // Optionally, you could add the remaining amount up to the goal
+      // Add only the remaining amount to reach the goal
       final remainingToGoal = _dailyGoal - _currentIntake;
       if (remainingToGoal > 0) {
         _currentIntake = _dailyGoal;
-        checkGoalReached();
+        _goalReachedToday = true;
         _saveData();
         notifyListeners();
+        if (context != null) {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => const GoalCompletionScreen(),
+            ),
+          );
+        }
       }
     }
   }
@@ -132,20 +159,5 @@ class HydrationProvider extends ChangeNotifier {
     _goalReachedToday = false;
     _saveData();
     notifyListeners();
-  }
-
-  // Check if goal is reached and navigate to GoalCompletionScreen
-  void checkGoalReached([BuildContext? context]) {
-    if (_currentIntake >= _dailyGoal && !_goalReachedToday) {
-      _goalReachedToday = true;
-      _saveData();
-      if (context != null) {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (context) => const GoalCompletionScreen(),
-          ),
-        );
-      }
-    }
   }
 }
