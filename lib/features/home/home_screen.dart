@@ -29,9 +29,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   Widget build(BuildContext context) {
     final hydrationProvider = Provider.of<HydrationProvider>(context);
     final screenSize = MediaQuery.of(context).size;
-    final waterLevelPosition =
-        screenSize.height * (1 - hydrationProvider.intakePercentage);
-    final percentagePosition = waterLevelPosition - 40;
 
     return SafeArea(
       bottom: false,
@@ -85,11 +82,14 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               ),
               const SizedBox(height: 8),
 
+              // Fixed remaining text visibility
               Text(
                 'Remaining: ${hydrationProvider.remainingIntake} ml',
                 style: const TextStyle(
                   fontSize: 16,
                   color: AppColors.textSubtitle,
+                  fontWeight:
+                      FontWeight.w500, // Added weight for better visibility
                 ),
               ),
 
@@ -109,30 +109,19 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             ],
           ),
 
-          // Percentage indicator
+          // Updated percentage indicator
           Positioned(
             left: 26,
-            top: percentagePosition.clamp(100.0, screenSize.height - 150.0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Text(
-                '${(hydrationProvider.intakePercentage * 100).toStringAsFixed(0)}%',
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.darkBlue,
-                ),
+            top:
+                screenSize.height *
+                (1 - hydrationProvider.intakePercentage) *
+                0.6,
+            child: Text(
+              '${(hydrationProvider.intakePercentage * 100).toInt()}%',
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w500,
+                color: AppColors.darkBlue,
               ),
             ),
           ),

@@ -21,7 +21,7 @@ class HydrationProvider extends ChangeNotifier {
   int get currentIntake => _currentIntake;
   int get dailyGoal => _dailyGoal;
   int get remainingIntake => _dailyGoal - _currentIntake;
-  double get intakePercentage => _currentIntake / _dailyGoal;
+  double get intakePercentage => (_currentIntake / _dailyGoal).clamp(0.0, 1.0);
   AvatarOption get selectedAvatar => _selectedAvatar;
   bool get goalReachedToday => _goalReachedToday;
   bool get isInitialized => _isInitialized;
@@ -84,10 +84,25 @@ class HydrationProvider extends ChangeNotifier {
 
   // Add water intake
   void addHydration(int amount) {
-    _currentIntake += amount;
-    checkGoalReached();
-    _saveData();
-    notifyListeners();
+    // Calculate what the new total would be
+    final newTotal = _currentIntake + amount;
+
+    // Only add the amount if it wouldn't exceed the daily goal
+    if (newTotal <= _dailyGoal) {
+      _currentIntake = newTotal;
+      checkGoalReached();
+      _saveData();
+      notifyListeners();
+    } else {
+      // Optionally, you could add the remaining amount up to the goal
+      final remainingToGoal = _dailyGoal - _currentIntake;
+      if (remainingToGoal > 0) {
+        _currentIntake = _dailyGoal;
+        checkGoalReached();
+        _saveData();
+        notifyListeners();
+      }
+    }
   }
 
   // Legacy method to maintain backward compatibility
