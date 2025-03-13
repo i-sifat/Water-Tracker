@@ -22,32 +22,28 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     {
       'title': 'Almost never',
       'subtitle': 'Never / several times a month',
-      'icon':
-          'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-1.svg',
+      'icon': '🚫',
       'value': 'almost_never',
       'iconBgColor': const Color(0xFFF2F2F2),
     },
     {
       'title': 'Rarely',
       'subtitle': 'Few times a week',
-      'icon':
-          'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-2.svg',
+      'icon': '🥤',
       'value': 'rarely',
       'iconBgColor': const Color(0xFFE9D9FF),
     },
     {
       'title': 'Regularly',
       'subtitle': 'Every day',
-      'icon':
-          'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-3.svg',
+      'icon': '🧃',
       'value': 'regularly',
       'iconBgColor': const Color(0xFFE4F0FF),
     },
     {
       'title': 'Often',
       'subtitle': 'Several per day',
-      'icon':
-          'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-4.svg',
+      'icon': '🥂',
       'value': 'often',
       'iconBgColor': const Color(0xFFFFF8E5),
     },

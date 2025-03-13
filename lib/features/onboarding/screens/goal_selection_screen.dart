@@ -20,36 +20,31 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
 
   final List<Map<String, dynamic>> _goals = [
     {
-      'icon':
-          'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame.svg',
+      'icon': '💧',
       'text': 'Drink More Water',
       'backgroundColor': const Color(0xFFE8FAE0),
       'iconColor': const Color(0xFF7FB364),
     },
     {
-      'icon':
-          'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-1.svg',
+      'icon': '🌿',
       'text': 'Improve digestions',
       'backgroundColor': const Color(0xFFE4F0FF),
       'iconColor': const Color(0xFF4B7FD6),
     },
     {
-      'icon':
-          'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-2.svg',
+      'icon': '💪',
       'text': 'Lead a Healty Lifestyle',
       'backgroundColor': const Color(0xFFE9D9FF),
       'iconColor': const Color(0xFF7D4FB2),
     },
     {
-      'icon':
-          'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-3.svg',
+      'icon': '⚖️',
       'text': 'Lose weight',
       'backgroundColor': const Color(0xFFF2F2F2),
       'iconColor': const Color(0xFF6E7191),
     },
     {
-      'icon':
-          'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-4.svg',
+      'icon': '🎯',
       'text': 'Just trying out the app, mate!',
       'backgroundColor': const Color(0xFFFFF8E5),
       'iconColor': const Color(0xFFE3B622),

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/primary_button.dart';
 import 'package:watertracker/features/onboarding/screens/data_summary_screen.dart';
+import 'package:watertracker/core/services/notification_service.dart';
 
 class NotificationSetupScreen extends StatefulWidget {
   const NotificationSetupScreen({super.key});
@@ -14,16 +15,58 @@ class NotificationSetupScreen extends StatefulWidget {
 }
 
 class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
-  final Map<String, bool> _notifications = {
-    'appointment': true,
-    'doctor': false,
-    'chatbot': true,
+  final NotificationService _notificationService = NotificationService();
+  bool _isNotificationPermissionGranted = false;
+
+  final Map<String, dynamic> _notifications = {
+    'appointment': {
+      'title': 'Water Reminder',
+      'subtitle': 'Get reminders to drink water',
+      'icon': '💧',
+      'value': true,
+    },
+    'doctor': {
+      'title': 'Health Tips',
+      'subtitle': 'Receive daily health tips',
+      'icon': '🏥',
+      'value': false,
+    },
+    'chatbot': {
+      'title': 'Smart Assistant',
+      'subtitle': 'Get personalized recommendations',
+      'icon': '🤖',
+      'value': true,
+    },
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeNotifications();
+  }
+
+  Future<void> _initializeNotifications() async {
+    await _notificationService.initialize();
+    final permissionGranted = await _notificationService.requestPermissions();
+    setState(() {
+      _isNotificationPermissionGranted = permissionGranted;
+    });
+  }
 
   Future<void> _saveNotificationPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     for (final entry in _notifications.entries) {
-      await prefs.setBool('notification_${entry.key}', entry.value);
+      await prefs.setBool(
+        'notification_${entry.key}',
+        entry.value['value'] as bool,
+      );
+    }
+
+    if (_isNotificationPermissionGranted &&
+        _notifications['appointment']?['value'] == true) {
+      await _notificationService.scheduleWaterReminder();
+    } else {
+      await _notificationService.cancelAllNotifications();
     }
   }
 
@@ -89,13 +132,42 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            _buildNotificationOption(
-              'App Notification',
-              'appointment',
-              const Color(0xFFFFE8E8),
-              '📅',
+            if (!_isNotificationPermissionGranted)
+              Container(
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.orange.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.orange[700],
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Please enable notifications to receive water reminders',
+                        style: TextStyle(color: Colors.orange[900]),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ..._notifications.entries.map(
+              (entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildNotificationOption(
+                  entry.value['title'] as String,
+                  entry.key,
+                  Colors.blue.shade50,
+                  entry.value['icon'] as String,
+                ),
+              ),
             ),
-
             const Spacer(),
             PrimaryButton(
               text: 'Continue',
@@ -151,7 +223,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
             ),
           ),
           Switch(
-            value: _notifications[key]!,
+            value: _notifications[key]['value'] as bool,
             onChanged: (value) {
               setState(() {
                 _notifications[key] = value;
