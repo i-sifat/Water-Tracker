@@ -18,25 +18,25 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
   final NotificationService _notificationService = NotificationService();
   bool _isNotificationPermissionGranted = false;
 
-  final Map<String, dynamic> _notifications = {
-    'appointment': {
-      'title': 'Water Reminder',
-      'subtitle': 'Get reminders to drink water',
-      'icon': '💧',
-      'value': true,
-    },
-    'doctor': {
-      'title': 'Health Tips',
-      'subtitle': 'Receive daily health tips',
-      'icon': '🏥',
-      'value': false,
-    },
-    'chatbot': {
-      'title': 'Smart Assistant',
-      'subtitle': 'Get personalized recommendations',
-      'icon': '🤖',
-      'value': true,
-    },
+  final Map<String, NotificationSetting> _notifications = {
+    'water_reminder': NotificationSetting(
+      title: 'Water Reminder',
+      subtitle: 'Get reminders to drink water',
+      iconPath: 'assets/images/icons/onboarding_elements/water_reminder.svg',
+      isEnabled: true,
+    ),
+    'health_tips': NotificationSetting(
+      title: 'Health Tips',
+      subtitle: 'Receive daily health tips',
+      iconPath: 'assets/images/icons/onboarding_elements/health_tips.svg',
+      isEnabled: false,
+    ),
+    'smart_assistant': NotificationSetting(
+      title: 'Smart Assistant',
+      subtitle: 'Get personalized recommendations',
+      iconPath: 'assets/images/icons/onboarding_elements/smart_assistant.svg',
+      isEnabled: true,
+    ),
   };
 
   @override
@@ -56,15 +56,17 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
   Future<void> _saveNotificationPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     for (final entry in _notifications.entries) {
-      await prefs.setBool(
-        'notification_${entry.key}',
-        entry.value['value'] as bool,
-      );
+      await prefs.setBool('notification_${entry.key}', entry.value.isEnabled);
     }
 
     if (_isNotificationPermissionGranted &&
-        _notifications['appointment']?['value'] == true) {
-      await _notificationService.scheduleWaterReminder();
+        _notifications['water_reminder']?.isEnabled == true) {
+      try {
+        await _notificationService.scheduleWaterReminder();
+      } catch (e) {
+        debugPrint('Error scheduling notifications: $e');
+        // Continue even if notification scheduling fails
+      }
     } else {
       await _notificationService.cancelAllNotifications();
     }
@@ -110,8 +112,6 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(),
-            const SizedBox(height: 32),
             const Text(
               'Notification Setup',
               style: TextStyle(
@@ -161,10 +161,15 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
               (entry) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _buildNotificationOption(
-                  entry.value['title'] as String,
-                  entry.key,
-                  Colors.blue.shade50,
-                  entry.value['icon'] as String,
+                  entry.value.title,
+                  entry.value.subtitle,
+                  entry.value.iconPath,
+                  entry.value.isEnabled,
+                  (value) {
+                    setState(() {
+                      entry.value.isEnabled = value;
+                    });
+                  },
                 ),
               ),
             ),
@@ -187,9 +192,10 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
 
   Widget _buildNotificationOption(
     String title,
-    String key,
-    Color backgroundColor,
-    String emoji,
+    String subtitle,
+    String iconPath,
+    bool isEnabled,
+    ValueChanged<bool> onChanged,
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -204,31 +210,44 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: Colors.blue.shade50,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 20)),
+              child: SvgPicture.asset(
+                iconPath,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  AppColors.darkBlue,
+                  BlendMode.srcIn,
+                ),
+              ),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.darkBlue,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.darkBlue,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              ],
             ),
           ),
           Switch(
-            value: _notifications[key]['value'] as bool,
-            onChanged: (value) {
-              setState(() {
-                _notifications[key] = value;
-              });
-            },
+            value: isEnabled,
+            onChanged: onChanged,
             activeColor: AppColors.selectedBorder,
             activeTrackColor: AppColors.preferNotToAnswer,
           ),
@@ -236,4 +255,18 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
       ),
     );
   }
+}
+
+class NotificationSetting {
+  NotificationSetting({
+    required this.title,
+    required this.subtitle,
+    required this.iconPath,
+    required this.isEnabled,
+  });
+
+  final String title;
+  final String subtitle;
+  final String iconPath;
+  bool isEnabled;
 }

@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -48,7 +48,6 @@ class NotificationService {
       priority: Priority.high,
       enableVibration: true,
       playSound: true,
-      sound: RawResourceAndroidNotificationSound('notification_sound'),
       enableLights: true,
       ledColor: Color.fromARGB(255, 0, 150, 255),
       ledOnMs: 1000,
@@ -59,7 +58,6 @@ class NotificationService {
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
-      sound: 'notification_sound.aiff',
       interruptionLevel: InterruptionLevel.active,
     );
 
@@ -79,23 +77,28 @@ class NotificationService {
       final notificationTime = scheduledTime.add(Duration(hours: i * 2));
       if (notificationTime.hour <= 22) {
         // Only schedule until 10 PM
-        await _notifications.zonedSchedule(
-          i,
-          'Time to Hydrate!',
-          'Don\'t forget to drink water and stay hydrated.',
-          tz.TZDateTime.local(
-            notificationTime.year,
-            notificationTime.month,
-            notificationTime.day,
-            notificationTime.hour,
-            notificationTime.minute,
-          ),
-          details,
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-          matchDateTimeComponents: DateTimeComponents.time,
-        );
+        try {
+          await _notifications.zonedSchedule(
+            i,
+            'Time to Hydrate!',
+            'Don\'t forget to drink water and stay hydrated.',
+            tz.TZDateTime.local(
+              notificationTime.year,
+              notificationTime.month,
+              notificationTime.day,
+              notificationTime.hour,
+              notificationTime.minute,
+            ),
+            details,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.time,
+          );
+        } catch (e) {
+          debugPrint('Error scheduling notification: $e');
+          // Continue with other notifications even if one fails
+        }
       }
     }
   }

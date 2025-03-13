@@ -22,28 +22,28 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     {
       'title': 'Almost never',
       'subtitle': 'Never / several times a month',
-      'icon': '🚫',
+      'iconPath': 'assets/images/icons/onboarding_elements/never_drink.svg',
       'value': 'almost_never',
       'iconBgColor': const Color(0xFFF2F2F2),
     },
     {
       'title': 'Rarely',
       'subtitle': 'Few times a week',
-      'icon': '🥤',
+      'iconPath': 'assets/images/icons/onboarding_elements/rarely_drink.svg',
       'value': 'rarely',
       'iconBgColor': const Color(0xFFE9D9FF),
     },
     {
       'title': 'Regularly',
       'subtitle': 'Every day',
-      'icon': '🧃',
+      'iconPath': 'assets/images/icons/onboarding_elements/regular_drink.svg',
       'value': 'regularly',
       'iconBgColor': const Color(0xFFE4F0FF),
     },
     {
       'title': 'Often',
       'subtitle': 'Several per day',
-      'icon': '🥂',
+      'iconPath': 'assets/images/icons/onboarding_elements/often_drink.svg',
       'value': 'often',
       'iconBgColor': const Color(0xFFFFF8E5),
     },
@@ -81,6 +81,14 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
             ),
+            child: const Text(
+              '7 of 10',
+              style: TextStyle(
+                color: AppColors.pageCounter,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),
@@ -108,8 +116,6 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                     (context, index) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
                   final frequency = _frequencies[index];
-                  final isSelected = _selectedFrequency == frequency['value'];
-
                   return SelectionBox(
                     title: frequency['title'] as String,
                     subtitle: frequency['subtitle'] as String,
@@ -122,11 +128,11 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                       ),
                       child: Center(
                         child: SvgPicture.asset(
-                          frequency['icon'] as String,
+                          frequency['iconPath'] as String,
                           width: 24,
                           height: 24,
                           colorFilter: ColorFilter.mode(
-                            isSelected
+                            _selectedFrequency == frequency['value']
                                 ? AppColors.selectedBorder
                                 : AppColors.unselectedBorder,
                             BlendMode.srcIn,
@@ -134,7 +140,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                         ),
                       ),
                     ),
-                    isSelected: isSelected,
+                    isSelected: _selectedFrequency == frequency['value'],
                     onTap: () {
                       setState(() {
                         _selectedFrequency = frequency['value'] as String;
@@ -145,14 +151,12 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            // In the ContinueButton's onPressed callback
             ContinueButton(
               onPressed:
                   _selectedFrequency.isNotEmpty
                       ? () async {
                         await _saveFrequency();
                         if (mounted) {
-                          // Removed: context.read<OnboardingProvider>().nextPage();
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => const PregnancyScreen(),
