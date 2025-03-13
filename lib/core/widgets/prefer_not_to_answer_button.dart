@@ -27,7 +27,7 @@ class PreferNotToAnswerButton extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Icon(Icons.close, size: 20, color: AppColors.pageCounter),
+          const Icon(Icons.close, size: 20, color: AppColors.pageCounter),
         ],
       ),
     );

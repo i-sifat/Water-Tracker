@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -6,9 +5,9 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
+  static final NotificationService _instance = NotificationService._internal();
 
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
@@ -46,8 +45,6 @@ class NotificationService {
       channelDescription: 'Reminds you to drink water',
       importance: Importance.high,
       priority: Priority.high,
-      enableVibration: true,
-      playSound: true,
       enableLights: true,
       ledColor: Color.fromARGB(255, 0, 150, 255),
       ledOnMs: 1000,
@@ -73,7 +70,7 @@ class NotificationService {
       scheduledTime = scheduledTime.add(const Duration(days: 1));
     }
 
-    for (int i = 0; i < 8; i++) {
+    for (var i = 0; i < 8; i++) {
       final notificationTime = scheduledTime.add(Duration(hours: i * 2));
       if (notificationTime.hour <= 22) {
         // Only schedule until 10 PM
@@ -81,7 +78,7 @@ class NotificationService {
           await _notifications.zonedSchedule(
             i,
             'Time to Hydrate!',
-            'Don\'t forget to drink water and stay hydrated.',
+            "Don't forget to drink water and stay hydrated.",
             tz.TZDateTime.local(
               notificationTime.year,
               notificationTime.month,

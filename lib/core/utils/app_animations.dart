@@ -5,18 +5,6 @@ import 'package:flutter/material.dart';
 
 // Class to manage all animations for the hydration screen
 class HydrationAnimations {
-  // Animation controller that coordinates all animations
-  late AnimationController _controller;
-
-  // Scale animation for the circle
-  late Animation<double> circleAnimation;
-
-  // Slide animations for the buttons in each row
-  late Animation<Offset> firstRowLeftSlideAnimation;
-  late Animation<Offset> firstRowRightSlideAnimation;
-  late Animation<Offset> secondRowLeftSlideAnimation;
-  late Animation<Offset> secondRowRightSlideAnimation;
-
   // Constructor needs a TickerProvider (usually the State object with SingleTickerProviderStateMixin)
   HydrationAnimations({required TickerProvider vsync}) {
     // Initialize the animation controller
@@ -28,6 +16,17 @@ class HydrationAnimations {
     // Set up the animations
     _setupAnimations();
   }
+  // Animation controller that coordinates all animations
+  late AnimationController _controller;
+
+  // Scale animation for the circle
+  late Animation<double> circleAnimation;
+
+  // Slide animations for the buttons in each row
+  late Animation<Offset> firstRowLeftSlideAnimation;
+  late Animation<Offset> firstRowRightSlideAnimation;
+  late Animation<Offset> secondRowLeftSlideAnimation;
+  late Animation<Offset> secondRowRightSlideAnimation;
 
   // Configure all the animations
   void _setupAnimations() {

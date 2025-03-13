@@ -41,7 +41,7 @@ class WaterLevelPainter extends CustomPainter {
     // Background color - entire container
     final backgroundPaint =
         Paint()
-          ..color = backgroundColor.withOpacity(0.1)
+          ..color = backgroundColor.withAlpha(26)
           ..style = PaintingStyle.fill;
 
     canvas.drawRect(
@@ -53,17 +53,17 @@ class WaterLevelPainter extends CustomPainter {
     final waterLevel = size.height * (1 - progress);
 
     // Create wave pattern
-    final waterPath = Path();
-
-    // Start from bottom left
-    waterPath.moveTo(0, size.height);
+    final waterPath =
+        Path()
+          // Start from bottom left
+          ..moveTo(0, size.height);
 
     // Go to water level with wave pattern
-    final waveHeight = 10.0;
+    const waveHeight = 10.0;
     final waveCount = size.width ~/ 40; // Number of waves
 
     // Create wave pattern from left to right
-    for (int i = 0; i <= waveCount; i++) {
+    for (var i = 0; i <= waveCount; i++) {
       final x = i * (size.width / waveCount);
       final y =
           waterLevel +
@@ -89,9 +89,10 @@ class WaterLevelPainter extends CustomPainter {
     }
 
     // Complete the path
-    waterPath.lineTo(size.width, size.height);
-    waterPath.lineTo(0, size.height);
-    waterPath.close();
+    waterPath
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
 
     // Draw water
     final waterPaint =
@@ -105,12 +106,12 @@ class WaterLevelPainter extends CustomPainter {
     if (progress > 0.1) {
       final bubblePaint =
           Paint()
-            ..color = Colors.white.withOpacity(0.4)
+            ..color = Colors.white.withAlpha(100)
             ..style = PaintingStyle.fill;
 
       // Create random positions for bubbles
       final random = math.Random(42); // Fixed seed for consistent bubbles
-      for (int i = 0; i < 8; i++) {
+      for (var i = 0; i < 8; i++) {
         final bubbleX = random.nextDouble() * size.width;
         final bubbleY =
             waterLevel + random.nextDouble() * (size.height - waterLevel);

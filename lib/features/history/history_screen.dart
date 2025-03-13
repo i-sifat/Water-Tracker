@@ -32,7 +32,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 
   @override
   Widget build(BuildContext context) {
-    final hydrationProvider = Provider.of<HydrationProvider>(context);
+    Provider.of<HydrationProvider>(context);
 
     // Sample data for visualization
     final weeklyData = <double>[1.45, 1.45, 1.45, 1.45, 1.45, 1.45, 1.45];
@@ -261,7 +261,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey.withAlpha(26),
                   blurRadius: 5,
                   offset: const Offset(0, 2),
                 ),
@@ -315,7 +315,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                     isSelected
                         ? [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
+                            color: Colors.grey.withAlpha(50),
                             blurRadius: 5,
                             offset: const Offset(0, 2),
                           ),
@@ -324,7 +324,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
               ),
               child: Center(
                 child: Text(
-                  "week $weekNum",
+                  'week $weekNum',
                   style: TextStyle(
                     color: isSelected ? Colors.white : AppColors.textHeadline,
                     fontWeight: FontWeight.w500,
@@ -344,7 +344,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   static final List<Widget> _widgetOptions = <Widget>[
     const HomeScreenContent(),
     const AddHydrationScreenContent(),
-    HistoryScreenContent(selectedWeekIndex: 1), // Default to week 2
+    const HistoryScreenContent(selectedWeekIndex: 1), // Default to week 2
   ];
   int _selectedIndex = 2;
 

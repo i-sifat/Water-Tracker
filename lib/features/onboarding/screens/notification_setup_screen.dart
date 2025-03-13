@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/core/services/notification_service.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/primary_button.dart';
 import 'package:watertracker/features/onboarding/screens/data_summary_screen.dart';
-import 'package:watertracker/core/services/notification_service.dart';
 
 class NotificationSetupScreen extends StatefulWidget {
   const NotificationSetupScreen({super.key});
@@ -108,7 +108,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -218,7 +218,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
                 iconPath,
                 width: 24,
                 height: 24,
-                colorFilter: ColorFilter.mode(
+                colorFilter: const ColorFilter.mode(
                   AppColors.darkBlue,
                   BlendMode.srcIn,
                 ),

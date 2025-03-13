@@ -139,7 +139,9 @@ class HydrationProvider extends ChangeNotifier {
       _saveData();
       if (context != null) {
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const GoalCompletionScreen()),
+          MaterialPageRoute<void>(
+            builder: (context) => const GoalCompletionScreen(),
+          ),
         );
       }
     }

@@ -1,8 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 import 'package:watertracker/core/widgets/water_animation.dart';
@@ -38,7 +38,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -46,11 +46,11 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       height: 40,
                       width: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withAlpha(200),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withAlpha(150),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -133,42 +133,47 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-
   late final List<Widget> _widgetOptions;
 
   @override
   Widget build(BuildContext context) {
     final hydrationProvider = Provider.of<HydrationProvider>(context);
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Water animation that covers the entire screen
-          Positioned.fill(
-            child: WaterAnimation(
-              progress: hydrationProvider.intakePercentage,
-              waterColor: AppColors.waterFull,
-              backgroundColor: AppColors.waterLow,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+    return WillPopScope(
+      onWillPop: () async {
+        await SystemNavigator.pop();
+        return false;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Water animation that covers the entire screen
+            Positioned.fill(
+              child: WaterAnimation(
+                progress: hydrationProvider.intakePercentage,
+                waterColor: AppColors.waterFull,
+                backgroundColor: AppColors.waterLow,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+              ),
             ),
-          ),
 
-          // Main content
-          Center(child: _widgetOptions.elementAt(_selectedIndex)),
+            // Main content
+            Center(child: _widgetOptions.elementAt(_selectedIndex)),
 
-          // Custom navigation bar with transparent background
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: CustomBottomNavigationBar(
-              selectedIndex: _selectedIndex,
-              onItemTapped: _onItemTapped,
-              backgroundColor: Colors.transparent,
+            // Custom navigation bar with transparent background
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: CustomBottomNavigationBar(
+                selectedIndex: _selectedIndex,
+                onItemTapped: _onItemTapped,
+                backgroundColor: Colors.transparent,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

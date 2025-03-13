@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class WaterAnimation extends StatefulWidget {
@@ -112,10 +111,8 @@ class _WaterAnimationState extends State<WaterAnimation>
             size: Size(widget.width, widget.height),
             painter: WaterLevelPainter(
               progress: widget.progress,
-              waterColor: widget.waterColor.withOpacity(
-                0.7,
-              ), // Semi-transparent
-              backgroundColor: widget.backgroundColor.withOpacity(0.05),
+              waterColor: widget.waterColor.withAlpha(179), // Semi-transparent
+              backgroundColor: widget.backgroundColor.withAlpha(150),
               animationValue: _controller.value,
               bubbles: bubbles,
             ),
@@ -179,7 +176,6 @@ class WaterLevelPainter extends CustomPainter {
           ..style = PaintingStyle.fill;
 
     // Create a blur effect for the water
-    final blurFilter = ImageFilter.blur(sigmaX: 5, sigmaY: 5);
     canvas.saveLayer(Rect.fromLTWH(0, 0, size.width, size.height), Paint());
 
     // Draw water waves
@@ -229,7 +225,7 @@ class WaterLevelPainter extends CustomPainter {
     // Draw bubbles
     final bubblePaint =
         Paint()
-          ..color = Colors.white.withOpacity(0.6)
+          ..color = Colors.white.withAlpha(170)
           ..style = PaintingStyle.fill;
 
     for (final bubble in bubbles) {

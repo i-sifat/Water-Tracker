@@ -3,22 +3,21 @@ import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 
 class SelectionBox extends StatelessWidget {
+  const SelectionBox({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+    super.key,
+    this.iconBackgroundColor,
+  });
   final String title;
   final String subtitle;
   final Widget icon;
   final bool isSelected;
   final VoidCallback onTap;
   final Color? iconBackgroundColor;
-
-  const SelectionBox({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.isSelected,
-    required this.onTap,
-    this.iconBackgroundColor,
-  });
 
   @override
   Widget build(BuildContext context) {

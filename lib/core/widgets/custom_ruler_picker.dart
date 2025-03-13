@@ -56,10 +56,10 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
             shaderCallback: (Rect bounds) {
               return LinearGradient(
                 colors: [
-                  Colors.white.withOpacity(0.1),
+                  Colors.white.withAlpha(26),
                   Colors.white,
                   Colors.white,
-                  Colors.white.withOpacity(0.1),
+                  Colors.white.withAlpha(26),
                 ],
                 stops: const [0.0, 0.2, 0.8, 1.0],
               ).createShader(bounds);
@@ -88,7 +88,7 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
                         color:
                             isSelected
                                 ? AppColors.lightBlue
-                                : Colors.grey.withOpacity(0.5),
+                                : Colors.grey.withAlpha(150),
                         borderRadius: BorderRadius.circular(1),
                       ),
                     ),
@@ -149,7 +149,7 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
   }
 
   Future<void> _provideHapticFeedback() async {
-    if (await Vibration.hasVibrator() ?? false) {
+    if (await Vibration.hasVibrator()) {
       await Vibration.vibrate(duration: 20, amplitude: 40);
     } else {
       await HapticFeedback.selectionClick();

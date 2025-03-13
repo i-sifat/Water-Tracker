@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
@@ -52,7 +52,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
   ];
 
   // In the _handleContinue method
-  void _handleContinue() async {
+  Future<void> _handleContinue() async {
     if (_isSaving || _selectedGoals.isEmpty) return;
 
     setState(() => _isSaving = true);
@@ -72,8 +72,10 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
 
       // Navigate to the next screen
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const GenderSelectionScreen()),
+      await Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(
+          builder: (context) => const GenderSelectionScreen(),
+        ),
       );
     } catch (e) {
       // Log detailed error for debugging
@@ -81,9 +83,9 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
 
       // Show error message to the user
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save goals: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to save goals: $e')));
       }
     } finally {
       // Reset the saving state

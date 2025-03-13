@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
@@ -80,13 +80,13 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("What's the Weather?", style: AppTypography.headline),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'Select your current weather condition.',
               style: AppTypography.subtitle,
             ),
@@ -175,10 +175,11 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
   }
 
   void _handleContinue() {
-    _saveWeather().then((_) {
+    _saveWeather().then((_) async {
       // context.read<OnboardingProvider>().nextPage();
-      Navigator.of(context).push(
-        MaterialPageRoute(
+      if (!mounted) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
           builder: (context) => const NotificationSetupScreen(),
         ),
       );

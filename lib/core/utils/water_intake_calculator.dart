@@ -112,6 +112,6 @@ class WaterIntakeCalculator {
     }
 
     // Round to nearest 100ml for user-friendly number
-    return ((baseIntake / 100).round() * 100).toInt();
+    return (baseIntake / 100).round() * 100;
   }
 }

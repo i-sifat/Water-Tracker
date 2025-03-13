@@ -75,7 +75,7 @@ class _CompileDataScreenState extends State<CompileDataScreen>
                   width: 40,
                   height: 40,
                   child: CircularProgressIndicator(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withAlpha(200),
                     strokeWidth: 3,
                   ),
                 ),
@@ -111,23 +111,19 @@ class _CompileDataScreenState extends State<CompileDataScreen>
       ),
     );
 
-    _bubbleAnimations = _bubbleControllers.map((controller) {
-      return Tween<double>(
-        begin: 0.0,
-        end: 1.0,
-      ).animate(
-        CurvedAnimation(
-          parent: controller,
-          curve: Curves.linear,
-        ),
-      );
-    }).toList();
+    _bubbleAnimations =
+        _bubbleControllers.map((controller) {
+          return Tween<double>(
+            begin: 0,
+            end: 1,
+          ).animate(CurvedAnimation(parent: controller, curve: Curves.linear));
+        }).toList();
 
     // Initialize bubble positions
     // We need to use a post-frame callback to access MediaQuery safely
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      
+
       final screenWidth = MediaQuery.of(context).size.width;
       final screenHeight = MediaQuery.of(context).size.height;
 
@@ -158,10 +154,8 @@ class _CompileDataScreenState extends State<CompileDataScreen>
       if (!mounted) return;
 
       // Navigate to home screen
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+      await Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     });
   }
@@ -196,6 +190,4 @@ class _CompileDataScreenState extends State<CompileDataScreen>
       }
     }
   }
-
-
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
@@ -8,7 +7,7 @@ import 'package:watertracker/core/widgets/selection_box.dart';
 import 'package:watertracker/features/onboarding/screens/sugary_drinks_screen.dart';
 
 class VegetablesFruitsScreen extends StatefulWidget {
-  const VegetablesFruitsScreen({Key? key}) : super(key: key);
+  const VegetablesFruitsScreen({super.key});
 
   @override
   State<VegetablesFruitsScreen> createState() => _VegetablesFruitsScreenState();
@@ -69,7 +68,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -106,8 +105,8 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                       ? () async {
                         await _saveFrequency();
                         if (mounted) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
+                          await Navigator.of(context).push(
+                            MaterialPageRoute<void>(
                               builder:
                                   (context) => const SugaryBeveragesScreen(),
                             ),

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/continue_button.dart';
-
 import 'package:watertracker/features/onboarding/screens/weight_selection_screen.dart';
 
 class AgeSelectionScreen extends StatefulWidget {
@@ -211,7 +209,7 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
                 _saveAge().then((_) {
                   // Removed: context.read<OnboardingProvider>().nextPage();
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (context) => const WeightSelectionScreen(),
                     ),
                   );
@@ -243,7 +241,7 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
     if (_ages[index] != _selectedAge) {
       setState(() => _selectedAge = _ages[index]);
       Vibration.hasVibrator().then((hasVibrator) {
-        if (hasVibrator ?? false) {
+        if (hasVibrator) {
           Vibration.vibrate(duration: 25, amplitude: 50);
         } else {
           HapticFeedback.lightImpact();

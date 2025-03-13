@@ -6,7 +6,7 @@ import 'package:watertracker/features/hydration/providers/hydration_provider.dar
 
 // Main screen widget that appears when users want to add hydration
 class AddHydrationScreen extends StatefulWidget {
-  const AddHydrationScreen({Key? key}) : super(key: key);
+  const AddHydrationScreen({super.key});
 
   @override
   _AddHydrationScreenState createState() => _AddHydrationScreenState();
@@ -14,7 +14,7 @@ class AddHydrationScreen extends StatefulWidget {
 
 // Content widget specifically for the Add Hydration screen
 class AddHydrationScreenContent extends StatefulWidget {
-  const AddHydrationScreenContent({Key? key}) : super(key: key);
+  const AddHydrationScreenContent({super.key});
 
   @override
   State<AddHydrationScreenContent> createState() =>
@@ -48,7 +48,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
         // First row of water amount buttons with slide animation
         Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 20.0,
+            horizontal: 20,
           ), // Bring buttons inward
           child: Row(
             children: [
@@ -85,7 +85,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
         // Second row of water amount buttons with slide animation
         Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 20.0,
+            horizontal: 20,
           ), // Bring buttons inward
           child: Row(
             children: [
@@ -151,7 +151,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha(120),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),

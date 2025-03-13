@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/onboarding/screens/welcome_screen.dart';
 
@@ -38,8 +40,45 @@ class MyApp extends StatelessWidget {
             labelSmall: TextStyle(fontFamily: 'Nunito'),
           ),
         ),
-        home: const WelcomeScreen(),
+        home: const InitialScreen(),
       ),
     );
+  }
+}
+
+class InitialScreen extends StatefulWidget {
+  const InitialScreen({super.key});
+
+  @override
+  State<InitialScreen> createState() => _InitialScreenState();
+}
+
+class _InitialScreenState extends State<InitialScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboardingStatus();
+  }
+
+  Future<void> _checkOnboardingStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final onboardingCompleted = prefs.getBool('onboarding_completed') ?? false;
+
+    if (!mounted) return;
+
+    if (onboardingCompleted) {
+      await Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (context) => const HomeScreen()),
+      );
+    } else {
+      await Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (context) => const WelcomeScreen()),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

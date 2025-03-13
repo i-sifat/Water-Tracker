@@ -62,7 +62,7 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
               children: [
                 const SizedBox(height: 40),
                 const Text(
-                  "Fitness Level",
+                  'Fitness Level',
                   style: TextStyle(
                     fontFamily: 'Nunito',
                     fontSize: 36,
@@ -98,7 +98,7 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                   children: [
                     // Background track with tick marks
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Container(
                         width: double.infinity,
                         height: 64,
@@ -150,7 +150,7 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                             borderRadius: BorderRadius.circular(40),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.lightBlue.withOpacity(0.3),
+                                color: AppColors.lightBlue.withAlpha(77),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -173,7 +173,7 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
 
                 // Labels below slider
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

@@ -26,7 +26,7 @@ class WelcomeScreen extends StatelessWidget {
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: AppColors.lightBlue.withOpacity(0.1),
+                  color: AppColors.lightBlue.withAlpha(26),
                   shape: BoxShape.circle,
                 ),
                 child: const Center(child: Icon(Icons.water_drop)),
@@ -55,11 +55,12 @@ class WelcomeScreen extends StatelessWidget {
                 'assets/images/icons/onboarding_elements/onboarding_bee_icon.svg',
                 width: 240,
                 height: 240,
-                placeholderBuilder: (BuildContext context) => const SizedBox(
-                  width: 240,
-                  height: 240,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
+                placeholderBuilder:
+                    (BuildContext context) => const SizedBox(
+                      width: 240,
+                      height: 240,
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
                 cacheColorFilter: true,
               ),
               const Spacer(),

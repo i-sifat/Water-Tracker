@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
@@ -110,9 +110,8 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
         children: [
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
                   const Text(
@@ -193,7 +192,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
   }
 
   Widget _buildUnitButton(String unit, bool isKg) {
-    final bool isSelected = _isKg == isKg;
+    final isSelected = _isKg == isKg;
 
     return GestureDetector(
       onTap: () => _handleUnitChange(isKg),

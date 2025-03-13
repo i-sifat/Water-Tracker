@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/history/history_screen.dart';
+import 'package:watertracker/features/home/home_screen.dart';
 
 class GoalCompletionScreen extends StatefulWidget {
   const GoalCompletionScreen({super.key});
@@ -157,11 +158,8 @@ class _GoalCompletionScreenWithLottieState
                   _animationCompleted
                       ? () {
                         Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder:
-                                (context) => const HistoryScreenContent(
-                                  selectedWeekIndex: 0,
-                                ),
+                          MaterialPageRoute<void>(
+                            builder: (context) => const HomeScreen(),
                           ),
                         );
                       }
