@@ -4,6 +4,7 @@ import 'package:watertracker/features/hydration/providers/hydration_provider.dar
 import 'package:watertracker/features/onboarding/screens/welcome_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

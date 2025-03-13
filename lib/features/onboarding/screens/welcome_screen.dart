@@ -55,6 +55,12 @@ class WelcomeScreen extends StatelessWidget {
                 'assets/images/icons/onboarding_elements/onboarding_bee_icon.svg',
                 width: 240,
                 height: 240,
+                placeholderBuilder: (BuildContext context) => const SizedBox(
+                  width: 240,
+                  height: 240,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                cacheColorFilter: true,
               ),
               const Spacer(),
 
