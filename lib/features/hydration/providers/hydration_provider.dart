@@ -85,14 +85,14 @@ class HydrationProvider extends ChangeNotifier {
   }
 
   // Add water intake
-  void addHydration(int amount) {
+  void addHydration(int amount, [BuildContext? context]) {
     // Calculate what the new total would be
     final newTotal = _currentIntake + amount;
 
     // Only add the amount if it wouldn't exceed the daily goal
     if (newTotal <= _dailyGoal) {
       _currentIntake = newTotal;
-      checkGoalReached();
+      checkGoalReached(context);
       _saveData();
       notifyListeners();
     } else {

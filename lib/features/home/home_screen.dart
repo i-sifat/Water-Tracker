@@ -97,8 +97,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                 child: Center(
                   child: SvgPicture.asset(
                     hydrationProvider.selectedAvatar == AvatarOption.male
-                        ? 'assets/avatars/male-avater.svg'
-                        : 'assets/avatars/female-avater.svg',
+                        ? 'assets/images/avatars/male.svg'
+                        : 'assets/images/avatars/female.svg',
                     width: 390,
                     height: 390,
                   ),

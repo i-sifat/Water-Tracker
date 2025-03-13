@@ -190,13 +190,13 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(
                       color: AppColors.waterFull.withOpacity(0.3),
-                      width: 3,
+                      width: 9,
                     ),
                   ),
                 ),
                 // Inner container (the blue background)
                 Container(
-                  height: _itemExtent - 6, // Account for the border
+                  height: _itemExtent - 9, // Account for the border
                   width: 194, // Account for the border
                   decoration: BoxDecoration(
                     color: AppColors.waterFull,

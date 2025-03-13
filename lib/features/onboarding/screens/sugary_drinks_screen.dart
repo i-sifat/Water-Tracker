@@ -49,9 +49,9 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.onBoardingpagebackground,
       appBar: AppBar(
-        backgroundColor: AppColors.appBar,
+        backgroundColor: AppColors.onBoardingpagebackground,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -70,11 +70,11 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Colors.grey[300],
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
-              '7 of 10',
+              '8 of 10',
               style: TextStyle(
                 color: AppColors.pageCounter,
                 fontSize: 14,
