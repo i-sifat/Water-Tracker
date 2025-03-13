@@ -16,13 +16,13 @@ class ContinueButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: isDisabled ? null : onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.selectedBorder,
+        backgroundColor: AppColors.waterFull,
         foregroundColor: AppColors.buttonText,
         disabledBackgroundColor: Colors.grey[300],
         disabledForegroundColor: Colors.grey[500],
         elevation: 0,
         minimumSize: const Size(double.infinity, 56),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,

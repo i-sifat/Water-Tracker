@@ -7,7 +7,7 @@ class AppTypography {
   static const TextStyle headline = TextStyle(
     fontFamily: 'Nunito',
     fontSize: 32,
-    fontWeight: FontWeight.w800, // ExtraBold
+    fontWeight: FontWeight.w900, // ExtraBold
     color: AppColors.assessmentText,
     height: 1.2,
   );
@@ -21,16 +21,16 @@ class AppTypography {
 
   static const TextStyle subtitle = TextStyle(
     fontFamily: 'Nunito',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: FontWeight.w400, // Regular
     color: AppColors.pageCounter,
   );
 
   static const TextStyle welcomeHeadline = TextStyle(
     fontFamily: 'Nunito',
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: FontWeight.w800, // ExtraBold
     color: AppColors.assessmentText,
-    height: 1.2,
+    height: 1.4,
   );
 }

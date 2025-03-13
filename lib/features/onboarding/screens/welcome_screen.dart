@@ -14,13 +14,13 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.onBoardingpagebackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              const Spacer(),
+              const SizedBox(height: 50),
               // App Logo
               Container(
                 width: 72,
@@ -31,7 +31,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 child: const Center(child: Icon(Icons.water_drop)),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
 
               // Welcome Text
               const Text(
@@ -53,17 +53,16 @@ class WelcomeScreen extends StatelessWidget {
               // Illustration
               SvgPicture.asset(
                 'assets/images/icons/onboarding_elements/onboarding_bee_icon.svg',
-                width: 240,
-                height: 240,
+                width: 320,
+                height: 320,
                 placeholderBuilder:
                     (BuildContext context) => const SizedBox(
-                      width: 240,
-                      height: 240,
+                      width: 320,
+                      height: 320,
                       child: Center(child: CircularProgressIndicator()),
                     ),
-                cacheColorFilter: true,
               ),
-              const Spacer(),
+              const SizedBox(height: 30),
 
               // Get Started Button
               Padding(
@@ -72,12 +71,12 @@ class WelcomeScreen extends StatelessWidget {
                   text: 'Start Calculating',
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (context) => const GoalSelectionScreen(),
                       ),
                     );
                   },
-                  backgroundColor: const Color(0xFF7671FF),
+                  backgroundColor: AppColors.waterFull,
                   rightIcon: const Icon(
                     Icons.arrow_forward,
                     color: Colors.white,
@@ -85,13 +84,15 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 50),
 
               // Skip Button
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    MaterialPageRoute<void>(
+                      builder: (context) => const HomeScreen(),
+                    ),
                   );
                 },
                 style: TextButton.styleFrom(
@@ -101,9 +102,9 @@ class WelcomeScreen extends StatelessWidget {
                   'skip?',
                   style: TextStyle(
                     fontSize: 16,
-                    decoration: TextDecoration.underline,
+
                     fontFamily: 'Nunito',
-                    color: Color(0xFF7671FF),
+                    color: AppColors.waterFull,
                   ),
                 ),
               ),

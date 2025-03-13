@@ -11,7 +11,7 @@ class PreferNotToAnswerButton extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       style: TextButton.styleFrom(
-        backgroundColor: const Color(0xFFF3F1FF),
+        backgroundColor: AppColors.waterLow,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         minimumSize: const Size(double.infinity, 56),
@@ -20,14 +20,13 @@ class PreferNotToAnswerButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Prefer not to answer',
+            'skip',
             style: AppTypography.buttonText.copyWith(
               color: AppColors.pageCounter,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(width: 8),
-          const Icon(Icons.close, size: 20, color: AppColors.pageCounter),
         ],
       ),
     );

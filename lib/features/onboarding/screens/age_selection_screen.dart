@@ -54,8 +54,8 @@ class AgeSelectionWheel extends StatelessWidget {
       child: ListWheelScrollView.useDelegate(
         controller: scrollController,
         itemExtent: itemExtent,
-        perspective: 0.001,
-        diameterRatio: 1.3,
+        perspective: 0.0015,
+        diameterRatio: 1.6,
         physics: const FixedExtentScrollPhysics(),
         onSelectedItemChanged: onSelectedItemChanged,
         childDelegate: ListWheelChildBuilderDelegate(
@@ -68,24 +68,32 @@ class AgeSelectionWheel extends StatelessWidget {
                         : 0)
                     .abs();
 
+            // More dramatic font size difference
             final fontSize =
-                distanceFromCenter <= 2
-                    ? maxFontSize -
-                        (distanceFromCenter * (maxFontSize - minFontSize) / 2)
+                distanceFromCenter == 0
+                    ? maxFontSize
+                    : distanceFromCenter == 1
+                    ? maxFontSize * 0.7
+                    : distanceFromCenter == 2
+                    ? maxFontSize * 0.55
                     : minFontSize;
 
+            // More dramatic color transition
             final color =
                 distanceFromCenter == 0
                     ? selectedTextColor
-                    : distanceFromCenter <= 2
-                    ? unselectedTextColor
+                    : distanceFromCenter == 1
+                    ? unselectedTextColor.withOpacity(0.9)
+                    : distanceFromCenter == 2
+                    ? unselectedTextColor.withOpacity(0.5)
                     : farTextColor;
 
+            // Make items beyond visible range nearly invisible
             final opacity =
-                distanceFromCenter > 5
-                    ? 0.5
-                    : distanceFromCenter > 3
-                    ? 0.7
+                distanceFromCenter > 3
+                    ? 0.0 // Hide items beyond 3 positions
+                    : distanceFromCenter == 3
+                    ? 0.3
                     : 1.0;
 
             final fontWeight =
@@ -95,16 +103,16 @@ class AgeSelectionWheel extends StatelessWidget {
                     ? FontWeight.w600
                     : FontWeight.w500;
 
-            return Center(
-              child: AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 150),
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: fontWeight,
-                  color: color,
-                ),
-                child: Opacity(
-                  opacity: opacity,
+            return Opacity(
+              opacity: opacity,
+              child: Center(
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 150),
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
+                    color: color,
+                  ),
                   child: Text(age.toString(), textAlign: TextAlign.center),
                 ),
               ),
@@ -121,18 +129,17 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   late final List<int> _ages;
   int _selectedAge = 45;
 
-  final double _maxFontSize = 64;
-  final double _minFontSize = 32;
-  final double _itemExtent = 80;
+  // Increase font sizes for better visibility
+  final double _maxFontSize = 140; // Increased from 74
+  final double _minFontSize = 28; // Slightly decreased to create more contrast
+  final double _itemExtent = 160; // Increased from 100 for more spacing
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-
-      // In AgeSelectionScreen's build method, update the AppBar:
+      backgroundColor: AppColors.onBoardingpagebackground,
       appBar: AppBar(
-        backgroundColor: AppColors.appBar,
+        backgroundColor: AppColors.onBoardingpagebackground,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.only(left: 16),
@@ -151,11 +158,11 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Colors.grey[300],
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
-              '3 of 10',
+              '4 of 10',
               style: TextStyle(
                 color: AppColors.pageCounter,
                 fontSize: 14,
@@ -175,15 +182,25 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
             child: Stack(
               alignment: Alignment.center,
               children: [
+                // Outer container with stroke effect
                 Container(
                   height: _itemExtent,
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 120,
-                    // vertical: 50,
-                  ),
+                  width: 200, // Fixed width to match design
                   decoration: BoxDecoration(
-                    color: AppColors.selectedBorder,
                     borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: AppColors.waterFull.withOpacity(0.3),
+                      width: 3,
+                    ),
+                  ),
+                ),
+                // Inner container (the blue background)
+                Container(
+                  height: _itemExtent - 6, // Account for the border
+                  width: 194, // Account for the border
+                  decoration: BoxDecoration(
+                    color: AppColors.waterFull,
+                    borderRadius: BorderRadius.circular(27),
                   ),
                 ),
                 AgeSelectionWheel(
@@ -192,7 +209,8 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
                   selectedAge: _selectedAge,
                   itemExtent: _itemExtent,
                   highlightColor: AppColors.selectedBorder,
-                  selectedTextColor: AppColors.buttonText,
+                  selectedTextColor:
+                      Colors.white, // Changed to white for better contrast
                   unselectedTextColor: AppColors.assessmentText,
                   farTextColor: Colors.grey.shade300,
                   maxFontSize: _maxFontSize,
@@ -207,7 +225,6 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
             child: ContinueButton(
               onPressed: () {
                 _saveAge().then((_) {
-                  // Removed: context.read<OnboardingProvider>().nextPage();
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (context) => const WeightSelectionScreen(),

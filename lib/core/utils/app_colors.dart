@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Text colors
-  static const Color textHeadline = Color(0xFF323062);
-  static const Color textSubtitle = Color(0xFFC2C1D0);
+  static const Color textHeadline = Color(0xFF313A34);
+  static const Color textSubtitle = Color(0xFF647067);
   static const Color assessmentText = Color(0xFF313A34);
   static const Color buttonText = Colors.white;
   static const Color pageCounter = Color(0xFF666666);
@@ -16,13 +16,14 @@ class AppColors {
 
   // UI element colors
   static const Color checkBoxCircle = Color(0xFFF8F8F6);
-  static const Color lightBlue = Color(0xFF7671FF);
+  static const Color lightBlue = Color(0xFF918DFE);
   static const Color darkBlue = Color(0xFF323062);
   static const Color chartBlue = Color(0xFF918DFE);
   static const Color chartBackground = Color(0xFFF2F6FF);
-  static const Color background = Colors.white;
-  static const Color appBar = Colors.white;
+  static const Color background = Color(0xFFF5F5F5);
+  static const Color appBar = Color(0xFFF5F5F5);
   static const Color boxIconBackground = Color(0xFFF5F5F5);
+  static const Color onBoardingpagebackground = Color(0xFFF5F5F5);
 
   // Button box colors
   static const Color box1 = Color(0xFFE9D9FF);
@@ -44,13 +45,4 @@ class AppColors {
 
   // Tab indicator color
   static const Color activeTabIndicator = Color(0xFF323062);
-
-  // Static methods to get colors with custom opacity
-  static Color getWaterFullWithOpacity(double opacity) {
-    return waterFull.withOpacity(opacity);
-  }
-
-  static Color getDarkBlueWithOpacity(double opacity) {
-    return darkBlue.withOpacity(opacity);
-  }
 }

@@ -64,7 +64,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
-              '2 of 10',
+              '3 of 10',
               style: TextStyle(
                 color: AppColors.pageCounter,
                 fontSize: 14,
