@@ -176,7 +176,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
 
   void _handleContinue() {
     _saveWeather().then((_) {
-      context.read<OnboardingProvider>().nextPage();
+      // context.read<OnboardingProvider>().nextPage();
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => const NotificationSetupScreen(),

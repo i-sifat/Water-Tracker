@@ -117,7 +117,7 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
 
   void _handleContinue() {
     _saveSelection().then((_) {
-      context.read<OnboardingProvider>().nextPage();
+      // Removed: context.read<OnboardingProvider>().nextPage();
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const WeatherSelectionScreen()),
       );

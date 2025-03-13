@@ -177,7 +177,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
             child: ContinueButton(
               onPressed: () {
                 _saveWeight().then((_) {
-                  context.read<OnboardingProvider>().nextPage();
+                  // context.read<OnboardingProvider>().nextPage();
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const FitnessLevelScreen(),

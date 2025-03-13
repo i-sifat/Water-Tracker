@@ -26,24 +26,24 @@ class CustomBottomNavigationBar extends StatelessWidget {
                 context: context,
                 index: 0,
                 selectedIconPath:
-                    'assets/navbaricons/waterdropicons-selected.svg',
+                    'assets/images/icons/navbar/waterdropicons-selected.svg',
                 unselectedIconPath:
-                    'assets/navbaricons/waterdropicons-unselect.svg',
+                    'assets/images/icons/navbar/waterdropicons-unselect.svg',
               ),
               _buildNavItem(
                 context: context,
                 index: 1,
                 selectedIconPath:
-                    'assets/navbaricons/circle-notch-selected.svg',
+                    'assets/images/icons/navbar/circle-notch-selected.svg',
                 unselectedIconPath:
-                    'assets/navbaricons/circle-notch-non-selected.svg',
+                    'assets/images/icons/navbar/circle-notch-non-selected.svg',
               ),
               _buildNavItem(
                 context: context,
                 index: 2,
-                selectedIconPath: 'assets/navbaricons/options-selected.svg',
+                selectedIconPath: 'assets/images/icons/navbar/options-selected.svg',
                 unselectedIconPath:
-                    'assets/navbaricons/options-nonselected.svg',
+                    'assets/images/icons/navbar/options-nonselected.svg',
               ),
             ],
           ),

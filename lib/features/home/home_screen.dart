@@ -61,7 +61,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       ),
                       child: IconButton(
                         icon: SvgPicture.asset(
-                          'assets/navbaricons/setting page top right icon.svg',
+                          'assets/images/icons/navbar/setting page top right icon.svg',
                           width: 30,
                           height: 30,
                           color: AppColors.darkBlue,

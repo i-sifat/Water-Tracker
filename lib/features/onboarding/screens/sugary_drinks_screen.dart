@@ -7,7 +7,6 @@ import 'package:watertracker/features/onboarding/screens/pregnancy_status_screen
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/core/widgets/selection_box.dart';
-import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 
 class SugaryBeveragesScreen extends StatefulWidget {
   const SugaryBeveragesScreen({Key? key}) : super(key: key);
@@ -23,28 +22,28 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     {
       'title': 'Almost never',
       'subtitle': 'Never / several times a month',
-      'icon': 'assets/onboarding_elements/select_your_goal_icons/Frame-1.svg',
+      'icon': 'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-1.svg',
       'value': 'almost_never',
       'iconBgColor': const Color(0xFFF2F2F2),
     },
     {
       'title': 'Rarely',
       'subtitle': 'Few times a week',
-      'icon': 'assets/onboarding_elements/select_your_goal_icons/Frame-2.svg',
+      'icon': 'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-2.svg',
       'value': 'rarely',
       'iconBgColor': const Color(0xFFE9D9FF),
     },
     {
       'title': 'Regularly',
       'subtitle': 'Every day',
-      'icon': 'assets/onboarding_elements/select_your_goal_icons/Frame-3.svg',
+      'icon': 'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-3.svg',
       'value': 'regularly',
       'iconBgColor': const Color(0xFFE4F0FF),
     },
     {
       'title': 'Often',
       'subtitle': 'Several per day',
-      'icon': 'assets/onboarding_elements/select_your_goal_icons/Frame-4.svg',
+      'icon': 'assets/images/icons/onboarding_elements/select_your_goal_icons/Frame-4.svg',
       'value': 'often',
       'iconBgColor': const Color(0xFFFFF8E5),
     },
@@ -81,10 +80,6 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
             decoration: BoxDecoration(
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              context.watch<OnboardingProvider>().pageCounter,
-              style: AppTypography.subtitle,
             ),
           ),
         ],
@@ -150,13 +145,14 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
               ),
             ),
             const SizedBox(height: 24),
+            // In the ContinueButton's onPressed callback
             ContinueButton(
               onPressed:
                   _selectedFrequency.isNotEmpty
                       ? () async {
                         await _saveFrequency();
                         if (mounted) {
-                          context.read<OnboardingProvider>().nextPage();
+                          // Removed: context.read<OnboardingProvider>().nextPage();
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => const PregnancyScreen(),

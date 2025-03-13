@@ -209,7 +209,7 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
             child: ContinueButton(
               onPressed: () {
                 _saveAge().then((_) {
-                  context.read<OnboardingProvider>().nextPage();
+                  // Removed: context.read<OnboardingProvider>().nextPage();
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const WeightSelectionScreen(),

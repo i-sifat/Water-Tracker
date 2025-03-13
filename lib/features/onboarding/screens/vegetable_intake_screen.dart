@@ -5,7 +5,6 @@ import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/core/widgets/selection_box.dart';
-import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/sugary_drinks_screen.dart';
 
 class VegetablesFruitsScreen extends StatefulWidget {
@@ -107,7 +106,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                       ? () async {
                         await _saveFrequency();
                         if (mounted) {
-                          context.read<OnboardingProvider>().nextPage();
+                          // context.read<OnboardingProvider>().nextPage();
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder:

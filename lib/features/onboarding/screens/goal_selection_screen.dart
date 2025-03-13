@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/continue_button.dart';
-import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/gender_selection_screen.dart';
 
 class GoalSelectionScreen extends StatefulWidget {
@@ -57,6 +56,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
     },
   ];
 
+  // In the _handleContinue method
   void _handleContinue() async {
     if (_isSaving || _selectedGoals.isEmpty) return;
 
@@ -77,8 +77,6 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
 
       // Navigate to the next screen
       if (!mounted) return;
-
-      context.read<OnboardingProvider>().nextPage();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const GenderSelectionScreen()),
       );
@@ -126,10 +124,6 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
             decoration: BoxDecoration(
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              context.watch<OnboardingProvider>().pageCounter,
-              style: AppTypography.subtitle,
             ),
           ),
         ],
