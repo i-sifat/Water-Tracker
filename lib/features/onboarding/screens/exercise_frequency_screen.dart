@@ -8,14 +8,14 @@ import 'package:watertracker/core/widgets/continue_button.dart';
 import 'package:watertracker/features/onboarding/screens/vegetable_intake_screen.dart';
 
 class FitnessLevelScreen extends StatefulWidget {
-  const FitnessLevelScreen({Key? key}) : super(key: key);
+  const FitnessLevelScreen({super.key});
 
   @override
   State<FitnessLevelScreen> createState() => _FitnessLevelScreenState();
 }
 
 class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
-  int _selectedLevel = 0;
+  int _selectedLevel = 0; // 0: Frequent, 1: Medium, 2: 2-3x Weekly
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,6 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                 ),
                 const SizedBox(height: 100),
 
-                // Fitness equipment illustration
                 SizedBox(
                   height: 300,
                   width: double.infinity,
@@ -93,10 +92,8 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
 
                 const Spacer(),
 
-                // Custom slider with tick marks
                 Stack(
                   children: [
-                    // Background track with tick marks
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Container(
@@ -119,7 +116,6 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                       ),
                     ),
 
-                    // Slider thumb that overlaps the track
                     Positioned(
                       top: -8,
                       left:
@@ -171,7 +167,6 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
 
                 const SizedBox(height: 16),
 
-                // Labels below slider
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Row(
@@ -238,7 +233,6 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
             ),
           ),
 
-          // Continue button
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
             child: ContinueButton(
@@ -258,16 +252,11 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
     );
   }
 
-  void _handleContinue() {
-    _saveFitnessLevel().then((_) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const VegetablesFruitsScreen()),
-      );
-    });
-  }
-
   Future<void> _saveFitnessLevel() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('fitness_level', _selectedLevel);
+    // Save as 2 for Frequent, 1 for Medium, 0 for 2-3x Weekly
+    // This matches the calculator's expected values
+    final levelValue = 2 - _selectedLevel;
+    await prefs.setInt('fitness_level', levelValue);
   }
 }
