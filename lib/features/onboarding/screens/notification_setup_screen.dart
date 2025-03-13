@@ -35,18 +35,21 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
       title: 'Smart Assistant',
       subtitle: 'Get personalized recommendations',
       iconPath: 'assets/images/icons/onboarding_elements/smart_assistant.svg',
-      isEnabled: true,
+      isEnabled: false,
     ),
   };
 
   @override
   void initState() {
     super.initState();
-    _initializeNotifications();
+    _initializeNotificationService();
   }
 
-  Future<void> _initializeNotifications() async {
+  Future<void> _initializeNotificationService() async {
     await _notificationService.initialize();
+  }
+
+  Future<void> _requestNotificationPermission() async {
     final permissionGranted = await _notificationService.requestPermissions();
     setState(() {
       _isNotificationPermissionGranted = permissionGranted;
@@ -72,12 +75,14 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
     }
   }
 
-  void _handleContinue() {
-    _saveNotificationPreferences().then((_) {
+  void _handleContinue() async {
+    await _requestNotificationPermission();
+    await _saveNotificationPreferences();
+    if (mounted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const CompileDataScreen()),
       );
-    });
+    }
   }
 
   @override

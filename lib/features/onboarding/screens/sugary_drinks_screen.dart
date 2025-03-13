@@ -21,30 +21,23 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     {
       'title': 'Almost never',
       'subtitle': 'Never / several times a month',
-      'iconPath': 'assets/images/icons/onboarding_elements/never_drink.svg',
+      'icon': '🚫',
       'value': 'almost_never',
       'iconBgColor': const Color(0xFFF2F2F2),
     },
     {
       'title': 'Rarely',
       'subtitle': 'Few times a week',
-      'iconPath': 'assets/images/icons/onboarding_elements/rarely_drink.svg',
+      'icon': '🥤',
       'value': 'rarely',
-      'iconBgColor': const Color(0xFFE9D9FF),
+      'iconBgColor': const Color(0xFFF2F2F2),
     },
     {
       'title': 'Regularly',
       'subtitle': 'Every day',
-      'iconPath': 'assets/images/icons/onboarding_elements/regular_drink.svg',
+      'icon': '🧃',
       'value': 'regularly',
-      'iconBgColor': const Color(0xFFE4F0FF),
-    },
-    {
-      'title': 'Often',
-      'subtitle': 'Several per day',
-      'iconPath': 'assets/images/icons/onboarding_elements/often_drink.svg',
-      'value': 'often',
-      'iconBgColor': const Color(0xFFFFF8E5),
+      'iconBgColor': const Color(0xFFF2F2F2),
     },
   ];
 
@@ -126,16 +119,9 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
-                        child: SvgPicture.asset(
-                          frequency['iconPath'] as String,
-                          width: 24,
-                          height: 24,
-                          colorFilter: ColorFilter.mode(
-                            _selectedFrequency == frequency['value']
-                                ? AppColors.selectedBorder
-                                : AppColors.unselectedBorder,
-                            BlendMode.srcIn,
-                          ),
+                        child: Text(
+                          frequency['icon'] as String,
+                          style: const TextStyle(fontSize: 24),
                         ),
                       ),
                     ),

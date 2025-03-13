@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/primary_button.dart';
 import 'package:watertracker/features/history/history_screen.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 
@@ -14,7 +17,6 @@ class GoalCompletionScreen extends StatefulWidget {
 class _GoalCompletionScreenState extends State<GoalCompletionScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  bool _showCheck = false;
 
   @override
   void initState() {
@@ -24,20 +26,10 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
       duration: const Duration(milliseconds: 1500),
     );
 
-    // Start showing the check mark after a small delay
+    // Start animation after a small delay
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
-        setState(() {
-          _showCheck = true;
-        });
         _animationController.forward();
-      }
-    });
-
-    // Listen for animation completion to enable tap
-    _animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        setState(() {});
       }
     });
   }
@@ -46,14 +38,6 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
   void dispose() {
     _animationController.dispose();
     super.dispose();
-  }
-
-  void _navigateToHistory() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const HistoryScreenContent(selectedWeekIndex: 0),
-      ),
-    );
   }
 
   @override
@@ -80,114 +64,43 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
             const SizedBox(height: 40),
 
             // Animated check icon
-            GestureDetector(
-              onTap:
-                  _animationController.isCompleted ? _navigateToHistory : null,
-              child: AnimatedOpacity(
-                opacity: _showCheck ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 500),
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: const BoxDecoration(
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 160,
+                  height: 160,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF2F2F2),
                     shape: BoxShape.circle,
-                    color: AppColors.darkBlue,
-                  ),
-                  child: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      return Center(
-                        child: Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: 40 * _animationController.value,
-                        ),
-                      );
-                    },
+                    border: Border.all(
+                      color: const Color(0xFF7FB364),
+                      width: 3,
+                    ),
                   ),
                 ),
-              ),
-            ),
-            const Spacer(flex: 3),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Alternative implementation with Lottie animation
-class GoalCompletionScreenWithLottie extends StatefulWidget {
-  const GoalCompletionScreenWithLottie({super.key});
-
-  @override
-  State<GoalCompletionScreenWithLottie> createState() =>
-      _GoalCompletionScreenWithLottieState();
-}
-
-class _GoalCompletionScreenWithLottieState
-    extends State<GoalCompletionScreenWithLottie> {
-  bool _animationCompleted = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Spacer(flex: 2),
-            // Celebration text
-            const Text(
-              "You've reached\nour goal!",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 32,
-                fontWeight: FontWeight.w600,
-                color: AppColors.darkBlue,
-                height: 1.2,
-              ),
+                const Icon(
+                  Icons.check_circle,
+                  size: 100,
+                  color: Color(0xFF7FB364),
+                ),
+              ],
             ),
             const SizedBox(height: 40),
 
-            // Lottie animation for check icon
-            GestureDetector(
-              onTap:
-                  _animationCompleted
-                      ? () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute<void>(
-                            builder: (context) => const HomeScreen(),
-                          ),
-                        );
-                      }
-                      : null,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.darkBlue,
-                ),
-                child: Lottie.asset(
-                  'assets/animations/check_animation.json', // Add this Lottie file to your assets
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.contain,
-                  onLoaded: (composition) {
-                    // Mark as complete after animation runs
-                    Future.delayed(composition.duration, () {
-                      if (mounted) {
-                        setState(() {
-                          _animationCompleted = true;
-                        });
-                      }
-                    });
-                  },
-                ),
-              ),
+            // Continue button
+            PrimaryButton(
+              text: 'Continue',
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<void>(
+                    builder:
+                        (BuildContext context) =>
+                            const HistoryScreenContent(selectedWeekIndex: 0),
+                  ),
+                );
+              },
+              width: 200,
             ),
             const Spacer(flex: 3),
           ],

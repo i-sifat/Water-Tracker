@@ -22,19 +22,19 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
     {
       'icon': '💧',
       'text': 'Drink More Water',
-      'backgroundColor': const Color(0xFFE8FAE0),
+      'backgroundColor': const Color(0xFFF2F2F2),
       'iconColor': const Color(0xFF7FB364),
     },
     {
       'icon': '🌿',
       'text': 'Improve digestions',
-      'backgroundColor': const Color(0xFFE4F0FF),
+      'backgroundColor': const Color(0xFFF2F2F2),
       'iconColor': const Color(0xFF4B7FD6),
     },
     {
       'icon': '💪',
       'text': 'Lead a Healty Lifestyle',
-      'backgroundColor': const Color(0xFFE9D9FF),
+      'backgroundColor': const Color(0xFFF2F2F2),
       'iconColor': const Color(0xFF7D4FB2),
     },
     {
@@ -46,7 +46,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
     {
       'icon': '🎯',
       'text': 'Just trying out the app, mate!',
-      'backgroundColor': const Color(0xFFFFF8E5),
+      'backgroundColor': const Color(0xFFF2F2F2),
       'iconColor': const Color(0xFFE3B622),
     },
   ];
@@ -175,14 +175,9 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(
-                              child: SvgPicture.asset(
+                              child: Text(
                                 goal['icon'] as String,
-                                width: 24,
-                                height: 24,
-                                colorFilter: ColorFilter.mode(
-                                  goal['iconColor'] as Color,
-                                  BlendMode.srcIn,
-                                ),
+                                style: const TextStyle(fontSize: 24),
                               ),
                             ),
                           ),

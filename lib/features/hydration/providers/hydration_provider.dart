@@ -26,6 +26,8 @@ class HydrationProvider extends ChangeNotifier {
   bool get goalReachedToday => _goalReachedToday;
   bool get isInitialized => _isInitialized;
 
+  get hasReachedDailyGoal => null;
+
   // Load data from SharedPreferences
   Future<void> loadData() async {
     if (_isInitialized) return; // Prevent multiple initializations

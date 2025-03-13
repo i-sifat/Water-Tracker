@@ -78,12 +78,19 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   }
 
   Widget _buildAverageCard(double averageIntake, List<double> weeklyData) {
+    final hydrationProvider = Provider.of<HydrationProvider>(context);
+    final hasReachedGoal = hydrationProvider.hasReachedDailyGoal;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.chartBackground,
         borderRadius: BorderRadius.circular(20),
+        border:
+            hasReachedGoal == true
+                ? Border.all(color: const Color(0xFF7FB364), width: 2)
+                : null,
       ),
       child: Column(
         children: [
@@ -303,16 +310,16 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
               height: 50,
               decoration: BoxDecoration(
                 color:
-                    isSelected
+                    isSelected == true
                         ? AppColors.selectedWeekBackground
                         : AppColors.unselectedWeekBackground,
                 borderRadius: BorderRadius.circular(30),
                 border:
-                    !isSelected
+                    isSelected == false
                         ? Border.all(color: Colors.grey.shade200)
                         : null,
                 boxShadow:
-                    isSelected
+                    isSelected == true
                         ? [
                           BoxShadow(
                             color: Colors.grey.withAlpha(50),
