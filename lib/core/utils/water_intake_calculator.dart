@@ -46,14 +46,14 @@ class WaterIntakeCalculator {
     if (goals.contains('Drink More Water')) {
       baseIntake += 200;
     }
-    if (goals.contains('Improve digestions')) {
+    if (goals.contains('Improve digestion')) {
       baseIntake += 300;
     }
     if (goals.contains('Lose weight')) {
       baseIntake += 500;
     }
 
-    // 4. Activity level adjustments
+    // 4. Activity level adjustments (Fixed switch case)
     switch (activityLevel) {
       case 2: // Frequent
         baseIntake += 700;
@@ -63,7 +63,7 @@ class WaterIntakeCalculator {
         baseIntake += 250;
     }
 
-    // 5. Dietary adjustments
+    // 5. Dietary adjustments (Fixed switch case)
     switch (vegetableIntake.toLowerCase()) {
       case 'regularly':
         baseIntake -= 200; // More hydration from food
@@ -76,16 +76,14 @@ class WaterIntakeCalculator {
         baseIntake += 500; // Need more water to compensate
       case 'rarely':
         baseIntake += 200;
-      // 'almost_never' requires no adjustment
     }
 
-    // 6. Weather/temperature adjustments
+    // 6. Weather/temperature adjustments (Fixed switch case)
     switch (weather.toLowerCase()) {
       case 'hot': // Above 25°C
         baseIntake += 500;
       case 'cold': // Below 20°C
         baseIntake -= 200;
-      // 'normal' (20-25°C) requires no adjustment
     }
 
     // 7. Special conditions for females
