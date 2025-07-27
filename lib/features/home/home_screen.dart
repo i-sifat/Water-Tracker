@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/animations/water_animation.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
-import 'package:watertracker/core/widgets/water_animation.dart';
 import 'package:watertracker/features/history/history_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
@@ -61,7 +60,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           'assets/images/icons/navbar/setting page top right icon.svg',
                           width: 30,
                           height: 30,
-                          color: AppColors.darkBlue,
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.darkBlue,
+                            BlendMode.srcIn,
+                          ),
                         ),
                         onPressed: hydrationProvider.resetIntake,
                       ),
@@ -73,10 +75,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
 
               Text(
                 '${hydrationProvider.currentIntake} ml',
-                style: const TextStyle(
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   fontSize: 58,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textHeadline,
                   height: 1,
                 ),
               ),
@@ -85,11 +86,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               // Fixed remaining text visibility
               Text(
                 'Remaining: ${hydrationProvider.remainingIntake} ml',
-                style: const TextStyle(
-                  fontSize: 16,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: AppColors.textSubtitle,
-                  fontWeight:
-                      FontWeight.w500, // Added weight for better visibility
+                  fontWeight: FontWeight.w500,
                 ),
               ),
 
@@ -118,7 +117,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                 0.6,
             child: Text(
               '${(hydrationProvider.intakePercentage * 100).toInt()}%',
-              style: const TextStyle(
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontSize: 32,
                 fontWeight: FontWeight.w500,
                 color: AppColors.darkBlue,
@@ -139,10 +138,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final hydrationProvider = Provider.of<HydrationProvider>(context);
 
-    return WillPopScope(
-      onWillPop: () async {
-        await SystemNavigator.pop();
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          await SystemNavigator.pop();
+        }
       },
       child: Scaffold(
         body: Stack(

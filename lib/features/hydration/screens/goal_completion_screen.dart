@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/history/history_screen.dart';
 
 class GoalCompletionScreen extends StatefulWidget {

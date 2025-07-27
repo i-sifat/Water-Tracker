@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
-import 'package:watertracker/core/widgets/large_selection_box.dart';
-import 'package:watertracker/core/widgets/prefer_not_to_answer_button.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
+import 'package:watertracker/core/widgets/buttons/prefer_not_to_answer_button.dart';
+import 'package:watertracker/core/widgets/cards/large_selection_box.dart';
 import 'package:watertracker/features/onboarding/screens/weather_preference_screen.dart';
 
 class PregnancyScreen extends StatefulWidget {
@@ -115,13 +114,13 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
     );
   }
 
-  void _handleContinue() {
-    _saveSelection().then((_) {
-      // Removed: context.read<OnboardingProvider>().nextPage();
+  Future<void> _handleContinue() async {
+    await _saveSelection();
+    if (mounted) {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const WeatherSelectionScreen()),
       );
-    });
+    }
   }
 
   void _handlePreferNotToAnswer() {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/onboarding/screens/notification_setup_screen.dart';
 
 class WeatherSelectionScreen extends StatefulWidget {
@@ -14,10 +14,10 @@ class WeatherSelectionScreen extends StatefulWidget {
 }
 
 class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
-  String? _selectedWeather;
+  String? _selectedWeather = 'normal'; // Initialize with middle option
   final PageController _pageController = PageController(
-    viewportFraction: 0.7,
-    initialPage: 1,
+    viewportFraction: 0.7, // Increased to show more of main card while keeping hints of adjacent cards
+    initialPage: 1, // Start with middle card (Normal weather)
   );
 
   final List<Map<String, dynamic>> _weatherOptions = [
@@ -108,12 +108,12 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
 
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 8), // Reduced margin for better spacing
                     decoration: BoxDecoration(
                       color:
                           isSelected
                               ? AppColors.selectedBorder
-                              : AppColors.boxIconBackground,
+                              : AppColors.weatherUnselectedCard,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Column(
@@ -174,16 +174,15 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
     super.dispose();
   }
 
-  void _handleContinue() {
-    _saveWeather().then((_) async {
-      // context.read<OnboardingProvider>().nextPage();
-      if (!mounted) return;
+  Future<void> _handleContinue() async {
+    await _saveWeather();
+    if (mounted) {
       await Navigator.of(context).push(
-        MaterialPageRoute<void>(
+        MaterialPageRoute(
           builder: (context) => const NotificationSetupScreen(),
         ),
       );
-    });
+    }
   }
 
   Future<void> _saveWeather() async {

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class WaterAnimation extends StatefulWidget {
   const WaterAnimation({
@@ -22,11 +23,16 @@ class WaterAnimation extends StatefulWidget {
 }
 
 class _WaterAnimationState extends State<WaterAnimation>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _progressController;
+  late Animation<double> _progressAnimation;
   List<Bubble> bubbles = [];
   final Random random = Random();
   Timer? _bubbleTimer;
+  Ticker? _bubbleTicker;
+  double _lastProgress = 0;
+  int _frameCount = 0;
 
   @override
   void initState() {
@@ -36,18 +42,42 @@ class _WaterAnimationState extends State<WaterAnimation>
       duration: const Duration(seconds: 4),
     )..repeat();
 
-    // Initialize bubbles
+    _progressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _progressAnimation = Tween<double>(
+      begin: 0,
+      end: widget.progress,
+    ).animate(CurvedAnimation(
+      parent: _progressController,
+      curve: Curves.easeInOutCubic,
+    ));
+
+    _lastProgress = widget.progress;
+    _progressController.forward();
+
+    // Initialize bubbles with better performance
     _generateBubbles();
 
-    // Set up timer to continuously generate new bubbles
-    _bubbleTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      if (mounted) {
-        setState(() {
-          // Add 1-3 new bubbles every half second
-          _addNewBubbles(1 + random.nextInt(2));
-        });
-      }
-    });
+    // Use Ticker for better performance instead of Timer
+    _bubbleTicker = createTicker(_updateBubbles);
+    _bubbleTicker?.start();
+  }
+
+  void _updateBubbles(Duration elapsed) {
+    if (!mounted) return;
+    
+    _frameCount++;
+    
+    // Only add new bubbles every 30 frames (approximately 0.5 seconds at 60fps)
+    if (_frameCount % 30 == 0 && widget.progress > 0.1) {
+      _addNewBubbles(1 + random.nextInt(2));
+    }
+    
+    // Update bubble positions more efficiently
+    _updateBubblePositions();
   }
 
   void _generateBubbles() {
@@ -92,25 +122,44 @@ class _WaterAnimationState extends State<WaterAnimation>
   }
 
   @override
+  void didUpdateWidget(WaterAnimation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // Animate progress changes smoothly
+    if (oldWidget.progress != widget.progress) {
+      _progressAnimation = Tween<double>(
+        begin: _lastProgress,
+        end: widget.progress,
+      ).animate(CurvedAnimation(
+        parent: _progressController,
+        curve: Curves.easeInOutCubic,
+      ));
+      
+      _lastProgress = widget.progress;
+      _progressController.reset();
+      _progressController.forward();
+    }
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
+    _progressController.dispose();
     _bubbleTimer?.cancel();
+    _bubbleTicker?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: Listenable.merge([_controller, _progressAnimation]),
       builder: (context, child) {
-        // Update bubble positions
-        _updateBubblePositions();
-
         return ClipRect(
           child: CustomPaint(
             size: Size(widget.width, widget.height),
             painter: WaterLevelPainter(
-              progress: widget.progress,
+              progress: _progressAnimation.value,
               waterColor: widget.waterColor.withAlpha(179), // Semi-transparent
               backgroundColor: widget.backgroundColor.withAlpha(150),
               animationValue: _controller.value,

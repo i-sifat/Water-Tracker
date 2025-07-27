@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/services/notification_service.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/onboarding/screens/data_summary_screen.dart';
 
 class NotificationSetupScreen extends StatefulWidget {
@@ -63,7 +63,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
     }
 
     if (_isNotificationPermissionGranted &&
-        _notifications['water_reminder']?.isEnabled == true) {
+        (_notifications['water_reminder']?.isEnabled ?? false)) {
       try {
         await _notificationService.scheduleWaterReminder();
       } catch (e) {
@@ -75,15 +75,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
     }
   }
 
-  void _handleContinue() async {
-    await _requestNotificationPermission();
-    await _saveNotificationPreferences();
-    if (mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const CompileDataScreen()),
-      );
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {

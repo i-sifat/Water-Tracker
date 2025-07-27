@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/core/providers/theme_provider.dart';
+import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/onboarding/screens/welcome_screen.dart';
+import 'package:watertracker/features/premium/providers/premium_provider.dart';
+import 'package:watertracker/features/premium/screens/donation_info_screen.dart';
+import 'package:watertracker/features/premium/screens/donation_proof_screen.dart';
+import 'package:watertracker/features/premium/screens/premium_success_screen.dart';
+import 'package:watertracker/features/premium/screens/unlock_code_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,31 +23,27 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => HydrationProvider())],
-      child: MaterialApp(
-        title: 'Water Tracker',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          fontFamily: 'Nunito',
-          textTheme: const TextTheme(
-            displayLarge: TextStyle(fontFamily: 'Nunito'),
-            displayMedium: TextStyle(fontFamily: 'Nunito'),
-            displaySmall: TextStyle(fontFamily: 'Nunito'),
-            headlineLarge: TextStyle(fontFamily: 'Nunito'),
-            headlineMedium: TextStyle(fontFamily: 'Nunito'),
-            headlineSmall: TextStyle(fontFamily: 'Nunito'),
-            titleLarge: TextStyle(fontFamily: 'Nunito'),
-            titleMedium: TextStyle(fontFamily: 'Nunito'),
-            titleSmall: TextStyle(fontFamily: 'Nunito'),
-            bodyLarge: TextStyle(fontFamily: 'Nunito'),
-            bodyMedium: TextStyle(fontFamily: 'Nunito'),
-            bodySmall: TextStyle(fontFamily: 'Nunito'),
-            labelLarge: TextStyle(fontFamily: 'Nunito'),
-            labelMedium: TextStyle(fontFamily: 'Nunito'),
-            labelSmall: TextStyle(fontFamily: 'Nunito'),
-          ),
-        ),
-        home: const InitialScreen(),
+      providers: [
+        ChangeNotifierProvider(create: (_) => HydrationProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()..initialize()),
+        ChangeNotifierProvider(create: (_) => PremiumProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'Water Tracker',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            home: const InitialScreen(),
+            routes: {
+              DonationInfoScreen.routeName: (context) => const DonationInfoScreen(),
+              DonationProofScreen.routeName: (context) => const DonationProofScreen(),
+              UnlockCodeScreen.routeName: (context) => const UnlockCodeScreen(),
+              PremiumSuccessScreen.routeName: (context) => const PremiumSuccessScreen(),
+            },
+          );
+        },
       ),
     );
   }

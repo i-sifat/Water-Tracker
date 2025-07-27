@@ -128,7 +128,7 @@ class _CompileDataScreenState extends State<CompileDataScreen>
       final screenHeight = MediaQuery.of(context).size.height;
 
       setState(() {
-        for (int i = 0; i < 8; i++) {
+        for (var i = 0; i < 8; i++) {
           _bubblePositions.add(
             Offset(
               _random.nextDouble() * screenWidth,
@@ -155,7 +155,7 @@ class _CompileDataScreenState extends State<CompileDataScreen>
 
       // Navigate to home screen
       await Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute<void>(builder: (context) => const HomeScreen()),
       );
     });
   }

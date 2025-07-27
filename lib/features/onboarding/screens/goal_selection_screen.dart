@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
-import 'package:watertracker/features/onboarding/screens/gender_selection_screen.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
+import 'package:watertracker/features/onboarding/screens/age_selection_screen.dart';
 
 class GoalSelectionScreen extends StatefulWidget {
   const GoalSelectionScreen({super.key});
@@ -71,8 +71,8 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
       // Navigate to the next screen
       if (!mounted) return;
       await Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(
-          builder: (context) => const GenderSelectionScreen(),
+        MaterialPageRoute(
+          builder: (context) => const AgeSelectionScreen(),
         ),
       );
     } catch (e) {

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/constants/typography.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
 
 class ContinueButton extends StatelessWidget {
   const ContinueButton({
@@ -16,20 +14,20 @@ class ContinueButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: isDisabled ? null : onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.waterFull,
-        foregroundColor: AppColors.buttonText,
-        disabledBackgroundColor: Colors.grey[300],
-        disabledForegroundColor: Colors.grey[500],
-        elevation: 0,
         minimumSize: const Size(double.infinity, 56),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Continue', style: AppTypography.buttonText),
-          SizedBox(width: 8),
-          Icon(Icons.arrow_forward, color: AppColors.buttonText, size: 20),
+          Text(
+            'Continue',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
         ],
       ),
     );

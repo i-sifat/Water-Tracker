@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
-import 'package:watertracker/core/widgets/selection_box.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
+import 'package:watertracker/core/widgets/cards/selection_box.dart';
 import 'package:watertracker/features/onboarding/screens/pregnancy_status_screen.dart';
 
 class SugaryBeveragesScreen extends StatefulWidget {

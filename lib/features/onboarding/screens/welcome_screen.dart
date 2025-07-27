@@ -2,9 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/onboarding/screens/goal_selection_screen.dart';
@@ -15,7 +14,6 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.onBoardingpagebackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -35,17 +33,19 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 30),
 
               // Welcome Text
-              const Text(
+              Text(
                 'Welcome to the\nHydration Tracker App',
                 textAlign: TextAlign.center,
-                style: AppTypography.welcomeHeadline,
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  height: 1.4,
+                ),
               ),
               const SizedBox(height: 12),
 
               // Subtitle
               Text(
                 'Your intelligent hydration solutions.',
-                style: AppTypography.subtitle.copyWith(
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: AppColors.textSubtitle,
                 ),
               ),
@@ -90,14 +90,11 @@ class WelcomeScreen extends StatelessWidget {
                   );
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: AppColors.textSubtitle,
+                  foregroundColor: AppColors.waterFull,
                 ),
-                child: const Text(
+                child: Text(
                   'skip?',
-                  style: TextStyle(
-                    fontSize: 16,
-
-                    fontFamily: 'Nunito',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: AppColors.waterFull,
                   ),
                 ),

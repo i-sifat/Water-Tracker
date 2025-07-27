@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/onboarding/screens/weight_selection_screen.dart';
 
 class AgeSelectionScreen extends StatefulWidget {
@@ -40,7 +40,7 @@ class AgeSelectionWheel extends StatelessWidget {
   final double maxFontSize;
   final double minFontSize;
 
-  final Function(int) onSelectedItemChanged;
+  final void Function(int) onSelectedItemChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +83,9 @@ class AgeSelectionWheel extends StatelessWidget {
                 distanceFromCenter == 0
                     ? selectedTextColor
                     : distanceFromCenter == 1
-                    ? unselectedTextColor.withOpacity(0.9)
+                    ? unselectedTextColor.withValues(alpha: 0.9)
                     : distanceFromCenter == 2
-                    ? unselectedTextColor.withOpacity(0.5)
+                    ? unselectedTextColor.withValues(alpha: 0.5)
                     : farTextColor;
 
             // Make items beyond visible range nearly invisible
@@ -189,7 +189,7 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(
-                      color: AppColors.waterFull.withOpacity(0.3),
+                      color: AppColors.waterFull.withValues(alpha: 0.3),
                       width: 9,
                     ),
                   ),
@@ -223,14 +223,15 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
             child: ContinueButton(
-              onPressed: () {
-                _saveAge().then((_) {
+              onPressed: () async {
+                await _saveAge();
+                if (mounted) {
                   Navigator.of(context).push(
-                    MaterialPageRoute<void>(
+                    MaterialPageRoute(
                       builder: (context) => const WeightSelectionScreen(),
                     ),
                   );
-                });
+                }
               },
             ),
           ),

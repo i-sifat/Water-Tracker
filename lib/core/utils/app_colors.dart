@@ -35,6 +35,7 @@ class AppColors {
   static const Color selectedWeekBackground = Color(0xFF323062);
   static const Color unselectedWeekBackground = Colors.white;
   static const Color selectedBorder = Color(0xFF7671FF);
+  static const Color weatherUnselectedCard = Color.fromARGB(255, 204, 203, 250);
   static const Color selectedShade = Color(0x1A7671FF);
   static const Color unselectedBorder = Color(0xFFE8E8E8);
 

@@ -9,7 +9,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     this.backgroundColor,
   });
   final int selectedIndex;
-  final Function(int) onItemTapped;
+  final void Function(int) onItemTapped;
   final Color? backgroundColor;
 
   @override
@@ -76,8 +76,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
           isSelected ? selectedIconPath : unselectedIconPath,
           width: 24,
           height: 24,
-          color:
-              isSelected ? Colors.white : const Color(0xFF323062).withAlpha(77),
+          colorFilter: ColorFilter.mode(
+            isSelected ? Colors.white : const Color(0xFF323062).withAlpha(77),
+            BlendMode.srcIn,
+          ),
         ),
       ),
     );

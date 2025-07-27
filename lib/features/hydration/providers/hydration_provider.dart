@@ -1,163 +1,669 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/core/utils/water_intake_calculator.dart';
+import 'package:watertracker/core/models/app_error.dart';
+import 'package:watertracker/core/models/hydration_data.dart';
+import 'package:watertracker/core/services/storage_service.dart';
 import 'package:watertracker/features/hydration/screens/goal_completion_screen.dart';
+
+// Helper function for unawaited futures
+void unawaited(Future<void> future) {
+  // Intentionally ignore the future
+}
 
 enum AvatarOption { male, female }
 
+/// Enhanced hydration provider with comprehensive tracking and analytics
 class HydrationProvider extends ChangeNotifier {
-  // Initialize provider
-  HydrationProvider() {
-    loadData();
+  HydrationProvider({dynamic storageService}) 
+      : _storageService = storageService ?? StorageService() {
+    _initialize();
   }
+
+  final dynamic _storageService;
+  
+  // Current state
   int _currentIntake = 0;
-  int _dailyGoal = 2000; // Default goal (will be updated by calculator)
+  int _dailyGoal = 2000;
   AvatarOption _selectedAvatar = AvatarOption.male;
   bool _goalReachedToday = false;
   DateTime? _lastUpdated;
   bool _isInitialized = false;
+  bool _isLoading = false;
+  bool _isSyncing = false;
+  
+  // Historical data
+  List<HydrationData> _hydrationHistory = [];
+  final Map<DateTime, List<HydrationData>> _dailyDataCache = {};
+  
+  // Streak tracking
+  int _currentStreak = 0;
+  int _longestStreak = 0;
+  DateTime? _lastGoalAchievedDate;
+  
+  // Error handling
+  AppError? _lastError;
 
-  // Getters
+  // Getters - Current state
   int get currentIntake => _currentIntake;
   int get dailyGoal => _dailyGoal;
-  int get remainingIntake => _dailyGoal - _currentIntake;
+  int get remainingIntake => (_dailyGoal - _currentIntake).clamp(0, _dailyGoal);
   double get intakePercentage => (_currentIntake / _dailyGoal).clamp(0.0, 1.0);
   AvatarOption get selectedAvatar => _selectedAvatar;
   bool get goalReachedToday => _goalReachedToday;
   bool get isInitialized => _isInitialized;
   bool get hasReachedDailyGoal => _currentIntake >= _dailyGoal;
+  bool get isLoading => _isLoading;
+  bool get isSyncing => _isSyncing;
+  AppError? get lastError => _lastError;
 
-  // Load data from SharedPreferences
-  Future<void> loadData() async {
-    if (_isInitialized) return; // Prevent multiple initializations
+  // Getters - Historical data
+  List<HydrationData> get hydrationHistory => List.unmodifiable(_hydrationHistory);
+  List<HydrationData> get todaysEntries => getEntriesForDate(DateTime.now());
+  int get currentStreak => _currentStreak;
+  int get longestStreak => _longestStreak;
+  DateTime? get lastGoalAchievedDate => _lastGoalAchievedDate;
 
-    final prefs = await SharedPreferences.getInstance();
-
-    // Calculate daily goal first
-    _dailyGoal = await calculateDailyGoal();
-
-    // Then load other data
-    _currentIntake = prefs.getInt('currentIntake') ?? 0;
-    _selectedAvatar =
-        prefs.getString('avatar') == 'female'
-            ? AvatarOption.female
-            : AvatarOption.male;
-    _goalReachedToday = prefs.getBool('goalReachedToday') ?? false;
-
-    final lastUpdatedMillis = prefs.getInt('lastUpdated');
-    _lastUpdated =
-        lastUpdatedMillis != null
-            ? DateTime.fromMillisecondsSinceEpoch(lastUpdatedMillis)
-            : null;
-
-    // Reset goal status if it's a new day
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    if (_lastUpdated == null || _lastUpdated!.isBefore(today)) {
-      _goalReachedToday = false;
-      _currentIntake = 0; // Reset intake for the new day
-      await _saveData(); // Save the reset values
+  /// Initialize the provider
+  Future<void> _initialize() async {
+    if (_isInitialized) return;
+    
+    _isLoading = true;
+    notifyListeners();
+    
+    try {
+      await _loadData();
+      await _loadHistoricalData();
+      _calculateStreaks();
+      _updateCurrentDayData();
+      _isInitialized = true;
+      _lastError = null;
+    } catch (e, stackTrace) {
+      _lastError = StorageError.readFailed(e.toString());
+      debugPrint('Failed to initialize HydrationProvider: $e');
+      debugPrint('Stack trace: $stackTrace');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
+  }
 
-    _isInitialized = true;
+  /// Load basic data from storage
+  Future<void> _loadData() async {
+    try {
+      // Load current state
+      final currentIntakeValue = await _storageService.getInt('currentIntake');
+      _currentIntake = (currentIntakeValue as int?) ?? 0;
+      
+      final dailyGoalValue = await _storageService.getInt('dailyGoal');
+      _dailyGoal = (dailyGoalValue as int?) ?? 2000;
+      
+      final goalReachedValue = await _storageService.getBool('goalReachedToday');
+      _goalReachedToday = (goalReachedValue as bool?) ?? false;
+      
+      final currentStreakValue = await _storageService.getInt('currentStreak');
+      _currentStreak = (currentStreakValue as int?) ?? 0;
+      
+      final longestStreakValue = await _storageService.getInt('longestStreak');
+      _longestStreak = (longestStreakValue as int?) ?? 0;
+      
+      final avatarString = await _storageService.getString('avatar', encrypted: false) as String?;
+      _selectedAvatar = avatarString == 'female' ? AvatarOption.female : AvatarOption.male;
+      
+      final lastUpdatedMillis = await _storageService.getInt('lastUpdated') as int?;
+      _lastUpdated = lastUpdatedMillis != null 
+          ? DateTime.fromMillisecondsSinceEpoch(lastUpdatedMillis)
+          : null;
+          
+      final lastGoalAchievedMillis = await _storageService.getInt('lastGoalAchievedDate') as int?;
+      _lastGoalAchievedDate = lastGoalAchievedMillis != null
+          ? DateTime.fromMillisecondsSinceEpoch(lastGoalAchievedMillis)
+          : null;
+    } catch (e) {
+      throw StorageError.readFailed('Failed to load basic data: $e');
+    }
+  }
+
+  /// Load historical hydration data
+  Future<void> _loadHistoricalData() async {
+    try {
+      final historyJson = await _storageService.getString('hydrationHistory') as String?;
+      if (historyJson != null) {
+        final historyList = jsonDecode(historyJson) as List<dynamic>;
+        _hydrationHistory = historyList
+            .map((json) => HydrationData.fromJson(json as Map<String, dynamic>))
+            .toList();
+        
+        // Sort by timestamp (newest first)
+        _hydrationHistory.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        
+        // Build daily cache
+        _buildDailyCache();
+      }
+    } catch (e) {
+      throw StorageError.readFailed('Failed to load historical data: $e');
+    }
+  }
+
+  /// Build daily data cache for faster access
+  void _buildDailyCache() {
+    _dailyDataCache.clear();
+    for (final entry in _hydrationHistory) {
+      final date = entry.date;
+      _dailyDataCache[date] = (_dailyDataCache[date] ?? [])..add(entry);
+    }
+    
+    // Sort each day's entries by timestamp
+    for (final entries in _dailyDataCache.values) {
+      entries.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    }
+  }
+
+  /// Update current day data based on today's entries
+  void _updateCurrentDayData() {
+    final today = DateTime.now();
+    final todayDate = DateTime(today.year, today.month, today.day);
+    
+    // Check if we need to reset for a new day
+    if (_lastUpdated == null || _lastUpdated!.isBefore(todayDate)) {
+      _resetForNewDay();
+    }
+    
+    // Calculate current intake from today's entries
+    final todaysEntries = getEntriesForDate(today);
+    _currentIntake = todaysEntries.totalWaterIntake;
+    _goalReachedToday = _currentIntake >= _dailyGoal;
+  }
+
+  /// Reset data for a new day
+  void _resetForNewDay() {
+    _currentIntake = 0;
+    _goalReachedToday = false;
+    _lastUpdated = DateTime.now();
+    _saveBasicData(); // Save the reset
+  }
+
+  /// Calculate streak information
+  void _calculateStreaks() {
+    if (_hydrationHistory.isEmpty) {
+      _currentStreak = 0;
+      return;
+    }
+    
+    final today = DateTime.now();
+    final todayDate = DateTime(today.year, today.month, today.day);
+    
+    // Calculate current streak
+    _currentStreak = 0;
+    var checkDate = todayDate;
+    
+    // Check if today's goal is achieved
+    final todaysEntries = getEntriesForDate(today);
+    if (todaysEntries.totalWaterIntake >= _dailyGoal) {
+      _currentStreak = 1;
+      checkDate = checkDate.subtract(const Duration(days: 1));
+    } else {
+      // If today's goal isn't achieved, check yesterday
+      checkDate = checkDate.subtract(const Duration(days: 1));
+    }
+    
+    // Count consecutive days with achieved goals
+    while (true) {
+      final dayEntries = getEntriesForDate(checkDate);
+      if (dayEntries.totalWaterIntake >= _dailyGoal) {
+        _currentStreak++;
+        checkDate = checkDate.subtract(const Duration(days: 1));
+      } else {
+        break;
+      }
+    }
+    
+    // Update longest streak if current is higher
+    if (_currentStreak > _longestStreak) {
+      _longestStreak = _currentStreak;
+    }
+  }
+
+  /// Save basic data to storage
+  Future<void> _saveBasicData() async {
+    try {
+      await _storageService.saveInt('currentIntake', _currentIntake);
+      await _storageService.saveInt('dailyGoal', _dailyGoal);
+      await _storageService.saveBool('goalReachedToday', _goalReachedToday);
+      await _storageService.saveInt('currentStreak', _currentStreak);
+      await _storageService.saveInt('longestStreak', _longestStreak);
+      await _storageService.saveString('avatar', _selectedAvatar == AvatarOption.female ? 'female' : 'male', encrypted: false);
+      await _storageService.saveInt('lastUpdated', DateTime.now().millisecondsSinceEpoch);
+      
+      if (_lastGoalAchievedDate != null) {
+        await _storageService.saveInt('lastGoalAchievedDate', _lastGoalAchievedDate!.millisecondsSinceEpoch);
+      }
+    } catch (e) {
+      throw StorageError.writeFailed('Failed to save basic data: $e');
+    }
+  }
+
+  /// Save historical data to storage
+  Future<void> _saveHistoricalData() async {
+    try {
+      final historyJson = jsonEncode(_hydrationHistory.map((e) => e.toJson()).toList());
+      await _storageService.saveString('hydrationHistory', historyJson);
+    } catch (e) {
+      throw StorageError.writeFailed('Failed to save historical data: $e');
+    }
+  }
+
+  /// Add hydration entry with enhanced tracking
+  Future<void> addHydration(
+    int amount, {
+    DrinkType type = DrinkType.water,
+    String? notes,
+    BuildContext? context,
+  }) async {
+    try {
+      if (amount <= 0) {
+        throw ValidationError.invalidInput('amount', 'Amount must be greater than 0');
+      }
+
+      // Create new hydration entry
+      final entry = HydrationData.create(
+        amount: amount,
+        type: type,
+        notes: notes,
+      );
+
+      // Add to history
+      _hydrationHistory.insert(0, entry); // Add to beginning (newest first)
+      
+      // Update daily cache
+      final date = entry.date;
+      _dailyDataCache[date] = (_dailyDataCache[date] ?? [])..add(entry);
+      _dailyDataCache[date]!.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+      // Update current intake
+      final waterContent = entry.waterContent;
+      _currentIntake += waterContent;
+
+      // Check if goal is reached
+      final wasGoalReached = _goalReachedToday;
+      _goalReachedToday = _currentIntake >= _dailyGoal;
+
+      // Update streak if goal just reached
+      if (!wasGoalReached && _goalReachedToday) {
+        _lastGoalAchievedDate = DateTime.now();
+        _calculateStreaks();
+        
+        // Show celebration if context provided
+        if (context != null) {
+          unawaited(Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => const GoalCompletionScreen(),
+            ),
+          ));
+        }
+      }
+
+      // Save data
+      await _saveBasicData();
+      await _saveHistoricalData();
+      
+      _lastError = null;
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _lastError = e is AppError ? e : HydrationError.saveFailed();
+      debugPrint('Failed to add hydration: $e');
+      debugPrint('Stack trace: $stackTrace');
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  /// Edit existing hydration entry
+  Future<void> editHydrationEntry(String entryId, {
+    int? amount,
+    DrinkType? type,
+    String? notes,
+  }) async {
+    try {
+      final entryIndex = _hydrationHistory.indexWhere((e) => e.id == entryId);
+      if (entryIndex == -1) {
+        throw ValidationError.invalidInput('entryId', 'Entry not found');
+      }
+
+      final oldEntry = _hydrationHistory[entryIndex];
+      final newEntry = oldEntry.copyWith(
+        amount: amount ?? oldEntry.amount,
+        type: type ?? oldEntry.type,
+        notes: notes ?? oldEntry.notes,
+      );
+
+      // Update history
+      _hydrationHistory[entryIndex] = newEntry;
+      
+      // Update daily cache
+      final date = newEntry.date;
+      final dayEntries = _dailyDataCache[date] ?? [];
+      final dayEntryIndex = dayEntries.indexWhere((e) => e.id == entryId);
+      if (dayEntryIndex != -1) {
+        dayEntries[dayEntryIndex] = newEntry;
+      }
+
+      // Recalculate current intake if it's today's entry
+      final today = DateTime.now();
+      if (newEntry.date == DateTime(today.year, today.month, today.day)) {
+        _updateCurrentDayData();
+        _calculateStreaks();
+      }
+
+      await _saveBasicData();
+      await _saveHistoricalData();
+      
+      _lastError = null;
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _lastError = e is AppError ? e : HydrationError.saveFailed();
+      debugPrint('Failed to edit hydration entry: $e');
+      debugPrint('Stack trace: $stackTrace');
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  /// Delete hydration entry
+  Future<void> deleteHydrationEntry(String entryId) async {
+    try {
+      final entryIndex = _hydrationHistory.indexWhere((e) => e.id == entryId);
+      if (entryIndex == -1) {
+        throw ValidationError.invalidInput('entryId', 'Entry not found');
+      }
+
+      final entry = _hydrationHistory[entryIndex];
+      
+      // Remove from history
+      _hydrationHistory.removeAt(entryIndex);
+      
+      // Remove from daily cache
+      final date = entry.date;
+      _dailyDataCache[date]?.removeWhere((e) => e.id == entryId);
+      if (_dailyDataCache[date]?.isEmpty ?? false) {
+        _dailyDataCache.remove(date);
+      }
+
+      // Recalculate current intake if it's today's entry
+      final today = DateTime.now();
+      if (entry.date == DateTime(today.year, today.month, today.day)) {
+        _updateCurrentDayData();
+        _calculateStreaks();
+      }
+
+      await _saveBasicData();
+      await _saveHistoricalData();
+      
+      _lastError = null;
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _lastError = e is AppError ? e : HydrationError.saveFailed();
+      debugPrint('Failed to delete hydration entry: $e');
+      debugPrint('Stack trace: $stackTrace');
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  /// Get entries for a specific date
+  List<HydrationData> getEntriesForDate(DateTime date) {
+    final dateKey = DateTime(date.year, date.month, date.day);
+    return List.from(_dailyDataCache[dateKey] ?? []);
+  }
+
+  /// Get entries for a date range
+  List<HydrationData> getEntriesForDateRange(DateTime start, DateTime end) {
+    return _hydrationHistory.forDateRange(start, end);
+  }
+
+  /// Get weekly data aggregation
+  Map<DateTime, int> getWeeklyData(DateTime weekStart) {
+    final weekData = <DateTime, int>{};
+    
+    for (var i = 0; i < 7; i++) {
+      final date = weekStart.add(Duration(days: i));
+      final dayEntries = getEntriesForDate(date);
+      weekData[date] = dayEntries.totalWaterIntake;
+    }
+    
+    return weekData;
+  }
+
+  /// Get monthly data aggregation
+  Map<DateTime, int> getMonthlyData(DateTime month) {
+    final monthData = <DateTime, int>{};
+    final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
+    
+    for (var i = 1; i <= daysInMonth; i++) {
+      final date = DateTime(month.year, month.month, i);
+      final dayEntries = getEntriesForDate(date);
+      monthData[date] = dayEntries.totalWaterIntake;
+    }
+    
+    return monthData;
+  }
+
+  /// Get goal achievement rate for a period
+  double getGoalAchievementRate(DateTime start, DateTime end) {
+    final totalDays = end.difference(start).inDays + 1;
+    var achievedDays = 0;
+    
+    for (var i = 0; i < totalDays; i++) {
+      final date = start.add(Duration(days: i));
+      final dayEntries = getEntriesForDate(date);
+      if (dayEntries.totalWaterIntake >= _dailyGoal) {
+        achievedDays++;
+      }
+    }
+    
+    return totalDays > 0 ? achievedDays / totalDays : 0.0;
+  }
+
+  /// Export data for premium users
+  Future<String> exportData({
+    DateTime? startDate,
+    DateTime? endDate,
+    String format = 'csv',
+  }) async {
+    try {
+      final start = startDate ?? DateTime.now().subtract(const Duration(days: 30));
+      final end = endDate ?? DateTime.now();
+      final entries = getEntriesForDateRange(start, end);
+      
+      if (format.toLowerCase() == 'csv') {
+        return _exportToCsv(entries);
+      } else {
+        throw ValidationError.invalidInput('format', 'Unsupported export format');
+      }
+    } catch (e) {
+      throw HydrationError.saveFailed();
+    }
+  }
+
+  /// Export data to CSV format
+  String _exportToCsv(List<HydrationData> entries) {
+    final buffer = StringBuffer();
+    
+    // Header
+    buffer.writeln('Date,Time,Amount (ml),Drink Type,Water Content (ml),Notes');
+    
+    // Data rows
+    for (final entry in entries) {
+      final date = '${entry.timestamp.year}-${entry.timestamp.month.toString().padLeft(2, '0')}-${entry.timestamp.day.toString().padLeft(2, '0')}';
+      final time = '${entry.timestamp.hour.toString().padLeft(2, '0')}:${entry.timestamp.minute.toString().padLeft(2, '0')}';
+      final notes = entry.notes?.replaceAll(',', ';') ?? '';
+      
+      buffer.writeln('$date,$time,${entry.amount},${entry.type.displayName},${entry.waterContent},$notes');
+    }
+    
+    return buffer.toString();
+  }
+
+  /// Sync data with external services (placeholder for premium feature)
+  Future<void> syncData() async {
+    if (_isSyncing) return;
+    
+    _isSyncing = true;
+    notifyListeners();
+    
+    try {
+      // Mark unsynced entries as synced
+      for (var i = 0; i < _hydrationHistory.length; i++) {
+        if (!_hydrationHistory[i].isSynced) {
+          _hydrationHistory[i] = _hydrationHistory[i].copyWith(isSynced: true);
+        }
+      }
+      
+      // Rebuild cache
+      _buildDailyCache();
+      
+      await _saveHistoricalData();
+      _lastError = null;
+    } catch (e, stackTrace) {
+      _lastError = HydrationError.syncFailed(e.toString());
+      debugPrint('Failed to sync data: $e');
+      debugPrint('Stack trace: $stackTrace');
+    } finally {
+      _isSyncing = false;
+      notifyListeners();
+    }
+  }
+
+  /// Set daily goal
+  Future<void> setDailyGoal(int goal) async {
+    try {
+      if (goal <= 0) {
+        throw ValidationError.invalidInput('goal', 'Goal must be greater than 0');
+      }
+      
+      _dailyGoal = goal;
+      
+      // Recalculate goal status and streaks
+      _updateCurrentDayData();
+      _calculateStreaks();
+      
+      await _saveBasicData();
+      _lastError = null;
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _lastError = e is AppError ? e : HydrationError.saveFailed();
+      debugPrint('Failed to set daily goal: $e');
+      debugPrint('Stack trace: $stackTrace');
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  /// Set avatar
+  Future<void> setAvatar(AvatarOption avatar) async {
+    try {
+      _selectedAvatar = avatar;
+      await _saveBasicData();
+      _lastError = null;
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _lastError = StorageError.writeFailed('Failed to save avatar');
+      debugPrint('Failed to set avatar: $e');
+      debugPrint('Stack trace: $stackTrace');
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  /// Reset intake for current day
+  Future<void> resetIntake() async {
+    try {
+      // Remove today's entries
+      final today = DateTime.now();
+      final todayDate = DateTime(today.year, today.month, today.day);
+      
+      _hydrationHistory.removeWhere((entry) => entry.date == todayDate);
+      _dailyDataCache.remove(todayDate);
+      
+      _currentIntake = 0;
+      _goalReachedToday = false;
+      
+      // Recalculate streaks
+      _calculateStreaks();
+      
+      await _saveBasicData();
+      await _saveHistoricalData();
+      
+      _lastError = null;
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _lastError = HydrationError.saveFailed();
+      debugPrint('Failed to reset intake: $e');
+      debugPrint('Stack trace: $stackTrace');
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  /// Clear error
+  void clearError() {
+    _lastError = null;
     notifyListeners();
   }
 
-  // Calculate daily goal using the calculator
-  Future<int> calculateDailyGoal() async {
-    final calculatedGoal = await WaterIntakeCalculator.calculateWaterIntake();
-    debugPrint('Calculated water intake goal: $calculatedGoal ml');
-    return calculatedGoal;
-  }
-
-  // Save data to SharedPreferences
-  Future<void> _saveData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('currentIntake', _currentIntake);
-    await prefs.setInt('dailyGoal', _dailyGoal);
-    await prefs.setString(
-      'avatar',
-      _selectedAvatar == AvatarOption.female ? 'female' : 'male',
-    );
-    await prefs.setBool('goalReachedToday', _goalReachedToday);
-    await prefs.setInt('lastUpdated', DateTime.now().millisecondsSinceEpoch);
-  }
-
-  // Add water intake
-  void addHydration(int amount, [BuildContext? context]) {
-    if (_goalReachedToday) {
-      if (context != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Daily water intake goal already achieved!'),
-            backgroundColor: Color(0xFF323062),
-          ),
-        );
-      }
-      return;
-    }
-
-    // Calculate what the new total would be
-    final newTotal = _currentIntake + amount;
-
-    // Only add the amount if it wouldn't exceed the daily goal
-    if (newTotal <= _dailyGoal) {
-      _currentIntake = newTotal;
-      if (_currentIntake >= _dailyGoal) {
-        _goalReachedToday = true;
-        if (context != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (context) => const GoalCompletionScreen(),
-            ),
-          );
-        }
-      }
-      _saveData();
-      notifyListeners();
-    } else {
-      // Add only the remaining amount to reach the goal
-      final remainingToGoal = _dailyGoal - _currentIntake;
-      if (remainingToGoal > 0) {
-        _currentIntake = _dailyGoal;
-        _goalReachedToday = true;
-        _saveData();
-        notifyListeners();
-        if (context != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (context) => const GoalCompletionScreen(),
-            ),
-          );
-        }
-      }
-    }
-  }
-
-  // Legacy method to maintain backward compatibility
+  /// Legacy methods for backward compatibility
   void addIntake(int amount) {
     addHydration(amount);
   }
 
-  // Set daily goal
-  Future<void> setDailyGoal(int goal) async {
-    _dailyGoal = goal;
-    await _saveData();
-    notifyListeners();
+  Future<void> loadData() async {
+    if (!_isInitialized) {
+      await _initialize();
+    }
   }
 
-  // Set avatar
-  void setAvatar(AvatarOption avatar) {
-    _selectedAvatar = avatar;
-    _saveData();
-    notifyListeners();
+  /// Get entries for a specific date
+  List<HydrationData> getEntriesForDate(DateTime date) {
+    final targetDate = DateTime(date.year, date.month, date.day);
+    return _dailyDataCache[targetDate] ?? [];
   }
 
-  // Reset intake
-  void resetIntake() {
-    _currentIntake = 0;
-    _goalReachedToday = false;
-    _saveData();
-    notifyListeners();
+  /// Get entries for a date range
+  List<HydrationData> getEntriesForDateRange(DateTime start, DateTime end) {
+    return _hydrationHistory.forDateRange(start, end);
+  }
+
+  /// Get weekly data as a map of date to total water intake
+  Map<DateTime, int> getWeeklyData(DateTime weekStart) {
+    final weeklyData = <DateTime, int>{};
+    
+    for (var i = 0; i < 7; i++) {
+      final date = weekStart.add(Duration(days: i));
+      final entries = getEntriesForDate(date);
+      weeklyData[date] = entries.totalWaterIntake;
+    }
+    
+    return weeklyData;
+  }
+
+  /// Get monthly data as a map of date to total water intake
+  Map<DateTime, int> getMonthlyData(DateTime monthStart) {
+    final monthEnd = DateTime(monthStart.year, monthStart.month + 1, 0);
+    final monthlyData = <DateTime, int>{};
+    
+    for (var i = 1; i <= monthEnd.day; i++) {
+      final date = DateTime(monthStart.year, monthStart.month, i);
+      final entries = getEntriesForDate(date);
+      monthlyData[date] = entries.totalWaterIntake;
+    }
+    
+    return monthlyData;
+  }
+
+  @override
+  void dispose() {
+    // Clean up resources
+    super.dispose();
   }
 }

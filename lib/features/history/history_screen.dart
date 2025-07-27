@@ -108,7 +108,10 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                     'assets/navbaricons/waterdropicons-unselect.svg',
                     width: 30,
                     height: 30,
-                    color: AppColors.darkBlue,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.darkBlue,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/continue_button.dart';
-import 'package:watertracker/core/widgets/selection_box.dart';
-import 'package:watertracker/features/onboarding/screens/sugary_drinks_screen.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
+import 'package:watertracker/core/widgets/cards/selection_box.dart';
+import 'package:watertracker/features/onboarding/screens/gender_selection_screen.dart';
+
 
 class VegetablesFruitsScreen extends StatefulWidget {
   const VegetablesFruitsScreen({super.key});
@@ -83,7 +84,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                   final frequency = _frequencies[index];
                   return SelectionBox(
                     title: frequency['title']!,
-                    subtitle: frequency['subtitle']!,
+                    subtitle: frequency['subtitle'],
                     icon: Text(
                       frequency['icon']!,
                       style: const TextStyle(fontSize: 24),
@@ -106,9 +107,9 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                         await _saveFrequency();
                         if (mounted) {
                           await Navigator.of(context).push(
-                            MaterialPageRoute<void>(
+                            MaterialPageRoute(
                               builder:
-                                  (context) => const SugaryBeveragesScreen(),
+                                  (context) => const GenderSelectionScreen(),
                             ),
                           );
                         }
