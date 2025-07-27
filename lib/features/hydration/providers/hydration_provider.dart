@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:watertracker/core/models/app_error.dart';
+import 'package:watertracker/core/models/custom_drink_type.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
+import 'package:watertracker/core/services/health_service.dart';
 import 'package:watertracker/core/services/storage_service.dart';
 import 'package:watertracker/features/hydration/screens/goal_completion_screen.dart';
 
@@ -17,11 +19,13 @@ enum AvatarOption { male, female }
 /// Enhanced hydration provider with comprehensive tracking and analytics
 class HydrationProvider extends ChangeNotifier {
   HydrationProvider({dynamic storageService}) 
-      : _storageService = storageService ?? StorageService() {
+      : _storageService = storageService ?? StorageService(),
+        _healthService = HealthService() {
     _initialize();
   }
 
   final dynamic _storageService;
+  final HealthService _healthService;
   
   // Current state
   int _currentIntake = 0;
@@ -41,6 +45,10 @@ class HydrationProvider extends ChangeNotifier {
   int _currentStreak = 0;
   int _longestStreak = 0;
   DateTime? _lastGoalAchievedDate;
+  
+  // Premium features
+  List<CustomDrinkType> _customDrinkTypes = [];
+  bool _healthSyncEnabled = false;
   
   // Error handling
   AppError? _lastError;
@@ -64,6 +72,10 @@ class HydrationProvider extends ChangeNotifier {
   int get currentStreak => _currentStreak;
   int get longestStreak => _longestStreak;
   DateTime? get lastGoalAchievedDate => _lastGoalAchievedDate;
+  
+  // Getters - Premium features
+  List<CustomDrinkType> get customDrinkTypes => List.unmodifiable(_customDrinkTypes);
+  bool get healthSyncEnabled => _healthSyncEnabled;
 
   /// Initialize the provider
   Future<void> _initialize() async {
@@ -75,6 +87,8 @@ class HydrationProvider extends ChangeNotifier {
     try {
       await _loadData();
       await _loadHistoricalData();
+      await loadCustomDrinkTypes();
+      await loadHealthSyncSettings();
       _calculateStreaks();
       _updateCurrentDayData();
       _isInitialized = true;
@@ -302,6 +316,11 @@ class HydrationProvider extends ChangeNotifier {
             ),
           ));
         }
+      }
+
+      // Sync to health app if enabled
+      if (_healthSyncEnabled) {
+        unawaited(_healthService.syncSingleEntry(entry));
       }
 
       // Save data
@@ -623,42 +642,296 @@ class HydrationProvider extends ChangeNotifier {
     }
   }
 
-  /// Get entries for a specific date
-  List<HydrationData> getEntriesForDate(DateTime date) {
-    final targetDate = DateTime(date.year, date.month, date.day);
-    return _dailyDataCache[targetDate] ?? [];
-  }
+  // MARK: - Premium Features
 
-  /// Get entries for a date range
-  List<HydrationData> getEntriesForDateRange(DateTime start, DateTime end) {
-    return _hydrationHistory.forDateRange(start, end);
-  }
-
-  /// Get weekly data as a map of date to total water intake
-  Map<DateTime, int> getWeeklyData(DateTime weekStart) {
-    final weeklyData = <DateTime, int>{};
-    
-    for (var i = 0; i < 7; i++) {
-      final date = weekStart.add(Duration(days: i));
-      final entries = getEntriesForDate(date);
-      weeklyData[date] = entries.totalWaterIntake;
+  /// Load custom drink types (Premium feature)
+  Future<void> loadCustomDrinkTypes() async {
+    try {
+      final customDrinkTypesJson = await _storageService.getString('customDrinkTypes') as String?;
+      if (customDrinkTypesJson != null) {
+        final drinkTypesList = jsonDecode(customDrinkTypesJson) as List<dynamic>;
+        _customDrinkTypes = drinkTypesList
+            .map((json) => CustomDrinkType.fromJson(json as Map<String, dynamic>))
+            .toList();
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Failed to load custom drink types: $e');
     }
-    
-    return weeklyData;
   }
 
-  /// Get monthly data as a map of date to total water intake
-  Map<DateTime, int> getMonthlyData(DateTime monthStart) {
-    final monthEnd = DateTime(monthStart.year, monthStart.month + 1, 0);
-    final monthlyData = <DateTime, int>{};
-    
-    for (var i = 1; i <= monthEnd.day; i++) {
-      final date = DateTime(monthStart.year, monthStart.month, i);
-      final entries = getEntriesForDate(date);
-      monthlyData[date] = entries.totalWaterIntake;
+  /// Save custom drink types
+  Future<void> saveCustomDrinkTypes() async {
+    try {
+      final drinkTypesJson = jsonEncode(_customDrinkTypes.map((e) => e.toJson()).toList());
+      await _storageService.saveString('customDrinkTypes', drinkTypesJson);
+    } catch (e) {
+      debugPrint('Failed to save custom drink types: $e');
     }
+  }
+
+  /// Add custom drink type (Premium feature)
+  Future<void> addCustomDrinkType(CustomDrinkType drinkType) async {
+    try {
+      _customDrinkTypes.add(drinkType);
+      await saveCustomDrinkTypes();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Failed to add custom drink type: $e');
+      rethrow;
+    }
+  }
+
+  /// Update custom drink type (Premium feature)
+  Future<void> updateCustomDrinkType(CustomDrinkType drinkType) async {
+    try {
+      final index = _customDrinkTypes.indexWhere((dt) => dt.id == drinkType.id);
+      if (index != -1) {
+        _customDrinkTypes[index] = drinkType;
+        await saveCustomDrinkTypes();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Failed to update custom drink type: $e');
+      rethrow;
+    }
+  }
+
+  /// Delete custom drink type (Premium feature)
+  Future<void> deleteCustomDrinkType(String drinkTypeId) async {
+    try {
+      _customDrinkTypes.removeWhere((dt) => dt.id == drinkTypeId);
+      await saveCustomDrinkTypes();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Failed to delete custom drink type: $e');
+      rethrow;
+    }
+  }
+
+  /// Get all available drink types (built-in + custom)
+  List<dynamic> getAllDrinkTypes() {
+    final builtInTypes = DrinkType.values;
+    final customTypes = _customDrinkTypes.where((dt) => dt.isActive).toList();
+    return [...builtInTypes, ...customTypes];
+  }
+
+  /// Add hydration with custom drink type
+  Future<void> addHydrationWithCustomType(
+    int amount, {
+    CustomDrinkType? customType,
+    DrinkType? builtInType,
+    String? notes,
+    BuildContext? context,
+  }) async {
+    if (customType != null) {
+      // Create hydration data with custom water content calculation
+      final waterContent = customType.getWaterContent(amount);
+      final entry = HydrationData.create(
+        amount: amount,
+        type: DrinkType.other, // Use 'other' as base type
+        notes: notes,
+      );
+
+      // Override water content calculation
+      final customEntry = HydrationData(
+        id: entry.id,
+        amount: amount,
+        timestamp: entry.timestamp,
+        type: DrinkType.other,
+        isSynced: false,
+        notes: '${customType.name}${notes != null ? ' - $notes' : ''}',
+      );
+
+      await _addCustomHydrationEntry(customEntry, waterContent, context);
+    } else if (builtInType != null) {
+      await addHydration(amount, type: builtInType, notes: notes, context: context);
+    } else {
+      throw ValidationError.invalidInput('drinkType', 'Either custom or built-in drink type must be provided');
+    }
+  }
+
+  /// Add custom hydration entry with specific water content
+  Future<void> _addCustomHydrationEntry(
+    HydrationData entry,
+    int waterContent,
+    BuildContext? context,
+  ) async {
+    try {
+      // Add to history
+      _hydrationHistory.insert(0, entry);
+      
+      // Update daily cache
+      final date = entry.date;
+      _dailyDataCache[date] = (_dailyDataCache[date] ?? [])..add(entry);
+      _dailyDataCache[date]!.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+      // Update current intake with custom water content
+      _currentIntake += waterContent;
+
+      // Check if goal is reached
+      final wasGoalReached = _goalReachedToday;
+      _goalReachedToday = _currentIntake >= _dailyGoal;
+
+      // Update streak if goal just reached
+      if (!wasGoalReached && _goalReachedToday) {
+        _lastGoalAchievedDate = DateTime.now();
+        _calculateStreaks();
+        
+        // Show celebration if context provided
+        if (context != null) {
+          unawaited(Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => const GoalCompletionScreen(),
+            ),
+          ));
+        }
+      }
+
+      // Sync to health app if enabled
+      if (_healthSyncEnabled) {
+        unawaited(_healthService.syncSingleEntry(entry));
+      }
+
+      // Save data
+      await _saveBasicData();
+      await _saveHistoricalData();
+      
+      _lastError = null;
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _lastError = e is AppError ? e : HydrationError.saveFailed();
+      debugPrint('Failed to add custom hydration: $e');
+      debugPrint('Stack trace: $stackTrace');
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  /// Enable/disable health sync (Premium feature)
+  Future<void> setHealthSyncEnabled(bool enabled) async {
+    try {
+      await _healthService.initialize();
+      
+      if (enabled) {
+        final success = await _healthService.setHealthSyncEnabled(true);
+        if (success) {
+          _healthSyncEnabled = true;
+          await _storageService.saveBool('healthSyncEnabled', true);
+          
+          // Perform initial sync
+          await syncToHealthApp();
+        } else {
+          throw HydrationError.syncFailed('Failed to enable health sync');
+        }
+      } else {
+        await _healthService.setHealthSyncEnabled(false);
+        _healthSyncEnabled = false;
+        await _storageService.saveBool('healthSyncEnabled', false);
+      }
+      
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Failed to set health sync: $e');
+      rethrow;
+    }
+  }
+
+  /// Sync hydration data to health app (Premium feature)
+  Future<void> syncToHealthApp() async {
+    if (!_healthSyncEnabled) return;
     
-    return monthlyData;
+    try {
+      _isSyncing = true;
+      notifyListeners();
+      
+      // Get unsynced entries
+      final unsyncedEntries = _hydrationHistory.where((entry) => !entry.isSynced).toList();
+      
+      if (unsyncedEntries.isNotEmpty) {
+        final success = await _healthService.syncToHealth(unsyncedEntries);
+        
+        if (success) {
+          // Mark entries as synced
+          for (var i = 0; i < _hydrationHistory.length; i++) {
+            if (!_hydrationHistory[i].isSynced) {
+              _hydrationHistory[i] = _hydrationHistory[i].copyWith(isSynced: true);
+            }
+          }
+          
+          await _saveHistoricalData();
+        }
+      }
+    } catch (e) {
+      debugPrint('Failed to sync to health app: $e');
+    } finally {
+      _isSyncing = false;
+      notifyListeners();
+    }
+  }
+
+  /// Import hydration data from health app (Premium feature)
+  Future<void> importFromHealthApp({
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    try {
+      _isSyncing = true;
+      notifyListeners();
+      
+      final importedData = await _healthService.importFromHealth(
+        startTime: startDate,
+        endTime: endDate,
+      );
+      
+      if (importedData.isNotEmpty) {
+        // Add imported data to history (avoid duplicates)
+        for (final entry in importedData) {
+          final exists = _hydrationHistory.any((existing) => 
+            existing.timestamp.isAtSameMomentAs(entry.timestamp) &&
+            existing.amount == entry.amount
+          );
+          
+          if (!exists) {
+            _hydrationHistory.add(entry);
+          }
+        }
+        
+        // Sort and rebuild cache
+        _hydrationHistory.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        _buildDailyCache();
+        _updateCurrentDayData();
+        _calculateStreaks();
+        
+        await _saveHistoricalData();
+        await _saveBasicData();
+      }
+    } catch (e) {
+      debugPrint('Failed to import from health app: $e');
+    } finally {
+      _isSyncing = false;
+      notifyListeners();
+    }
+  }
+
+  /// Get health sync statistics (Premium feature)
+  Future<Map<String, dynamic>> getHealthSyncStats() async {
+    return await _healthService.getHealthSyncStats();
+  }
+
+  /// Load health sync settings
+  Future<void> loadHealthSyncSettings() async {
+    try {
+      await _healthService.initialize();
+      _healthSyncEnabled = await _storageService.getBool('healthSyncEnabled') ?? false;
+      
+      if (_healthSyncEnabled) {
+        // Perform auto sync if enabled
+        unawaited(_healthService.performAutoSync());
+      }
+    } catch (e) {
+      debugPrint('Failed to load health sync settings: $e');
+    }
   }
 
   @override

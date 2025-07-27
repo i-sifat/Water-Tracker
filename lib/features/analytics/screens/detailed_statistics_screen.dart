@@ -24,8 +24,9 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final analytics = context.read<AnalyticsProvider>();
-      analytics.loadDetailedStatistics();
-      analytics.loadStreakData();
+      analytics
+        ..loadDetailedStatistics()
+        ..loadStreakData();
     });
   }
 
@@ -47,7 +48,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.file_download),
-            onPressed: () => _showExportDialog(),
+            onPressed: _showExportDialog,
           ),
         ],
       ),
@@ -70,7 +71,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
             if (stats == null) {
               return const EmptyStateWidget(
                 title: 'No Data Available',
-                message: 'Start tracking your water intake to see detailed statistics.',
+                subtitle: 'Start tracking your water intake to see detailed statistics.',
               );
             }
 
@@ -247,9 +248,9 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -329,9 +330,9 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -422,9 +423,9 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
       AppColors.lightBlue,
       AppColors.chartBlue,
       AppColors.darkBlue,
-      AppColors.box1.withOpacity(0.8),
-      AppColors.box2.withOpacity(0.8),
-      AppColors.box3.withOpacity(0.8),
+      AppColors.box1.withValues(alpha: 0.8),
+      AppColors.box2.withValues(alpha: 0.8),
+      AppColors.box3.withValues(alpha: 0.8),
     ];
 
     return Wrap(
@@ -478,7 +479,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
             const SizedBox(height: 16),
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.access_time,
                   size: 24,
                   color: AppColors.lightBlue,
@@ -578,7 +579,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              analytics.lastError?.message ?? 'An error occurred',
+              analytics.lastError?.toString() ?? 'An error occurred',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: AppColors.textSubtitle,
@@ -588,9 +589,10 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
             PrimaryButton(
               text: 'Retry',
               onPressed: () {
-                analytics.clearError();
-                analytics.loadDetailedStatistics();
-                analytics.loadStreakData();
+                analytics
+                  ..clearError()
+                  ..loadDetailedStatistics()
+                  ..loadStreakData();
               },
             ),
           ],
@@ -642,7 +644,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
   }
 
   void _showExportDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Export Data'),
@@ -692,7 +694,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(analytics.lastError?.message ?? 'Export failed'),
+            content: Text(analytics.lastError?.toString() ?? 'Export failed'),
             backgroundColor: Colors.red,
           ),
         );
@@ -707,9 +709,9 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
       AppColors.lightBlue,
       AppColors.chartBlue,
       AppColors.darkBlue,
-      AppColors.box1.withOpacity(0.8),
-      AppColors.box2.withOpacity(0.8),
-      AppColors.box3.withOpacity(0.8),
+      AppColors.box1.withValues(alpha: 0.8),
+      AppColors.box2.withValues(alpha: 0.8),
+      AppColors.box3.withValues(alpha: 0.8),
     ];
 
     return breakdown.entries.toList().asMap().entries.map((entry) {
