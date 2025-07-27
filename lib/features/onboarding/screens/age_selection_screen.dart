@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
-import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
-import 'package:watertracker/features/onboarding/screens/weight_selection_screen.dart';
-import 'package:watertracker/features/onboarding/widgets/onboarding_progress_indicator.dart';
+import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
 class AgeSelectionScreen extends StatefulWidget {
   const AgeSelectionScreen({super.key});
@@ -137,130 +134,11 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   final double _itemExtent = 160; // Increased from 100 for more spacing
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<OnboardingProvider>(
-      builder: (context, onboardingProvider, child) {
-        return Scaffold(
-          backgroundColor: AppColors.onBoardingpagebackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.onBoardingpagebackground,
-            elevation: 0,
-            leading: Container(
-              margin: const EdgeInsets.only(left: 16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-                onPressed: () {
-                  onboardingProvider.previousStep();
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-            title: const Text('Assessment', style: AppTypography.subtitle),
-            actions: [
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '${onboardingProvider.currentStep + 1} of ${onboardingProvider.totalStepsCount}',
-                  style: const TextStyle(
-                    color: AppColors.pageCounter,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          body: Column(
-            children: [
-              // Progress indicator
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                child: AnimatedOnboardingProgressIndicator(
-                  currentStep: onboardingProvider.currentStep,
-                  totalSteps: onboardingProvider.totalStepsCount,
-                  showStepNumbers: false,
-                ),
-              ),
-              
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
-                child: Column(
-                  children: [
-                    const Text("What's your Age?", style: AppTypography.headline),
-                    const SizedBox(height: 8),
-                    Text(
-                      'This helps us calculate your personalized hydration goal',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSubtitle,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-              
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Outer container with stroke effect
-                    Container(
-                      height: _itemExtent,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(
-                          color: AppColors.waterFull.withOpacity(0.3),
-                          width: 9,
-                        ),
-                      ),
-                    ),
-                    // Inner container (the blue background)
-                    Container(
-                      height: _itemExtent - 9,
-                      width: 194,
-                      decoration: BoxDecoration(
-                        color: AppColors.waterFull,
-                        borderRadius: BorderRadius.circular(27),
-                      ),
-                    ),
-                    AgeSelectionWheel(
-                      scrollController: _scrollController,
-                      ages: _ages,
-                      selectedAge: _selectedAge,
-                      itemExtent: _itemExtent,
-                      highlightColor: AppColors.selectedBorder,
-                      selectedTextColor: Colors.white,
-                      unselectedTextColor: AppColors.assessmentText,
-                      farTextColor: Colors.grey.shade300,
-                      maxFontSize: _maxFontSize,
-                      minFontSize: _minFontSize,
-                      onSelectedItemChanged: _handleSelectionChange,
-                    ),
-                  ],
-                ),
-              ),
-              
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
-                child: ContinueButton(
-                  onPressed: () => _handleContinue(onboardingProvider),
-                  isDisabled: onboardingProvider.isSaving,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+  void initState() {
+    super.initState();
+    _ages = List.generate(100, (index) => index + 1);
+    _scrollController = FixedExtentScrollController(
+      initialItem: _ages.indexOf(_selectedAge),
     );
   }
 
@@ -268,15 +146,6 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _ages = List.generate(100, (index) => index + 1);
-    _scrollController = FixedExtentScrollController(
-      initialItem: _ages.indexOf(_selectedAge),
-    );
   }
 
   void _handleSelectionChange(int index) {
@@ -294,14 +163,60 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
 
   Future<void> _handleContinue(OnboardingProvider provider) async {
     provider.updateAge(_selectedAge);
-    await provider.nextStep();
-    
-    if (mounted) {
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (context) => const WeightSelectionScreen(),
-        ),
-      );
-    }
+    await provider.navigateNext();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<OnboardingProvider>(
+      builder: (context, onboardingProvider, child) {
+        return OnboardingScreenWrapper(
+          title: "What's your Age?",
+          subtitle: 'This helps us calculate your personalized hydration goal',
+          backgroundColor: AppColors.onBoardingpagebackground,
+          onContinue: () => _handleContinue(onboardingProvider),
+          isLoading: onboardingProvider.isSaving,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Outer container with stroke effect
+              Container(
+                height: _itemExtent,
+                width: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: AppColors.waterFull.withValues(alpha: 0.3),
+                    width: 9,
+                  ),
+                ),
+              ),
+              // Inner container (the blue background)
+              Container(
+                height: _itemExtent - 9,
+                width: 194,
+                decoration: BoxDecoration(
+                  color: AppColors.waterFull,
+                  borderRadius: BorderRadius.circular(27),
+                ),
+              ),
+              AgeSelectionWheel(
+                scrollController: _scrollController,
+                ages: _ages,
+                selectedAge: _selectedAge,
+                itemExtent: _itemExtent,
+                highlightColor: AppColors.selectedBorder,
+                selectedTextColor: Colors.white,
+                unselectedTextColor: AppColors.assessmentText,
+                farTextColor: Colors.grey.shade300,
+                maxFontSize: _maxFontSize,
+                minFontSize: _minFontSize,
+                onSelectedItemChanged: _handleSelectionChange,
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

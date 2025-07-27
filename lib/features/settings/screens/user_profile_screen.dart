@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:watertracker/core/models/user_profile.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/core/widgets/inputs/app_text_field.dart';
-import 'package:watertracker/core/models/user_profile.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/screens/onboarding_flow_screen.dart';
 import 'package:watertracker/features/settings/providers/settings_provider.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -118,6 +119,47 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               
               const SizedBox(height: 24),
               
+              // Reopen onboarding button
+              AppCard(
+                child: ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.waterFull.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.edit_outlined,
+                      color: AppColors.waterFull,
+                      size: 20,
+                    ),
+                  ),
+                  title: const Text(
+                    'Modify Assessment Data',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Update your goals, preferences, and personal information',
+                    style: TextStyle(
+                      color: AppColors.textSubtitle,
+                      fontSize: 14,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: AppColors.textSubtitle,
+                  ),
+                  onTap: _reopenOnboarding,
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
               Consumer<SettingsProvider>(
                 builder: (context, settingsProvider, child) {
                   return PrimaryButton(
@@ -132,6 +174,58 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _reopenOnboarding() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Modify Assessment Data'),
+          content: const Text(
+            'This will take you through the assessment process again with your current data pre-filled. You can update any information you want to change.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Continue'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true && mounted) {
+      try {
+        // Create onboarding provider and reopen for editing
+        final onboardingProvider = OnboardingProvider();
+        await onboardingProvider.reopenOnboardingForEditing();
+
+        if (mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => ChangeNotifierProvider.value(
+                value: onboardingProvider,
+                child: const OnboardingFlowScreen(),
+              ),
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to open assessment: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
   }
 
   Future<void> _saveProfile(SettingsProvider settingsProvider) async {

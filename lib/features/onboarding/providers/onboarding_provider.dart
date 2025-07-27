@@ -169,7 +169,7 @@ class OnboardingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateNotificationsEnabled(bool enabled) {
+  void updateNotificationsEnabled({required bool enabled}) {
     _userProfile = _userProfile.copyWith(notificationsEnabled: enabled);
     notifyListeners();
   }
@@ -179,19 +179,14 @@ class OnboardingProvider extends ChangeNotifier {
     switch (step) {
       case 2: // Gender
         _userProfile = _userProfile.copyWith(gender: Gender.notSpecified);
-        break;
       case 6: // Pregnancy
         _userProfile = _userProfile.copyWith(pregnancyStatus: PregnancyStatus.preferNotToSay);
-        break;
       case 7: // Exercise
         _userProfile = _userProfile.copyWith(activityLevel: ActivityLevel.moderatelyActive);
-        break;
       case 8: // Vegetables
         _userProfile = _userProfile.copyWith(vegetableIntake: 3); // Average
-        break;
       case 9: // Weather
         _userProfile = _userProfile.copyWith(weatherPreference: WeatherPreference.moderate);
-        break;
     }
   }
 
@@ -206,12 +201,11 @@ class OnboardingProvider extends ChangeNotifier {
       final calculatedGoal = _userProfile.calculateWaterIntake();
       _userProfile = _userProfile.copyWith(dailyGoal: calculatedGoal);
 
-      // Save user profile (using SharedPreferences for now)
+      // Save user profile
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_profile', jsonEncode(_userProfile.toJson()));
 
       // Mark onboarding as completed
-      final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('onboarding_completed', true);
       await prefs.setString('user_profile_id', _userProfile.id);
 
@@ -305,7 +299,7 @@ class OnboardingProvider extends ChangeNotifier {
     }).toList();
 
     final genderString = prefs.getString('selected_gender');
-    Gender gender = Gender.notSpecified;
+    var gender = Gender.notSpecified;
     if (genderString == 'male') gender = Gender.male;
     if (genderString == 'female') gender = Gender.female;
 
@@ -369,9 +363,9 @@ class OnboardingProvider extends ChangeNotifier {
       case 3:
         return 'Sugary Beverages';
       case 4:
-        return 'What\'s Your Age?';
+        return "What's Your Age?";
       case 5:
-        return 'What\'s Your Weight?';
+        return "What's Your Weight?";
       case 6:
         return 'Pregnancy Status';
       case 7:
@@ -415,5 +409,109 @@ class OnboardingProvider extends ChangeNotifier {
       default:
         return '';
     }
+  }
+
+  /// Get validation error message for current step
+  String? getValidationError(int step) {
+    switch (step) {
+      case 1: // Goals
+        if (_userProfile.goals.isEmpty) {
+          return 'Please select at least one goal to continue';
+        }
+        return null;
+      case 4: // Age
+        if (_userProfile.age == null) {
+          return 'Please select your age to continue';
+        }
+        if (_userProfile.age! < 1 || _userProfile.age! > 120) {
+          return 'Please enter a valid age between 1 and 120';
+        }
+        return null;
+      case 5: // Weight
+        if (_userProfile.weight == null) {
+          return 'Please enter your weight to continue';
+        }
+        if (_userProfile.weight! < 20 || _userProfile.weight! > 300) {
+          return 'Please enter a valid weight between 20 and 300 kg';
+        }
+        return null;
+      default:
+        return null;
+    }
+  }
+
+  /// Navigate to next step with proper validation
+  Future<bool> navigateNext() async {
+    final validationError = getValidationError(_currentStep);
+    if (validationError != null) {
+      _error = validationError;
+      notifyListeners();
+      return false;
+    }
+
+    _error = null;
+    await nextStep();
+    return true;
+  }
+
+  /// Navigate to previous step
+  void navigatePrevious() {
+    _error = null;
+    previousStep();
+  }
+
+  /// Clear current error
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+
+  /// Check if user can modify onboarding data after completion
+  Future<bool> canModifyOnboardingData() async {
+    return await isOnboardingCompleted();
+  }
+
+  /// Reopen onboarding for editing (preserving existing data)
+  Future<void> reopenOnboardingForEditing() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Load existing user profile
+      final profileData = prefs.getString('user_profile');
+      if (profileData != null) {
+        final profileJson = jsonDecode(profileData) as Map<String, dynamic>;
+        _userProfile = UserProfile.fromJson(profileJson);
+      }
+
+      // Set onboarding as not completed to allow editing
+      await prefs.setBool('onboarding_completed', false);
+      
+      // Start from first step
+      _currentStep = 0;
+      _completedSteps.clear();
+      _error = null;
+      
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to reopen onboarding: $e';
+      debugPrint(_error);
+      notifyListeners();
+    }
+  }
+
+  /// Get completion percentage
+  double get completionPercentage {
+    final requiredSteps = totalSteps - _optionalSteps.length;
+    final completedRequiredSteps = _completedSteps.where((step) => !_optionalSteps.contains(step)).length;
+    return completedRequiredSteps / requiredSteps;
+  }
+
+  /// Get list of completed steps for progress visualization
+  Set<int> get completedSteps => Set.from(_completedSteps);
+
+  /// Check if all required steps are completed
+  bool get areRequiredStepsCompleted {
+    final requiredSteps = List.generate(totalSteps, (i) => i).where((step) => !_optionalSteps.contains(step));
+    return requiredSteps.every((step) => _completedSteps.contains(step) || step == _currentStep);
   }
 }

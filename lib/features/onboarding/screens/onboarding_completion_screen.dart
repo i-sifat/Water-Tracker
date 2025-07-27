@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 
 /// Celebration screen shown when onboarding is completed
 class OnboardingCompletionScreen extends StatefulWidget {
   const OnboardingCompletionScreen({
-    super.key,
-    required this.dailyGoal,
+    required this.dailyGoal, super.key,
     this.userName,
   });
 
@@ -43,16 +41,16 @@ class _OnboardingCompletionScreenState
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _scaleController,
       curve: Curves.elasticOut,
     ));
 
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _fadeController,
       curve: Curves.easeIn,
@@ -85,7 +83,7 @@ class _OnboardingCompletionScreenState
       backgroundColor: AppColors.lightBlue,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24),
           child: Column(
             children: [
               const Spacer(),
@@ -97,7 +95,7 @@ class _OnboardingCompletionScreenState
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -138,7 +136,7 @@ class _OnboardingCompletionScreenState
                           ? 'Welcome to your hydration journey, ${widget.userName}!'
                           : 'Welcome to your hydration journey!',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 18,
                       ),
                       textAlign: TextAlign.center,
@@ -150,16 +148,15 @@ class _OnboardingCompletionScreenState
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
+                        color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 1,
+                          color: Colors.white.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Column(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.water_drop,
                             size: 48,
                             color: Colors.white,
@@ -168,7 +165,7 @@ class _OnboardingCompletionScreenState
                           Text(
                             'Your Daily Goal',
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -185,7 +182,7 @@ class _OnboardingCompletionScreenState
                           Text(
                             'Personalized just for you',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                         ],
@@ -198,13 +195,13 @@ class _OnboardingCompletionScreenState
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Column(
                         children: [
                           Text(
-                            'What\'s next?',
+                            "What's next?",
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -273,7 +270,7 @@ class _OnboardingCompletionScreenState
                   child: Text(
                     'Continue to App',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -297,7 +294,7 @@ class _OnboardingCompletionScreenState
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -344,8 +341,7 @@ class _OnboardingCompletionScreenState
 /// Simple completion screen without animations (fallback)
 class SimpleOnboardingCompletionScreen extends StatelessWidget {
   const SimpleOnboardingCompletionScreen({
-    super.key,
-    required this.dailyGoal,
+    required this.dailyGoal, super.key,
     this.userName,
   });
 
@@ -358,18 +354,18 @@ class SimpleOnboardingCompletionScreen extends StatelessWidget {
       backgroundColor: AppColors.lightBlue,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 width: 120,
                 height: 120,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.check_circle,
                   size: 80,
                   color: AppColors.lightBlue,
@@ -390,7 +386,7 @@ class SimpleOnboardingCompletionScreen extends StatelessWidget {
               const SizedBox(height: 16),
               
               Text(
-                'Your daily goal: ${dailyGoal} ml',
+                'Your daily goal: $dailyGoal ml',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: Colors.white,
                 ),

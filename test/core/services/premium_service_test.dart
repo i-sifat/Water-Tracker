@@ -295,13 +295,13 @@ void main() {
   group('PremiumFeature', () {
     test('should have display names for all features', () {
       for (final feature in PremiumFeature.values) {
-        expect(feature.displayName, isNotEmpty);
-        expect(feature.description, isNotEmpty);
+        expect(PremiumFeatures.featureNames[feature], isNotEmpty);
+        expect(PremiumFeatures.featureDescriptions[feature], isNotEmpty);
       }
     });
 
     test('should have unique display names', () {
-      final displayNames = PremiumFeature.values.map((f) => f.displayName).toList();
+      final displayNames = PremiumFeature.values.map((f) => PremiumFeatures.featureNames[f]).toList();
       final uniqueNames = displayNames.toSet();
       
       expect(displayNames.length, equals(uniqueNames.length));
@@ -309,8 +309,9 @@ void main() {
 
     test('should have meaningful descriptions', () {
       for (final feature in PremiumFeature.values) {
-        expect(feature.description.length, greaterThan(10));
-        expect(feature.description, contains(RegExp('[a-zA-Z]')));
+        final description = PremiumFeatures.featureDescriptions[feature]!;
+        expect(description.length, greaterThan(10));
+        expect(description, contains(RegExp('[a-zA-Z]')));
       }
     });
   });

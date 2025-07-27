@@ -144,8 +144,8 @@ class WaterIntakeCalculator {
     final now = DateTime.now();
     
     // Default times if not provided
-    final wake = wakeUpTime ?? DateTime(now.year, now.month, now.day, 7, 0);
-    final sleep = bedTime ?? DateTime(now.year, now.month, now.day, 22, 0);
+    final wake = wakeUpTime ?? DateTime(now.year, now.month, now.day, 7);
+    final sleep = bedTime ?? DateTime(now.year, now.month, now.day, 22);
     
     // Calculate optimal distribution
     final totalWakingHours = sleep.difference(wake).inHours;
@@ -296,11 +296,11 @@ class WaterIntakeCalculator {
     var adjustedIntake = baseIntake * activityLevel.waterMultiplier;
     
     // Additional adjustments for workout timing
-    if (isPreWorkout == true) {
+    if (isPreWorkout ?? false) {
       adjustedIntake += 500; // Extra 500ml before workout
     }
     
-    if (isPostWorkout == true) {
+    if (isPostWorkout ?? false) {
       adjustedIntake += 750; // Extra 750ml after workout
     }
     
@@ -348,13 +348,10 @@ class WaterIntakeCalculator {
       switch (climateZone.toLowerCase()) {
         case 'tropical':
           adjustedIntake *= 1.2;
-          break;
         case 'desert':
           adjustedIntake *= 1.3;
-          break;
         case 'arctic':
           adjustedIntake *= 0.9;
-          break;
       }
     }
     
@@ -379,13 +376,10 @@ class WaterIntakeCalculator {
         switch (medication.toLowerCase()) {
           case 'diuretic':
             adjustedIntake *= 1.2;
-            break;
           case 'blood_pressure':
             adjustedIntake *= 1.1;
-            break;
           case 'antidepressant':
             adjustedIntake *= 1.05;
-            break;
         }
       }
     }
@@ -501,7 +495,6 @@ class WaterIntakeCalculator {
             reminderTime.month,
             reminderTime.day,
             hour,
-            0,
           );
         }
       }
