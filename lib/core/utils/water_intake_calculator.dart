@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/models/user_profile.dart';
 
 /// Advanced water intake calculator with premium features
@@ -98,6 +100,32 @@ class WaterIntakeCalculator {
     );
 
     return max(1500, min(5000, baseIntake.round())); // Safety bounds
+  }
+
+  /// Calculate water intake from user profile data (legacy method for compatibility)
+  static Future<int> calculateWaterIntake() async {
+    // This is a simplified version that uses stored preferences
+    // In a real app, you'd pass the UserProfile directly
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final weight = prefs.getDouble('user_weight') ?? 70.0;
+      final age = prefs.getInt('user_age') ?? 30;
+      
+      // Simple calculation: 35ml per kg of body weight
+      var baseIntake = weight * 35;
+      
+      // Age adjustments
+      if (age > 65) {
+        baseIntake *= 1.1;
+      } else if (age < 18) {
+        baseIntake *= 0.9;
+      }
+      
+      return baseIntake.round();
+    } catch (e) {
+      debugPrint('Error calculating water intake: $e');
+      return 2000; // Default value
+    }
   }
 
   /// Calculate personalized reminder schedule (premium feature)

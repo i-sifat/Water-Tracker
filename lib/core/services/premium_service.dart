@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/services/device_service.dart';
 
 /// Service for managing premium features and donation unlock system
@@ -273,69 +274,3 @@ Thank you!
   }
 }
 
-/// Enum for premium features
-enum PremiumFeature {
-  advancedAnalytics,
-  customReminders,
-  dataExport,
-  healthSync,
-  unlimitedHistory,
-  customGoals,
-  weeklyReports,
-  themeCustomization,
-  backupRestore,
-  prioritySupport,
-}
-
-/// Extension to check if a premium feature is available
-extension PremiumFeatureExtension on PremiumFeature {
-  String get displayName {
-    switch (this) {
-      case PremiumFeature.advancedAnalytics:
-        return 'Advanced Analytics';
-      case PremiumFeature.customReminders:
-        return 'Custom Reminders';
-      case PremiumFeature.dataExport:
-        return 'Data Export';
-      case PremiumFeature.healthSync:
-        return 'Health App Sync';
-      case PremiumFeature.unlimitedHistory:
-        return 'Unlimited History';
-      case PremiumFeature.customGoals:
-        return 'Custom Goals';
-      case PremiumFeature.weeklyReports:
-        return 'Weekly Reports';
-      case PremiumFeature.themeCustomization:
-        return 'Theme Customization';
-      case PremiumFeature.backupRestore:
-        return 'Backup & Restore';
-      case PremiumFeature.prioritySupport:
-        return 'Priority Support';
-    }
-  }
-
-  String get description {
-    switch (this) {
-      case PremiumFeature.advancedAnalytics:
-        return 'Detailed charts and insights about your hydration patterns';
-      case PremiumFeature.customReminders:
-        return 'Set personalized reminder schedules and messages';
-      case PremiumFeature.dataExport:
-        return 'Export your data to CSV or PDF formats';
-      case PremiumFeature.healthSync:
-        return 'Sync with Google Fit and Apple Health';
-      case PremiumFeature.unlimitedHistory:
-        return 'Access your complete hydration history';
-      case PremiumFeature.customGoals:
-        return 'Set custom daily goals based on advanced factors';
-      case PremiumFeature.weeklyReports:
-        return 'Receive detailed weekly progress reports';
-      case PremiumFeature.themeCustomization:
-        return 'Customize app themes and colors';
-      case PremiumFeature.backupRestore:
-        return 'Backup and restore your data across devices';
-      case PremiumFeature.prioritySupport:
-        return 'Get priority customer support';
-    }
-  }
-}

@@ -4,6 +4,7 @@ class AppColors {
   // Text colors
   static const Color textHeadline = Color(0xFF313A34);
   static const Color textSubtitle = Color(0xFF647067);
+  static const Color textPrimary = Color(0xFF313A34);
   static const Color assessmentText = Color(0xFF313A34);
   static const Color buttonText = Colors.white;
   static const Color pageCounter = Color(0xFF666666);

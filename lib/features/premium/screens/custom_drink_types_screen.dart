@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:watertracker/core/constants/premium_features.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/models/custom_drink_type.dart';
 import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
@@ -112,13 +113,13 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
           const SizedBox(height: 24),
           Text(
             'Custom Drink Types',
-            style: AppTextStyles.headlineMedium,
+            style: AppTypography.headlineMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Create your own drink types with custom water percentages. Track specialty beverages, herbal teas, or any liquid that contributes to your hydration.',
-            style: AppTextStyles.bodyLarge,
+            style: AppTypography.bodyLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -145,13 +146,13 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
           const SizedBox(height: 24),
           Text(
             'No Custom Drink Types',
-            style: AppTextStyles.headlineMedium,
+            style: AppTypography.headlineMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Create your first custom drink type to track specialty beverages with accurate water content.',
-            style: AppTextStyles.bodyLarge,
+            style: AppTypography.bodyLarge,
             textAlign: TextAlign.center,
           ),
         ],
@@ -183,7 +184,7 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
         ),
         title: Text(
           drinkType.name,
-          style: AppTextStyles.titleMedium,
+          style: AppTypography.titleMedium,
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +192,7 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
             const SizedBox(height: 4),
             Text(
               '${(drinkType.waterPercentage * 100).toInt()}% water content',
-              style: AppTextStyles.bodyMedium.copyWith(
+              style: AppTypography.bodyMedium.copyWith(
                 color: AppColors.waterFull,
                 fontWeight: FontWeight.w600,
               ),
@@ -200,7 +201,7 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
               const SizedBox(height: 4),
               Text(
                 drinkType.description!,
-                style: AppTextStyles.bodySmall,
+                style: AppTypography.bodySmall,
               ),
             ],
           ],
@@ -525,7 +526,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Name *', style: AppTextStyles.titleSmall),
+        Text('Name *', style: AppTypography.titleSmall),
         const SizedBox(height: 8),
         TextField(
           controller: _nameController,
@@ -542,7 +543,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Icon (Emoji)', style: AppTextStyles.titleSmall),
+        Text('Icon (Emoji)', style: AppTypography.titleSmall),
         const SizedBox(height: 8),
         TextField(
           controller: _iconController,
@@ -560,7 +561,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Water Content % *', style: AppTextStyles.titleSmall),
+        Text('Water Content % *', style: AppTypography.titleSmall),
         const SizedBox(height: 8),
         TextField(
           controller: _percentageController,
@@ -578,7 +579,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
         const SizedBox(height: 4),
         Text(
           'Enter the percentage of water content (1-100%)',
-          style: AppTextStyles.bodySmall.copyWith(color: Colors.grey),
+          style: AppTypography.bodySmall.copyWith(color: Colors.grey),
         ),
       ],
     );
@@ -588,7 +589,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Description', style: AppTextStyles.titleSmall),
+        Text('Description', style: AppTypography.titleSmall),
         const SizedBox(height: 8),
         TextField(
           controller: _descriptionController,

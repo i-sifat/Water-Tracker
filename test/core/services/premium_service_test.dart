@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/services/premium_service.dart';
 
 void main() {

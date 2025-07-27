@@ -8,6 +8,7 @@ import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 import 'package:watertracker/features/history/history_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
+import 'package:watertracker/features/settings/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -65,7 +66,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             BlendMode.srcIn,
                           ),
                         ),
-                        onPressed: hydrationProvider.resetIntake,
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(SettingsScreen.routeName);
+                        },
                       ),
                     ),
                   ],
@@ -185,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _widgetOptions = <Widget>[
       const HomeScreenContent(),
       const AddHydrationScreenContent(),
-      const HistoryScreenContent(selectedWeekIndex: 0),
+      const HistoryScreenContent(),
     ];
   }
 

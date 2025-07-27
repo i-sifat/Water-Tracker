@@ -3,11 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/utils/water_intake_calculator.dart';
-import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/screens/onboarding_completion_screen.dart';
 
 class CompileDataScreen extends StatefulWidget {
   const CompileDataScreen({super.key});
@@ -146,48 +145,43 @@ class _CompileDataScreenState extends State<CompileDataScreen>
       controller.repeat();
     }
 
-    // Calculate water intake and save onboarding status after a delay
-    Future.delayed(const Duration(seconds: 2), () async {
-      await _calculateUserData();
-      await _saveOnboardingStatus();
-
+    // Complete onboarding after a delay
+    Future.delayed(const Duration(seconds: 3), () async {
       if (!mounted) return;
-
-      // Navigate to home screen
-      await Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(builder: (context) => const HomeScreen()),
-      );
-    });
-  }
-
-  Future<void> _saveOnboardingStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('onboarding_completed', true);
-  }
-
-  Future<void> _calculateUserData() async {
-    try {
-      // Calculate the daily intake
-      final calculatedIntake =
-          await WaterIntakeCalculator.calculateWaterIntake();
-
-      if (!mounted) return;
-
-      // Update provider with calculated intake
-      final provider = Provider.of<HydrationProvider>(context, listen: false);
-      await provider.setDailyGoal(calculatedIntake);
-    } catch (e) {
-      debugPrint('Error calculating water intake: $e');
-      // Handle error appropriately
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Error calculating water intake. Using default value.',
+      
+      final onboardingProvider = Provider.of<OnboardingProvider>(context, listen: false);
+      final hydrationProvider = Provider.of<HydrationProvider>(context, listen: false);
+      
+      try {
+        // Complete onboarding process
+        await onboardingProvider.completeOnboarding();
+        
+        // Update hydration provider with calculated goal
+        final dailyGoal = onboardingProvider.userProfile.effectiveDailyGoal;
+        await hydrationProvider.setDailyGoal(dailyGoal);
+        
+        if (!mounted) return;
+        
+        // Navigate to completion screen
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute<void>(
+            builder: (context) => OnboardingCompletionScreen(
+              dailyGoal: dailyGoal,
+              userName: null, // Could be extracted from profile if we had name field
             ),
           ),
         );
+      } catch (e) {
+        debugPrint('Error completing onboarding: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error completing setup: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
-    }
+    });
   }
 }

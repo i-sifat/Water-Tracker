@@ -160,9 +160,9 @@ class NotificationService {
     final usagePattern = await _getUsagePattern();
     
     // Default schedule: every 2 hours between 8 AM and 10 PM
-    final startHour = settings['startHour'] ?? 8;
-    final endHour = settings['endHour'] ?? 22;
-    final interval = settings['interval'] ?? 2;
+    final startHour = (settings['startHour'] as int?) ?? 8;
+    final endHour = (settings['endHour'] as int?) ?? 22;
+    final interval = (settings['interval'] as num?)?.toInt() ?? 2;
 
     final now = DateTime.now();
     var scheduledDate = DateTime(now.year, now.month, now.day, startHour);
@@ -209,7 +209,7 @@ class NotificationService {
     var notificationId = 100; // Start from 100 to avoid conflicts
     
     for (final reminder in customReminders) {
-      if (!reminder['enabled']) continue;
+      if (!(reminder['enabled'] as bool? ?? false)) continue;
 
       final hour = reminder['hour'] as int;
       final minute = reminder['minute'] as int;

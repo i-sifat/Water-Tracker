@@ -211,9 +211,11 @@ class StorageService {
     try {
       if (encrypted && _encryptedPrefs != null) {
         final jsonString = await _encryptedPrefs!.getString(key);
-        final List<dynamic> decoded = jsonDecode(jsonString);
-        return decoded.cast<String>();
-              return null;
+        if (jsonString != null) {
+          final List<dynamic> decoded = jsonDecode(jsonString);
+          return decoded.cast<String>();
+        }
+        return null;
       } else {
         return _regularPrefs!.getStringList(key);
       }

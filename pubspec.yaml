@@ -17,10 +17,14 @@ dependencies:
   fl_chart: ^0.66.2
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_local_notifications: ^18.0.1
   flutter_svg: ^2.0.17
-  health: ^10.2.0
+  health: ^13.1.1
+  http: ^1.1.0
   image_picker: ^1.0.4
+  intl: any
   lottie: ^3.3.1
   path_provider: ^2.1.4
   pdf: ^3.11.1
@@ -28,6 +32,7 @@ dependencies:
   provider: ^6.1.2
   ruler_scale_picker: ^0.1.0
   shared_preferences: ^2.5.2
+  table_calendar: ^3.1.2
   timezone: ^0.9.4
   url_launcher: ^6.3.1
   vibration: ^3.1.3

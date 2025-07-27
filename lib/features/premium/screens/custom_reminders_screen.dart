@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:watertracker/core/constants/premium_features.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/services/notification_service.dart';
 import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
@@ -97,13 +98,13 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
           const SizedBox(height: 24),
           Text(
             'Custom Reminders',
-            style: AppTextStyles.headlineMedium,
+            style: AppTypography.headlineMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Create personalized reminder schedules that fit your lifestyle. Set specific times, custom messages, and choose which days to receive reminders.',
-            style: AppTextStyles.bodyLarge,
+            style: AppTypography.bodyLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -130,13 +131,13 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
           const SizedBox(height: 24),
           Text(
             'No Custom Reminders',
-            style: AppTextStyles.headlineMedium,
+            style: AppTypography.headlineMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Create your first custom reminder to get personalized hydration notifications.',
-            style: AppTextStyles.bodyLarge,
+            style: AppTypography.bodyLarge,
             textAlign: TextAlign.center,
           ),
         ],
@@ -178,7 +179,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
         ),
         title: Text(
           title,
-          style: AppTextStyles.titleMedium,
+          style: AppTypography.titleMedium,
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,14 +187,14 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
             const SizedBox(height: 4),
             Text(
               timeString,
-              style: AppTextStyles.headlineSmall.copyWith(
+              style: AppTypography.headlineSmall.copyWith(
                 color: AppColors.waterFull,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               dayNames,
-              style: AppTextStyles.bodySmall,
+              style: AppTypography.bodySmall,
             ),
           ],
         ),
@@ -525,7 +526,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Time', style: AppTextStyles.titleSmall),
+        Text('Time', style: AppTypography.titleSmall),
         const SizedBox(height: 8),
         InkWell(
           onTap: _selectTime,
@@ -541,7 +542,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
                 const SizedBox(width: 12),
                 Text(
                   _selectedTime.format(context),
-                  style: AppTextStyles.bodyLarge,
+                  style: AppTypography.bodyLarge,
                 ),
               ],
             ),
@@ -555,7 +556,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Title', style: AppTextStyles.titleSmall),
+        Text('Title', style: AppTypography.titleSmall),
         const SizedBox(height: 8),
         TextField(
           controller: _titleController,
@@ -572,7 +573,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Message', style: AppTextStyles.titleSmall),
+        Text('Message', style: AppTypography.titleSmall),
         const SizedBox(height: 8),
         TextField(
           controller: _bodyController,
@@ -590,7 +591,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Days', style: AppTextStyles.titleSmall),
+        Text('Days', style: AppTypography.titleSmall),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/accessibility_service.dart';
 
 class ThemeProvider extends ChangeNotifier {
   static const String _themeKey = 'theme_mode';
   
   ThemeMode _themeMode = ThemeMode.system;
   bool _isInitialized = false;
+  AccessibilityService? _accessibilityService;
 
   ThemeMode get themeMode => _themeMode;
   bool get isInitialized => _isInitialized;
@@ -32,6 +34,9 @@ class ThemeProvider extends ChangeNotifier {
       if (savedThemeIndex != null && savedThemeIndex < ThemeMode.values.length) {
         _themeMode = ThemeMode.values[savedThemeIndex];
       }
+      
+      // Initialize accessibility service
+      _accessibilityService = await AccessibilityService.initialize();
       
       _isInitialized = true;
       notifyListeners();
@@ -98,4 +103,39 @@ class ThemeProvider extends ChangeNotifier {
     ThemeMode.light: 'Light',
     ThemeMode.dark: 'Dark',
   };
+
+  /// Get accessibility service instance
+  AccessibilityService? get accessibilityService => _accessibilityService;
+
+  /// Get text scale factor for accessibility
+  double get textScaleFactor => _accessibilityService?.textScaleFactor ?? 1.0;
+
+  /// Check if high contrast mode is enabled
+  bool get isHighContrastEnabled => _accessibilityService?.isHighContrastEnabled ?? false;
+
+  /// Check if reduced motion is enabled
+  bool get isReducedMotionEnabled => _accessibilityService?.isReducedMotionEnabled ?? false;
+
+  /// Set high contrast mode
+  Future<void> setHighContrastMode(bool enabled) async {
+    await _accessibilityService?.setHighContrastMode(enabled);
+    notifyListeners();
+  }
+
+  /// Set text scale factor
+  Future<void> setTextScaleFactor(double scale) async {
+    await _accessibilityService?.setTextScaleFactor(scale);
+    notifyListeners();
+  }
+
+  /// Set reduced motion
+  Future<void> setReducedMotion(bool enabled) async {
+    await _accessibilityService?.setReducedMotion(enabled);
+    notifyListeners();
+  }
+
+  /// Get animation duration based on accessibility settings
+  Duration getAnimationDuration(Duration defaultDuration) {
+    return _accessibilityService?.getAnimationDuration(defaultDuration) ?? defaultDuration;
+  }
 }

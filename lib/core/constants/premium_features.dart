@@ -6,6 +6,9 @@ enum PremiumFeature {
   unlimitedHistory,
   customGoals,
   weeklyReports,
+  themeCustomization,
+  backupRestore,
+  prioritySupport,
 }
 
 class PremiumFeatures {
@@ -17,6 +20,9 @@ class PremiumFeatures {
     PremiumFeature.unlimitedHistory: 'Unlimited History',
     PremiumFeature.customGoals: 'Custom Goals',
     PremiumFeature.weeklyReports: 'Weekly Reports',
+    PremiumFeature.themeCustomization: 'Theme Customization',
+    PremiumFeature.backupRestore: 'Backup & Restore',
+    PremiumFeature.prioritySupport: 'Priority Support',
   };
 
   static const Map<PremiumFeature, String> featureDescriptions = {
@@ -27,5 +33,8 @@ class PremiumFeatures {
     PremiumFeature.unlimitedHistory: 'Access unlimited historical data',
     PremiumFeature.customGoals: 'Set advanced personalized goals',
     PremiumFeature.weeklyReports: 'Receive detailed weekly reports',
+    PremiumFeature.themeCustomization: 'Customize app themes and colors',
+    PremiumFeature.backupRestore: 'Backup and restore your data across devices',
+    PremiumFeature.prioritySupport: 'Get priority customer support',
   };
 }

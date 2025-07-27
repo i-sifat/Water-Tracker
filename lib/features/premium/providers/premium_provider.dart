@@ -405,6 +405,11 @@ class PremiumProvider extends ChangeNotifier {
     }
   }
 
+  /// Show premium flow (navigate to donation info screen)
+  void showPremiumFlow(BuildContext context) {
+    Navigator.of(context).pushNamed('/donation-info');
+  }
+
   @override
   void dispose() {
     // Clean up resources

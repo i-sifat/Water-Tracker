@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import '../services/accessibility_service.dart';
 
 class AppTheme {
   // Private constructor to prevent instantiation
   AppTheme._();
 
   // Material 3 light theme
-  static ThemeData get lightTheme {
-    final colorScheme = ColorScheme.fromSeed(
+  static ThemeData lightTheme({
+    AccessibilityService? accessibilityService,
+    double textScaleFactor = 1.0,
+  }) {
+    var colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.waterFull,
     ).copyWith(
       primary: AppColors.waterFull,
@@ -20,13 +24,18 @@ class AppTheme {
       outlineVariant: AppColors.genderUnselected,
     );
 
+    // Apply high contrast if enabled
+    if (accessibilityService?.isHighContrastEnabled == true) {
+      colorScheme = accessibilityService!.getHighContrastColorScheme(colorScheme);
+    }
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       fontFamily: 'Nunito',
       
-      // Text theme
-      textTheme: _buildTextTheme(colorScheme),
+      // Text theme with accessibility scaling
+      textTheme: _buildTextTheme(colorScheme, textScaleFactor),
       
       // App bar theme
       appBarTheme: const AppBarTheme(
@@ -42,12 +51,14 @@ class AppTheme {
         ),
       ),
       
-      // Elevated button theme
+      // Elevated button theme with minimum touch target
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.waterFull,
           foregroundColor: Colors.white,
           elevation: 0,
+          minimumSize: const Size(AccessibilityService.minimumTouchTargetSize, 
+                                  AccessibilityService.minimumTouchTargetSize),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -61,7 +72,7 @@ class AppTheme {
       ),
       
       // Card theme
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -118,7 +129,7 @@ class AppTheme {
         ),
       ),
       
-      // Checkbox theme
+      // Checkbox theme with minimum touch target
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
@@ -129,6 +140,7 @@ class AppTheme {
         checkColor: WidgetStateProperty.all(Colors.white),
         side: const BorderSide(color: AppColors.unselectedBorder, width: 2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
       
       // Switch theme
@@ -141,17 +153,21 @@ class AppTheme {
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.waterFull.withOpacity(0.3);
+            return AppColors.waterFull.withValues(alpha: 0.3);
           }
-          return AppColors.genderUnselected.withOpacity(0.3);
+          return AppColors.genderUnselected.withValues(alpha: 0.3);
         }),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
     );
   }
 
   // Material 3 dark theme
-  static ThemeData get darkTheme {
-    final colorScheme = ColorScheme.fromSeed(
+  static ThemeData darkTheme({
+    AccessibilityService? accessibilityService,
+    double textScaleFactor = 1.0,
+  }) {
+    var colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.waterFull,
       brightness: Brightness.dark,
     ).copyWith(
@@ -165,13 +181,18 @@ class AppTheme {
       outlineVariant: const Color(0xFF2E2E2E),
     );
 
+    // Apply high contrast if enabled
+    if (accessibilityService?.isHighContrastEnabled == true) {
+      colorScheme = accessibilityService!.getHighContrastColorScheme(colorScheme);
+    }
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       fontFamily: 'Nunito',
       
-      // Text theme
-      textTheme: _buildTextTheme(colorScheme),
+      // Text theme with accessibility scaling
+      textTheme: _buildTextTheme(colorScheme, textScaleFactor),
       
       // App bar theme
       appBarTheme: AppBarTheme(
@@ -187,12 +208,14 @@ class AppTheme {
         ),
       ),
       
-      // Elevated button theme
+      // Elevated button theme with minimum touch target
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.waterFull,
           foregroundColor: Colors.white,
           elevation: 0,
+          minimumSize: const Size(AccessibilityService.minimumTouchTargetSize, 
+                                  AccessibilityService.minimumTouchTargetSize),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -206,7 +229,7 @@ class AppTheme {
       ),
       
       // Card theme
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: colorScheme.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -248,7 +271,7 @@ class AppTheme {
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: colorScheme.surface,
         selectedItemColor: AppColors.waterFull,
-        unselectedItemColor: colorScheme.onSurface.withOpacity(0.6),
+        unselectedItemColor: colorScheme.onSurface.withValues(alpha: 0.6),
         type: BottomNavigationBarType.fixed,
         elevation: 8,
         selectedLabelStyle: const TextStyle(
@@ -263,7 +286,7 @@ class AppTheme {
         ),
       ),
       
-      // Checkbox theme
+      // Checkbox theme with minimum touch target
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
@@ -274,6 +297,7 @@ class AppTheme {
         checkColor: WidgetStateProperty.all(Colors.white),
         side: BorderSide(color: colorScheme.outline, width: 2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
       
       // Switch theme
@@ -286,35 +310,36 @@ class AppTheme {
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.waterFull.withOpacity(0.3);
+            return AppColors.waterFull.withValues(alpha: 0.3);
           }
-          return colorScheme.outline.withOpacity(0.3);
+          return colorScheme.outline.withValues(alpha: 0.3);
         }),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
     );
   }
 
-  // Build text theme for both light and dark themes
-  static TextTheme _buildTextTheme(ColorScheme colorScheme) {
+  // Build text theme for both light and dark themes with accessibility scaling
+  static TextTheme _buildTextTheme(ColorScheme colorScheme, double textScaleFactor) {
     return TextTheme(
       // Display styles
       displayLarge: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 57,
+        fontSize: 57 * textScaleFactor,
         fontWeight: FontWeight.w800,
         color: colorScheme.onSurface,
         height: 1.12,
       ),
       displayMedium: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 45,
+        fontSize: 45 * textScaleFactor,
         fontWeight: FontWeight.w800,
         color: colorScheme.onSurface,
         height: 1.16,
       ),
       displaySmall: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 36,
+        fontSize: 36 * textScaleFactor,
         fontWeight: FontWeight.w800,
         color: colorScheme.onSurface,
         height: 1.22,
@@ -323,21 +348,21 @@ class AppTheme {
       // Headline styles
       headlineLarge: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 32,
+        fontSize: 32 * textScaleFactor,
         fontWeight: FontWeight.w800,
         color: colorScheme.onSurface,
         height: 1.25,
       ),
       headlineMedium: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 28,
+        fontSize: 28 * textScaleFactor,
         fontWeight: FontWeight.w700,
         color: colorScheme.onSurface,
         height: 1.29,
       ),
       headlineSmall: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 24,
+        fontSize: 24 * textScaleFactor,
         fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
         height: 1.33,
@@ -346,21 +371,21 @@ class AppTheme {
       // Title styles
       titleLarge: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 22,
+        fontSize: 22 * textScaleFactor,
         fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
         height: 1.27,
       ),
       titleMedium: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 16,
+        fontSize: 16 * textScaleFactor,
         fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
         height: 1.50,
       ),
       titleSmall: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 14,
+        fontSize: 14 * textScaleFactor,
         fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
         height: 1.43,
@@ -369,48 +394,54 @@ class AppTheme {
       // Body styles
       bodyLarge: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 16,
+        fontSize: 16 * textScaleFactor,
         fontWeight: FontWeight.w400,
         color: colorScheme.onSurface,
         height: 1.50,
       ),
       bodyMedium: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 14,
+        fontSize: 14 * textScaleFactor,
         fontWeight: FontWeight.w400,
         color: colorScheme.onSurface,
         height: 1.43,
       ),
       bodySmall: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 12,
+        fontSize: 12 * textScaleFactor,
         fontWeight: FontWeight.w400,
-        color: colorScheme.onSurface.withOpacity(0.7),
+        color: colorScheme.onSurface.withValues(alpha: 0.7),
         height: 1.33,
       ),
       
       // Label styles
       labelLarge: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 14,
+        fontSize: 14 * textScaleFactor,
         fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
         height: 1.43,
       ),
       labelMedium: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 12,
+        fontSize: 12 * textScaleFactor,
         fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
         height: 1.33,
       ),
       labelSmall: TextStyle(
         fontFamily: 'Nunito',
-        fontSize: 11,
+        fontSize: 11 * textScaleFactor,
         fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
         height: 1.45,
       ),
     );
   }
+
+  // Get legacy light theme (for backward compatibility)
+  static ThemeData get legacyLightTheme => AppTheme.lightTheme();
+
+  // Get legacy dark theme (for backward compatibility)
+  static ThemeData get legacyDarkTheme => AppTheme.darkTheme();
 }
