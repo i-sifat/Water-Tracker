@@ -108,8 +108,8 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
       ),
       body: PremiumGate(
         feature: PremiumFeature.customGoals,
-        child: _buildContent(),
         lockedChild: _buildLockedContent(),
+        child: _buildContent(),
       ),
     );
   }
@@ -155,13 +155,13 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
             color: AppColors.waterFull.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 24),
-          Text(
+          const Text(
             'Advanced Goal Calculator',
             style: AppTypography.headline,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Get personalized hydration goals based on advanced factors like body composition, sleep quality, stress levels, environmental conditions, and more.',
             style: AppTypography.subtitle,
             textAlign: TextAlign.center,
@@ -169,8 +169,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
           const SizedBox(height: 32),
           PrimaryButton(
             text: 'Unlock Premium',
-            onPressed:
-                () => context.read<PremiumProvider>().showPremiumFlow(context),
+            onPressed: () => context.read<PremiumProvider>().showPremiumFlow(context),
           ),
         ],
       ),
@@ -183,7 +182,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Text(
+            const Text(
               'Your Advanced Goal',
               style: AppTypography.subtitle,
               textAlign: TextAlign.center,
@@ -198,13 +197,13 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'per day',
               style: AppTypography.subtitle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'This goal is calculated using advanced factors for maximum accuracy.',
               style: AppTypography.subtitle,
               textAlign: TextAlign.center,
@@ -401,9 +400,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-          ],
+          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
           decoration: InputDecoration(
             hintText: hint,
             suffixText: suffix,
@@ -419,7 +416,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Stress Level', style: AppTypography.subtitle),
+        const Text('Stress Level', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -441,7 +438,10 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
             const Text('High'),
           ],
         ),
-        Text('Current: $_stressLevel/10', style: AppTypography.subtitle),
+        Text(
+          'Current: $_stressLevel/10',
+          style: AppTypography.subtitle,
+        ),
       ],
     );
   }
@@ -450,11 +450,13 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Climate Zone', style: AppTypography.subtitle),
+        const Text('Climate Zone', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _climateZone,
-          decoration: const InputDecoration(border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
           hint: const Text('Select climate zone'),
           items: const [
             DropdownMenuItem(value: 'tropical', child: Text('Tropical')),
@@ -475,7 +477,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Workout Timing', style: AppTypography.subtitle),
+        const Text('Workout Timing', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         CheckboxListTile(
           title: const Text('Pre-workout hydration needed'),
@@ -539,21 +541,19 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     try {
       // In a real implementation, this would save to storage and update the user profile
       // For now, just show a success message
-
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Advanced goal of ${_calculatedGoal}ml applied successfully!',
-          ),
+          content: Text('Advanced goal of ${_calculatedGoal}ml applied successfully!'),
           backgroundColor: AppColors.waterFull,
         ),
       );
 
       Navigator.of(context).pop();
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error saving goal: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving goal: $e')),
+      );
     }
   }
 }

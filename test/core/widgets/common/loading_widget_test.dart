@@ -4,11 +4,13 @@ import 'package:watertracker/core/widgets/common/loading_widget.dart';
 
 void main() {
   group('LoadingWidget Tests', () {
-    testWidgets('renders CircularProgressIndicator', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('renders CircularProgressIndicator', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(home: Scaffold(body: LoadingWidget())),
+        const MaterialApp(
+          home: Scaffold(
+            body: LoadingWidget(),
+          ),
+        ),
       );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -19,7 +21,9 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: LoadingWidget(message: message)),
+          home: Scaffold(
+            body: LoadingWidget(message: message),
+          ),
         ),
       );
 
@@ -27,11 +31,13 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('does not render message when not provided', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('does not render message when not provided', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(home: Scaffold(body: LoadingWidget())),
+        const MaterialApp(
+          home: Scaffold(
+            body: LoadingWidget(),
+          ),
+        ),
       );
 
       expect(find.byType(Text), findsNothing);
@@ -43,7 +49,9 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: LoadingWidget(size: customSize)),
+          home: Scaffold(
+            body: LoadingWidget(size: customSize),
+          ),
         ),
       );
 
@@ -52,13 +60,15 @@ void main() {
       expect(sizedBox.height, equals(customSize));
     });
 
-    testWidgets('applies custom stroke width correctly', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('applies custom stroke width correctly', (WidgetTester tester) async {
       const customStrokeWidth = 6.0;
 
       await tester.pumpWidget(
-        const MaterialApp(home: Scaffold(body: LoadingWidget())),
+        const MaterialApp(
+          home: Scaffold(
+            body: LoadingWidget(),
+          ),
+        ),
       );
 
       final progressIndicator = tester.widget<CircularProgressIndicator>(
@@ -69,7 +79,11 @@ void main() {
 
     testWidgets('centers content properly', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(home: Scaffold(body: LoadingWidget())),
+        const MaterialApp(
+          home: Scaffold(
+            body: LoadingWidget(),
+          ),
+        ),
       );
 
       final center = tester.widget<Center>(find.byType(Center));
@@ -79,14 +93,14 @@ void main() {
       expect(column.mainAxisAlignment, equals(MainAxisAlignment.center));
     });
 
-    testWidgets('has proper spacing between indicator and message', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('has proper spacing between indicator and message', (WidgetTester tester) async {
       const message = 'Loading...';
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: LoadingWidget(message: message)),
+          home: Scaffold(
+            body: LoadingWidget(message: message),
+          ),
         ),
       );
 
@@ -104,7 +118,11 @@ void main() {
     testWidgets('renders with default properties', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: SkeletonLoader(child: Text('Test content'))),
+          home: Scaffold(
+            body: SkeletonLoader(
+              child: Text('Test content'),
+            ),
+          ),
         ),
       );
 
@@ -120,17 +138,15 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: SkeletonLoader(
-              child: Text('Test content'),
               width: customWidth,
               height: customHeight,
+              child: Text('Test content'),
             ),
           ),
         ),
       );
 
-      final skeletonLoader = tester.widget<SkeletonLoader>(
-        find.byType(SkeletonLoader),
-      );
+      final skeletonLoader = tester.widget<SkeletonLoader>(find.byType(SkeletonLoader));
       expect(skeletonLoader.width, equals(customWidth));
       expect(skeletonLoader.height, equals(customHeight));
     });
@@ -142,23 +158,25 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: SkeletonLoader(
-              child: Text('Test content'),
               borderRadius: customBorderRadius,
+              child: Text('Test content'),
             ),
           ),
         ),
       );
 
-      final skeletonLoader = tester.widget<SkeletonLoader>(
-        find.byType(SkeletonLoader),
-      );
+      final skeletonLoader = tester.widget<SkeletonLoader>(find.byType(SkeletonLoader));
       expect(skeletonLoader.borderRadius, equals(customBorderRadius));
     });
 
     testWidgets('has animation controller', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: SkeletonLoader(child: Text('Test content'))),
+          home: Scaffold(
+            body: SkeletonLoader(
+              child: Text('Test content'),
+            ),
+          ),
         ),
       );
 
@@ -174,30 +192,38 @@ void main() {
     testWidgets('uses default values correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: SkeletonLoader(child: Text('Test content'))),
+          home: Scaffold(
+            body: SkeletonLoader(
+              child: Text('Test content'),
+            ),
+          ),
         ),
       );
 
-      final skeletonLoader = tester.widget<SkeletonLoader>(
-        find.byType(SkeletonLoader),
-      );
+      final skeletonLoader = tester.widget<SkeletonLoader>(find.byType(SkeletonLoader));
       expect(skeletonLoader.width, equals(double.infinity));
       expect(skeletonLoader.height, equals(20));
       expect(skeletonLoader.borderRadius, equals(8));
     });
 
-    testWidgets('disposes animation controller properly', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('disposes animation controller properly', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: SkeletonLoader(child: Text('Test content'))),
+          home: Scaffold(
+            body: SkeletonLoader(
+              child: Text('Test content'),
+            ),
+          ),
         ),
       );
 
       // Remove the widget to trigger dispose
       await tester.pumpWidget(
-        const MaterialApp(home: Scaffold(body: SizedBox())),
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox(),
+          ),
+        ),
       );
 
       // Should not throw any errors

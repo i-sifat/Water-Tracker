@@ -8,8 +8,7 @@ import 'package:watertracker/core/widgets/cards/app_card.dart';
 /// Comprehensive error handling widget with user-friendly messages and actions
 class ErrorHandler extends StatelessWidget {
   const ErrorHandler({
-    super.key,
-    required this.error,
+    required this.error, super.key,
     this.onRetry,
     this.onDismiss,
     this.showDetails = false,
@@ -29,7 +28,7 @@ class ErrorHandler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final errorInfo = _getErrorInfo(error);
-
+    
     return AppCard(
       margin: const EdgeInsets.all(16),
       child: Padding(
@@ -45,11 +44,15 @@ class ErrorHandler extends StatelessWidget {
                 color: errorInfo.color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(errorInfo.icon, color: errorInfo.color, size: 32),
+              child: Icon(
+                errorInfo.icon,
+                color: errorInfo.color,
+                size: 32,
+              ),
             ),
-
+            
             const SizedBox(height: 16),
-
+            
             // Title
             Text(
               customTitle ?? errorInfo.title,
@@ -60,9 +63,9 @@ class ErrorHandler extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-
+            
             const SizedBox(height: 8),
-
+            
             // Message
             Text(
               customMessage ?? errorInfo.message,
@@ -73,14 +76,17 @@ class ErrorHandler extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-
+            
             // Error details (if enabled)
             if (showDetails && error is AppError) ...[
               const SizedBox(height: 12),
               ExpansionTile(
                 title: const Text(
                   'Technical Details',
-                  style: TextStyle(fontSize: 12, color: AppColors.textSubtitle),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSubtitle,
+                  ),
                 ),
                 children: [
                   Container(
@@ -103,9 +109,9 @@ class ErrorHandler extends StatelessWidget {
                 ],
               ),
             ],
-
+            
             const SizedBox(height: 20),
-
+            
             // Actions
             if (customActions != null)
               ...customActions!
@@ -122,13 +128,19 @@ class ErrorHandler extends StatelessWidget {
       children: [
         if (onDismiss != null) ...[
           Expanded(
-            child: SecondaryButton(text: 'Dismiss', onPressed: onDismiss!),
+            child: SecondaryButton(
+              text: 'Dismiss',
+              onPressed: onDismiss,
+            ),
           ),
           if (onRetry != null) const SizedBox(width: 12),
         ],
         if (onRetry != null)
           Expanded(
-            child: PrimaryButton(text: 'Try Again', onPressed: onRetry!),
+            child: PrimaryButton(
+              text: 'Try Again',
+              onPressed: onRetry,
+            ),
           ),
       ],
     );
@@ -182,10 +194,6 @@ class ErrorHandler extends StatelessWidget {
 }
 
 class _ErrorInfo {
-  final String title;
-  final String message;
-  final IconData icon;
-  final Color color;
 
   _ErrorInfo({
     required this.title,
@@ -193,13 +201,16 @@ class _ErrorInfo {
     required this.icon,
     required this.color,
   });
+  final String title;
+  final String message;
+  final IconData icon;
+  final Color color;
 }
 
 /// Inline error widget for forms and smaller spaces
 class InlineErrorWidget extends StatelessWidget {
   const InlineErrorWidget({
-    super.key,
-    required this.error,
+    required this.error, super.key,
     this.onRetry,
     this.compact = false,
   });
@@ -211,17 +222,23 @@ class InlineErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final errorInfo = _getErrorInfo(error);
-
+    
     return Container(
       padding: EdgeInsets.all(compact ? 8 : 12),
       decoration: BoxDecoration(
         color: errorInfo.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: errorInfo.color.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: errorInfo.color.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         children: [
-          Icon(errorInfo.icon, color: errorInfo.color, size: compact ? 16 : 20),
+          Icon(
+            errorInfo.icon,
+            color: errorInfo.color,
+            size: compact ? 16 : 20,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -291,12 +308,16 @@ class ErrorSnackBar {
     Duration duration = const Duration(seconds: 4),
   }) {
     final errorInfo = _getErrorInfo(error);
-
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
-            Icon(errorInfo.icon, color: Colors.white, size: 20),
+            Icon(
+              errorInfo.icon,
+              color: Colors.white,
+              size: 20,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -311,16 +332,17 @@ class ErrorSnackBar {
         ),
         backgroundColor: errorInfo.color,
         duration: duration,
-        action:
-            onRetry != null
-                ? SnackBarAction(
-                  label: 'Retry',
-                  textColor: Colors.white,
-                  onPressed: onRetry,
-                )
-                : null,
+        action: onRetry != null
+            ? SnackBarAction(
+                label: 'Retry',
+                textColor: Colors.white,
+                onPressed: onRetry,
+              )
+            : null,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
     );
   }
@@ -361,8 +383,7 @@ class ErrorSnackBar {
 /// Global error boundary for unhandled exceptions
 class ErrorBoundary extends StatefulWidget {
   const ErrorBoundary({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.onError,
     this.fallbackBuilder,
   });
@@ -381,7 +402,7 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
   @override
   void initState() {
     super.initState();
-
+    
     // Set up global error handler
     FlutterError.onError = (FlutterErrorDetails details) {
       if (mounted) {
@@ -389,11 +410,8 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
           _error = details.exception;
         });
       }
-
-      widget.onError?.call(
-        details.exception,
-        details.stack ?? StackTrace.empty,
-      );
+      
+      widget.onError?.call(details.exception, details.stack ?? StackTrace.empty);
     };
   }
 
@@ -442,9 +460,12 @@ mixin ErrorHandlingMixin<T extends StatefulWidget> on State<T> {
     ErrorSnackBar.show(context, error, onRetry: onRetry);
   }
 
-  Widget buildErrorWidget({VoidCallback? onRetry, bool showDetails = false}) {
+  Widget buildErrorWidget({
+    VoidCallback? onRetry,
+    bool showDetails = false,
+  }) {
     if (_lastError == null) return const SizedBox.shrink();
-
+    
     return ErrorHandler(
       error: _lastError!,
       onRetry: onRetry,
@@ -453,9 +474,12 @@ mixin ErrorHandlingMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  Widget buildInlineErrorWidget({VoidCallback? onRetry, bool compact = false}) {
+  Widget buildInlineErrorWidget({
+    VoidCallback? onRetry,
+    bool compact = false,
+  }) {
     if (_lastError == null) return const SizedBox.shrink();
-
+    
     return InlineErrorWidget(
       error: _lastError!,
       onRetry: onRetry,

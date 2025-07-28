@@ -6,9 +6,7 @@ import 'package:watertracker/core/widgets/cards/app_card.dart';
 /// Enhanced empty state widget with animations and multiple styles
 class EmptyStateWidget extends StatefulWidget {
   const EmptyStateWidget({
-    super.key,
-    required this.title,
-    required this.subtitle,
+    required this.title, required this.subtitle, super.key,
     this.icon,
     this.actionText,
     this.onAction,
@@ -44,33 +42,36 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
   @override
   void initState() {
     super.initState();
-
+    
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0, 0.6, curve: Curves.easeOut),
-      ),
-    );
-
-    _slideAnimation = Tween<double>(begin: 30, end: 0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
-      ),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.5, curve: Curves.elasticOut),
-      ),
-    );
-
+    
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0, 0.6, curve: Curves.easeOut),
+    ));
+    
+    _slideAnimation = Tween<double>(
+      begin: 30,
+      end: 0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
+    ));
+    
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0, 0.5, curve: Curves.elasticOut),
+    ));
+    
     _animationController.forward();
   }
 
@@ -97,7 +98,10 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
 
     if (widget.showCard) {
       return Center(
-        child: AppCard(margin: const EdgeInsets.all(20), child: content),
+        child: AppCard(
+          margin: const EdgeInsets.all(20),
+          child: content,
+        ),
       );
     }
 
@@ -106,7 +110,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
 
   Widget _buildContent() {
     return Padding(
-      padding: const EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -116,7 +120,10 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
           _buildTitle(),
           const SizedBox(height: 8),
           _buildSubtitle(),
-          if (_hasAction()) ...[const SizedBox(height: 24), _buildAction()],
+          if (_hasAction()) ...[
+            const SizedBox(height: 24),
+            _buildAction(),
+          ],
         ],
       ),
     );
@@ -127,20 +134,20 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
     if (widget.customIllustration != null) {
       return ScaleTransition(
         scale: _scaleAnimation,
-        child: widget.customIllustration!,
+        child: widget.customIllustration,
       );
     }
-
+    
     if (widget.illustration != null) {
       return ScaleTransition(
         scale: _scaleAnimation,
-        child: widget.illustration!,
+        child: widget.illustration,
       );
     }
 
     final iconData = widget.icon ?? _getDefaultIcon();
     final iconColor = _getIconColor();
-
+    
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Container(
@@ -150,7 +157,11 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
           color: iconColor.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
-        child: Icon(iconData, size: 40, color: iconColor),
+        child: Icon(
+          iconData,
+          size: 40,
+          color: iconColor,
+        ),
       ),
     );
   }
@@ -182,17 +193,21 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
   Widget _buildAction() {
     final actionText = widget.actionText;
     final onAction = widget.onAction ?? widget.onActionPressed;
-
+    
     if (actionText == null || onAction == null) {
       return const SizedBox.shrink();
     }
-
-    return PrimaryButton(text: actionText, onPressed: onAction, width: 200);
+    
+    return PrimaryButton(
+      text: actionText,
+      onPressed: onAction,
+      width: 200,
+    );
   }
 
   bool _hasAction() {
-    return (widget.actionText != null) &&
-        (widget.onAction != null || widget.onActionPressed != null);
+    return (widget.actionText != null) && 
+           (widget.onAction != null || widget.onActionPressed != null);
   }
 
   IconData _getDefaultIcon() {
@@ -278,8 +293,7 @@ enum EmptyStateStyle {
 /// Compact empty state for smaller spaces
 class CompactEmptyState extends StatelessWidget {
   const CompactEmptyState({
-    super.key,
-    required this.message,
+    required this.message, super.key,
     this.icon,
     this.actionText,
     this.onAction,
@@ -293,13 +307,13 @@ class CompactEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (icon != null) ...[
             Icon(
-              icon!,
+              icon,
               size: 32,
               color: AppColors.textSubtitle.withValues(alpha: 0.7),
             ),
@@ -307,7 +321,10 @@ class CompactEmptyState extends StatelessWidget {
           ],
           Text(
             message,
-            style: const TextStyle(fontSize: 14, color: AppColors.textSubtitle),
+            style: const TextStyle(
+              fontSize: 14,
+              color: AppColors.textSubtitle,
+            ),
             textAlign: TextAlign.center,
           ),
           if (actionText != null && onAction != null) ...[
@@ -331,7 +348,10 @@ class CompactEmptyState extends StatelessWidget {
 
 /// Inline empty state for list items
 class InlineEmptyState extends StatelessWidget {
-  const InlineEmptyState({super.key, required this.message, this.icon});
+  const InlineEmptyState({
+    required this.message, super.key,
+    this.icon,
+  });
 
   final String message;
   final IconData? icon;
@@ -344,7 +364,7 @@ class InlineEmptyState extends StatelessWidget {
         children: [
           if (icon != null) ...[
             Icon(
-              icon!,
+              icon,
               size: 20,
               color: AppColors.textSubtitle.withValues(alpha: 0.7),
             ),
@@ -368,7 +388,10 @@ class InlineEmptyState extends StatelessWidget {
 
 /// Specialized empty states for common scenarios
 class HydrationEmptyState extends StatelessWidget {
-  const HydrationEmptyState({super.key, this.onAddWater});
+  const HydrationEmptyState({
+    super.key,
+    this.onAddWater,
+  });
 
   final VoidCallback? onAddWater;
 
@@ -376,8 +399,7 @@ class HydrationEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateWidget(
       title: 'No Water Logged Today',
-      subtitle:
-          'Start tracking your hydration by adding your first glass of water.',
+      subtitle: 'Start tracking your hydration by adding your first glass of water.',
       style: EmptyStateStyle.hydration,
       actionText: onAddWater != null ? 'Add Water' : null,
       onAction: onAddWater,
@@ -400,13 +422,20 @@ class HydrationEmptyState extends StatelessWidget {
         ),
         shape: BoxShape.circle,
       ),
-      child: const Icon(Icons.water_drop, size: 50, color: AppColors.waterFull),
+      child: const Icon(
+        Icons.water_drop,
+        size: 50,
+        color: AppColors.waterFull,
+      ),
     );
   }
 }
 
 class HistoryEmptyState extends StatelessWidget {
-  const HistoryEmptyState({super.key, this.onStartTracking});
+  const HistoryEmptyState({
+    super.key,
+    this.onStartTracking,
+  });
 
   final VoidCallback? onStartTracking;
 
@@ -414,8 +443,7 @@ class HistoryEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateWidget(
       title: 'No History Yet',
-      subtitle:
-          'Your hydration history will appear here once you start tracking your water intake.',
+      subtitle: 'Your hydration history will appear here once you start tracking your water intake.',
       style: EmptyStateStyle.history,
       actionText: onStartTracking != null ? 'Start Tracking' : null,
       onAction: onStartTracking,
@@ -425,8 +453,7 @@ class HistoryEmptyState extends StatelessWidget {
 
 class SearchEmptyState extends StatelessWidget {
   const SearchEmptyState({
-    super.key,
-    required this.searchQuery,
+    required this.searchQuery, super.key,
     this.onClearSearch,
   });
 
@@ -437,8 +464,7 @@ class SearchEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateWidget(
       title: 'No Results Found',
-      subtitle:
-          'No results found for "$searchQuery". Try adjusting your search terms.',
+      subtitle: 'No results found for "$searchQuery". Try adjusting your search terms.',
       style: EmptyStateStyle.search,
       actionText: onClearSearch != null ? 'Clear Search' : null,
       onAction: onClearSearch,
@@ -447,7 +473,10 @@ class SearchEmptyState extends StatelessWidget {
 }
 
 class NetworkEmptyState extends StatelessWidget {
-  const NetworkEmptyState({super.key, this.onRetry});
+  const NetworkEmptyState({
+    super.key,
+    this.onRetry,
+  });
 
   final VoidCallback? onRetry;
 

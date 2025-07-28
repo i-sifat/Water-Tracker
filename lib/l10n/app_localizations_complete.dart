@@ -3,9 +3,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 /// Complete localization implementation for the Water Tracker app
 class AppLocalizationsComplete {
-  final Locale locale;
 
   AppLocalizationsComplete(this.locale);
+  final Locale locale;
 
   static AppLocalizationsComplete? of(BuildContext context) {
     return Localizations.of<AppLocalizationsComplete>(
@@ -95,7 +95,7 @@ class AppLocalizationsComplete {
       'unlock_premium': 'Débloquer Premium',
       'daily_goal': 'Objectif Quotidien',
       'water_intake': "Consommation d'Eau",
-      'add_water': 'Ajouter de l\'Eau',
+      'add_water': "Ajouter de l'Eau",
       'history': 'Historique',
       'analytics': 'Analyses',
       'goal_completed': 'Objectif Atteint!',

@@ -186,8 +186,7 @@ class ImageOptimization {
 /// Optimized image widget with advanced caching and loading
 class OptimizedImageWidget extends StatefulWidget {
   const OptimizedImageWidget({
-    super.key,
-    required this.imagePath,
+    required this.imagePath, super.key,
     this.width,
     this.height,
     this.fit = BoxFit.cover,
@@ -277,7 +276,7 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
               imageData = byteData.buffer.asUint8List();
             } else {
               final file = File(widget.imagePath);
-              if (await file.exists()) {
+              if (file.existsSync()) {
                 imageData = await file.readAsBytes();
               }
             }
@@ -372,7 +371,7 @@ class ImagePreloader {
   }) async {
     final futures = <Future<void>>[];
 
-    for (int i = 0; i < imagePaths.length; i += maxConcurrent) {
+    for (var i = 0; i < imagePaths.length; i += maxConcurrent) {
       final batch = imagePaths.skip(i).take(maxConcurrent);
       final batchFutures = batch.map((path) => _preloadSingle(path, context));
 
@@ -398,7 +397,7 @@ class ImagePreloader {
     try {
       await task;
     } finally {
-      _preloadingTasks.remove(imagePath);
+      await _preloadingTasks.remove(imagePath);
     }
   }
 

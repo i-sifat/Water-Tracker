@@ -6,9 +6,7 @@ import 'package:watertracker/core/services/performance_service.dart';
 /// Optimized list view with lazy loading, caching, and performance monitoring
 class OptimizedListView<T> extends StatefulWidget {
   const OptimizedListView({
-    super.key,
-    required this.items,
-    required this.itemBuilder,
+    required this.items, required this.itemBuilder, super.key,
     this.loadingBuilder,
     this.emptyBuilder,
     this.errorBuilder,
@@ -81,9 +79,7 @@ class _OptimizedListViewState<T> extends State<OptimizedListView<T>>
     _scrollEndTimer?.cancel();
 
     // Set new timer for scroll end detection
-    _scrollEndTimer = Timer(const Duration(milliseconds: 150), () {
-      _checkLoadMore();
-    });
+    _scrollEndTimer = Timer(const Duration(milliseconds: 150), _checkLoadMore);
   }
 
   void _checkLoadMore() {
@@ -197,7 +193,7 @@ class _OptimizedListViewState<T> extends State<OptimizedListView<T>>
             // Loading indicator
             return widget.loadingBuilder?.call(context) ??
                 const Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
                 );
           }
@@ -212,10 +208,7 @@ class _OptimizedListViewState<T> extends State<OptimizedListView<T>>
 /// Optimized grid view with similar performance features
 class OptimizedGridView<T> extends StatefulWidget {
   const OptimizedGridView({
-    super.key,
-    required this.items,
-    required this.itemBuilder,
-    required this.crossAxisCount,
+    required this.items, required this.itemBuilder, required this.crossAxisCount, super.key,
     this.loadingBuilder,
     this.emptyBuilder,
     this.errorBuilder,
@@ -290,9 +283,7 @@ class _OptimizedGridViewState<T> extends State<OptimizedGridView<T>>
 
   void _onScroll() {
     _scrollEndTimer?.cancel();
-    _scrollEndTimer = Timer(const Duration(milliseconds: 150), () {
-      _checkLoadMore();
-    });
+    _scrollEndTimer = Timer(const Duration(milliseconds: 150), _checkLoadMore);
   }
 
   void _checkLoadMore() {

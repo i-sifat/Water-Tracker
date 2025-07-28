@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/services/storage_service.dart';
 
-@Skip("Temporarily disabled - needs API alignment")
+@Skip('Temporarily disabled - needs API alignment')
 void main() {
   group('StorageService Comprehensive Tests', () {
     late StorageService storageService;

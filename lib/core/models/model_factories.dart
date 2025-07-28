@@ -298,8 +298,8 @@ class HydrationDataBuilder {
   HydrationDataBuilder asCoffee() => withType(DrinkType.coffee);
   HydrationDataBuilder asTea() => withType(DrinkType.tea);
 
-  HydrationDataBuilder synced() => withSyncStatus(true);
-  HydrationDataBuilder unsynced() => withSyncStatus(false);
+  HydrationDataBuilder synced() => withSyncStatus(isSynced: true);
+  HydrationDataBuilder unsynced() => withSyncStatus(isSynced: false);
 
   HydrationDataBuilder today() => withTimestamp(DateTime.now());
   HydrationDataBuilder yesterday() =>

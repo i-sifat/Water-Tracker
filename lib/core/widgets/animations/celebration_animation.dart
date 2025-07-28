@@ -314,7 +314,7 @@ void showGoalAchievementDialog(
   String? message,
   VoidCallback? onContinue,
 }) {
-  showDialog(
+  showDialog<void>(
     context: context,
     barrierDismissible: false,
     builder:

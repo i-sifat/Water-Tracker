@@ -63,7 +63,7 @@ class MockPremiumProvider extends ChangeNotifier implements PremiumProvider {
   Future<bool> unlockWithCode(String code) async => true;
 }
 
-@Skip("Temporarily disabled - needs API alignment")
+@Skip('Temporarily disabled - needs API alignment')
 void main() {
   group('PremiumGate Widget Tests', () {
     late MockPremiumProvider mockPremiumProvider;

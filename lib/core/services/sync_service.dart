@@ -122,7 +122,7 @@ class SyncService {
 
     try {
       final backupFile = File(backupPath);
-      if (!await backupFile.exists()) {
+      if (!backupFile.existsSync()) {
         debugPrint('Backup file does not exist: $backupPath');
         return false;
       }
@@ -254,7 +254,7 @@ class SyncService {
 
     try {
       final importFile = File(filePath);
-      if (!await importFile.exists()) {
+      if (!importFile.existsSync()) {
         debugPrint('Import file does not exist: $filePath');
         return false;
       }
@@ -324,11 +324,11 @@ class SyncService {
       };
 
       // Remove existing item with same dataType and itemId
-      syncQueue.removeWhere(
-        (item) => item['dataType'] == dataType && item['itemId'] == itemId,
-      );
-
-      syncQueue.add(queueItem);
+      syncQueue
+        ..removeWhere(
+          (item) => item['dataType'] == dataType && item['itemId'] == itemId,
+        )
+        ..add(queueItem);
 
       await _storageService.saveJson(_syncQueueKey, {'queue': syncQueue});
     } catch (e) {
@@ -452,7 +452,7 @@ class SyncService {
   }
 
   Future<void> _clearSyncQueue() async {
-    await _storageService.saveJson(_syncQueueKey, {'queue': []});
+    await _storageService.saveJson(_syncQueueKey, {'queue': <Map<String, dynamic>>[]});
   }
 
   Future<List<Map<String, dynamic>>> _getLocalChangesSince(
@@ -597,8 +597,8 @@ class SyncService {
       final existingData = await _storageService.getJson(entry.key) ?? {};
 
       if (entry.value is Map<String, dynamic>) {
-        final mergedData = Map<String, dynamic>.from(existingData);
-        mergedData.addAll(entry.value as Map<String, dynamic>);
+        final mergedData = Map<String, dynamic>.from(existingData)
+          ..addAll(entry.value as Map<String, dynamic>);
         await _storageService.saveJson(entry.key, mergedData);
       } else {
         await _storageService.saveJson(

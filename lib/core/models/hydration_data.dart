@@ -82,6 +82,7 @@ class HydrationData extends Equatable {
     required int amount,
     DrinkType type = DrinkType.water,
     String? notes,
+    bool isSynced = false,
   }) {
     return HydrationData(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -89,6 +90,7 @@ class HydrationData extends Equatable {
       timestamp: DateTime.now(),
       type: type,
       notes: notes,
+      isSynced: isSynced,
     );
   }
 

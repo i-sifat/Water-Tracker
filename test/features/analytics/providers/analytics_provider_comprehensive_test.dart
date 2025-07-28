@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:watertracker/features/analytics/providers/analytics_provider.dart';
 
-@Skip("Temporarily disabled - needs API alignment")
+@Skip('Temporarily disabled - needs API alignment')
 void main() {
   group('AnalyticsProvider Comprehensive Tests', () {
     late AnalyticsProvider analyticsProvider;

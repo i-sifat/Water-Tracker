@@ -59,7 +59,7 @@ class AccessibilitySettingsScreen extends StatelessWidget {
                           Switch(
                             value: themeProvider.isHighContrastEnabled,
                             onChanged: (value) {
-                              themeProvider.setHighContrastMode(value);
+                              themeProvider.setHighContrastMode(enabled: value);
                             },
                           ),
                         ],
@@ -153,7 +153,7 @@ class AccessibilitySettingsScreen extends StatelessWidget {
                           Switch(
                             value: themeProvider.isReducedMotionEnabled,
                             onChanged: (value) {
-                              themeProvider.setReducedMotion(value);
+                              themeProvider.setReducedMotion(enabled: value);
                             },
                           ),
                         ],
@@ -241,9 +241,9 @@ class AccessibilitySettingsScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 themeProvider
-                  ..setHighContrastMode(false)
+                  ..setHighContrastMode(enabled: false)
                   ..setTextScaleFactor(1)
-                  ..setReducedMotion(false);
+                  ..setReducedMotion(enabled: false);
                 Navigator.of(context).pop();
 
                 ScaffoldMessenger.of(context).showSnackBar(

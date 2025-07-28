@@ -153,7 +153,7 @@ class MyApp extends StatelessWidget {
                         scale: animation.drive(
                           Tween<double>(
                             begin: 0.8,
-                            end: 1.0,
+                            end: 1,
                           ).chain(CurveTween(curve: Curves.easeOutBack)),
                         ),
                         child: FadeTransition(opacity: animation, child: child),
@@ -221,7 +221,7 @@ class _InitialScreenState extends State<InitialScreen>
 
       // Use immediate navigation without animation for faster startup
       if (onboardingCompleted) {
-        Navigator.of(context).pushReplacement(
+        await Navigator.of(context).pushReplacement(
           PageRouteBuilder<void>(
             pageBuilder:
                 (context, animation, secondaryAnimation) => const HomeScreen(),
@@ -230,7 +230,7 @@ class _InitialScreenState extends State<InitialScreen>
           ),
         );
       } else {
-        Navigator.of(context).pushReplacement(
+        await Navigator.of(context).pushReplacement(
           PageRouteBuilder<void>(
             pageBuilder:
                 (context, animation, secondaryAnimation) =>
@@ -244,7 +244,7 @@ class _InitialScreenState extends State<InitialScreen>
       debugPrint('Error during app startup: $e');
       // Fallback to welcome screen
       if (mounted) {
-        Navigator.of(context).pushReplacement(
+        await Navigator.of(context).pushReplacement(
           MaterialPageRoute<void>(builder: (context) => const WelcomeScreen()),
         );
       }

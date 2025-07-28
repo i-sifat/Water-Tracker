@@ -76,7 +76,7 @@ class HealthService {
       _hasPermissions = granted;
 
       if (granted) {
-        await _storageService.saveBool(_healthSyncEnabledKey, true);
+        await _storageService.saveBool(_healthSyncEnabledKey, value: true);
         debugPrint('Health permissions granted');
       } else {
         debugPrint('Health permissions denied');
@@ -104,7 +104,7 @@ class HealthService {
       if (!granted) return false;
     }
 
-    await _storageService.saveBool(_healthSyncEnabledKey, enabled);
+    await _storageService.saveBool(_healthSyncEnabledKey, value: enabled);
 
     if (enabled) {
       // Perform initial sync
@@ -267,8 +267,9 @@ class HealthService {
       final settings = await _getHealthSettings();
 
       if (autoSync != null) settings['autoSync'] = autoSync;
-      if (syncIntervalHours != null)
+      if (syncIntervalHours != null) {
         settings['syncIntervalHours'] = syncIntervalHours;
+      }
       if (syncOnAdd != null) settings['syncOnAdd'] = syncOnAdd;
       if (importOnStart != null) settings['importOnStart'] = importOnStart;
 
@@ -369,10 +370,7 @@ class HealthService {
 
       syncedIds.addAll(ids);
       syncedData
-        ..['syncedIds'] =
-            syncedIds
-                .toSet()
-                .toList() // Remove duplicates
+        ..['syncedIds'] = syncedIds.toSet().toList() // Remove duplicates
         ..['lastUpdated'] = DateTime.now().toIso8601String();
 
       await _storageService.saveJson(_syncedDataKey, syncedData);

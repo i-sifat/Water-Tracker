@@ -69,7 +69,7 @@ class PageTransitions {
           end: end,
         ).chain(CurveTween(curve: curve));
 
-        final fadeTween = Tween(
+        final fadeTween = Tween<double>(
           begin: 0,
           end: 1,
         ).chain(CurveTween(curve: Curves.easeIn));
@@ -286,7 +286,7 @@ mixin OptimizedNavigationMixin<T extends StatefulWidget> on State<T> {
     bool useSlideTransition = true,
     Duration? duration,
   }) async {
-    final operation = operationName ?? 'navigation_${page.runtimeType}';
+    // final operation = operationName ?? 'navigation_${page.runtimeType}';
 
     // Start performance monitoring
     final stopwatch = Stopwatch()..start();
@@ -323,7 +323,7 @@ mixin OptimizedNavigationMixin<T extends StatefulWidget> on State<T> {
     bool useSlideTransition = true,
     Duration? duration,
   }) async {
-    final operation = operationName ?? 'navigation_replace_${page.runtimeType}';
+    // final operation = operationName ?? 'navigation_replace_${page.runtimeType}';
 
     final stopwatch = Stopwatch()..start();
 

@@ -908,8 +908,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             title: 'No Entries Found',
             subtitle: 'Try adjusting your filters or search terms.',
           ),
-      cacheExtent: 500.0, // Increased cache for better scrolling
-      enablePerformanceMonitoring: true,
+      cacheExtent: 500, // Increased cache for better scrolling
     );
   }
 
