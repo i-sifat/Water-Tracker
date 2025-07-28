@@ -41,9 +41,12 @@ class WelcomeScreen extends StatelessWidget {
               Text(
                 'Welcome to the\nHydration Tracker App',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textHeadline,
                   height: 1.4,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 12),
@@ -51,9 +54,13 @@ class WelcomeScreen extends StatelessWidget {
               // Subtitle
               Text(
                 'Your intelligent hydration solutions.',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSubtitle),
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textSubtitle,
+                  height: 1.5,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),

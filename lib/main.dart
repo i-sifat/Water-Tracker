@@ -10,6 +10,7 @@ import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/core/utils/image_optimization.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/welcome_screen.dart';
 import 'package:watertracker/features/premium/providers/premium_provider.dart';
 import 'package:watertracker/features/premium/screens/donation_info_screen.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HydrationProvider()),
+        ChangeNotifierProvider(create: (_) => OnboardingProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()..initialize()),
         ChangeNotifierProvider(create: (_) => PremiumProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),

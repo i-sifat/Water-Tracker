@@ -46,7 +46,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
     return Consumer<OnboardingProvider>(
       builder: (context, onboardingProvider, _) {
         return Scaffold(
-          backgroundColor: backgroundColor ?? AppColors.background,
+          backgroundColor: backgroundColor ?? Colors.white,
           appBar: _buildAppBar(context, onboardingProvider),
           body: Column(
             children: [
@@ -115,13 +115,27 @@ class OnboardingScreenWrapper extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (title != null)
-                        Text(title!, style: AppTypography.headline),
+                        Text(
+                          title!, 
+                          style: const TextStyle(
+                            fontFamily: 'Nunito',
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.textHeadline,
+                            height: 1.2,
+                          ),
+                        ),
                       if (subtitle != null) ...[
                         const SizedBox(height: 8),
                         Text(
                           subtitle!,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: AppColors.textSubtitle),
+                          style: const TextStyle(
+                            fontFamily: 'Nunito',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.textSubtitle,
+                            height: 1.5,
+                          ),
                         ),
                       ],
                     ],
@@ -147,7 +161,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
     if (!showBackButton && provider.currentStep == 0) return null;
 
     return AppBar(
-      backgroundColor: backgroundColor ?? AppColors.background,
+      backgroundColor: backgroundColor ?? Colors.white,
       elevation: 0,
       leading:
           showBackButton && provider.currentStep > 0
@@ -168,7 +182,15 @@ class OnboardingScreenWrapper extends StatelessWidget {
                 ),
               )
               : null,
-      title: const Text('Assessment', style: AppTypography.subtitle),
+      title: const Text(
+        'Assessment', 
+        style: TextStyle(
+          fontFamily: 'Nunito',
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textHeadline,
+        ),
+      ),
       actions: [
         Container(
           margin: const EdgeInsets.only(right: 16),
@@ -259,9 +281,12 @@ class OnboardingScreenWrapper extends StatelessWidget {
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.waterFull,
                 ),
-                child: Text(
+                child: const Text(
                   'Skip onboarding',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                     color: AppColors.waterFull,
                     decoration: TextDecoration.underline,
                   ),
@@ -273,13 +298,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
     );
   }
 
-  void _defaultContinue() {
-    // This will be handled by the onContinue callback passed to the wrapper
-  }
 
-  void _defaultSkip() {
-    // This will be handled by the onSkip callback passed to the wrapper
-  }
 
   void _showSkipOnboardingDialog(BuildContext context) {
     showDialog<void>(

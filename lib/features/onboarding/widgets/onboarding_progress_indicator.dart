@@ -34,14 +34,18 @@ class OnboardingProgressIndicator extends StatelessWidget {
               children: [
                 Text(
                   'Step ${currentStep + 1} of $totalSteps',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 12,
                     color: AppColors.textSubtitle,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
                   '${(progress * 100).round()}%',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 12,
                     color: AppColors.waterFull,
                     fontWeight: FontWeight.w600,
                   ),
