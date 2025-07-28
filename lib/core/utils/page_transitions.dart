@@ -7,7 +7,7 @@ class PageTransitions {
     required Widget page,
     RouteSettings? settings,
     Duration duration = const Duration(milliseconds: 250),
-    Offset begin = const Offset(1.0, 0.0),
+    Offset begin = const Offset(1, 0),
     Offset end = Offset.zero,
     Curve curve = Curves.easeOutCubic,
   }) {
@@ -70,7 +70,7 @@ class PageTransitions {
           CurveTween(curve: curve),
         );
         
-        final fadeTween = Tween(begin: 0.0, end: 1.0).chain(
+        final fadeTween = Tween(begin: 0, end: 1).chain(
           CurveTween(curve: Curves.easeIn),
         );
         
@@ -140,7 +140,7 @@ class PageTransitions {
       barrierColor: Colors.black54,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         final tween = Tween(
-          begin: const Offset(0.0, 1.0),
+          begin: const Offset(0, 1),
           end: Offset.zero,
         ).chain(CurveTween(curve: curve));
         
@@ -187,7 +187,7 @@ extension NavigatorExtensions on NavigatorState {
       page: page,
       settings: settings,
       duration: duration ?? const Duration(milliseconds: 250),
-      begin: begin ?? const Offset(1.0, 0.0),
+      begin: begin ?? const Offset(1, 0),
     ));
   }
 

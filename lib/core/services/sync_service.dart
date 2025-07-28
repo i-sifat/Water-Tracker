@@ -23,7 +23,7 @@ class SyncService {
   static const String _lastSyncKey = 'last_sync_timestamp';
   static const String _syncQueueKey = 'sync_queue';
   static const String _syncSettingsKey = 'sync_settings';
-  static const String _conflictResolutionKey = 'conflict_resolution';
+
 
   // Cloud sync endpoint (would be replaced with actual server in production)
   static const String _syncEndpoint = 'https://api.watertracker.com/sync';

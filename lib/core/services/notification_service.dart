@@ -33,15 +33,14 @@ class NotificationService {
   static const String _usagePatternKey = 'usage_pattern';
 
   bool _isInitialized = false;
-  Function(String?)? _onNotificationTapped;
+
 
   /// Initialize the notification service
-  Future<void> initialize({Function(String?)? onNotificationTapped}) async {
+  Future<void> initialize() async {
     if (_isInitialized) return;
 
     try {
       tz.initializeTimeZones();
-      _onNotificationTapped = onNotificationTapped;
 
       const androidSettings = AndroidInitializationSettings(
         '@mipmap/ic_launcher',
@@ -68,16 +67,7 @@ class NotificationService {
     }
   }
 
-  /// Handle notification tap response
-  void _onNotificationResponse(NotificationResponse response) {
-    debugPrint('Notification tapped: ${response.payload}');
-    
-    // Track interaction
-    _trackNotificationInteraction(response.id ?? 0, 'tapped');
-    
-    // Call custom handler if provided
-    _onNotificationTapped?.call(response.payload);
-  }
+
 
   /// Request notification permissions
   Future<bool> requestPermissions() async {
@@ -397,14 +387,17 @@ class NotificationService {
     // Add contextual messages
     final hour = time.hour;
     if (hour >= 6 && hour < 9) {
-      bodies.add('Start your day right with a refreshing glass of water.');
-      bodies.add("Rehydrate after a good night's sleep.");
+      bodies
+        ..add('Start your day right with a refreshing glass of water.')
+        ..add("Rehydrate after a good night's sleep.");
     } else if (hour >= 12 && hour < 14) {
-      bodies.add('Lunch time hydration is important for digestion.');
-      bodies.add('Pair your meal with a glass of water.');
+      bodies
+        ..add('Lunch time hydration is important for digestion.')
+        ..add('Pair your meal with a glass of water.');
     } else if (hour >= 15 && hour < 17) {
-      bodies.add('Beat the afternoon slump with hydration.');
-      bodies.add('Water can help you stay focused and alert.');
+      bodies
+        ..add('Beat the afternoon slump with hydration.')
+        ..add('Water can help you stay focused and alert.');
     }
 
     return bodies[Random().nextInt(bodies.length)];
@@ -599,25 +592,7 @@ class NotificationService {
 
   // MARK: - Analytics and Tracking
 
-  /// Track notification interaction
-  Future<void> _trackNotificationInteraction(int notificationId, String action) async {
-    try {
-      final interactions = await _storageService.getJson(_notificationInteractionsKey) ?? {};
-      final today = DateTime.now().toIso8601String().substring(0, 10);
-      
-      if (!interactions.containsKey(today)) {
-        interactions[today] = <String, dynamic>{};
-      }
-      
-      final todayInteractions = interactions[today] as Map<String, dynamic>;
-      final key = '${notificationId}_$action';
-      todayInteractions[key] = DateTime.now().toIso8601String();
-      
-      await _storageService.saveJson(_notificationInteractionsKey, interactions);
-    } catch (e) {
-      debugPrint('Error tracking notification interaction: $e');
-    }
-  }
+
 
   /// Track notification scheduled
   Future<void> _trackNotificationScheduled(int id, String title, DateTime scheduledTime) async {
@@ -735,8 +710,8 @@ class NotificationService {
     final pattern = await _storageService.getJson(_usagePatternKey);
     return pattern ?? {
       'lastIntakeHour': null,
-      'averageIntakeHours': [],
-      'preferredTimes': [],
+      'averageIntakeHours': <int>[],
+      'preferredTimes': <int>[],
     };
   }
 

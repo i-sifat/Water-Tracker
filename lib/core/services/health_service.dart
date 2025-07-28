@@ -16,7 +16,7 @@ class HealthService {
   final PremiumService _premiumService = PremiumService();
   final StorageService _storageService = StorageService();
   
-  Health? _health;
+  late Health? _health;
   bool _isInitialized = false;
   bool _hasPermissions = false;
 
@@ -65,7 +65,7 @@ class HealthService {
 
       final hasPermissions = await _health!.hasPermissions(types, permissions: permissions);
       
-      if (hasPermissions == true) {
+      if (hasPermissions ?? false) {
         _hasPermissions = true;
         return true;
       }
@@ -94,7 +94,7 @@ class HealthService {
   }
 
   /// Enable or disable health sync
-  Future<bool> setHealthSyncEnabled(bool enabled) async {
+  Future<bool> setHealthSyncEnabled({required bool enabled}) async {
     if (!await isHealthSyncAvailable()) return false;
 
     if (enabled && !_hasPermissions) {
@@ -353,8 +353,9 @@ class HealthService {
       final syncedIds = (syncedData['syncedIds'] as List<dynamic>?)?.cast<String>() ?? <String>[];
       
       syncedIds.addAll(ids);
-      syncedData['syncedIds'] = syncedIds.toSet().toList(); // Remove duplicates
-      syncedData['lastUpdated'] = DateTime.now().toIso8601String();
+      syncedData
+        ..['syncedIds'] = syncedIds.toSet().toList() // Remove duplicates
+        ..['lastUpdated'] = DateTime.now().toIso8601String();
       
       await _storageService.saveJson(_syncedDataKey, syncedData);
     } catch (e) {

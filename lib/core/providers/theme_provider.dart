@@ -117,7 +117,7 @@ class ThemeProvider extends ChangeNotifier {
   bool get isReducedMotionEnabled => _accessibilityService?.isReducedMotionEnabled ?? false;
 
   /// Set high contrast mode
-  Future<void> setHighContrastMode(bool enabled) async {
+  Future<void> setHighContrastMode({required bool enabled}) async {
     await _accessibilityService?.setHighContrastMode(enabled: enabled);
     notifyListeners();
   }
@@ -129,7 +129,7 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   /// Set reduced motion
-  Future<void> setReducedMotion(bool enabled) async {
+  Future<void> setReducedMotion({required bool enabled}) async {
     await _accessibilityService?.setReducedMotion(enabled: enabled);
     notifyListeners();
   }

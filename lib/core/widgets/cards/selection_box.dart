@@ -67,8 +67,8 @@ class SelectionBox extends StatelessWidget {
                 subtitle!,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: isSelected 
-                      ? theme.colorScheme.primary.withOpacity(0.8)
-                      : theme.colorScheme.onSurface.withOpacity(0.7),
+                      ? theme.colorScheme.primary.withValues(alpha: 0.8)
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
               ),

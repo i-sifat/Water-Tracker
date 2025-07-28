@@ -15,11 +15,11 @@ class StorageService {
 
   static const String _currentVersion = '1.0.0';
   static const String _versionKey = 'storage_version';
-  static const String _backupPrefix = 'backup_';
+
   static const String _migrationLogKey = 'migration_log';
 
-  EncryptedSharedPreferences? _encryptedPrefs;
-  SharedPreferences? _regularPrefs;
+  late EncryptedSharedPreferences? _encryptedPrefs;
+  late SharedPreferences? _regularPrefs;
   bool _isInitialized = false;
   
   // Performance optimizations
@@ -114,9 +114,9 @@ class StorageService {
     await _ensureInitialized();
     
     try {
-      if (encrypted && _encryptedPrefs != null) {
+      if (encrypted) {
         final stringValue = await _encryptedPrefs!.getString(key);
-        return stringValue != null ? int.tryParse(stringValue) : null;
+        return int.tryParse(stringValue ?? '');
       } else {
         return _regularPrefs!.getInt(key);
       }
@@ -148,9 +148,9 @@ class StorageService {
     await _ensureInitialized();
     
     try {
-      if (encrypted && _encryptedPrefs != null) {
+      if (encrypted) {
         final stringValue = await _encryptedPrefs!.getString(key);
-        return stringValue != null ? stringValue.toLowerCase() == 'true' : null;
+        return stringValue?.toLowerCase() == 'true';
       } else {
         return _regularPrefs!.getBool(key);
       }
@@ -182,9 +182,9 @@ class StorageService {
     await _ensureInitialized();
     
     try {
-      if (encrypted && _encryptedPrefs != null) {
+      if (encrypted) {
         final stringValue = await _encryptedPrefs!.getString(key);
-        return stringValue != null ? double.tryParse(stringValue) : null;
+        return double.tryParse(stringValue ?? '');
       } else {
         return _regularPrefs!.getDouble(key);
       }
@@ -217,7 +217,7 @@ class StorageService {
     await _ensureInitialized();
     
     try {
-      if (encrypted && _encryptedPrefs != null) {
+      if (encrypted) {
         final jsonString = await _encryptedPrefs!.getString(key);
         if (jsonString == null) return null;
         final decoded = jsonDecode(jsonString);
@@ -256,7 +256,7 @@ class StorageService {
     await _ensureInitialized();
     
     try {
-      if (encrypted && _encryptedPrefs != null) {
+      if (encrypted) {
         final value = await _encryptedPrefs!.getString(key);
         return value != null;
       } else {
@@ -649,42 +649,9 @@ class StorageService {
     }
   }
 
-  /// Add operation to batch queue
-  void _addToBatch(_BatchOperation operation) {
-    _pendingOperations.add(operation);
-    
-    // Start batch timer if not already running
-    _batchTimer ??= Timer(const Duration(milliseconds: 100), _executeBatch);
-  }
 
-  /// Execute all pending batch operations
-  Future<void> _executeBatch() async {
-    if (_pendingOperations.isEmpty) return;
-    
-    final operations = List<_BatchOperation>.from(_pendingOperations);
-    _pendingOperations.clear();
-    _batchTimer = null;
-    
-    try {
-      // Group operations by type for better performance
-      final regularOps = operations.where((op) => !op.encrypted).toList();
-      final encryptedOps = operations.where((op) => op.encrypted).toList();
-      
-      // Execute regular operations
-      for (final op in regularOps) {
-        await op.execute(_regularPrefs!, null);
-      }
-      
-      // Execute encrypted operations
-      if (_encryptedPrefs != null) {
-        for (final op in encryptedOps) {
-          await op.execute(null, _encryptedPrefs!);
-        }
-      }
-    } catch (e) {
-      debugPrint('Error executing batch operations: $e');
-    }
-  }
+
+
 
   /// Optimized getString with caching
   Future<String?> getStringCached(String key, {bool encrypted = true}) async {
@@ -785,28 +752,24 @@ class _BatchOperation {
         } else if (!encrypted && regularPrefs != null) {
           await regularPrefs.setString(key, value as String);
         }
-        break;
       case _OperationType.setInt:
         if (encrypted && encryptedPrefs != null) {
           await encryptedPrefs.setString(key, (value as int).toString());
         } else if (!encrypted && regularPrefs != null) {
           await regularPrefs.setInt(key, value as int);
         }
-        break;
       case _OperationType.setBool:
         if (encrypted && encryptedPrefs != null) {
           await encryptedPrefs.setString(key, (value as bool).toString());
         } else if (!encrypted && regularPrefs != null) {
           await regularPrefs.setBool(key, value as bool);
         }
-        break;
       case _OperationType.remove:
         if (encrypted && encryptedPrefs != null) {
           await encryptedPrefs.remove(key);
         } else if (!encrypted && regularPrefs != null) {
           await regularPrefs.remove(key);
         }
-        break;
     }
   }
 }

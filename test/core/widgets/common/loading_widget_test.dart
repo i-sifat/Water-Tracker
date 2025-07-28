@@ -66,7 +66,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: LoadingWidget(strokeWidth: customStrokeWidth),
+            body: LoadingWidget(),
           ),
         ),
       );
@@ -119,7 +119,9 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: SkeletonLoader(),
+            body: SkeletonLoader(
+              child: Text('Test content'),
+            ),
           ),
         ),
       );
@@ -136,6 +138,7 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: SkeletonLoader(
+              child: Text('Test content'),
               width: customWidth,
               height: customHeight,
             ),
@@ -155,6 +158,7 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: SkeletonLoader(
+              child: Text('Test content'),
               borderRadius: customBorderRadius,
             ),
           ),
@@ -169,7 +173,9 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: SkeletonLoader(),
+            body: SkeletonLoader(
+              child: Text('Test content'),
+            ),
           ),
         ),
       );
@@ -187,7 +193,9 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: SkeletonLoader(),
+            body: SkeletonLoader(
+              child: Text('Test content'),
+            ),
           ),
         ),
       );
@@ -202,7 +210,9 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: SkeletonLoader(),
+            body: SkeletonLoader(
+              child: Text('Test content'),
+            ),
           ),
         ),
       );

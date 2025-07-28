@@ -107,7 +107,7 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
           Icon(
             Icons.local_drink,
             size: 80,
-            color: AppColors.waterFull.withOpacity(0.5),
+            color: AppColors.waterFull.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 24),
           Text(
@@ -140,7 +140,7 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
           Icon(
             Icons.local_drink_outlined,
             size: 80,
-            color: AppColors.waterFull.withOpacity(0.5),
+            color: AppColors.waterFull.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 24),
           Text(

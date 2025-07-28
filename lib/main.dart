@@ -107,7 +107,7 @@ class MyApp extends StatelessWidget {
                     transitionsBuilder: (context, animation, secondaryAnimation, child) {
                       return SlideTransition(
                         position: animation.drive(
-                          Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                          Tween(begin: const Offset(1, 0), end: Offset.zero)
                               .chain(CurveTween(curve: Curves.easeOutCubic)),
                         ),
                         child: child,
@@ -135,7 +135,7 @@ class MyApp extends StatelessWidget {
                     transitionsBuilder: (context, animation, secondaryAnimation, child) {
                       return ScaleTransition(
                         scale: animation.drive(
-                          Tween(begin: 0.8, end: 1.0)
+                          Tween(begin: 0.8, end: 1)
                               .chain(CurveTween(curve: Curves.easeOutBack)),
                         ),
                         child: FadeTransition(

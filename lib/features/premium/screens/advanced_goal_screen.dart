@@ -152,7 +152,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
           Icon(
             Icons.tune,
             size: 80,
-            color: AppColors.waterFull.withOpacity(0.5),
+            color: AppColors.waterFull.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 24),
           Text(

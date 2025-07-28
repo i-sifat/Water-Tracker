@@ -91,7 +91,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
           Icon(
             Icons.schedule,
             size: 80,
-            color: AppColors.waterFull.withOpacity(0.5),
+            color: AppColors.waterFull.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 24),
           Text(
@@ -124,7 +124,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
           Icon(
             Icons.schedule_outlined,
             size: 80,
-            color: AppColors.waterFull.withOpacity(0.5),
+            color: AppColors.waterFull.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 24),
           Text(
@@ -606,7 +606,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
                   }
                 });
               },
-              selectedColor: AppColors.waterFull.withOpacity(0.2),
+              selectedColor: AppColors.waterFull.withValues(alpha: 0.2),
               checkmarkColor: AppColors.waterFull,
             );
           }),

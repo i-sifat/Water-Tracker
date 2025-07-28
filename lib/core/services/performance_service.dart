@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
+
 
 /// Service for monitoring and optimizing app performance
 class PerformanceService {
@@ -97,7 +97,7 @@ class PerformanceService {
   /// Get average duration for an operation
   double getAverageOperationDuration(String operationName) {
     final durations = _operationDurations[operationName];
-    if (durations == null || durations.isEmpty) return 0.0;
+    if (durations == null || durations.isEmpty) return 0;
     
     final sum = durations.reduce((a, b) => a + b);
     return sum / durations.length;

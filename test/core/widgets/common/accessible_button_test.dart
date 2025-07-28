@@ -15,7 +15,7 @@ void main() {
           home: Scaffold(
             body: AccessibleButton(
               onPressed: () {},
-              label: testLabel,
+              semanticLabel: testLabel,
               child: childWidget,
             ),
           ),
@@ -34,7 +34,7 @@ void main() {
           home: Scaffold(
             body: AccessibleButton(
               onPressed: () => wasPressed = true,
-              label: testLabel,
+              semanticLabel: testLabel,
               child: const Text('Button Text'),
             ),
           ),
@@ -53,7 +53,7 @@ void main() {
           home: Scaffold(
             body: AccessibleButton(
               onPressed: () {},
-              label: testLabel,
+              semanticLabel: testLabel,
               child: const Text('Button Text'),
             ),
           ),
@@ -70,7 +70,7 @@ void main() {
           home: Scaffold(
             body: AccessibleButton(
               onPressed: () {},
-              label: testLabel,
+              semanticLabel: testLabel,
               tooltip: testTooltip,
               child: const Text('Button Text'),
             ),
@@ -90,7 +90,7 @@ void main() {
           home: Scaffold(
             body: AccessibleButton(
               onPressed: () {},
-              label: testLabel,
+              semanticLabel: testLabel,
               child: const Text('Button Text'),
             ),
           ),
@@ -105,7 +105,7 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: AccessibleButton(
-              label: testLabel,
+              semanticLabel: testLabel,
               child: Text('Button Text'),
             ),
           ),
@@ -122,7 +122,7 @@ void main() {
           home: Scaffold(
             body: AccessibleButton(
               onPressed: () {},
-              label: testLabel,
+              semanticLabel: testLabel,
               child: const Text('Button Text'),
             ),
           ),
@@ -139,7 +139,7 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: AccessibleButton(
-              label: testLabel,
+              semanticLabel: testLabel,
               child: Text('Button Text'),
             ),
           ),
@@ -157,7 +157,7 @@ void main() {
           home: Scaffold(
             body: AccessibleButton(
               onPressed: () {},
-              label: testLabel,
+              semanticLabel: testLabel,
               child: const SizedBox(width: 20, height: 20),
             ),
           ),
@@ -176,7 +176,7 @@ void main() {
           home: Scaffold(
             body: AccessibleButton(
               onPressed: () {},
-              label: testLabel,
+              semanticLabel: testLabel,
               child: const SizedBox(width: 100, height: 60),
             ),
           ),
@@ -194,7 +194,7 @@ void main() {
           home: Scaffold(
             body: AccessibleButton(
               onPressed: () {},
-              label: testLabel,
+              semanticLabel: testLabel,
               child: const Text('Button Text'),
             ),
           ),
@@ -210,7 +210,7 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: AccessibleButton(
-              label: testLabel,
+              semanticLabel: testLabel,
               child: Text('Button Text'),
             ),
           ),

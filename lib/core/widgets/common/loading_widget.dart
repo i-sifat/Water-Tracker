@@ -6,7 +6,7 @@ class LoadingWidget extends StatefulWidget {
   const LoadingWidget({
     super.key,
     this.message,
-    this.size = 24.0,
+    this.size = 24,
     this.color,
     this.backgroundColor,
     this.style = LoadingStyle.circular,
@@ -42,19 +42,19 @@ class _LoadingWidgetState extends State<LoadingWidget>
     );
     
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.0, 0.3, curve: Curves.easeIn),
+      curve: const Interval(0, 0.3, curve: Curves.easeIn),
     ));
     
     _scaleAnimation = Tween<double>(
       begin: 0.8,
-      end: 1.0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.0, 0.5, curve: Curves.elasticOut),
+      curve: const Interval(0, 0.5, curve: Curves.elasticOut),
     ));
     
     _animationController.forward();
@@ -208,7 +208,7 @@ class _DotsLoadingIndicatorState extends State<_DotsLoadingIndicator>
     });
     
     _animations = _controllers.map((controller) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
+      return Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: controller, curve: Curves.easeInOut),
       );
     }).toList();
@@ -296,7 +296,7 @@ class _PulseLoadingIndicatorState extends State<_PulseLoadingIndicator>
       vsync: this,
     );
     
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _animation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
     
@@ -366,7 +366,7 @@ class _WaveLoadingIndicatorState extends State<_WaveLoadingIndicator>
     });
     
     _animations = _controllers.map((controller) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
+      return Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: controller, curve: Curves.easeInOut),
       );
     }).toList();
@@ -452,7 +452,7 @@ class _WaterDropLoadingIndicatorState extends State<_WaterDropLoadingIndicator>
       vsync: this,
     );
     
-    _rotationAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _rotationAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.linear),
     );
     
@@ -529,7 +529,7 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
       vsync: this,
     );
     
-    _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
+    _animation = Tween<double>(begin: -1, end: 2).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
     
@@ -576,9 +576,9 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
               end: Alignment.centerRight,
               colors: [baseColor, highlightColor, baseColor],
               stops: [
-                (_animation.value - 1).clamp(0.0, 1.0),
-                _animation.value.clamp(0.0, 1.0),
-                (_animation.value + 1).clamp(0.0, 1.0),
+                (_animation.value - 1).clamp(0, 1),
+                _animation.value.clamp(0, 1),
+                (_animation.value + 1).clamp(0, 1),
               ],
             ).createShader(bounds);
           },
@@ -600,9 +600,9 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
 class CompactLoadingIndicator extends StatelessWidget {
   const CompactLoadingIndicator({
     super.key,
-    this.size = 16.0,
+    this.size = 16,
     this.color,
-    this.strokeWidth = 2.0,
+    this.strokeWidth = 2,
   });
 
   final double size;

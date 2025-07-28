@@ -281,7 +281,7 @@ class HydrationDataBuilder {
     return this;
   }
 
-  HydrationDataBuilder withSyncStatus(bool isSynced) {
+  HydrationDataBuilder withSyncStatus({required bool isSynced}) {
     _isSynced = isSynced;
     return this;
   }

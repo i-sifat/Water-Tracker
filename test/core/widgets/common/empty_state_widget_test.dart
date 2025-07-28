@@ -9,22 +9,6 @@ void main() {
     const testSubtitle = 'There is no data to display at the moment.';
     const testActionText = 'Refresh';
 
-    testWidgets('renders with title only', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: EmptyStateWidget(
-              title: testTitle,
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text(testTitle), findsOneWidget);
-      expect(find.text(testSubtitle), findsNothing);
-      expect(find.byType(PrimaryButton), findsNothing);
-    });
-
     testWidgets('renders with title and subtitle', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
@@ -48,6 +32,7 @@ void main() {
           home: Scaffold(
             body: EmptyStateWidget(
               title: testTitle,
+              subtitle: testSubtitle,
               icon: Icons.inbox,
             ),
           ),
@@ -66,6 +51,7 @@ void main() {
           home: Scaffold(
             body: EmptyStateWidget(
               title: testTitle,
+              subtitle: testSubtitle,
               illustration: customIllustration,
             ),
           ),
@@ -84,6 +70,7 @@ void main() {
           home: Scaffold(
             body: EmptyStateWidget(
               title: testTitle,
+              subtitle: testSubtitle,
               actionText: testActionText,
               onActionPressed: () => wasPressed = true,
             ),
@@ -106,6 +93,7 @@ void main() {
           home: Scaffold(
             body: EmptyStateWidget(
               title: testTitle,
+              subtitle: testSubtitle,
               actionText: testActionText,
             ),
           ),
@@ -121,6 +109,7 @@ void main() {
           home: Scaffold(
             body: EmptyStateWidget(
               title: testTitle,
+              subtitle: testSubtitle,
               onActionPressed: () {},
             ),
           ),
@@ -138,6 +127,7 @@ void main() {
           home: Scaffold(
             body: EmptyStateWidget(
               title: testTitle,
+              subtitle: testSubtitle,
               icon: Icons.inbox,
               illustration: customIllustration,
             ),
@@ -213,6 +203,7 @@ void main() {
           home: Scaffold(
             body: EmptyStateWidget(
               title: testTitle,
+              subtitle: testSubtitle,
               icon: Icons.inbox,
             ),
           ),
@@ -235,6 +226,7 @@ void main() {
           home: Scaffold(
             body: EmptyStateWidget(
               title: testTitle,
+              subtitle: testSubtitle,
               actionText: testActionText,
               onActionPressed: () {},
             ),

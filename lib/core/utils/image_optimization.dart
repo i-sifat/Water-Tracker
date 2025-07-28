@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:typed_data';
+
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -201,10 +201,10 @@ class OptimizedImageWidget extends StatefulWidget {
 
 class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
     with AutomaticKeepAliveClientMixin {
-  ImageProvider? _imageProvider;
+  late ImageProvider? _imageProvider;
   bool _isLoading = true;
   bool _hasError = false;
-  Object? _error;
+
 
   @override
   bool get wantKeepAlive => true;
@@ -229,7 +229,6 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
     setState(() {
       _isLoading = true;
       _hasError = false;
-      _error = null;
     });
 
     try {
@@ -288,7 +287,6 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
         setState(() {
           _isLoading = false;
           _hasError = true;
-          _error = error;
         });
       }
     }

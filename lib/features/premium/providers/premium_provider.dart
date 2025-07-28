@@ -86,11 +86,12 @@ class PremiumProvider extends ChangeNotifier {
   Future<void> _loadOrGenerateDeviceCode() async {
     try {
       final deviceCodeData = await _storageService.getString('device_code', encrypted: false);
-      String? deviceCode = (deviceCodeData is String) ? deviceCodeData : null;
+      String? deviceCode = (deviceCodeData is String) ? deviceCodeData as String : null;
       
       if (deviceCode == null) {
-        deviceCode = await _deviceService.generateUniqueCode();
-        await _storageService.saveString('device_code', deviceCode, encrypted: false);
+        final generatedCode = await _deviceService.generateUniqueCode();
+        deviceCode = generatedCode as String;
+        await _storageService.saveString('device_code', generatedCode as String, encrypted: false);
       }
       
       _premiumStatus = _premiumStatus.copyWith(deviceCode: deviceCode!);
@@ -280,12 +281,13 @@ class PremiumProvider extends ChangeNotifier {
   Future<void> regenerateDeviceCode() async {
     try {
       final newDeviceCode = await _deviceService.generateUniqueCode();
+      final deviceCodeString = newDeviceCode as String;
       
       // Update premium status with new device code
-      _premiumStatus = PremiumStatus.free(newDeviceCode);
+      _premiumStatus = PremiumStatus.free(deviceCodeString);
       
       // Save new device code and reset premium status
-      await _storageService.saveString('device_code', newDeviceCode, encrypted: false);
+      await _storageService.saveString('device_code', deviceCodeString, encrypted: false);
       await _savePremiumStatus();
       
       // Clear submitted proofs as they're tied to the old device code
