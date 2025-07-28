@@ -35,28 +35,26 @@ class _LoadingWidgetState extends State<LoadingWidget>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0, 0.3, curve: Curves.easeIn),
-    ));
-    
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0, 0.5, curve: Curves.elasticOut),
-    ));
-    
+
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0, 0.3, curve: Curves.easeIn),
+      ),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0, 0.5, curve: Curves.elasticOut),
+      ),
+    );
+
     _animationController.forward();
   }
 
@@ -105,7 +103,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
 
   Widget _buildLoadingIndicator() {
     final color = widget.color ?? AppColors.waterFull;
-    
+
     switch (widget.style) {
       case LoadingStyle.circular:
         return SizedBox(
@@ -116,30 +114,18 @@ class _LoadingWidgetState extends State<LoadingWidget>
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         );
-        
+
       case LoadingStyle.dots:
-        return _DotsLoadingIndicator(
-          size: widget.size,
-          color: color,
-        );
-        
+        return _DotsLoadingIndicator(size: widget.size, color: color);
+
       case LoadingStyle.pulse:
-        return _PulseLoadingIndicator(
-          size: widget.size,
-          color: color,
-        );
-        
+        return _PulseLoadingIndicator(size: widget.size, color: color);
+
       case LoadingStyle.wave:
-        return _WaveLoadingIndicator(
-          size: widget.size,
-          color: color,
-        );
-        
+        return _WaveLoadingIndicator(size: widget.size, color: color);
+
       case LoadingStyle.waterDrop:
-        return _WaterDropLoadingIndicator(
-          size: widget.size,
-          color: color,
-        );
+        return _WaterDropLoadingIndicator(size: widget.size, color: color);
     }
   }
 
@@ -158,10 +144,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
           const SizedBox(height: 4),
           Text(
             '${((widget.progress ?? 0) * 100).toInt()}%',
-            style: const TextStyle(
-              color: AppColors.textSubtitle,
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: AppColors.textSubtitle, fontSize: 12),
           ),
         ],
       ),
@@ -169,20 +152,11 @@ class _LoadingWidgetState extends State<LoadingWidget>
   }
 }
 
-enum LoadingStyle {
-  circular,
-  dots,
-  pulse,
-  wave,
-  waterDrop,
-}
+enum LoadingStyle { circular, dots, pulse, wave, waterDrop }
 
 /// Dots loading animation
 class _DotsLoadingIndicator extends StatefulWidget {
-  const _DotsLoadingIndicator({
-    required this.size,
-    required this.color,
-  });
+  const _DotsLoadingIndicator({required this.size, required this.color});
 
   final double size;
   final Color color;
@@ -199,20 +173,21 @@ class _DotsLoadingIndicatorState extends State<_DotsLoadingIndicator>
   @override
   void initState() {
     super.initState();
-    
+
     _controllers = List.generate(3, (index) {
       return AnimationController(
         duration: const Duration(milliseconds: 600),
         vsync: this,
       );
     });
-    
-    _animations = _controllers.map((controller) {
-      return Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-      );
-    }).toList();
-    
+
+    _animations =
+        _controllers.map((controller) {
+          return Tween<double>(begin: 0, end: 1).animate(
+            CurvedAnimation(parent: controller, curve: Curves.easeInOut),
+          );
+        }).toList();
+
     _startAnimations();
   }
 
@@ -237,7 +212,7 @@ class _DotsLoadingIndicatorState extends State<_DotsLoadingIndicator>
   @override
   Widget build(BuildContext context) {
     final dotSize = widget.size / 4;
-    
+
     return SizedBox(
       width: widget.size,
       height: dotSize,
@@ -270,10 +245,7 @@ class _DotsLoadingIndicatorState extends State<_DotsLoadingIndicator>
 
 /// Pulse loading animation
 class _PulseLoadingIndicator extends StatefulWidget {
-  const _PulseLoadingIndicator({
-    required this.size,
-    required this.color,
-  });
+  const _PulseLoadingIndicator({required this.size, required this.color});
 
   final double size;
   final Color color;
@@ -290,16 +262,17 @@ class _PulseLoadingIndicatorState extends State<_PulseLoadingIndicator>
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    
+
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
     _controller.repeat(reverse: true);
   }
 
@@ -318,7 +291,9 @@ class _PulseLoadingIndicatorState extends State<_PulseLoadingIndicator>
           width: widget.size,
           height: widget.size,
           decoration: BoxDecoration(
-            color: widget.color.withValues(alpha: 0.3 + (_animation.value * 0.7)),
+            color: widget.color.withValues(
+              alpha: 0.3 + (_animation.value * 0.7),
+            ),
             shape: BoxShape.circle,
           ),
           child: Transform.scale(
@@ -337,10 +312,7 @@ class _PulseLoadingIndicatorState extends State<_PulseLoadingIndicator>
 
 /// Wave loading animation
 class _WaveLoadingIndicator extends StatefulWidget {
-  const _WaveLoadingIndicator({
-    required this.size,
-    required this.color,
-  });
+  const _WaveLoadingIndicator({required this.size, required this.color});
 
   final double size;
   final Color color;
@@ -357,20 +329,21 @@ class _WaveLoadingIndicatorState extends State<_WaveLoadingIndicator>
   @override
   void initState() {
     super.initState();
-    
+
     _controllers = List.generate(4, (index) {
       return AnimationController(
         duration: const Duration(milliseconds: 1200),
         vsync: this,
       );
     });
-    
-    _animations = _controllers.map((controller) {
-      return Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-      );
-    }).toList();
-    
+
+    _animations =
+        _controllers.map((controller) {
+          return Tween<double>(begin: 0, end: 1).animate(
+            CurvedAnimation(parent: controller, curve: Curves.easeInOut),
+          );
+        }).toList();
+
     _startAnimations();
   }
 
@@ -396,7 +369,7 @@ class _WaveLoadingIndicatorState extends State<_WaveLoadingIndicator>
   Widget build(BuildContext context) {
     final barWidth = widget.size / 6;
     final barHeight = widget.size;
-    
+
     return SizedBox(
       width: widget.size,
       height: barHeight,
@@ -425,16 +398,14 @@ class _WaveLoadingIndicatorState extends State<_WaveLoadingIndicator>
 
 /// Water drop loading animation
 class _WaterDropLoadingIndicator extends StatefulWidget {
-  const _WaterDropLoadingIndicator({
-    required this.size,
-    required this.color,
-  });
+  const _WaterDropLoadingIndicator({required this.size, required this.color});
 
   final double size;
   final Color color;
 
   @override
-  State<_WaterDropLoadingIndicator> createState() => _WaterDropLoadingIndicatorState();
+  State<_WaterDropLoadingIndicator> createState() =>
+      _WaterDropLoadingIndicatorState();
 }
 
 class _WaterDropLoadingIndicatorState extends State<_WaterDropLoadingIndicator>
@@ -446,20 +417,22 @@ class _WaterDropLoadingIndicatorState extends State<_WaterDropLoadingIndicator>
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    
-    _rotationAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.linear),
-    );
-    
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    
+
+    _rotationAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
     _controller.repeat();
   }
 
@@ -523,16 +496,17 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
-    _animation = Tween<double>(begin: -1, end: 2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    
+
+    _animation = Tween<double>(
+      begin: -1,
+      end: 2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
     if (widget.isLoading) {
       _controller.repeat();
     }
@@ -541,7 +515,7 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
   @override
   void didUpdateWidget(SkeletonLoader oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (widget.isLoading != oldWidget.isLoading) {
       if (widget.isLoading) {
         _controller.repeat();
@@ -616,9 +590,7 @@ class CompactLoadingIndicator extends StatelessWidget {
       height: size,
       child: CircularProgressIndicator(
         strokeWidth: strokeWidth,
-        valueColor: AlwaysStoppedAnimation<Color>(
-          color ?? AppColors.waterFull,
-        ),
+        valueColor: AlwaysStoppedAnimation<Color>(color ?? AppColors.waterFull),
       ),
     );
   }

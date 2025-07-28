@@ -8,7 +8,10 @@ class AppLocalizationsComplete {
   AppLocalizationsComplete(this.locale);
 
   static AppLocalizationsComplete? of(BuildContext context) {
-    return Localizations.of<AppLocalizationsComplete>(context, AppLocalizationsComplete);
+    return Localizations.of<AppLocalizationsComplete>(
+      context,
+      AppLocalizationsComplete,
+    );
   }
 
   static const List<Locale> supportedLocales = [
@@ -19,7 +22,8 @@ class AppLocalizationsComplete {
     Locale('ar', 'SA'),
   ];
 
-  static const LocalizationsDelegate<AppLocalizationsComplete> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizationsComplete> delegate =
+      _AppLocalizationsDelegate();
 
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = [
     delegate,
@@ -174,13 +178,15 @@ class AppLocalizationsComplete {
   String get keepItUp => translate('keep_it_up');
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizationsComplete> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizationsComplete> {
   const _AppLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) {
-    return AppLocalizationsComplete.supportedLocales
-        .any((supportedLocale) => supportedLocale.languageCode == locale.languageCode);
+    return AppLocalizationsComplete.supportedLocales.any(
+      (supportedLocale) => supportedLocale.languageCode == locale.languageCode,
+    );
   }
 
   @override

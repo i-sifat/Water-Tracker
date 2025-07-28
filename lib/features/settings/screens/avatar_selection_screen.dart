@@ -22,7 +22,10 @@ class _AvatarSelectionScreenState extends State<AvatarSelectionScreen> {
   @override
   void initState() {
     super.initState();
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    final settingsProvider = Provider.of<SettingsProvider>(
+      context,
+      listen: false,
+    );
     _selectedAvatar = settingsProvider.appPreferences.selectedAvatar;
   }
 
@@ -61,13 +64,10 @@ class _AvatarSelectionScreenState extends State<AvatarSelectionScreen> {
             const SizedBox(height: 8),
             const Text(
               'This will be displayed on your home screen',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textSubtitle,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.textSubtitle),
             ),
             const SizedBox(height: 24),
-            
+
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -80,19 +80,22 @@ class _AvatarSelectionScreenState extends State<AvatarSelectionScreen> {
                 itemBuilder: (context, index) {
                   final avatar = AvatarOption.values[index];
                   final isSelected = _selectedAvatar == avatar;
-                  
+
                   return _buildAvatarCard(avatar, isSelected);
                 },
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             Consumer<SettingsProvider>(
               builder: (context, settingsProvider, child) {
                 return PrimaryButton(
                   text: 'Save Avatar',
-                  onPressed: _selectedAvatar != null ? () => _saveAvatar(settingsProvider) : null,
+                  onPressed:
+                      _selectedAvatar != null
+                          ? () => _saveAvatar(settingsProvider)
+                          : null,
                   isLoading: settingsProvider.isLoading,
                 );
               },
@@ -115,28 +118,25 @@ class _AvatarSelectionScreenState extends State<AvatarSelectionScreen> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: isSelected 
-                ? Border.all(color: AppColors.waterFull, width: 2)
-                : null,
-            color: isSelected 
-                ? AppColors.waterFull.withValues(alpha: 0.05)
-                : null,
+            border:
+                isSelected
+                    ? Border.all(color: AppColors.waterFull, width: 2)
+                    : null,
+            color:
+                isSelected ? AppColors.waterFull.withValues(alpha: 0.05) : null,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: SvgPicture.asset(
-                  avatar.assetPath,
-                ),
-              ),
+              Expanded(child: SvgPicture.asset(avatar.assetPath)),
               const SizedBox(height: 12),
               Text(
                 avatar.displayName,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: isSelected ? AppColors.waterFull : AppColors.textPrimary,
+                  color:
+                      isSelected ? AppColors.waterFull : AppColors.textPrimary,
                 ),
               ),
               if (isSelected) ...[
@@ -158,7 +158,7 @@ class _AvatarSelectionScreenState extends State<AvatarSelectionScreen> {
     if (_selectedAvatar == null) return;
 
     final success = await settingsProvider.updateAvatar(_selectedAvatar!);
-    
+
     if (!mounted) return;
 
     if (success) {

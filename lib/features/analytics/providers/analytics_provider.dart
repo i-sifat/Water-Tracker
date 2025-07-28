@@ -13,8 +13,8 @@ class AnalyticsProvider extends ChangeNotifier {
   AnalyticsProvider({
     required HydrationProvider hydrationProvider,
     required PremiumProvider premiumProvider,
-  })  : _hydrationProvider = hydrationProvider,
-        _premiumProvider = premiumProvider;
+  }) : _hydrationProvider = hydrationProvider,
+       _premiumProvider = premiumProvider;
 
   final HydrationProvider _hydrationProvider;
   final PremiumProvider _premiumProvider;
@@ -23,7 +23,7 @@ class AnalyticsProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isExporting = false;
   AppError? _lastError;
-  
+
   // Analytics data cache
   WeeklyAnalytics? _currentWeekAnalytics;
   MonthlyAnalytics? _currentMonthAnalytics;
@@ -40,7 +40,8 @@ class AnalyticsProvider extends ChangeNotifier {
   DetailedStatistics? get detailedStats => _detailedStats;
 
   /// Check if analytics features are available
-  bool get isAnalyticsAvailable => _premiumProvider.isFeatureUnlocked(PremiumFeature.advancedAnalytics);
+  bool get isAnalyticsAvailable =>
+      _premiumProvider.isFeatureUnlocked(PremiumFeature.advancedAnalytics);
 
   /// Load analytics data for current week
   Future<void> loadCurrentWeekAnalytics() async {
@@ -57,10 +58,11 @@ class AnalyticsProvider extends ChangeNotifier {
     try {
       final now = DateTime.now();
       final weekStart = _getWeekStart(now);
-      
+
       _currentWeekAnalytics = await _calculateWeeklyAnalytics(weekStart);
     } catch (e, stackTrace) {
-      _lastError = e is AppError ? e : AnalyticsError.calculationFailed(e.toString());
+      _lastError =
+          e is AppError ? e : AnalyticsError.calculationFailed(e.toString());
       debugPrint('Failed to load weekly analytics: $e');
       debugPrint('Stack trace: $stackTrace');
     } finally {
@@ -83,9 +85,13 @@ class AnalyticsProvider extends ChangeNotifier {
 
     try {
       final now = DateTime.now();
-      _currentMonthAnalytics = await _calculateMonthlyAnalytics(now.year, now.month);
+      _currentMonthAnalytics = await _calculateMonthlyAnalytics(
+        now.year,
+        now.month,
+      );
     } catch (e, stackTrace) {
-      _lastError = e is AppError ? e : AnalyticsError.calculationFailed(e.toString());
+      _lastError =
+          e is AppError ? e : AnalyticsError.calculationFailed(e.toString());
       debugPrint('Failed to load monthly analytics: $e');
       debugPrint('Stack trace: $stackTrace');
     } finally {
@@ -109,7 +115,8 @@ class AnalyticsProvider extends ChangeNotifier {
     try {
       _streakData = await _calculateStreakData();
     } catch (e, stackTrace) {
-      _lastError = e is AppError ? e : AnalyticsError.calculationFailed(e.toString());
+      _lastError =
+          e is AppError ? e : AnalyticsError.calculationFailed(e.toString());
       debugPrint('Failed to load streak data: $e');
       debugPrint('Stack trace: $stackTrace');
     } finally {
@@ -133,7 +140,8 @@ class AnalyticsProvider extends ChangeNotifier {
     try {
       _detailedStats = await _calculateDetailedStatistics();
     } catch (e, stackTrace) {
-      _lastError = e is AppError ? e : AnalyticsError.calculationFailed(e.toString());
+      _lastError =
+          e is AppError ? e : AnalyticsError.calculationFailed(e.toString());
       debugPrint('Failed to load detailed statistics: $e');
       debugPrint('Stack trace: $stackTrace');
     } finally {
@@ -158,26 +166,26 @@ class AnalyticsProvider extends ChangeNotifier {
     final dailyGoals = <DateTime, int>{};
     var totalIntake = 0;
     var goalAchievedDays = 0;
-    
+
     for (var i = 0; i < 7; i++) {
       final date = weekStart.add(Duration(days: i));
       final dayEntries = _hydrationProvider.getEntriesForDate(date);
       final dayIntake = dayEntries.totalWaterIntake;
       final dayGoal = _hydrationProvider.dailyGoal;
-      
+
       dailyIntakes[date] = dayIntake;
       dailyGoals[date] = dayGoal;
       totalIntake += dayIntake;
-      
+
       if (dayIntake >= dayGoal) {
         goalAchievedDays++;
       }
     }
-    
+
     final averageIntake = totalIntake / 7.0;
     final goalAchievementRate = goalAchievedDays / 7.0;
     final streak = _calculateWeekStreak(weekStart);
-    
+
     return WeeklyAnalytics(
       weekStart: weekStart,
       dailyIntakes: dailyIntakes,
@@ -190,39 +198,42 @@ class AnalyticsProvider extends ChangeNotifier {
   }
 
   /// Calculate monthly analytics
-  Future<MonthlyAnalytics> _calculateMonthlyAnalytics(int year, int month) async {
+  Future<MonthlyAnalytics> _calculateMonthlyAnalytics(
+    int year,
+    int month,
+  ) async {
     final monthEnd = DateTime(year, month + 1, 0);
     final daysInMonth = monthEnd.day;
-    
+
     final dailyIntakes = <DateTime, int>{};
     final weeklyAverages = <int, double>{};
     var totalIntake = 0;
     var goalAchievedDays = 0;
-    
+
     // Calculate daily intakes
     for (var i = 1; i <= daysInMonth; i++) {
       final date = DateTime(year, month, i);
       final dayEntries = _hydrationProvider.getEntriesForDate(date);
       final dayIntake = dayEntries.totalWaterIntake;
-      
+
       dailyIntakes[date] = dayIntake;
       totalIntake += dayIntake;
-      
+
       if (dayIntake >= _hydrationProvider.dailyGoal) {
         goalAchievedDays++;
       }
     }
-    
+
     // Calculate weekly averages
     var currentWeek = 1;
     var weekTotal = 0;
     var weekDays = 0;
-    
+
     for (var i = 1; i <= daysInMonth; i++) {
       final date = DateTime(year, month, i);
       weekTotal += dailyIntakes[date] ?? 0;
       weekDays++;
-      
+
       // Check if week ended or month ended
       if (date.weekday == 7 || i == daysInMonth) {
         weeklyAverages[currentWeek] = weekDays > 0 ? weekTotal / weekDays : 0;
@@ -231,12 +242,13 @@ class AnalyticsProvider extends ChangeNotifier {
         weekDays = 0;
       }
     }
-    
+
     final averageIntake = daysInMonth > 0 ? totalIntake / daysInMonth : 0.0;
-    final goalAchievementRate = daysInMonth > 0 ? goalAchievedDays / daysInMonth : 0.0;
+    final goalAchievementRate =
+        daysInMonth > 0 ? goalAchievedDays / daysInMonth : 0.0;
     final bestStreak = _calculateBestStreakInMonth(year, month);
     final currentStreak = _hydrationProvider.currentStreak;
-    
+
     return MonthlyAnalytics(
       month: month,
       year: year,
@@ -255,20 +267,24 @@ class AnalyticsProvider extends ChangeNotifier {
     final currentStreak = _hydrationProvider.currentStreak;
     final longestStreak = _hydrationProvider.longestStreak;
     final lastGoalAchievedDate = _hydrationProvider.lastGoalAchievedDate;
-    
+
     // Calculate streak history (simplified version)
     final streakHistory = <StreakPeriod>[];
     // This would require more complex logic to track historical streaks
     // For now, we'll just add the current streak if it exists
     if (currentStreak > 0 && lastGoalAchievedDate != null) {
-      final startDate = lastGoalAchievedDate.subtract(Duration(days: currentStreak - 1));
-      streakHistory.add(StreakPeriod(
-        startDate: startDate,
-        endDate: lastGoalAchievedDate,
-        length: currentStreak,
-      ));
+      final startDate = lastGoalAchievedDate.subtract(
+        Duration(days: currentStreak - 1),
+      );
+      streakHistory.add(
+        StreakPeriod(
+          startDate: startDate,
+          endDate: lastGoalAchievedDate,
+          length: currentStreak,
+        ),
+      );
     }
-    
+
     return StreakData(
       currentStreak: currentStreak,
       longestStreak: longestStreak,
@@ -280,7 +296,7 @@ class AnalyticsProvider extends ChangeNotifier {
   /// Calculate detailed statistics
   Future<DetailedStatistics> _calculateDetailedStatistics() async {
     final history = _hydrationProvider.hydrationHistory;
-    
+
     if (history.isEmpty) {
       return const DetailedStatistics(
         totalDaysTracked: 0,
@@ -295,51 +311,56 @@ class AnalyticsProvider extends ChangeNotifier {
         monthlyTrend: 0,
       );
     }
-    
+
     // Calculate basic stats
-    final totalWaterConsumed = history.fold(0, (sum, entry) => sum + entry.waterContent);
+    final totalWaterConsumed = history.fold(
+      0,
+      (sum, entry) => sum + entry.waterContent,
+    );
     final uniqueDays = history.map((e) => e.date).toSet().length;
-    final averageDailyIntake = uniqueDays > 0 ? totalWaterConsumed / uniqueDays : 0.0;
-    
+    final averageDailyIntake =
+        uniqueDays > 0 ? totalWaterConsumed / uniqueDays : 0.0;
+
     // Calculate goal achievement rate
     var goalAchievedDays = 0;
     final dailyTotals = <DateTime, int>{};
-    
+
     for (final entry in history) {
       final date = entry.date;
       dailyTotals[date] = (dailyTotals[date] ?? 0) + entry.waterContent;
     }
-    
+
     for (final total in dailyTotals.values) {
       if (total >= _hydrationProvider.dailyGoal) {
         goalAchievedDays++;
       }
     }
-    
-    final goalAchievementRate = uniqueDays > 0 ? goalAchievedDays / uniqueDays : 0.0;
-    
+
+    final goalAchievementRate =
+        uniqueDays > 0 ? goalAchievedDays / uniqueDays : 0.0;
+
     // Calculate favorite hour
     final hourCounts = <int, int>{};
     for (final entry in history) {
       final hour = entry.timestamp.hour;
       hourCounts[hour] = (hourCounts[hour] ?? 0) + 1;
     }
-    
-    final favoriteHour = hourCounts.entries
-        .reduce((a, b) => a.value > b.value ? a : b)
-        .key;
-    
+
+    final favoriteHour =
+        hourCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+
     // Calculate drink type breakdown
     final drinkTypeBreakdown = <String, int>{};
     for (final entry in history) {
       final type = entry.type.displayName;
-      drinkTypeBreakdown[type] = (drinkTypeBreakdown[type] ?? 0) + entry.waterContent;
+      drinkTypeBreakdown[type] =
+          (drinkTypeBreakdown[type] ?? 0) + entry.waterContent;
     }
-    
+
     // Calculate trends (simplified)
     final weeklyTrend = _calculateWeeklyTrend();
     final monthlyTrend = _calculateMonthlyTrend();
-    
+
     return DetailedStatistics(
       totalDaysTracked: uniqueDays,
       totalWaterConsumed: totalWaterConsumed,
@@ -355,10 +376,7 @@ class AnalyticsProvider extends ChangeNotifier {
   }
 
   /// Export data to CSV
-  Future<String?> exportToCsv({
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
+  Future<String?> exportToCsv({DateTime? startDate, DateTime? endDate}) async {
     if (!_premiumProvider.isFeatureUnlocked(PremiumFeature.dataExport)) {
       _lastError = PremiumError.featureLocked('Data Export');
       notifyListeners();
@@ -370,20 +388,23 @@ class AnalyticsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final start = startDate ?? DateTime.now().subtract(const Duration(days: 30));
+      final start =
+          startDate ?? DateTime.now().subtract(const Duration(days: 30));
       final end = endDate ?? DateTime.now();
-      
+
       final entries = _hydrationProvider.getEntriesForDateRange(start, end);
       final csvContent = _generateCsvContent(entries);
-      
+
       final directory = await getApplicationDocumentsDirectory();
-      final fileName = 'water_tracker_export_${DateTime.now().millisecondsSinceEpoch}.csv';
+      final fileName =
+          'water_tracker_export_${DateTime.now().millisecondsSinceEpoch}.csv';
       final file = File('${directory.path}/$fileName');
-      
+
       await file.writeAsString(csvContent);
       return file.path;
     } catch (e, stackTrace) {
-      _lastError = e is AppError ? e : DataExportError.exportFailed(e.toString());
+      _lastError =
+          e is AppError ? e : DataExportError.exportFailed(e.toString());
       debugPrint('Failed to export CSV: $e');
       debugPrint('Stack trace: $stackTrace');
       return null;
@@ -394,10 +415,7 @@ class AnalyticsProvider extends ChangeNotifier {
   }
 
   /// Export data to PDF (placeholder - would need pdf package)
-  Future<String?> exportToPdf({
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
+  Future<String?> exportToPdf({DateTime? startDate, DateTime? endDate}) async {
     if (!_premiumProvider.isFeatureUnlocked(PremiumFeature.dataExport)) {
       _lastError = PremiumError.featureLocked('Data Export');
       notifyListeners();
@@ -412,11 +430,14 @@ class AnalyticsProvider extends ChangeNotifier {
       // This would require implementing PDF generation
       // For now, we'll just return a placeholder
       await Future<void>.delayed(const Duration(seconds: 2));
-      
-      _lastError = DataExportError.exportFailed('PDF export not yet implemented');
+
+      _lastError = DataExportError.exportFailed(
+        'PDF export not yet implemented',
+      );
       return null;
     } catch (e, stackTrace) {
-      _lastError = e is AppError ? e : DataExportError.exportFailed(e.toString());
+      _lastError =
+          e is AppError ? e : DataExportError.exportFailed(e.toString());
       debugPrint('Failed to export PDF: $e');
       debugPrint('Stack trace: $stackTrace');
       return null;
@@ -429,20 +450,23 @@ class AnalyticsProvider extends ChangeNotifier {
   /// Generate CSV content
   String _generateCsvContent(List<HydrationData> entries) {
     final buffer = StringBuffer();
-    
+
     // Header
-    buffer
-      .writeln('Date,Time,Amount (ml),Drink Type,Water Content (ml),Notes');
-    
+    buffer.writeln('Date,Time,Amount (ml),Drink Type,Water Content (ml),Notes');
+
     // Data rows
     for (final entry in entries) {
-      final date = '${entry.timestamp.year}-${entry.timestamp.month.toString().padLeft(2, '0')}-${entry.timestamp.day.toString().padLeft(2, '0')}';
-      final time = '${entry.timestamp.hour.toString().padLeft(2, '0')}:${entry.timestamp.minute.toString().padLeft(2, '0')}';
+      final date =
+          '${entry.timestamp.year}-${entry.timestamp.month.toString().padLeft(2, '0')}-${entry.timestamp.day.toString().padLeft(2, '0')}';
+      final time =
+          '${entry.timestamp.hour.toString().padLeft(2, '0')}:${entry.timestamp.minute.toString().padLeft(2, '0')}';
       final notes = entry.notes?.replaceAll(',', ';') ?? '';
-      
-      buffer.writeln('$date,$time,${entry.amount},${entry.type.displayName},${entry.waterContent},$notes');
+
+      buffer.writeln(
+        '$date,$time,${entry.amount},${entry.type.displayName},${entry.waterContent},$notes',
+      );
     }
-    
+
     return buffer.toString();
   }
 
@@ -468,14 +492,14 @@ class AnalyticsProvider extends ChangeNotifier {
 
   int _calculateBestStreakInMonth(int year, int month) {
     final monthEnd = DateTime(year, month + 1, 0);
-    
+
     var bestStreak = 0;
     var currentStreak = 0;
-    
+
     for (var i = 1; i <= monthEnd.day; i++) {
       final date = DateTime(year, month, i);
       final dayEntries = _hydrationProvider.getEntriesForDate(date);
-      
+
       if (dayEntries.totalWaterIntake >= _hydrationProvider.dailyGoal) {
         currentStreak++;
         bestStreak = currentStreak > bestStreak ? currentStreak : bestStreak;
@@ -483,7 +507,7 @@ class AnalyticsProvider extends ChangeNotifier {
         currentStreak = 0;
       }
     }
-    
+
     return bestStreak;
   }
 
@@ -491,15 +515,21 @@ class AnalyticsProvider extends ChangeNotifier {
     final now = DateTime.now();
     final thisWeekStart = _getWeekStart(now);
     final lastWeekStart = thisWeekStart.subtract(const Duration(days: 7));
-    
+
     final thisWeekData = _hydrationProvider.getWeeklyData(thisWeekStart);
     final lastWeekData = _hydrationProvider.getWeeklyData(lastWeekStart);
-    
-    final thisWeekTotal = thisWeekData.values.fold(0, (sum, value) => sum + value);
-    final lastWeekTotal = lastWeekData.values.fold(0, (sum, value) => sum + value);
-    
+
+    final thisWeekTotal = thisWeekData.values.fold(
+      0,
+      (sum, value) => sum + value,
+    );
+    final lastWeekTotal = lastWeekData.values.fold(
+      0,
+      (sum, value) => sum + value,
+    );
+
     if (lastWeekTotal == 0) return 0;
-    
+
     return ((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100;
   }
 
@@ -507,15 +537,21 @@ class AnalyticsProvider extends ChangeNotifier {
     final now = DateTime.now();
     final thisMonth = DateTime(now.year, now.month);
     final lastMonth = DateTime(now.year, now.month - 1);
-    
+
     final thisMonthData = _hydrationProvider.getMonthlyData(thisMonth);
     final lastMonthData = _hydrationProvider.getMonthlyData(lastMonth);
-    
-    final thisMonthTotal = thisMonthData.values.fold(0, (sum, value) => sum + value);
-    final lastMonthTotal = lastMonthData.values.fold(0, (sum, value) => sum + value);
-    
+
+    final thisMonthTotal = thisMonthData.values.fold(
+      0,
+      (sum, value) => sum + value,
+    );
+    final lastMonthTotal = lastMonthData.values.fold(
+      0,
+      (sum, value) => sum + value,
+    );
+
     if (lastMonthTotal == 0) return 0;
-    
+
     return ((thisMonthTotal - lastMonthTotal) / lastMonthTotal) * 100;
   }
 
@@ -524,6 +560,4 @@ class AnalyticsProvider extends ChangeNotifier {
     _lastError = null;
     notifyListeners();
   }
-
-
 }

@@ -42,10 +42,10 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   DateTime _focusedDate = DateTime.now();
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  
+
   // Weekly view state
   int _selectedWeekIndex = 0;
   DateTime get _currentWeekStart {
@@ -57,20 +57,20 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize animation controller
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
     );
-    
+
     _animationController.forward();
-    
+
     // Listen to search changes
     _searchController.addListener(() {
       setState(() {
@@ -146,9 +146,13 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     );
   }
 
-  Widget _buildViewModeButton(String title, HistoryViewMode mode, IconData icon) {
+  Widget _buildViewModeButton(
+    String title,
+    HistoryViewMode mode,
+    IconData icon,
+  ) {
     final isSelected = _viewMode == mode;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -163,15 +167,19 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
           color: isSelected ? AppColors.waterFull : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppColors.waterFull : AppColors.unselectedBorder,
+            color:
+                isSelected ? AppColors.waterFull : AppColors.unselectedBorder,
           ),
-          boxShadow: isSelected ? [
-            BoxShadow(
-              color: AppColors.waterFull.withValues(alpha: 0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ] : null,
+          boxShadow:
+              isSelected
+                  ? [
+                    BoxShadow(
+                      color: AppColors.waterFull.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                  : null,
         ),
         child: Column(
           children: [
@@ -243,7 +251,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 
   Widget _buildFilterChip(String title, FilterType type) {
     final isSelected = _filterType == type;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -256,7 +264,8 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
           color: isSelected ? AppColors.lightBlue : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.lightBlue : AppColors.unselectedBorder,
+            color:
+                isSelected ? AppColors.lightBlue : AppColors.unselectedBorder,
           ),
         ),
         child: Text(
@@ -312,7 +321,10 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                   ],
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.analytics_outlined, color: AppColors.darkBlue),
+                  icon: const Icon(
+                    Icons.analytics_outlined,
+                    color: AppColors.darkBlue,
+                  ),
                   onPressed: () {
                     Navigator.pushNamed(context, '/analytics/weekly');
                   },
@@ -389,13 +401,19 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
         IconButton(
           icon: Icon(
             Icons.chevron_right,
-            color: _selectedWeekIndex > 0 ? AppColors.textSubtitle : AppColors.unselectedBorder,
+            color:
+                _selectedWeekIndex > 0
+                    ? AppColors.textSubtitle
+                    : AppColors.unselectedBorder,
           ),
-          onPressed: _selectedWeekIndex > 0 ? () {
-            setState(() {
-              _selectedWeekIndex--;
-            });
-          } : null,
+          onPressed:
+              _selectedWeekIndex > 0
+                  ? () {
+                    setState(() {
+                      _selectedWeekIndex--;
+                    });
+                  }
+                  : null,
         ),
       ],
     );
@@ -404,7 +422,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   Widget _buildWeeklyChart(HydrationProvider provider) {
     final weekData = provider.getWeeklyData(_currentWeekStart);
     final filteredData = _filterWeeklyData(weekData);
-    
+
     return AppCard(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -430,7 +448,9 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                     touchTooltipData: BarTouchTooltipData(
                       tooltipBgColor: AppColors.darkBlue,
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                        final date = _currentWeekStart.add(Duration(days: groupIndex));
+                        final date = _currentWeekStart.add(
+                          Duration(days: groupIndex),
+                        );
                         final intake = filteredData[date] ?? 0;
                         return BarTooltipItem(
                           '${_getDayName(date)}\n${(intake / 1000).toStringAsFixed(1)}L',
@@ -449,7 +469,9 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
-                          final date = _currentWeekStart.add(Duration(days: value.toInt()));
+                          final date = _currentWeekStart.add(
+                            Duration(days: value.toInt()),
+                          );
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
@@ -480,7 +502,10 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                     ),
                   ),
                   borderData: FlBorderData(show: false),
-                  barGroups: _buildWeeklyBarGroups(filteredData, provider.dailyGoal),
+                  barGroups: _buildWeeklyBarGroups(
+                    filteredData,
+                    provider.dailyGoal,
+                  ),
                   gridData: FlGridData(
                     drawVerticalLine: false,
                     horizontalInterval: 500,
@@ -503,11 +528,17 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   Widget _buildWeeklyStats(HydrationProvider provider) {
     final weekData = provider.getWeeklyData(_currentWeekStart);
     final filteredData = _filterWeeklyData(weekData);
-    
-    final totalIntake = filteredData.values.fold(0, (sum, value) => sum + value);
+
+    final totalIntake = filteredData.values.fold(
+      0,
+      (sum, value) => sum + value,
+    );
     final averageIntake = totalIntake / 7.0;
-    final goalAchievedDays = filteredData.values.where((intake) => intake >= provider.dailyGoal).length;
-    
+    final goalAchievedDays =
+        filteredData.values
+            .where((intake) => intake >= provider.dailyGoal)
+            .length;
+
     return Row(
       children: [
         Expanded(
@@ -569,14 +600,21 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     final thisWeekData = provider.getWeeklyData(_currentWeekStart);
     final lastWeekStart = _currentWeekStart.subtract(const Duration(days: 7));
     final lastWeekData = provider.getWeeklyData(lastWeekStart);
-    
-    final thisWeekTotal = thisWeekData.values.fold(0, (sum, value) => sum + value);
-    final lastWeekTotal = lastWeekData.values.fold(0, (sum, value) => sum + value);
-    
-    final percentageChange = lastWeekTotal > 0 
-        ? ((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100
-        : 0.0;
-    
+
+    final thisWeekTotal = thisWeekData.values.fold(
+      0,
+      (sum, value) => sum + value,
+    );
+    final lastWeekTotal = lastWeekData.values.fold(
+      0,
+      (sum, value) => sum + value,
+    );
+
+    final percentageChange =
+        lastWeekTotal > 0
+            ? ((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100
+            : 0.0;
+
     return AppCard(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -595,7 +633,9 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             Row(
               children: [
                 Icon(
-                  percentageChange >= 0 ? Icons.trending_up : Icons.trending_down,
+                  percentageChange >= 0
+                      ? Icons.trending_up
+                      : Icons.trending_down,
                   color: percentageChange >= 0 ? Colors.green : Colors.red,
                   size: 20,
                 ),
@@ -610,10 +650,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                 ),
                 const Text(
                   ' from last week',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSubtitle,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppColors.textSubtitle),
                 ),
               ],
             ),
@@ -637,8 +674,12 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarStyle: CalendarStyle(
                 outsideDaysVisible: false,
-                weekendTextStyle: const TextStyle(color: AppColors.textSubtitle),
-                holidayTextStyle: const TextStyle(color: AppColors.textSubtitle),
+                weekendTextStyle: const TextStyle(
+                  color: AppColors.textSubtitle,
+                ),
+                holidayTextStyle: const TextStyle(
+                  color: AppColors.textSubtitle,
+                ),
                 selectedDecoration: const BoxDecoration(
                   color: AppColors.waterFull,
                   shape: BoxShape.circle,
@@ -677,11 +718,11 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
               calendarBuilders: CalendarBuilders(
                 markerBuilder: (context, date, events) {
                   if (events.isEmpty) return null;
-                  
+
                   final entries = events.cast<HydrationData>();
                   final totalIntake = entries.totalWaterIntake;
                   final goalAchieved = totalIntake >= provider.dailyGoal;
-                  
+
                   return Positioned(
                     bottom: 1,
                     right: 1,
@@ -689,7 +730,10 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: goalAchieved ? AppColors.waterFull : AppColors.lightBlue,
+                        color:
+                            goalAchieved
+                                ? AppColors.waterFull
+                                : AppColors.lightBlue,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -699,13 +743,18 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                   final entries = provider.getEntriesForDate(date);
                   final filteredEntries = _filterEntries(entries);
                   final totalIntake = filteredEntries.totalWaterIntake;
-                  
+
                   Color? backgroundColor;
                   if (totalIntake > 0) {
-                    final percentage = (totalIntake / provider.dailyGoal).clamp(0.0, 1.0);
-                    backgroundColor = AppColors.waterFull.withValues(alpha: 0.1 + (percentage * 0.3));
+                    final percentage = (totalIntake / provider.dailyGoal).clamp(
+                      0.0,
+                      1.0,
+                    );
+                    backgroundColor = AppColors.waterFull.withValues(
+                      alpha: 0.1 + (percentage * 0.3),
+                    );
                   }
-                  
+
                   return Container(
                     margin: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
@@ -744,7 +793,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     final filteredEntries = _filterEntries(entries);
     final totalIntake = filteredEntries.totalWaterIntake;
     final goalAchieved = totalIntake >= provider.dailyGoal;
-    
+
     return AppCard(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -764,7 +813,10 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                 const Spacer(),
                 Icon(
                   goalAchieved ? Icons.check_circle : Icons.circle_outlined,
-                  color: goalAchieved ? AppColors.waterFull : AppColors.textSubtitle,
+                  color:
+                      goalAchieved
+                          ? AppColors.waterFull
+                          : AppColors.textSubtitle,
                 ),
               ],
             ),
@@ -837,20 +889,25 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 
   Widget _buildListView(HydrationProvider provider) {
     final allEntries = provider.hydrationHistory;
-    final filteredEntries = _filterEntries(allEntries)
-        .where((entry) => _searchQuery.isEmpty || 
-            entry.type.displayName.toLowerCase().contains(_searchQuery) ||
-            (entry.notes?.toLowerCase().contains(_searchQuery) ?? false))
-        .toList();
-    
+    final filteredEntries =
+        _filterEntries(allEntries)
+            .where(
+              (entry) =>
+                  _searchQuery.isEmpty ||
+                  entry.type.displayName.toLowerCase().contains(_searchQuery) ||
+                  (entry.notes?.toLowerCase().contains(_searchQuery) ?? false),
+            )
+            .toList();
+
     return OptimizedListView<HydrationData>(
       items: filteredEntries,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       itemBuilder: (context, entry, index) => _buildEntryCard(entry, provider),
-      emptyBuilder: (context) => const EmptyStateWidget(
-        title: 'No Entries Found',
-        subtitle: 'Try adjusting your filters or search terms.',
-      ),
+      emptyBuilder:
+          (context) => const EmptyStateWidget(
+            title: 'No Entries Found',
+            subtitle: 'Try adjusting your filters or search terms.',
+          ),
       cacheExtent: 500.0, // Increased cache for better scrolling
       enablePerformanceMonitoring: true,
     );
@@ -908,28 +965,29 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             ),
             PopupMenuButton<String>(
               onSelected: (value) => _handleEntryAction(value, entry, provider),
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, size: 16),
-                      SizedBox(width: 8),
-                      Text('Edit'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, size: 16, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Delete', style: TextStyle(color: Colors.red)),
-                    ],
-                  ),
-                ),
-              ],
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, size: 16),
+                          SizedBox(width: 8),
+                          Text('Edit'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, size: 16, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Delete', style: TextStyle(color: Colors.red)),
+                        ],
+                      ),
+                    ),
+                  ],
             ),
           ],
         ),
@@ -950,10 +1008,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
           const SizedBox(width: 8),
           Text(
             _formatTime(entry.timestamp),
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppColors.textSubtitle,
-            ),
+            style: const TextStyle(fontSize: 12, color: AppColors.textSubtitle),
           ),
           const SizedBox(width: 8),
           Text(
@@ -996,7 +1051,10 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     return weekData;
   }
 
-  List<BarChartGroupData> _buildWeeklyBarGroups(Map<DateTime, int> weekData, int dailyGoal) {
+  List<BarChartGroupData> _buildWeeklyBarGroups(
+    Map<DateTime, int> weekData,
+    int dailyGoal,
+  ) {
     return weekData.entries.map((entry) {
       final index = weekData.keys.toList().indexOf(entry.key);
       final intake = entry.value;
@@ -1031,22 +1089,66 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   }
 
   String _formatDateShort(DateTime date) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return '${months[date.month - 1]} ${date.day}';
   }
 
   String _formatSelectedDate() {
-    const months = ['January', 'February', 'March', 'April', 'May', 'June',
-                   'July', 'August', 'September', 'October', 'November', 'December'];
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+
     return '${days[_selectedDate.weekday - 1]}, ${months[_selectedDate.month - 1]} ${_selectedDate.day}';
   }
 
   String _formatEntryTime(DateTime timestamp) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     final time = _formatTime(timestamp);
     return '${months[timestamp.month - 1]} ${timestamp.day} at $time';
   }
@@ -1054,7 +1156,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   String _formatTime(DateTime timestamp) {
     final hour = timestamp.hour;
     final minute = timestamp.minute.toString().padLeft(2, '0');
-    
+
     if (hour == 0) return '12:$minute AM';
     if (hour < 12) return '$hour:$minute AM';
     if (hour == 12) return '12:$minute PM';
@@ -1062,7 +1164,15 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   }
 
   String _getDayName(DateTime date) {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
     return days[date.weekday - 1];
   }
 
@@ -1090,7 +1200,11 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     }
   }
 
-  void _handleEntryAction(String action, HydrationData entry, HydrationProvider provider) {
+  void _handleEntryAction(
+    String action,
+    HydrationData entry,
+    HydrationProvider provider,
+  ) {
     switch (action) {
       case 'edit':
         _showEditEntryDialog(entry, provider);
@@ -1109,32 +1223,41 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     );
   }
 
-  void _showDeleteConfirmation(HydrationData entry, HydrationProvider provider) {
+  void _showDeleteConfirmation(
+    HydrationData entry,
+    HydrationProvider provider,
+  ) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Entry'),
-        content: Text('Are you sure you want to delete this ${entry.amount}ml ${entry.type.displayName} entry?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              provider.deleteHydrationEntry(entry.id);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Entry deleted'),
-                  backgroundColor: AppColors.waterFull,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Delete Entry'),
+            content: Text(
+              'Are you sure you want to delete this ${entry.amount}ml ${entry.type.displayName} entry?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  provider.deleteHydrationEntry(entry.id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Entry deleted'),
+                      backgroundColor: AppColors.waterFull,
+                    ),
+                  );
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
                 ),
-              );
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

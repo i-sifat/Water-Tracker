@@ -32,12 +32,12 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
 
   Future<void> _loadCustomDrinkTypes() async {
     setState(() => _isLoading = true);
-    
+
     try {
       // In a real implementation, this would load from storage service
       // For now, we'll use sample data
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       setState(() {
         _customDrinkTypes = [
           CustomDrinkType.create(
@@ -76,7 +76,8 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
       body: PremiumGate(
         feature: PremiumFeature.customGoals,
         child: _buildContent(),
-        lockedChild: _buildLockedContent(), // Using customGoals as proxy for custom drink types
+        lockedChild:
+            _buildLockedContent(), // Using customGoals as proxy for custom drink types
       ),
     );
   }
@@ -89,9 +90,10 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
     return Column(
       children: [
         Expanded(
-          child: _customDrinkTypes.isEmpty
-              ? _buildEmptyState()
-              : _buildDrinkTypesList(),
+          child:
+              _customDrinkTypes.isEmpty
+                  ? _buildEmptyState()
+                  : _buildDrinkTypesList(),
         ),
         _buildAddButton(),
       ],
@@ -124,7 +126,8 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
           const SizedBox(height: 32),
           PrimaryButton(
             text: 'Unlock Premium',
-            onPressed: () => context.read<PremiumProvider>().showPremiumFlow(context),
+            onPressed:
+                () => context.read<PremiumProvider>().showPremiumFlow(context),
           ),
         ],
       ),
@@ -175,16 +178,14 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: drinkType.isActive ? AppColors.waterFull : Colors.grey,
+          backgroundColor:
+              drinkType.isActive ? AppColors.waterFull : Colors.grey,
           child: Text(
             drinkType.icon ?? '🥤',
             style: const TextStyle(fontSize: 20),
           ),
         ),
-        title: Text(
-          drinkType.name,
-          style: AppTypography.subtitle,
-        ),
+        title: Text(drinkType.name, style: AppTypography.subtitle),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -198,47 +199,49 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
             ),
             if (drinkType.description != null) ...[
               const SizedBox(height: 4),
-              Text(
-                drinkType.description!,
-                style: AppTypography.subtitle,
-              ),
+              Text(drinkType.description!, style: AppTypography.subtitle),
             ],
           ],
         ),
         trailing: PopupMenuButton<String>(
           onSelected: (value) => _handleMenuAction(value, drinkType),
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'edit',
-              child: Row(
-                children: [
-                  Icon(Icons.edit),
-                  SizedBox(width: 8),
-                  Text('Edit'),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              value: drinkType.isActive ? 'deactivate' : 'activate',
-              child: Row(
-                children: [
-                  Icon(drinkType.isActive ? Icons.visibility_off : Icons.visibility),
-                  const SizedBox(width: 8),
-                  Text(drinkType.isActive ? 'Deactivate' : 'Activate'),
-                ],
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('Delete', style: TextStyle(color: Colors.red)),
-                ],
-              ),
-            ),
-          ],
+          itemBuilder:
+              (context) => [
+                const PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit),
+                      SizedBox(width: 8),
+                      Text('Edit'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: drinkType.isActive ? 'deactivate' : 'activate',
+                  child: Row(
+                    children: [
+                      Icon(
+                        drinkType.isActive
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(drinkType.isActive ? 'Deactivate' : 'Activate'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Delete', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ],
         ),
       ),
     );
@@ -270,46 +273,49 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
   Future<void> _showAddDrinkTypeDialog() async {
     await showDialog<void>(
       context: context,
-      builder: (context) => _DrinkTypeDialog(
-        onSave: _addDrinkType,
-      ),
+      builder: (context) => _DrinkTypeDialog(onSave: _addDrinkType),
     );
   }
 
   Future<void> _showEditDrinkTypeDialog(CustomDrinkType drinkType) async {
     await showDialog<void>(
       context: context,
-      builder: (context) => _DrinkTypeDialog(
-        drinkType: drinkType,
-        onSave: (name, waterPercentage, icon, description) => _updateDrinkType(
-          drinkType,
-          name,
-          waterPercentage,
-          icon,
-          description,
-        ),
-      ),
+      builder:
+          (context) => _DrinkTypeDialog(
+            drinkType: drinkType,
+            onSave:
+                (name, waterPercentage, icon, description) => _updateDrinkType(
+                  drinkType,
+                  name,
+                  waterPercentage,
+                  icon,
+                  description,
+                ),
+          ),
     );
   }
 
   Future<void> _showDeleteConfirmation(CustomDrinkType drinkType) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Drink Type'),
-        content: Text('Are you sure you want to delete "${drinkType.name}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Delete Drink Type'),
+            content: Text(
+              'Are you sure you want to delete "${drinkType.name}"?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Delete'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
     );
 
     if (confirmed == true) {
@@ -342,9 +348,9 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error adding drink type: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error adding drink type: $e')));
       }
     }
   }
@@ -365,16 +371,18 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
       );
 
       setState(() {
-        final index = _customDrinkTypes.indexWhere((dt) => dt.id == drinkType.id);
+        final index = _customDrinkTypes.indexWhere(
+          (dt) => dt.id == drinkType.id,
+        );
         if (index != -1) {
           _customDrinkTypes[index] = updatedDrinkType;
         }
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Drink type updated')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Drink type updated')));
       }
     } catch (e) {
       if (mounted) {
@@ -387,10 +395,14 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
 
   Future<void> _toggleDrinkType(CustomDrinkType drinkType) async {
     try {
-      final updatedDrinkType = drinkType.copyWith(isActive: !drinkType.isActive);
+      final updatedDrinkType = drinkType.copyWith(
+        isActive: !drinkType.isActive,
+      );
 
       setState(() {
-        final index = _customDrinkTypes.indexWhere((dt) => dt.id == drinkType.id);
+        final index = _customDrinkTypes.indexWhere(
+          (dt) => dt.id == drinkType.id,
+        );
         if (index != -1) {
           _customDrinkTypes[index] = updatedDrinkType;
         }
@@ -400,8 +412,8 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              updatedDrinkType.isActive 
-                  ? 'Drink type activated' 
+              updatedDrinkType.isActive
+                  ? 'Drink type activated'
                   : 'Drink type deactivated',
             ),
           ),
@@ -423,9 +435,9 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Drink type deleted')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Drink type deleted')));
       }
     } catch (e) {
       if (mounted) {
@@ -439,12 +451,16 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
 
 /// Dialog for adding/editing custom drink types
 class _DrinkTypeDialog extends StatefulWidget {
-  const _DrinkTypeDialog({
-    required this.onSave, this.drinkType,
-  });
+  const _DrinkTypeDialog({required this.onSave, this.drinkType});
 
   final CustomDrinkType? drinkType;
-  final Function(String name, double waterPercentage, String? icon, String? description) onSave;
+  final Function(
+    String name,
+    double waterPercentage,
+    String? icon,
+    String? description,
+  )
+  onSave;
 
   @override
   State<_DrinkTypeDialog> createState() => _DrinkTypeDialogState();
@@ -459,12 +475,14 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
   @override
   void initState() {
     super.initState();
-    
+
     if (widget.drinkType != null) {
       final drinkType = widget.drinkType!;
       _nameController = TextEditingController(text: drinkType.name);
       _iconController = TextEditingController(text: drinkType.icon ?? '');
-      _descriptionController = TextEditingController(text: drinkType.description ?? '');
+      _descriptionController = TextEditingController(
+        text: drinkType.description ?? '',
+      );
       _percentageController = TextEditingController(
         text: (drinkType.waterPercentage * 100).toInt().toString(),
       );
@@ -488,7 +506,9 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.drinkType != null ? 'Edit Drink Type' : 'Add Drink Type'),
+      title: Text(
+        widget.drinkType != null ? 'Edit Drink Type' : 'Add Drink Type',
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -509,10 +529,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancel'),
         ),
-        PrimaryButton(
-          text: 'Save',
-          onPressed: _saveDrinkType,
-        ),
+        PrimaryButton(text: 'Save', onPressed: _saveDrinkType),
       ],
     );
   }
@@ -603,9 +620,9 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     final percentageText = _percentageController.text.trim();
 
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a name')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter a name')));
       return;
     }
 
@@ -619,7 +636,9 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     final percentage = int.tryParse(percentageText);
     if (percentage == null || percentage < 1 || percentage > 100) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid percentage (1-100)')),
+        const SnackBar(
+          content: Text('Please enter a valid percentage (1-100)'),
+        ),
       );
       return;
     }
@@ -628,7 +647,9 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
       name,
       percentage / 100.0,
       _iconController.text.trim().isEmpty ? null : _iconController.text.trim(),
-      _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+      _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim(),
     );
 
     Navigator.of(context).pop();

@@ -75,8 +75,6 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -22,9 +22,9 @@ class ContinueButton extends StatelessWidget {
         children: [
           Text(
             'Continue',
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Colors.white,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(color: Colors.white),
           ),
           const SizedBox(width: 8),
           const Icon(Icons.arrow_forward, color: Colors.white, size: 20),

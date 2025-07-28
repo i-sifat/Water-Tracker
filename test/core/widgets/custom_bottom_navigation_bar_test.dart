@@ -5,7 +5,9 @@ import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 
 void main() {
   group('CustomBottomNavigationBar Widget Tests', () {
-    testWidgets('renders with correct number of navigation items', (WidgetTester tester) async {
+    testWidgets('renders with correct number of navigation items', (
+      WidgetTester tester,
+    ) async {
       var selectedIndex = 0;
 
       await tester.pumpWidget(
@@ -24,7 +26,9 @@ void main() {
       expect(find.byType(SvgPicture), findsNWidgets(3));
     });
 
-    testWidgets('calls onItemTapped when item is tapped', (WidgetTester tester) async {
+    testWidgets('calls onItemTapped when item is tapped', (
+      WidgetTester tester,
+    ) async {
       const selectedIndex = 0;
       var tappedIndex = -1;
 
@@ -67,7 +71,9 @@ void main() {
       expect(animatedContainers, hasLength(3));
     });
 
-    testWidgets('uses default background color when not provided', (WidgetTester tester) async {
+    testWidgets('uses default background color when not provided', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -84,7 +90,9 @@ void main() {
       expect(decoration?.color, equals(Colors.white));
     });
 
-    testWidgets('uses custom background color when provided', (WidgetTester tester) async {
+    testWidgets('uses custom background color when provided', (
+      WidgetTester tester,
+    ) async {
       const customColor = Colors.blue;
 
       await tester.pumpWidget(
@@ -135,7 +143,9 @@ void main() {
       expect(find.byType(SafeArea), findsOneWidget);
     });
 
-    testWidgets('navigation items have correct spacing', (WidgetTester tester) async {
+    testWidgets('navigation items have correct spacing', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -151,7 +161,9 @@ void main() {
       expect(row.mainAxisAlignment, equals(MainAxisAlignment.spaceEvenly));
     });
 
-    testWidgets('animated containers have correct animation duration', (WidgetTester tester) async {
+    testWidgets('animated containers have correct animation duration', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -173,7 +185,9 @@ void main() {
       }
     });
 
-    testWidgets('svg icons have correct dimensions', (WidgetTester tester) async {
+    testWidgets('svg icons have correct dimensions', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -185,7 +199,9 @@ void main() {
         ),
       );
 
-      final svgPictures = tester.widgetList<SvgPicture>(find.byType(SvgPicture));
+      final svgPictures = tester.widgetList<SvgPicture>(
+        find.byType(SvgPicture),
+      );
 
       for (final svg in svgPictures) {
         expect(svg.width, equals(24));
@@ -193,7 +209,9 @@ void main() {
       }
     });
 
-    testWidgets('gesture detectors have opaque hit test behavior', (WidgetTester tester) async {
+    testWidgets('gesture detectors have opaque hit test behavior', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -214,7 +232,9 @@ void main() {
       }
     });
 
-    testWidgets('animated containers have correct border radius', (WidgetTester tester) async {
+    testWidgets('animated containers have correct border radius', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

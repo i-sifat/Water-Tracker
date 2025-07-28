@@ -18,7 +18,7 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 30),
-              
+
               // App Logo
               Container(
                 width: 72,
@@ -51,9 +51,9 @@ class WelcomeScreen extends StatelessWidget {
               // Subtitle
               Text(
                 'Your intelligent hydration solutions.',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSubtitle,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSubtitle),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
@@ -65,19 +65,20 @@ class WelcomeScreen extends StatelessWidget {
                     'assets/images/icons/onboarding_elements/onboarding_bee_icon.svg',
                     width: 280,
                     height: 280,
-                    placeholderBuilder: (BuildContext context) => Container(
-                      width: 280,
-                      height: 280,
-                      decoration: BoxDecoration(
-                        color: AppColors.lightBlue.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.waterFull,
+                    placeholderBuilder:
+                        (BuildContext context) => Container(
+                          width: 280,
+                          height: 280,
+                          decoration: BoxDecoration(
+                            color: AppColors.lightBlue.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.waterFull,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
                   ),
                 ),
               ),

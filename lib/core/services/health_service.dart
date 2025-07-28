@@ -15,7 +15,7 @@ class HealthService {
 
   final PremiumService _premiumService = PremiumService();
   final StorageService _storageService = StorageService();
-  
+
   late Health? _health;
   bool _isInitialized = false;
   bool _hasPermissions = false;
@@ -55,24 +55,26 @@ class HealthService {
     }
 
     try {
-      final types = [
-        HealthDataType.WATER,
-      ];
+      final types = [HealthDataType.WATER];
 
-      final permissions = [
-        HealthDataAccess.READ_WRITE,
-      ];
+      final permissions = [HealthDataAccess.READ_WRITE];
 
-      final hasPermissions = await _health!.hasPermissions(types, permissions: permissions);
-      
+      final hasPermissions = await _health!.hasPermissions(
+        types,
+        permissions: permissions,
+      );
+
       if (hasPermissions ?? false) {
         _hasPermissions = true;
         return true;
       }
 
-      final granted = await _health!.requestAuthorization(types, permissions: permissions);
+      final granted = await _health!.requestAuthorization(
+        types,
+        permissions: permissions,
+      );
       _hasPermissions = granted;
-      
+
       if (granted) {
         await _storageService.saveBool(_healthSyncEnabledKey, true);
         debugPrint('Health permissions granted');
@@ -103,7 +105,7 @@ class HealthService {
     }
 
     await _storageService.saveBool(_healthSyncEnabledKey, enabled);
-    
+
     if (enabled) {
       // Perform initial sync
       await syncToHealth();
@@ -134,10 +136,15 @@ class HealthService {
       // Update sync status
       if (syncedIds.isNotEmpty) {
         await _markDataAsSynced(syncedIds);
-        await _storageService.saveInt(_lastSyncTimeKey, DateTime.now().millisecondsSinceEpoch);
+        await _storageService.saveInt(
+          _lastSyncTimeKey,
+          DateTime.now().millisecondsSinceEpoch,
+        );
       }
 
-      debugPrint('Synced $successCount/${dataToSync.length} hydration entries to health app');
+      debugPrint(
+        'Synced $successCount/${dataToSync.length} hydration entries to health app',
+      );
       return successCount == dataToSync.length;
     } catch (e) {
       debugPrint('Error syncing to health app: $e');
@@ -153,12 +160,11 @@ class HealthService {
     if (!await isHealthSyncEnabled()) return [];
 
     try {
-      final start = startTime ?? DateTime.now().subtract(const Duration(days: 7));
+      final start =
+          startTime ?? DateTime.now().subtract(const Duration(days: 7));
       final end = endTime ?? DateTime.now();
 
-      final types = [
-        HealthDataType.WATER,
-      ];
+      final types = [HealthDataType.WATER];
 
       final healthData = await _health!.getHealthDataFromTypes(
         types: types,
@@ -182,15 +188,18 @@ class HealthService {
     if (!await isHealthSyncAvailable()) return [];
 
     try {
-      final healthData = await readFromHealth(startTime: startTime, endTime: endTime);
+      final healthData = await readFromHealth(
+        startTime: startTime,
+        endTime: endTime,
+      );
       final importedData = <HydrationData>[];
 
       for (final dataPoint in healthData) {
         if (dataPoint.type == HealthDataType.WATER) {
-          
           // Convert from liters to milliliters
-          final amountInMl = (double.parse(dataPoint.value.toString()) * 1000).round();
-          
+          final amountInMl =
+              (double.parse(dataPoint.value.toString()) * 1000).round();
+
           final hydrationData = HydrationData.create(
             amount: amountInMl,
           ).copyWith(
@@ -202,7 +211,9 @@ class HealthService {
         }
       }
 
-      debugPrint('Imported ${importedData.length} hydration entries from health app');
+      debugPrint(
+        'Imported ${importedData.length} hydration entries from health app',
+      );
       return importedData;
     } catch (e) {
       debugPrint('Error importing from health app: $e');
@@ -225,22 +236,21 @@ class HealthService {
       final enabled = await isHealthSyncEnabled();
       final lastSync = await _storageService.getInt(_lastSyncTimeKey);
       final syncedData = await _storageService.getJson(_syncedDataKey) ?? {};
-      
+
       return {
         'available': true,
         'enabled': enabled,
         'hasPermissions': _hasPermissions,
-        'lastSync': lastSync != null ? DateTime.fromMillisecondsSinceEpoch(lastSync) : null,
+        'lastSync':
+            lastSync != null
+                ? DateTime.fromMillisecondsSinceEpoch(lastSync)
+                : null,
         'totalSynced': (syncedData['syncedIds'] as List<dynamic>?)?.length ?? 0,
         'platform': Platform.isIOS ? 'Apple Health' : 'Google Fit',
       };
     } catch (e) {
       debugPrint('Error getting health sync stats: $e');
-      return {
-        'available': false,
-        'enabled': false,
-        'error': e.toString(),
-      };
+      return {'available': false, 'enabled': false, 'error': e.toString()};
     }
   }
 
@@ -255,12 +265,13 @@ class HealthService {
 
     try {
       final settings = await _getHealthSettings();
-      
+
       if (autoSync != null) settings['autoSync'] = autoSync;
-      if (syncIntervalHours != null) settings['syncIntervalHours'] = syncIntervalHours;
+      if (syncIntervalHours != null)
+        settings['syncIntervalHours'] = syncIntervalHours;
       if (syncOnAdd != null) settings['syncOnAdd'] = syncOnAdd;
       if (importOnStart != null) settings['importOnStart'] = importOnStart;
-      
+
       await _storageService.saveJson(_healthSettingsKey, settings);
     } catch (e) {
       debugPrint('Error updating health settings: $e');
@@ -280,16 +291,18 @@ class HealthService {
     try {
       final settings = await _getHealthSettings();
       final autoSync = settings['autoSync'] as bool? ?? true;
-      
+
       if (!autoSync) return;
 
       final syncIntervalHours = settings['syncIntervalHours'] as int? ?? 6;
       final lastSync = await _storageService.getInt(_lastSyncTimeKey);
-      
+
       if (lastSync != null) {
         final lastSyncTime = DateTime.fromMillisecondsSinceEpoch(lastSync);
-        final nextSyncTime = lastSyncTime.add(Duration(hours: syncIntervalHours));
-        
+        final nextSyncTime = lastSyncTime.add(
+          Duration(hours: syncIntervalHours),
+        );
+
         if (DateTime.now().isBefore(nextSyncTime)) {
           debugPrint('Auto sync not due yet');
           return;
@@ -308,7 +321,7 @@ class HealthService {
 
     final settings = await _getHealthSettings();
     final syncOnAdd = settings['syncOnAdd'] as bool? ?? false;
-    
+
     if (!syncOnAdd) return false;
 
     return syncToHealth([data]);
@@ -321,7 +334,7 @@ class HealthService {
     try {
       // Convert milliliters to liters for health app
       final amountInLiters = data.waterContent / 1000.0;
-      
+
       const healthDataType = HealthDataType.WATER;
 
       final success = await _health!.writeHealthData(
@@ -350,13 +363,18 @@ class HealthService {
   Future<void> _markDataAsSynced(List<String> ids) async {
     try {
       final syncedData = await _storageService.getJson(_syncedDataKey) ?? {};
-      final syncedIds = (syncedData['syncedIds'] as List<dynamic>?)?.cast<String>() ?? <String>[];
-      
+      final syncedIds =
+          (syncedData['syncedIds'] as List<dynamic>?)?.cast<String>() ??
+          <String>[];
+
       syncedIds.addAll(ids);
       syncedData
-        ..['syncedIds'] = syncedIds.toSet().toList() // Remove duplicates
+        ..['syncedIds'] =
+            syncedIds
+                .toSet()
+                .toList() // Remove duplicates
         ..['lastUpdated'] = DateTime.now().toIso8601String();
-      
+
       await _storageService.saveJson(_syncedDataKey, syncedData);
     } catch (e) {
       debugPrint('Error marking data as synced: $e');
@@ -366,12 +384,13 @@ class HealthService {
   /// Get health settings with defaults
   Future<Map<String, dynamic>> _getHealthSettings() async {
     final settings = await _storageService.getJson(_healthSettingsKey);
-    return settings ?? {
-      'autoSync': true,
-      'syncIntervalHours': 6,
-      'syncOnAdd': false,
-      'importOnStart': false,
-    };
+    return settings ??
+        {
+          'autoSync': true,
+          'syncIntervalHours': 6,
+          'syncOnAdd': false,
+          'importOnStart': false,
+        };
   }
 
   /// Reset health sync (for testing or troubleshooting)
@@ -381,7 +400,7 @@ class HealthService {
       await _storageService.remove(_lastSyncTimeKey);
       await _storageService.remove(_syncedDataKey);
       await _storageService.remove(_healthSettingsKey);
-      
+
       _hasPermissions = false;
       debugPrint('Health sync reset completed');
     } catch (e) {

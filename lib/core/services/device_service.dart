@@ -16,7 +16,7 @@ class DeviceService {
   String? _cachedDeviceId;
 
   /// Gets a unique device identifier
-  /// 
+  ///
   /// Returns a platform-specific unique identifier that persists across app installs
   /// but may change if the device is factory reset or OS is reinstalled.
   Future<String> getDeviceId() async {
@@ -26,7 +26,7 @@ class DeviceService {
 
     try {
       String deviceId;
-      
+
       if (Platform.isAndroid) {
         final androidInfo = await _deviceInfo.androidInfo;
         // Use Android ID as primary identifier
@@ -60,7 +60,7 @@ class DeviceService {
   }
 
   /// Generates a unique device code for premium unlock system
-  /// 
+  ///
   /// This code is used by users to identify their device when submitting
   /// donation proof. The code includes device ID, timestamp, and random component.
   Future<String> generateUniqueCode() async {
@@ -68,14 +68,14 @@ class DeviceService {
       final deviceId = await getDeviceId();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final random = Random().nextInt(9999);
-      
+
       // Create a unique code combining device ID, timestamp, and random number
       final codeString = '$deviceId-$timestamp-$random';
-      
+
       // Hash the code to make it shorter and more user-friendly
       final bytes = utf8.encode(codeString);
       final digest = sha256.convert(bytes);
-      
+
       // Take first 12 characters and format as XXX-XXX-XXX-XXX
       final shortCode = digest.toString().substring(0, 12).toUpperCase();
       return '${shortCode.substring(0, 3)}-${shortCode.substring(3, 6)}-${shortCode.substring(6, 9)}-${shortCode.substring(9, 12)}';
@@ -83,13 +83,17 @@ class DeviceService {
       debugPrint('Error generating unique code: $e');
       // Fallback code generation
       final random = Random();
-      final fallbackCode = List.generate(12, (index) => random.nextInt(16).toRadixString(16)).join().toUpperCase();
+      final fallbackCode =
+          List.generate(
+            12,
+            (index) => random.nextInt(16).toRadixString(16),
+          ).join().toUpperCase();
       return '${fallbackCode.substring(0, 3)}-${fallbackCode.substring(3, 6)}-${fallbackCode.substring(6, 9)}-${fallbackCode.substring(9, 12)}';
     }
   }
 
   /// Hashes a device ID with a secret for secure validation
-  /// 
+  ///
   /// This method is used to create secure hashes for premium unlock validation.
   /// The secret should be kept secure and not exposed in the client app.
   String hashDeviceId(String deviceId, String secret) {
@@ -105,7 +109,7 @@ class DeviceService {
   }
 
   /// Generates a deterministic hash from device ID for validation purposes
-  /// 
+  ///
   /// This creates a consistent hash that can be used to validate unlock codes
   /// without exposing the actual device ID.
   Future<String> generateValidationHash() async {
@@ -121,7 +125,7 @@ class DeviceService {
   }
 
   /// Gets detailed device information for debugging purposes
-  /// 
+  ///
   /// Returns a map containing platform-specific device information.
   /// This should only be used for debugging and not stored permanently.
   Future<Map<String, dynamic>> getDeviceInfo() async {
@@ -153,10 +157,7 @@ class DeviceService {
       }
     } catch (e) {
       debugPrint('Error getting device info: $e');
-      return {
-        'platform': 'Unknown',
-        'error': e.toString(),
-      };
+      return {'platform': 'Unknown', 'error': e.toString()};
     }
   }
 

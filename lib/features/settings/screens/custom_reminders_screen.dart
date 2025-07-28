@@ -37,11 +37,7 @@ class CustomRemindersScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.lock,
-                  size: 64,
-                  color: AppColors.textSubtitle,
-                ),
+                Icon(Icons.lock, size: 64, color: AppColors.textSubtitle),
                 SizedBox(height: 16),
                 Text(
                   'Premium Feature',
@@ -54,10 +50,7 @@ class CustomRemindersScreen extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   'Custom reminders are available with premium unlock. Support the app development to access this feature.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSubtitle,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppColors.textSubtitle),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -66,8 +59,9 @@ class CustomRemindersScreen extends StatelessWidget {
         ),
         child: Consumer<SettingsProvider>(
           builder: (context, settingsProvider, child) {
-            final reminders = settingsProvider.notificationSettings.customReminders;
-            
+            final reminders =
+                settingsProvider.notificationSettings.customReminders;
+
             return Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -90,7 +84,7 @@ class CustomRemindersScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   if (reminders.isEmpty)
                     Expanded(
                       child: Center(
@@ -100,7 +94,9 @@ class CustomRemindersScreen extends StatelessWidget {
                             Icon(
                               Icons.alarm_add,
                               size: 64,
-                              color: AppColors.textSubtitle.withValues(alpha: 0.5),
+                              color: AppColors.textSubtitle.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
                             const SizedBox(height: 16),
                             const Text(
@@ -135,8 +131,13 @@ class CustomRemindersScreen extends StatelessWidget {
                             child: AppCard(
                               child: ListTile(
                                 leading: Icon(
-                                  reminder.enabled ? Icons.alarm_on : Icons.alarm_off,
-                                  color: reminder.enabled ? AppColors.waterFull : AppColors.textSubtitle,
+                                  reminder.enabled
+                                      ? Icons.alarm_on
+                                      : Icons.alarm_off,
+                                  color:
+                                      reminder.enabled
+                                          ? AppColors.waterFull
+                                          : AppColors.textSubtitle,
                                 ),
                                 title: Text(
                                   reminder.title,
@@ -147,13 +148,19 @@ class CustomRemindersScreen extends StatelessWidget {
                                 ),
                                 subtitle: Text(
                                   '${reminder.timeString} • ${reminder.daysString}',
-                                  style: const TextStyle(color: AppColors.textSubtitle),
+                                  style: const TextStyle(
+                                    color: AppColors.textSubtitle,
+                                  ),
                                 ),
                                 trailing: Switch(
                                   value: reminder.enabled,
                                   onChanged: (value) {
-                                    final updatedReminder = reminder.copyWith(enabled: value);
-                                    settingsProvider.updateCustomReminder(updatedReminder);
+                                    final updatedReminder = reminder.copyWith(
+                                      enabled: value,
+                                    );
+                                    settingsProvider.updateCustomReminder(
+                                      updatedReminder,
+                                    );
                                   },
                                   activeColor: AppColors.waterFull,
                                 ),
@@ -176,9 +183,7 @@ class CustomRemindersScreen extends StatelessWidget {
           onPressed: () {
             // TODO: Implement add reminder dialog
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Add reminder feature coming soon'),
-              ),
+              const SnackBar(content: Text('Add reminder feature coming soon')),
             );
           },
           backgroundColor: AppColors.waterFull,

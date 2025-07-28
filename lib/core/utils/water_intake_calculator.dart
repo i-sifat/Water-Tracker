@@ -110,17 +110,17 @@ class WaterIntakeCalculator {
       final prefs = await SharedPreferences.getInstance();
       final weight = prefs.getDouble('user_weight') ?? 70.0;
       final age = prefs.getInt('user_age') ?? 30;
-      
+
       // Simple calculation: 35ml per kg of body weight
       var baseIntake = weight * 35;
-      
+
       // Age adjustments
       if (age > 65) {
         baseIntake *= 1.1;
       } else if (age < 18) {
         baseIntake *= 0.9;
       }
-      
+
       return baseIntake.round();
     } catch (e) {
       debugPrint('Error calculating water intake: $e');
@@ -142,48 +142,48 @@ class WaterIntakeCalculator {
   }) {
     final reminders = <DateTime>[];
     final now = DateTime.now();
-    
+
     // Default times if not provided
     final wake = wakeUpTime ?? DateTime(now.year, now.month, now.day, 7);
     final sleep = bedTime ?? DateTime(now.year, now.month, now.day, 22);
-    
+
     // Calculate optimal distribution
     final totalWakingHours = sleep.difference(wake).inHours;
     final dailyGoal = profile.effectiveDailyGoal;
-    
+
     // Base frequency: every 2 hours, adjusted for goal
     var baseInterval = 2.0;
     if (dailyGoal > 3000) baseInterval = 1.5;
     if (dailyGoal < 2000) baseInterval = 2.5;
-    
+
     // Calculate number of reminders
     final reminderCount = (totalWakingHours / baseInterval).round();
-    
+
     // Distribute reminders throughout the day
     for (var i = 0; i < reminderCount; i++) {
       final intervalHours = totalWakingHours / reminderCount;
-      var reminderTime = wake.add(Duration(
-        minutes: (i * intervalHours * 60).round(),
-      ));
-      
+      var reminderTime = wake.add(
+        Duration(minutes: (i * intervalHours * 60).round()),
+      );
+
       // Adjust for meal times (drink before meals)
       if (mealTimes != null) {
         reminderTime = _adjustForMealTimes(reminderTime, mealTimes);
       }
-      
+
       // Adjust for workout times
       if (workoutTimes != null) {
         reminderTime = _adjustForWorkoutTimes(reminderTime, workoutTimes);
       }
-      
+
       // Avoid busy hours
       if (busyHours != null) {
         reminderTime = _avoidBusyHours(reminderTime, busyHours);
       }
-      
+
       reminders.add(reminderTime);
     }
-    
+
     return reminders;
   }
 
@@ -210,30 +210,31 @@ class WaterIntakeCalculator {
       'soccer': 12.0,
       'general': 6.0,
     };
-    
-    final baseRate = baseRates[activityType.toLowerCase()] ?? baseRates['general']!;
+
+    final baseRate =
+        baseRates[activityType.toLowerCase()] ?? baseRates['general']!;
     var hydrationRate = baseRate * bodyWeight;
-    
+
     // Adjust for intensity
     if (intensityLevel != null) {
       final intensityMultiplier = 0.7 + (intensityLevel * 0.05);
       hydrationRate *= intensityMultiplier;
     }
-    
+
     // Adjust for environment
     if (environmentalTemp != null && environmentalTemp > 25) {
       final tempMultiplier = 1 + ((environmentalTemp - 25) * 0.02);
       hydrationRate *= tempMultiplier;
     }
-    
+
     if (humidity != null && humidity > 60) {
       final humidityMultiplier = 1 + ((humidity - 60) * 0.005);
       hydrationRate *= humidityMultiplier;
     }
-    
+
     // Calculate total for duration
     final totalHydration = (hydrationRate * durationMinutes / 60).round();
-    
+
     return max(100, min(2000, totalHydration)); // Safety bounds
   }
 
@@ -245,7 +246,7 @@ class WaterIntakeCalculator {
     double? muscleMass,
   }) {
     var baseIntake = weight * 35; // Base: 35ml per kg
-    
+
     // Adjust for body composition if available
     if (bodyFatPercentage != null) {
       // Lower body fat = higher water needs (muscle holds more water)
@@ -255,12 +256,12 @@ class WaterIntakeCalculator {
         baseIntake *= 0.95;
       }
     }
-    
+
     if (muscleMass != null && muscleMass > weight * 0.4) {
       // High muscle mass = higher water needs
       baseIntake *= 1.05;
     }
-    
+
     return baseIntake;
   }
 
@@ -294,22 +295,22 @@ class WaterIntakeCalculator {
     bool? isPostWorkout,
   }) {
     var adjustedIntake = baseIntake * activityLevel.waterMultiplier;
-    
+
     // Additional adjustments for workout timing
     if (isPreWorkout ?? false) {
       adjustedIntake += 500; // Extra 500ml before workout
     }
-    
+
     if (isPostWorkout ?? false) {
       adjustedIntake += 750; // Extra 750ml after workout
     }
-    
+
     // Adjust for sweat rate if available
     if (sweatRate != null) {
       // Add replacement for expected sweat loss
       adjustedIntake += sweatRate * 1.5; // 150% replacement
     }
-    
+
     return adjustedIntake;
   }
 
@@ -321,7 +322,7 @@ class WaterIntakeCalculator {
     String? climateZone,
   }) {
     var adjustedIntake = baseIntake;
-    
+
     // Temperature adjustments
     if (temperature != null) {
       if (temperature > 30) {
@@ -332,17 +333,17 @@ class WaterIntakeCalculator {
         adjustedIntake *= 0.95; // Cold weather (less sweating)
       }
     }
-    
+
     // Humidity adjustments
     if (humidity != null && humidity > 70) {
       adjustedIntake *= 1.1; // High humidity increases needs
     }
-    
+
     // Altitude adjustments
     if (altitude != null && altitude > 2500) {
       adjustedIntake *= 1.15; // High altitude increases needs
     }
-    
+
     // Climate zone adjustments
     if (climateZone != null) {
       switch (climateZone.toLowerCase()) {
@@ -354,7 +355,7 @@ class WaterIntakeCalculator {
           adjustedIntake *= 0.9;
       }
     }
-    
+
     return adjustedIntake;
   }
 
@@ -364,12 +365,12 @@ class WaterIntakeCalculator {
     List<String>? medications,
   }) {
     var adjustedIntake = baseIntake;
-    
+
     // Pregnancy adjustments
     if (pregnancyStatus != null) {
       adjustedIntake *= pregnancyStatus.waterMultiplier;
     }
-    
+
     // Medication adjustments
     if (medications != null) {
       for (final medication in medications) {
@@ -383,7 +384,7 @@ class WaterIntakeCalculator {
         }
       }
     }
-    
+
     return adjustedIntake;
   }
 
@@ -395,7 +396,7 @@ class WaterIntakeCalculator {
     int? alcoholIntake,
   }) {
     var adjustedIntake = baseIntake;
-    
+
     // Sleep adjustments
     if (sleepHours != null) {
       if (sleepHours < 6) {
@@ -404,35 +405,36 @@ class WaterIntakeCalculator {
         adjustedIntake *= 0.95; // Excessive sleep slightly reduces needs
       }
     }
-    
+
     // Stress adjustments
     if (stressLevel != null && stressLevel > 7) {
       adjustedIntake *= 1.1; // High stress increases needs
     }
-    
+
     // Caffeine adjustments
     if (caffeineIntake != null) {
       // Add extra water for caffeine (diuretic effect)
-      adjustedIntake += (caffeineIntake / 100) * 200; // 200ml per 100mg caffeine
+      adjustedIntake +=
+          (caffeineIntake / 100) * 200; // 200ml per 100mg caffeine
     }
-    
+
     // Alcohol adjustments
     if (alcoholIntake != null && alcoholIntake > 0) {
       // Add extra water for alcohol (dehydrating effect)
       adjustedIntake += alcoholIntake * 300; // 300ml per standard drink
     }
-    
+
     return adjustedIntake;
   }
 
   static double _applyGoalAdjustments(double baseIntake, List<Goal> goals) {
     if (goals.isEmpty) return baseIntake;
-    
+
     // Apply the highest goal multiplier
     final maxMultiplier = goals
         .map((goal) => goal.waterMultiplier)
         .reduce((a, b) => a > b ? a : b);
-    
+
     return baseIntake * maxMultiplier;
   }
 
@@ -442,21 +444,24 @@ class WaterIntakeCalculator {
     int? sugarDrinkIntake,
   }) {
     var adjustedIntake = baseIntake;
-    
+
     // Vegetable intake (provides water from food)
     if (vegetableIntake != null && vegetableIntake < 3) {
       adjustedIntake *= 1.05; // Less water from food
     }
-    
+
     // Sugar drink intake (requires more water to process)
     if (sugarDrinkIntake != null && sugarDrinkIntake > 2) {
       adjustedIntake *= 1.1; // More water needed
     }
-    
+
     return adjustedIntake;
   }
 
-  static DateTime _adjustForMealTimes(DateTime reminderTime, List<DateTime> mealTimes) {
+  static DateTime _adjustForMealTimes(
+    DateTime reminderTime,
+    List<DateTime> mealTimes,
+  ) {
     // Try to schedule reminders 30 minutes before meals
     for (final mealTime in mealTimes) {
       final timeDiff = reminderTime.difference(mealTime).inMinutes.abs();
@@ -468,7 +473,10 @@ class WaterIntakeCalculator {
     return reminderTime;
   }
 
-  static DateTime _adjustForWorkoutTimes(DateTime reminderTime, List<DateTime> workoutTimes) {
+  static DateTime _adjustForWorkoutTimes(
+    DateTime reminderTime,
+    List<DateTime> workoutTimes,
+  ) {
     // Schedule reminders before and after workouts
     for (final workoutTime in workoutTimes) {
       final timeDiff = reminderTime.difference(workoutTime).inMinutes;

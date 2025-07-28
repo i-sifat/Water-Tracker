@@ -6,11 +6,7 @@ void main() {
   group('AppTextField Simple Tests', () {
     testWidgets('renders basic widget', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppTextField())),
       );
 
       expect(find.byType(TextFormField), findsOneWidget);
@@ -21,11 +17,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              labelText: labelText,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(labelText: labelText)),
         ),
       );
 
@@ -34,11 +26,7 @@ void main() {
 
     testWidgets('handles text input', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppTextField())),
       );
 
       await tester.enterText(find.byType(TextFormField), 'test input');

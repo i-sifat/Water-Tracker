@@ -169,7 +169,8 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
           const SizedBox(height: 32),
           PrimaryButton(
             text: 'Unlock Premium',
-            onPressed: () => context.read<PremiumProvider>().showPremiumFlow(context),
+            onPressed:
+                () => context.read<PremiumProvider>().showPremiumFlow(context),
           ),
         ],
       ),
@@ -400,7 +401,9 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+          ],
           decoration: InputDecoration(
             hintText: hint,
             suffixText: suffix,
@@ -438,10 +441,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
             const Text('High'),
           ],
         ),
-        Text(
-          'Current: $_stressLevel/10',
-          style: AppTypography.subtitle,
-        ),
+        Text('Current: $_stressLevel/10', style: AppTypography.subtitle),
       ],
     );
   }
@@ -454,9 +454,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _climateZone,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-          ),
+          decoration: const InputDecoration(border: OutlineInputBorder()),
           hint: const Text('Select climate zone'),
           items: const [
             DropdownMenuItem(value: 'tropical', child: Text('Tropical')),
@@ -541,19 +539,21 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     try {
       // In a real implementation, this would save to storage and update the user profile
       // For now, just show a success message
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Advanced goal of ${_calculatedGoal}ml applied successfully!'),
+          content: Text(
+            'Advanced goal of ${_calculatedGoal}ml applied successfully!',
+          ),
           backgroundColor: AppColors.waterFull,
         ),
       );
 
       Navigator.of(context).pop();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving goal: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error saving goal: $e')));
     }
   }
 }

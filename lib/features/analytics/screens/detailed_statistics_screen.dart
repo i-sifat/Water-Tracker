@@ -1,7 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/constants/premium_features.dart' as premium_constants;
+import 'package:watertracker/core/constants/premium_features.dart'
+    as premium_constants;
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
@@ -15,7 +16,8 @@ class DetailedStatisticsScreen extends StatefulWidget {
   const DetailedStatisticsScreen({super.key});
 
   @override
-  State<DetailedStatisticsScreen> createState() => _DetailedStatisticsScreenState();
+  State<DetailedStatisticsScreen> createState() =>
+      _DetailedStatisticsScreenState();
 }
 
 class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
@@ -67,11 +69,12 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
 
             final stats = analytics.detailedStats;
             final streakData = analytics.streakData;
-            
+
             if (stats == null) {
               return const EmptyStateWidget(
                 title: 'No Data Available',
-                subtitle: 'Start tracking your water intake to see detailed statistics.',
+                subtitle:
+                    'Start tracking your water intake to see detailed statistics.',
               );
             }
 
@@ -82,7 +85,10 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
     );
   }
 
-  Widget _buildDetailedStatistics(DetailedStatistics stats, StreakData? streakData) {
+  Widget _buildDetailedStatistics(
+    DetailedStatistics stats,
+    StreakData? streakData,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -166,11 +172,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
   Widget _buildOverviewItem(String title, String value, IconData icon) {
     return Column(
       children: [
-        Icon(
-          icon,
-          size: 32,
-          color: AppColors.lightBlue,
-        ),
+        Icon(icon, size: 32, color: AppColors.lightBlue),
         const SizedBox(height: 8),
         Text(
           value,
@@ -182,10 +184,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
         ),
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textSubtitle,
-          ),
+          style: const TextStyle(fontSize: 12, color: AppColors.textSubtitle),
         ),
       ],
     );
@@ -254,11 +253,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            size: 24,
-            color: color,
-          ),
+          Icon(icon, size: 24, color: color),
           const SizedBox(height: 8),
           Text(
             value.toString(),
@@ -271,10 +266,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12,
-              color: color,
-            ),
+            style: TextStyle(fontSize: 12, color: color),
           ),
         ],
       ),
@@ -336,20 +328,12 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            size: 24,
-            color: color,
-          ),
+          Icon(icon, size: 24, color: color),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                trendIcon,
-                size: 16,
-                color: color,
-              ),
+              Icon(trendIcon, size: 16, color: color),
               const SizedBox(width: 4),
               Text(
                 '${trend.abs().toStringAsFixed(1)}%',
@@ -364,10 +348,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12,
-              color: color,
-            ),
+            style: TextStyle(fontSize: 12, color: color),
           ),
         ],
       ),
@@ -431,33 +412,34 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
     return Wrap(
       spacing: 16,
       runSpacing: 8,
-      children: breakdown.entries.toList().asMap().entries.map((entry) {
-        final index = entry.key;
-        final drinkEntry = entry.value;
-        final color = colors[index % colors.length];
-        
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Text(
-              drinkEntry.key,
-              style: const TextStyle(
-                fontSize: 12,
-                color: AppColors.textSubtitle,
-              ),
-            ),
-          ],
-        );
-      }).toList(),
+      children:
+          breakdown.entries.toList().asMap().entries.map((entry) {
+            final index = entry.key;
+            final drinkEntry = entry.value;
+            final color = colors[index % colors.length];
+
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  drinkEntry.key,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSubtitle,
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
     );
   }
 
@@ -581,9 +563,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
             Text(
               analytics.lastError?.toString() ?? 'An error occurred',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.textSubtitle,
-              ),
+              style: const TextStyle(color: AppColors.textSubtitle),
             ),
             const SizedBox(height: 24),
             PrimaryButton(
@@ -608,11 +588,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.bar_chart,
-              size: 64,
-              color: AppColors.lightBlue,
-            ),
+            const Icon(Icons.bar_chart, size: 64, color: AppColors.lightBlue),
             const SizedBox(height: 16),
             const Text(
               'Detailed Statistics',
@@ -626,9 +602,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
             const Text(
               'Get comprehensive insights with detailed statistics, streak analysis, and drinking patterns.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.textSubtitle,
-              ),
+              style: TextStyle(color: AppColors.textSubtitle),
             ),
             const SizedBox(height: 24),
             PrimaryButton(
@@ -646,36 +620,37 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
   void _showExportDialog() {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Export Data'),
-        content: const Text('Choose export format:'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _exportData('csv');
-            },
-            child: const Text('CSV'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Export Data'),
+            content: const Text('Choose export format:'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _exportData('csv');
+                },
+                child: const Text('CSV'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _exportData('pdf');
+                },
+                child: const Text('PDF'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _exportData('pdf');
-            },
-            child: const Text('PDF'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
     );
   }
 
   Future<void> _exportData(String format) async {
     final analytics = context.read<AnalyticsProvider>();
-    
+
     String? filePath;
     if (format == 'csv') {
       filePath = await analytics.exportToCsv();
@@ -718,7 +693,7 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
       final index = entry.key;
       final drinkEntry = entry.value;
       final percentage = (drinkEntry.value / total) * 100;
-      
+
       return PieChartSectionData(
         color: colors[index % colors.length],
         value: drinkEntry.value.toDouble(),
@@ -744,8 +719,18 @@ class _DetailedStatisticsScreenState extends State<DetailedStatisticsScreen> {
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }

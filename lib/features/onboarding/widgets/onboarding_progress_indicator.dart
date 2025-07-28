@@ -4,7 +4,9 @@ import 'package:watertracker/core/utils/app_colors.dart';
 /// Custom progress indicator for onboarding flow
 class OnboardingProgressIndicator extends StatelessWidget {
   const OnboardingProgressIndicator({
-    required this.currentStep, required this.totalSteps, super.key,
+    required this.currentStep,
+    required this.totalSteps,
+    super.key,
     this.height = 4.0,
     this.backgroundColor,
     this.progressColor,
@@ -21,7 +23,7 @@ class OnboardingProgressIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = (currentStep + 1) / totalSteps;
-    
+
     return Column(
       children: [
         if (showStepNumbers)
@@ -72,7 +74,9 @@ class OnboardingProgressIndicator extends StatelessWidget {
 /// Animated progress indicator with smooth transitions
 class AnimatedOnboardingProgressIndicator extends StatefulWidget {
   const AnimatedOnboardingProgressIndicator({
-    required this.currentStep, required this.totalSteps, super.key,
+    required this.currentStep,
+    required this.totalSteps,
+    super.key,
     this.height = 4.0,
     this.backgroundColor,
     this.progressColor,
@@ -107,7 +111,7 @@ class _AnimatedOnboardingProgressIndicatorState
       duration: widget.animationDuration,
       vsync: this,
     );
-    
+
     _updateAnimation();
     _animationController.forward();
   }
@@ -125,14 +129,13 @@ class _AnimatedOnboardingProgressIndicatorState
   void _updateAnimation() {
     final previousProgress = (_previousStep + 1) / widget.totalSteps;
     final currentProgress = (widget.currentStep + 1) / widget.totalSteps;
-    
+
     _progressAnimation = Tween<double>(
       begin: previousProgress,
       end: currentProgress,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -198,7 +201,9 @@ class _AnimatedOnboardingProgressIndicatorState
 /// Step-by-step progress indicator with individual step markers
 class StepProgressIndicator extends StatelessWidget {
   const StepProgressIndicator({
-    required this.currentStep, required this.totalSteps, super.key,
+    required this.currentStep,
+    required this.totalSteps,
+    super.key,
     this.completedSteps = const {},
     this.stepSize = 24.0,
     this.lineHeight = 2.0,
@@ -234,7 +239,7 @@ class StepProgressIndicator extends StatelessWidget {
             final isCompleted = completedSteps.contains(index);
             final isActive = index == currentStep;
             final isPast = index < currentStep;
-            
+
             Color stepColor;
             if (isCompleted || isPast) {
               stepColor = completedCol;
@@ -253,25 +258,23 @@ class StepProgressIndicator extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: stepColor,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: stepColor,
-                        width: 2,
-                      ),
+                      border: Border.all(color: stepColor, width: 2),
                     ),
                     child: Center(
-                      child: isCompleted || isPast
-                          ? Icon(
-                              Icons.check,
-                              size: stepSize * 0.6,
-                              color: Colors.white,
-                            )
-                          : Text(
-                              '${index + 1}',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: isActive ? Colors.white : stepColor,
-                                fontWeight: FontWeight.bold,
+                      child:
+                          isCompleted || isPast
+                              ? Icon(
+                                Icons.check,
+                                size: stepSize * 0.6,
+                                color: Colors.white,
+                              )
+                              : Text(
+                                '${index + 1}',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: isActive ? Colors.white : stepColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
                     ),
                   ),
                   if (index < totalSteps - 1)
@@ -296,12 +299,14 @@ class StepProgressIndicator extends StatelessWidget {
                     labels[index],
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: index <= currentStep
-                          ? AppColors.assessmentText
-                          : AppColors.textSubtitle,
-                      fontWeight: index == currentStep
-                          ? FontWeight.w600
-                          : FontWeight.normal,
+                      color:
+                          index <= currentStep
+                              ? AppColors.assessmentText
+                              : AppColors.textSubtitle,
+                      fontWeight:
+                          index == currentStep
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

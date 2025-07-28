@@ -27,11 +27,13 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = backgroundColor ?? 
+
+    final effectiveBackgroundColor =
+        backgroundColor ??
         (isSelected ? theme.colorScheme.primaryContainer : theme.cardColor);
-    
-    final effectiveBorderColor = borderColor ?? 
+
+    final effectiveBorderColor =
+        borderColor ??
         (isSelected ? theme.colorScheme.primary : theme.colorScheme.outline);
 
     Widget cardWidget = Container(
@@ -43,15 +45,16 @@ class AppCard extends StatelessWidget {
           color: effectiveBorderColor,
           width: isSelected ? 2 : 1,
         ),
-        boxShadow: elevation > 0
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: elevation,
-                  offset: Offset(0, elevation / 2),
-                ),
-              ]
-            : null,
+        boxShadow:
+            elevation > 0
+                ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: elevation,
+                    offset: Offset(0, elevation / 2),
+                  ),
+                ]
+                : null,
       ),
       child: Padding(
         padding: padding ?? const EdgeInsets.all(16),

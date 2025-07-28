@@ -26,17 +26,19 @@ class AppTheme {
 
     // Apply high contrast if enabled
     if (accessibilityService?.isHighContrastEnabled ?? false) {
-      colorScheme = accessibilityService!.getHighContrastColorScheme(colorScheme);
+      colorScheme = accessibilityService!.getHighContrastColorScheme(
+        colorScheme,
+      );
     }
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       fontFamily: 'Nunito',
-      
+
       // Text theme with accessibility scaling
       textTheme: _buildTextTheme(colorScheme, textScaleFactor),
-      
+
       // App bar theme
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.appBar,
@@ -50,15 +52,17 @@ class AppTheme {
           color: AppColors.textHeadline,
         ),
       ),
-      
+
       // Elevated button theme with minimum touch target
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.waterFull,
           foregroundColor: Colors.white,
           elevation: 0,
-          minimumSize: const Size(AccessibilityService.minimumTouchTargetSize, 
-                                  AccessibilityService.minimumTouchTargetSize),
+          minimumSize: const Size(
+            AccessibilityService.minimumTouchTargetSize,
+            AccessibilityService.minimumTouchTargetSize,
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -70,20 +74,18 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Card theme
       cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(
-            color: AppColors.unselectedBorder,
-          ),
+          side: const BorderSide(color: AppColors.unselectedBorder),
         ),
         margin: const EdgeInsets.all(8),
       ),
-      
+
       // Input decoration theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -104,12 +106,15 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: colorScheme.error),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
-      
+
       // Scaffold theme
       scaffoldBackgroundColor: AppColors.background,
-      
+
       // Bottom navigation bar theme
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.white,
@@ -128,7 +133,7 @@ class AppTheme {
           fontWeight: FontWeight.w400,
         ),
       ),
-      
+
       // Checkbox theme with minimum touch target
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
@@ -142,7 +147,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
-      
+
       // Switch theme
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
@@ -183,17 +188,19 @@ class AppTheme {
 
     // Apply high contrast if enabled
     if (accessibilityService?.isHighContrastEnabled ?? false) {
-      colorScheme = accessibilityService!.getHighContrastColorScheme(colorScheme);
+      colorScheme = accessibilityService!.getHighContrastColorScheme(
+        colorScheme,
+      );
     }
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       fontFamily: 'Nunito',
-      
+
       // Text theme with accessibility scaling
       textTheme: _buildTextTheme(colorScheme, textScaleFactor),
-      
+
       // App bar theme
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
@@ -207,15 +214,17 @@ class AppTheme {
           color: colorScheme.onSurface,
         ),
       ),
-      
+
       // Elevated button theme with minimum touch target
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.waterFull,
           foregroundColor: Colors.white,
           elevation: 0,
-          minimumSize: const Size(AccessibilityService.minimumTouchTargetSize, 
-                                  AccessibilityService.minimumTouchTargetSize),
+          minimumSize: const Size(
+            AccessibilityService.minimumTouchTargetSize,
+            AccessibilityService.minimumTouchTargetSize,
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -227,20 +236,18 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Card theme
       cardTheme: CardThemeData(
         color: colorScheme.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: colorScheme.outline,
-          ),
+          side: BorderSide(color: colorScheme.outline),
         ),
         margin: const EdgeInsets.all(8),
       ),
-      
+
       // Input decoration theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -261,12 +268,15 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: colorScheme.error),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
-      
+
       // Scaffold theme
       scaffoldBackgroundColor: colorScheme.surface,
-      
+
       // Bottom navigation bar theme
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: colorScheme.surface,
@@ -285,7 +295,7 @@ class AppTheme {
           fontWeight: FontWeight.w400,
         ),
       ),
-      
+
       // Checkbox theme with minimum touch target
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
@@ -299,7 +309,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
-      
+
       // Switch theme
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
@@ -320,7 +330,10 @@ class AppTheme {
   }
 
   // Build text theme for both light and dark themes with accessibility scaling
-  static TextTheme _buildTextTheme(ColorScheme colorScheme, double textScaleFactor) {
+  static TextTheme _buildTextTheme(
+    ColorScheme colorScheme,
+    double textScaleFactor,
+  ) {
     return TextTheme(
       // Display styles
       displayLarge: TextStyle(
@@ -344,7 +357,7 @@ class AppTheme {
         color: colorScheme.onSurface,
         height: 1.22,
       ),
-      
+
       // Headline styles
       headlineLarge: TextStyle(
         fontFamily: 'Nunito',
@@ -367,7 +380,7 @@ class AppTheme {
         color: colorScheme.onSurface,
         height: 1.33,
       ),
-      
+
       // Title styles
       titleLarge: TextStyle(
         fontFamily: 'Nunito',
@@ -390,7 +403,7 @@ class AppTheme {
         color: colorScheme.onSurface,
         height: 1.43,
       ),
-      
+
       // Body styles
       bodyLarge: TextStyle(
         fontFamily: 'Nunito',
@@ -413,7 +426,7 @@ class AppTheme {
         color: colorScheme.onSurface.withValues(alpha: 0.7),
         height: 1.33,
       ),
-      
+
       // Label styles
       labelLarge: TextStyle(
         fontFamily: 'Nunito',

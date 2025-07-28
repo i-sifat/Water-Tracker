@@ -34,7 +34,7 @@ void main() {
         // Act
         await premiumProvider.generateDeviceCode();
         final firstCode = premiumProvider.deviceCode;
-        
+
         // Create new provider instance
         final newProvider = PremiumProvider();
         await newProvider.loadPremiumStatus();

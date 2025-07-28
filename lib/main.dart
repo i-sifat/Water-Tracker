@@ -23,19 +23,19 @@ import 'package:watertracker/l10n/app_localizations.dart';
 void main() async {
   // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize performance monitoring
   PerformanceService().initialize();
-  
+
   // Initialize image optimization
   ImageOptimization.initialize();
-  
+
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  
+
   // Optimize system UI
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -45,7 +45,7 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
-  
+
   runApp(const MyApp());
 }
 
@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
         builder: (context, themeProvider, localeProvider, child) {
           return MaterialApp(
             title: 'Water Tracker',
-            
+
             // Localization support
             localizationsDelegates: const [
               AppLocalizations.delegate,
@@ -76,25 +76,27 @@ class MyApp extends StatelessWidget {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             locale: localeProvider.locale,
-            
+
             // Theme with accessibility support
-            theme: themeProvider.isInitialized 
-                ? AppTheme.lightTheme(
-                    accessibilityService: themeProvider.accessibilityService,
-                    textScaleFactor: themeProvider.textScaleFactor,
-                  )
-                : AppTheme.legacyLightTheme,
-            darkTheme: themeProvider.isInitialized
-                ? AppTheme.darkTheme(
-                    accessibilityService: themeProvider.accessibilityService,
-                    textScaleFactor: themeProvider.textScaleFactor,
-                  )
-                : AppTheme.legacyDarkTheme,
+            theme:
+                themeProvider.isInitialized
+                    ? AppTheme.lightTheme(
+                      accessibilityService: themeProvider.accessibilityService,
+                      textScaleFactor: themeProvider.textScaleFactor,
+                    )
+                    : AppTheme.legacyLightTheme,
+            darkTheme:
+                themeProvider.isInitialized
+                    ? AppTheme.darkTheme(
+                      accessibilityService: themeProvider.accessibilityService,
+                      textScaleFactor: themeProvider.textScaleFactor,
+                    )
+                    : AppTheme.legacyDarkTheme,
             themeMode: themeProvider.themeMode,
-            
+
             // Accessibility settings
             debugShowCheckedModeBanner: false,
-            
+
             home: const InitialScreen(),
             onGenerateRoute: (settings) {
               // Use optimized transitions for better performance
@@ -102,13 +104,22 @@ class MyApp extends StatelessWidget {
                 case DonationInfoScreen.routeName:
                   return PageRouteBuilder<void>(
                     settings: settings,
-                    pageBuilder: (context, animation, secondaryAnimation) => const DonationInfoScreen(),
+                    pageBuilder:
+                        (context, animation, secondaryAnimation) =>
+                            const DonationInfoScreen(),
                     transitionDuration: const Duration(milliseconds: 200),
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    transitionsBuilder: (
+                      context,
+                      animation,
+                      secondaryAnimation,
+                      child,
+                    ) {
                       return SlideTransition(
                         position: animation.drive(
-                          Tween(begin: const Offset(1, 0), end: Offset.zero)
-                              .chain(CurveTween(curve: Curves.easeOutCubic)),
+                          Tween(
+                            begin: const Offset(1, 0),
+                            end: Offset.zero,
+                          ).chain(CurveTween(curve: Curves.easeOutCubic)),
                         ),
                         child: child,
                       );
@@ -132,27 +143,40 @@ class MyApp extends StatelessWidget {
                       }
                     },
                     transitionDuration: const Duration(milliseconds: 250),
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    transitionsBuilder: (
+                      context,
+                      animation,
+                      secondaryAnimation,
+                      child,
+                    ) {
                       return ScaleTransition(
                         scale: animation.drive(
-                          Tween(begin: 0.8, end: 1)
-                              .chain(CurveTween(curve: Curves.easeOutBack)),
+                          Tween<double>(
+                            begin: 0.8,
+                            end: 1.0,
+                          ).chain(CurveTween(curve: Curves.easeOutBack)),
                         ),
-                        child: FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        ),
+                        child: FadeTransition(opacity: animation, child: child),
                       );
                     },
                   );
                 case SettingsScreen.routeName:
                   return PageRouteBuilder<void>(
                     settings: settings,
-                    pageBuilder: (context, animation, secondaryAnimation) => const SettingsScreen(),
+                    pageBuilder:
+                        (context, animation, secondaryAnimation) =>
+                            const SettingsScreen(),
                     transitionDuration: const Duration(milliseconds: 150),
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    transitionsBuilder: (
+                      context,
+                      animation,
+                      secondaryAnimation,
+                      child,
+                    ) {
                       return FadeTransition(
-                        opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+                        opacity: animation.drive(
+                          CurveTween(curve: Curves.easeIn),
+                        ),
                         child: child,
                       );
                     },
@@ -175,7 +199,8 @@ class InitialScreen extends StatefulWidget {
   State<InitialScreen> createState() => _InitialScreenState();
 }
 
-class _InitialScreenState extends State<InitialScreen> with PerformanceMonitorMixin {
+class _InitialScreenState extends State<InitialScreen>
+    with PerformanceMonitorMixin {
   @override
   void initState() {
     super.initState();
@@ -187,7 +212,8 @@ class _InitialScreenState extends State<InitialScreen> with PerformanceMonitorMi
     try {
       // Use cached SharedPreferences instance if available
       final prefs = await SharedPreferences.getInstance();
-      final onboardingCompleted = prefs.getBool('onboarding_completed') ?? false;
+      final onboardingCompleted =
+          prefs.getBool('onboarding_completed') ?? false;
 
       if (!mounted) return;
 
@@ -197,7 +223,8 @@ class _InitialScreenState extends State<InitialScreen> with PerformanceMonitorMi
       if (onboardingCompleted) {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder<void>(
-            pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
+            pageBuilder:
+                (context, animation, secondaryAnimation) => const HomeScreen(),
             transitionDuration: Duration.zero,
             reverseTransitionDuration: Duration.zero,
           ),
@@ -205,7 +232,9 @@ class _InitialScreenState extends State<InitialScreen> with PerformanceMonitorMi
       } else {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder<void>(
-            pageBuilder: (context, animation, secondaryAnimation) => const WelcomeScreen(),
+            pageBuilder:
+                (context, animation, secondaryAnimation) =>
+                    const WelcomeScreen(),
             transitionDuration: Duration.zero,
             reverseTransitionDuration: Duration.zero,
           ),
@@ -249,10 +278,7 @@ class _InitialScreenState extends State<InitialScreen> with PerformanceMonitorMi
             const SizedBox(height: 16),
             Text(
               'Loading...',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
             ),
           ],
         ),

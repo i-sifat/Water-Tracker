@@ -47,13 +47,12 @@ class _WaterAnimationState extends State<WaterAnimation>
       duration: const Duration(milliseconds: 800),
     );
 
-    _progressAnimation = Tween<double>(
-      begin: 0,
-      end: widget.progress,
-    ).animate(CurvedAnimation(
-      parent: _progressController,
-      curve: Curves.easeInOutCubic,
-    ));
+    _progressAnimation = Tween<double>(begin: 0, end: widget.progress).animate(
+      CurvedAnimation(
+        parent: _progressController,
+        curve: Curves.easeInOutCubic,
+      ),
+    );
 
     _lastProgress = widget.progress;
     _progressController.forward();
@@ -68,14 +67,14 @@ class _WaterAnimationState extends State<WaterAnimation>
 
   void _updateBubbles(Duration elapsed) {
     if (!mounted) return;
-    
+
     _frameCount++;
-    
+
     // Only add new bubbles every 30 frames (approximately 0.5 seconds at 60fps)
     if (_frameCount % 30 == 0 && widget.progress > 0.1) {
       _addNewBubbles(1 + random.nextInt(2));
     }
-    
+
     // Update bubble positions more efficiently
     _updateBubblePositions();
   }
@@ -124,17 +123,19 @@ class _WaterAnimationState extends State<WaterAnimation>
   @override
   void didUpdateWidget(WaterAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // Animate progress changes smoothly
     if (oldWidget.progress != widget.progress) {
       _progressAnimation = Tween<double>(
         begin: _lastProgress,
         end: widget.progress,
-      ).animate(CurvedAnimation(
-        parent: _progressController,
-        curve: Curves.easeInOutCubic,
-      ));
-      
+      ).animate(
+        CurvedAnimation(
+          parent: _progressController,
+          curve: Curves.easeInOutCubic,
+        ),
+      );
+
       _lastProgress = widget.progress;
       _progressController.reset();
       _progressController.forward();

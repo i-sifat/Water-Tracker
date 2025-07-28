@@ -172,9 +172,10 @@ extension HydrationDataList on List<HydrationData> {
 
   /// Filter by date range
   List<HydrationData> forDateRange(DateTime start, DateTime end) {
-    return where((data) => 
-      data.timestamp.isAfter(start.subtract(const Duration(days: 1))) &&
-      data.timestamp.isBefore(end.add(const Duration(days: 1)))
+    return where(
+      (data) =>
+          data.timestamp.isAfter(start.subtract(const Duration(days: 1))) &&
+          data.timestamp.isBefore(end.add(const Duration(days: 1))),
     ).toList();
   }
 
@@ -189,5 +190,6 @@ extension HydrationDataList on List<HydrationData> {
   }
 
   /// Get entries that need syncing
-  List<HydrationData> get unsyncedEntries => where((data) => !data.isSynced).toList();
+  List<HydrationData> get unsyncedEntries =>
+      where((data) => !data.isSynced).toList();
 }

@@ -6,7 +6,8 @@ import 'package:watertracker/features/home/home_screen.dart';
 /// Celebration screen shown when onboarding is completed
 class OnboardingCompletionScreen extends StatefulWidget {
   const OnboardingCompletionScreen({
-    required this.dailyGoal, super.key,
+    required this.dailyGoal,
+    super.key,
     this.userName,
   });
 
@@ -18,8 +19,7 @@ class OnboardingCompletionScreen extends StatefulWidget {
       _OnboardingCompletionScreenState();
 }
 
-class _OnboardingCompletionScreenState
-    extends State<OnboardingCompletionScreen>
+class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
     with TickerProviderStateMixin {
   late AnimationController _scaleController;
   late AnimationController _fadeController;
@@ -29,32 +29,25 @@ class _OnboardingCompletionScreenState
   @override
   void initState() {
     super.initState();
-    
+
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
 
     _fadeAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeIn,
-    ));
+    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
 
     // Start animations with delay
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -87,7 +80,7 @@ class _OnboardingCompletionScreenState
           child: Column(
             children: [
               const Spacer(),
-              
+
               // Celebration animation
               ScaleTransition(
                 scale: _scaleAnimation,
@@ -111,9 +104,9 @@ class _OnboardingCompletionScreenState
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Success message
               FadeTransition(
                 opacity: _fadeAnimation,
@@ -121,16 +114,18 @@ class _OnboardingCompletionScreenState
                   children: [
                     Text(
                       'Congratulations!',
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineLarge?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 32,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     Text(
                       widget.userName != null
                           ? 'Welcome to your hydration journey, ${widget.userName}!'
@@ -141,9 +136,9 @@ class _OnboardingCompletionScreenState
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Daily goal display
                     Container(
                       padding: const EdgeInsets.all(24),
@@ -164,7 +159,9 @@ class _OnboardingCompletionScreenState
                           const SizedBox(height: 12),
                           Text(
                             'Your Daily Goal',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
                               color: Colors.white.withValues(alpha: 0.9),
                               fontWeight: FontWeight.w600,
                             ),
@@ -172,7 +169,9 @@ class _OnboardingCompletionScreenState
                           const SizedBox(height: 8),
                           Text(
                             '${widget.dailyGoal} ml',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            style: Theme.of(
+                              context,
+                            ).textTheme.headlineMedium?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 36,
@@ -181,16 +180,18 @@ class _OnboardingCompletionScreenState
                           const SizedBox(height: 8),
                           Text(
                             'Personalized just for you',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
                               color: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Features preview
                     Container(
                       padding: const EdgeInsets.all(20),
@@ -202,7 +203,9 @@ class _OnboardingCompletionScreenState
                         children: [
                           Text(
                             "What's next?",
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
                             ),
@@ -231,9 +234,9 @@ class _OnboardingCompletionScreenState
                   ],
                 ),
               ),
-              
+
               const Spacer(),
-              
+
               // Continue button
               FadeTransition(
                 opacity: _fadeAnimation,
@@ -259,9 +262,9 @@ class _OnboardingCompletionScreenState
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Skip to home option
               FadeTransition(
                 opacity: _fadeAnimation,
@@ -297,11 +300,7 @@ class _OnboardingCompletionScreenState
             color: Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: 20,
-          ),
+          child: Icon(icon, color: Colors.white, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -330,9 +329,7 @@ class _OnboardingCompletionScreenState
 
   void _navigateToHome() {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute<void>(
-        builder: (context) => const HomeScreen(),
-      ),
+      MaterialPageRoute<void>(builder: (context) => const HomeScreen()),
       (route) => false,
     );
   }
@@ -341,7 +338,8 @@ class _OnboardingCompletionScreenState
 /// Simple completion screen without animations (fallback)
 class SimpleOnboardingCompletionScreen extends StatelessWidget {
   const SimpleOnboardingCompletionScreen({
-    required this.dailyGoal, super.key,
+    required this.dailyGoal,
+    super.key,
     this.userName,
   });
 
@@ -371,9 +369,9 @@ class SimpleOnboardingCompletionScreen extends StatelessWidget {
                   color: AppColors.lightBlue,
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               Text(
                 'Setup Complete!',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
@@ -382,19 +380,19 @@ class SimpleOnboardingCompletionScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               Text(
                 'Your daily goal: $dailyGoal ml',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.white,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(color: Colors.white),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 48),
-              
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -416,10 +414,7 @@ class SimpleOnboardingCompletionScreen extends StatelessWidget {
                   ),
                   child: const Text(
                     'Start Tracking',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

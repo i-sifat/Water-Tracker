@@ -38,10 +38,12 @@ class RTLUtils {
   }
 
   /// Get start alignment (left in LTR, right in RTL)
-  static AlignmentDirectional get alignmentStart => AlignmentDirectional.centerStart;
+  static AlignmentDirectional get alignmentStart =>
+      AlignmentDirectional.centerStart;
 
   /// Get end alignment (right in LTR, left in RTL)
-  static AlignmentDirectional get alignmentEnd => AlignmentDirectional.centerEnd;
+  static AlignmentDirectional get alignmentEnd =>
+      AlignmentDirectional.centerEnd;
 
   /// Get the appropriate icon for back navigation based on text direction
   static IconData getBackIcon(BuildContext context) {
@@ -163,7 +165,7 @@ class RTLUtils {
     if (!shouldMirror || !isRTL(context)) {
       return child;
     }
-    
+
     return Transform(
       alignment: Alignment.center,
       transform: getMirrorTransform(context),

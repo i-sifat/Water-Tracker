@@ -5,7 +5,6 @@ import 'package:watertracker/core/widgets/common/accessible_button.dart';
 import 'package:watertracker/l10n/app_localizations.dart';
 
 class AccessibilitySettingsScreen extends StatelessWidget {
-
   const AccessibilitySettingsScreen({super.key});
   static const String routeName = '/accessibility-settings';
 
@@ -44,7 +43,9 @@ class AccessibilitySettingsScreen extends StatelessWidget {
                       Text(
                         'Increase contrast for better visibility',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -77,40 +78,34 @@ class AccessibilitySettingsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        l10n.textSize,
-                        style: theme.textTheme.titleMedium,
-                      ),
+                      Text(l10n.textSize, style: theme.textTheme.titleMedium),
                       const SizedBox(height: 8),
                       Text(
                         'Adjust text size for better readability',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
                       Row(
                         children: [
-                          Text(
-                            'A',
-                            style: theme.textTheme.bodySmall,
-                          ),
+                          Text('A', style: theme.textTheme.bodySmall),
                           Expanded(
                             child: Slider(
                               value: themeProvider.textScaleFactor,
                               min: 0.8,
                               max: 2,
                               divisions: 12,
-                              label: '${(themeProvider.textScaleFactor * 100).round()}%',
+                              label:
+                                  '${(themeProvider.textScaleFactor * 100).round()}%',
                               onChanged: (value) {
                                 themeProvider.setTextScaleFactor(value);
                               },
                             ),
                           ),
-                          Text(
-                            'A',
-                            style: theme.textTheme.headlineSmall,
-                          ),
+                          Text('A', style: theme.textTheme.headlineSmall),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -142,7 +137,9 @@ class AccessibilitySettingsScreen extends StatelessWidget {
                       Text(
                         'Reduce animations and motion effects',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -207,7 +204,9 @@ class AccessibilitySettingsScreen extends StatelessWidget {
                       Text(
                         'Minimum touch target size: 44x44 dp',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
                       ),
                     ],
@@ -221,13 +220,19 @@ class AccessibilitySettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showResetDialog(BuildContext context, ThemeProvider themeProvider, AppLocalizations l10n) {
+  void _showResetDialog(
+    BuildContext context,
+    ThemeProvider themeProvider,
+    AppLocalizations l10n,
+  ) {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Reset Accessibility Settings'),
-          content: const Text('This will reset all accessibility settings to their default values. Continue?'),
+          content: const Text(
+            'This will reset all accessibility settings to their default values. Continue?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -240,7 +245,7 @@ class AccessibilitySettingsScreen extends StatelessWidget {
                   ..setTextScaleFactor(1)
                   ..setReducedMotion(false);
                 Navigator.of(context).pop();
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Accessibility settings reset to defaults'),

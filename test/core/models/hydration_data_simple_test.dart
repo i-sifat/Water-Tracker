@@ -128,7 +128,10 @@ void main() {
         // Assert
         expect(entry.id, equals('test-id'));
         expect(entry.amount, equals(300));
-        expect(entry.timestamp.millisecondsSinceEpoch, equals(timestamp.millisecondsSinceEpoch));
+        expect(
+          entry.timestamp.millisecondsSinceEpoch,
+          equals(timestamp.millisecondsSinceEpoch),
+        );
         expect(entry.type, equals(DrinkType.tea));
         expect(entry.isSynced, isTrue);
         expect(entry.notes, equals('Afternoon tea'));
@@ -155,8 +158,14 @@ void main() {
       test('should calculate water content correctly', () {
         // Arrange
         final waterEntry = HydrationData.create(amount: 250);
-        final coffeeEntry = HydrationData.create(amount: 250, type: DrinkType.coffee);
-        final juiceEntry = HydrationData.create(amount: 250, type: DrinkType.juice);
+        final coffeeEntry = HydrationData.create(
+          amount: 250,
+          type: DrinkType.coffee,
+        );
+        final juiceEntry = HydrationData.create(
+          amount: 250,
+          type: DrinkType.juice,
+        );
 
         // Act
         final waterContent = waterEntry.waterContent;
@@ -201,10 +210,7 @@ void main() {
         );
 
         // Act
-        final updated = original.copyWith(
-          amount: 300,
-          notes: 'Updated notes',
-        );
+        final updated = original.copyWith(amount: 300, notes: 'Updated notes');
 
         // Assert
         expect(updated.amount, equals(300));

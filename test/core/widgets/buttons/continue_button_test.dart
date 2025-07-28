@@ -4,15 +4,15 @@ import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 
 void main() {
   group('ContinueButton Widget Tests', () {
-    testWidgets('renders with Continue text and arrow icon', (WidgetTester tester) async {
+    testWidgets('renders with Continue text and arrow icon', (
+      WidgetTester tester,
+    ) async {
       var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ContinueButton(
-              onPressed: () => wasPressed = true,
-            ),
+            body: ContinueButton(onPressed: () => wasPressed = true),
           ),
         ),
       );
@@ -28,9 +28,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ContinueButton(
-              onPressed: () => wasPressed = true,
-            ),
+            body: ContinueButton(onPressed: () => wasPressed = true),
           ),
         ),
       );
@@ -41,7 +39,9 @@ void main() {
       expect(wasPressed, isTrue);
     });
 
-    testWidgets('is disabled when isDisabled is true', (WidgetTester tester) async {
+    testWidgets('is disabled when isDisabled is true', (
+      WidgetTester tester,
+    ) async {
       var wasPressed = false;
 
       await tester.pumpWidget(
@@ -66,13 +66,7 @@ void main() {
 
     testWidgets('has correct styling and layout', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ContinueButton(
-              onPressed: () {},
-            ),
-          ),
-        ),
+        MaterialApp(home: Scaffold(body: ContinueButton(onPressed: () {}))),
       );
 
       final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
@@ -85,15 +79,11 @@ void main() {
       expect(minimumSize?.height, equals(56));
     });
 
-    testWidgets('has correct text and icon colors', (WidgetTester tester) async {
+    testWidgets('has correct text and icon colors', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ContinueButton(
-              onPressed: () {},
-            ),
-          ),
-        ),
+        MaterialApp(home: Scaffold(body: ContinueButton(onPressed: () {}))),
       );
 
       // Find the text widget
@@ -106,15 +96,11 @@ void main() {
       expect(iconWidget.size, equals(20));
     });
 
-    testWidgets('has proper spacing between text and icon', (WidgetTester tester) async {
+    testWidgets('has proper spacing between text and icon', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ContinueButton(
-              onPressed: () {},
-            ),
-          ),
-        ),
+        MaterialApp(home: Scaffold(body: ContinueButton(onPressed: () {}))),
       );
 
       // Check that there's a SizedBox with width 8 between text and icon
@@ -126,15 +112,15 @@ void main() {
       expect(spacingBox.width, equals(8));
     });
 
-    testWidgets('maintains enabled state when isDisabled is false', (WidgetTester tester) async {
+    testWidgets('maintains enabled state when isDisabled is false', (
+      WidgetTester tester,
+    ) async {
       var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ContinueButton(
-              onPressed: () => wasPressed = true,
-            ),
+            body: ContinueButton(onPressed: () => wasPressed = true),
           ),
         ),
       );

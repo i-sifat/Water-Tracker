@@ -79,12 +79,14 @@ void main() {
       );
 
       expect(find.byType(Tooltip), findsOneWidget);
-      
+
       final tooltip = tester.widget<Tooltip>(find.byType(Tooltip));
       expect(tooltip.message, equals(testTooltip));
     });
 
-    testWidgets('does not show tooltip when not provided', (WidgetTester tester) async {
+    testWidgets('does not show tooltip when not provided', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -100,7 +102,9 @@ void main() {
       expect(find.byType(Tooltip), findsNothing);
     });
 
-    testWidgets('is disabled when onPressed is null', (WidgetTester tester) async {
+    testWidgets('is disabled when onPressed is null', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -112,11 +116,15 @@ void main() {
         ),
       );
 
-      final gestureDetector = tester.widget<GestureDetector>(find.byType(GestureDetector));
+      final gestureDetector = tester.widget<GestureDetector>(
+        find.byType(GestureDetector),
+      );
       expect(gestureDetector.onTap, isNull);
     });
 
-    testWidgets('has correct semantic properties for button', (WidgetTester tester) async {
+    testWidgets('has correct semantic properties for button', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -134,7 +142,9 @@ void main() {
       expect(semantics.properties.enabled, isTrue);
     });
 
-    testWidgets('has correct semantic properties when disabled', (WidgetTester tester) async {
+    testWidgets('has correct semantic properties when disabled', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -205,7 +215,9 @@ void main() {
       expect(focus.canRequestFocus, isTrue);
     });
 
-    testWidgets('excludes from semantics when disabled', (WidgetTester tester) async {
+    testWidgets('excludes from semantics when disabled', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

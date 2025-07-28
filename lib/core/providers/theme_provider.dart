@@ -4,14 +4,14 @@ import 'package:watertracker/core/services/accessibility_service.dart';
 
 class ThemeProvider extends ChangeNotifier {
   static const String _themeKey = 'theme_mode';
-  
+
   ThemeMode _themeMode = ThemeMode.system;
   bool _isInitialized = false;
   AccessibilityService? _accessibilityService;
 
   ThemeMode get themeMode => _themeMode;
   bool get isInitialized => _isInitialized;
-  
+
   bool get isDarkMode {
     switch (_themeMode) {
       case ThemeMode.dark:
@@ -19,25 +19,27 @@ class ThemeProvider extends ChangeNotifier {
       case ThemeMode.light:
         return false;
       case ThemeMode.system:
-        return WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark;
+        return WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+            Brightness.dark;
     }
   }
 
   /// Initialize theme provider and load saved theme preference
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedThemeIndex = prefs.getInt(_themeKey);
-      
-      if (savedThemeIndex != null && savedThemeIndex < ThemeMode.values.length) {
+
+      if (savedThemeIndex != null &&
+          savedThemeIndex < ThemeMode.values.length) {
         _themeMode = ThemeMode.values[savedThemeIndex];
       }
-      
+
       // Initialize accessibility service
       _accessibilityService = await AccessibilityService.initialize();
-      
+
       _isInitialized = true;
       notifyListeners();
     } catch (e) {
@@ -50,10 +52,10 @@ class ThemeProvider extends ChangeNotifier {
   /// Set theme mode and persist to storage
   Future<void> setThemeMode(ThemeMode themeMode) async {
     if (_themeMode == themeMode) return;
-    
+
     _themeMode = themeMode;
     notifyListeners();
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(_themeKey, themeMode.index);
@@ -64,9 +66,8 @@ class ThemeProvider extends ChangeNotifier {
 
   /// Toggle between light and dark theme
   Future<void> toggleTheme() async {
-    final newTheme = _themeMode == ThemeMode.light 
-        ? ThemeMode.dark 
-        : ThemeMode.light;
+    final newTheme =
+        _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     await setThemeMode(newTheme);
   }
 
@@ -111,10 +112,12 @@ class ThemeProvider extends ChangeNotifier {
   double get textScaleFactor => _accessibilityService?.textScaleFactor ?? 1.0;
 
   /// Check if high contrast mode is enabled
-  bool get isHighContrastEnabled => _accessibilityService?.isHighContrastEnabled ?? false;
+  bool get isHighContrastEnabled =>
+      _accessibilityService?.isHighContrastEnabled ?? false;
 
   /// Check if reduced motion is enabled
-  bool get isReducedMotionEnabled => _accessibilityService?.isReducedMotionEnabled ?? false;
+  bool get isReducedMotionEnabled =>
+      _accessibilityService?.isReducedMotionEnabled ?? false;
 
   /// Set high contrast mode
   Future<void> setHighContrastMode({required bool enabled}) async {
@@ -136,6 +139,7 @@ class ThemeProvider extends ChangeNotifier {
 
   /// Get animation duration based on accessibility settings
   Duration getAnimationDuration(Duration defaultDuration) {
-    return _accessibilityService?.getAnimationDuration(defaultDuration) ?? defaultDuration;
+    return _accessibilityService?.getAnimationDuration(defaultDuration) ??
+        defaultDuration;
   }
 }

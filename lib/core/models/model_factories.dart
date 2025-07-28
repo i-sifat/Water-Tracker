@@ -35,13 +35,10 @@ class ModelFactories {
   }) {
     final start = startDate ?? DateTime.now().subtract(const Duration(days: 7));
     final end = endDate ?? DateTime.now();
-    
+
     return List.generate(count, (index) {
       final timestamp = _randomTimestampBetween(start, end);
-      return createHydrationData(
-        id: 'test_$index',
-        timestamp: timestamp,
-      );
+      return createHydrationData(id: 'test_$index', timestamp: timestamp);
     });
   }
 
@@ -53,19 +50,22 @@ class ModelFactories {
   }) {
     final entries = <HydrationData>[];
     final amountPerEntry = totalAmount ~/ entryCount;
-    
+
     for (var i = 0; i < entryCount; i++) {
       final hour = 8 + (i * 2); // Spread throughout the day
       final timestamp = DateTime(date.year, date.month, date.day, hour);
-      
-      entries.add(createHydrationData(
-        id: '${date.millisecondsSinceEpoch}_$i',
-        amount: amountPerEntry + _random.nextInt(100) - 50, // Add some variation
-        timestamp: timestamp,
-        type: i == 0 ? DrinkType.water : _randomDrinkType(),
-      ));
+
+      entries.add(
+        createHydrationData(
+          id: '${date.millisecondsSinceEpoch}_$i',
+          amount:
+              amountPerEntry + _random.nextInt(100) - 50, // Add some variation
+          timestamp: timestamp,
+          type: i == 0 ? DrinkType.water : _randomDrinkType(),
+        ),
+      );
     }
-    
+
     return entries;
   }
 
@@ -152,9 +152,7 @@ class ModelFactories {
 
   /// Create a free status for testing
   static PremiumStatus createPremiumStatusFree() {
-    return createPremiumStatus(
-      isPremium: false,
-    );
+    return createPremiumStatus(isPremium: false);
   }
 
   /// Create a sample DonationProof instance
@@ -195,7 +193,7 @@ class ModelFactories {
         errorMessage: errorMessage ?? 'Invalid unlock code',
       );
     }
-    
+
     return UnlockCodeValidation.success(
       deviceCode: deviceCode ?? _generateTestDeviceCode(),
       unlockCode: unlockCode ?? 'TEST123456789ABC',
@@ -237,7 +235,9 @@ class ModelFactories {
   }
 
   static WeatherPreference _randomWeatherPreference() {
-    return WeatherPreference.values[_random.nextInt(WeatherPreference.values.length)];
+    return WeatherPreference.values[_random.nextInt(
+      WeatherPreference.values.length,
+    )];
   }
 
   static List<Goal> _randomGoals() {
@@ -248,7 +248,10 @@ class ModelFactories {
 
   static String _generateTestDeviceCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return List.generate(16, (index) => chars[_random.nextInt(chars.length)]).join();
+    return List.generate(
+      16,
+      (index) => chars[_random.nextInt(chars.length)],
+    ).join();
   }
 }
 
@@ -299,7 +302,8 @@ class HydrationDataBuilder {
   HydrationDataBuilder unsynced() => withSyncStatus(false);
 
   HydrationDataBuilder today() => withTimestamp(DateTime.now());
-  HydrationDataBuilder yesterday() => withTimestamp(DateTime.now().subtract(const Duration(days: 1)));
+  HydrationDataBuilder yesterday() =>
+      withTimestamp(DateTime.now().subtract(const Duration(days: 1)));
 
   HydrationData build() {
     return ModelFactories.createHydrationData(
@@ -367,8 +371,10 @@ class UserProfileBuilder {
   UserProfileBuilder female() => withGender(Gender.female);
 
   UserProfileBuilder sedentary() => withActivityLevel(ActivityLevel.sedentary);
-  UserProfileBuilder active() => withActivityLevel(ActivityLevel.moderatelyActive);
-  UserProfileBuilder veryActive() => withActivityLevel(ActivityLevel.veryActive);
+  UserProfileBuilder active() =>
+      withActivityLevel(ActivityLevel.moderatelyActive);
+  UserProfileBuilder veryActive() =>
+      withActivityLevel(ActivityLevel.veryActive);
 
   UserProfileBuilder complete() {
     return withWeight(70)

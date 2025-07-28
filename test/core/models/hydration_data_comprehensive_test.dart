@@ -30,9 +30,7 @@ void main() {
 
       test('should generate unique IDs for different instances', () {
         // Arrange & Act
-        final hydration1 = HydrationData.create(
-          amount: 250,
-        );
+        final hydration1 = HydrationData.create(amount: 250);
 
         final hydration2 = HydrationData.create(
           amount: 300,
@@ -131,27 +129,30 @@ void main() {
         expect(hydrationData.isSynced, equals(true));
       });
 
-      test('should deserialize from JSON correctly with minimal properties', () {
-        // Arrange
-        final timestamp = DateTime.now();
-        final json = {
-          'id': 'test-id-456',
-          'amount': 200,
-          'timestamp': timestamp.millisecondsSinceEpoch,
-          'type': 'juice',
-        };
+      test(
+        'should deserialize from JSON correctly with minimal properties',
+        () {
+          // Arrange
+          final timestamp = DateTime.now();
+          final json = {
+            'id': 'test-id-456',
+            'amount': 200,
+            'timestamp': timestamp.millisecondsSinceEpoch,
+            'type': 'juice',
+          };
 
-        // Act
-        final hydrationData = HydrationData.fromJson(json);
+          // Act
+          final hydrationData = HydrationData.fromJson(json);
 
-        // Assert
-        expect(hydrationData.id, equals('test-id-456'));
-        expect(hydrationData.amount, equals(200));
-        expect(hydrationData.timestamp, equals(timestamp));
-        expect(hydrationData.type, equals(DrinkType.juice));
-        expect(hydrationData.notes, isNull);
-        expect(hydrationData.isSynced, equals(false));
-      });
+          // Assert
+          expect(hydrationData.id, equals('test-id-456'));
+          expect(hydrationData.amount, equals(200));
+          expect(hydrationData.timestamp, equals(timestamp));
+          expect(hydrationData.type, equals(DrinkType.juice));
+          expect(hydrationData.notes, isNull);
+          expect(hydrationData.isSynced, equals(false));
+        },
+      );
 
       test('should handle JSON serialization round trip', () {
         // Arrange
@@ -176,25 +177,46 @@ void main() {
     });
 
     group('Water Content Calculation', () {
-      test('should calculate water content correctly for different drink types', () {
-        // Arrange & Act
-        final waterData = HydrationData.create(amount: 1000);
-        final teaData = HydrationData.create(amount: 1000, type: DrinkType.tea);
-        final coffeeData = HydrationData.create(amount: 1000, type: DrinkType.coffee);
-        final juiceData = HydrationData.create(amount: 1000, type: DrinkType.juice);
-        final sodaData = HydrationData.create(amount: 1000, type: DrinkType.soda);
-        final sportsData = HydrationData.create(amount: 1000, type: DrinkType.sports);
-        final otherData = HydrationData.create(amount: 1000, type: DrinkType.other);
+      test(
+        'should calculate water content correctly for different drink types',
+        () {
+          // Arrange & Act
+          final waterData = HydrationData.create(amount: 1000);
+          final teaData = HydrationData.create(
+            amount: 1000,
+            type: DrinkType.tea,
+          );
+          final coffeeData = HydrationData.create(
+            amount: 1000,
+            type: DrinkType.coffee,
+          );
+          final juiceData = HydrationData.create(
+            amount: 1000,
+            type: DrinkType.juice,
+          );
+          final sodaData = HydrationData.create(
+            amount: 1000,
+            type: DrinkType.soda,
+          );
+          final sportsData = HydrationData.create(
+            amount: 1000,
+            type: DrinkType.sports,
+          );
+          final otherData = HydrationData.create(
+            amount: 1000,
+            type: DrinkType.other,
+          );
 
-        // Assert
-        expect(waterData.waterContent, equals(1000)); // 100%
-        expect(teaData.waterContent, equals(950)); // 95%
-        expect(coffeeData.waterContent, equals(950)); // 95%
-        expect(juiceData.waterContent, equals(850)); // 85%
-        expect(sodaData.waterContent, equals(900)); // 90%
-        expect(sportsData.waterContent, equals(920)); // 92%
-        expect(otherData.waterContent, equals(800)); // 80%
-      });
+          // Assert
+          expect(waterData.waterContent, equals(1000)); // 100%
+          expect(teaData.waterContent, equals(950)); // 95%
+          expect(coffeeData.waterContent, equals(950)); // 95%
+          expect(juiceData.waterContent, equals(850)); // 85%
+          expect(sodaData.waterContent, equals(900)); // 90%
+          expect(sportsData.waterContent, equals(920)); // 92%
+          expect(otherData.waterContent, equals(800)); // 80%
+        },
+      );
     });
 
     group('Date Utilities', () {
@@ -397,8 +419,14 @@ void main() {
         // Arrange
         final hydrationList = [
           HydrationData.create(amount: 1000), // 1000ml water
-          HydrationData.create(amount: 1000, type: DrinkType.tea), // 950ml water
-          HydrationData.create(amount: 1000, type: DrinkType.juice), // 850ml water
+          HydrationData.create(
+            amount: 1000,
+            type: DrinkType.tea,
+          ), // 950ml water
+          HydrationData.create(
+            amount: 1000,
+            type: DrinkType.juice,
+          ), // 850ml water
         ];
 
         // Act
@@ -427,7 +455,7 @@ void main() {
         // Arrange
         final targetDate = DateTime(2023, 6, 15);
         final otherDate = DateTime(2023, 6, 16);
-        
+
         final hydrationList = [
           HydrationData(id: '1', amount: 250, timestamp: targetDate),
           HydrationData(id: '2', amount: 300, timestamp: otherDate),
@@ -446,7 +474,7 @@ void main() {
         // Arrange
         final date1 = DateTime(2023, 6, 15);
         final date2 = DateTime(2023, 6, 16);
-        
+
         final hydrationList = [
           HydrationData(id: '1', amount: 250, timestamp: date1),
           HydrationData(id: '2', amount: 300, timestamp: date2),
@@ -465,7 +493,12 @@ void main() {
       test('should filter unsynced entries correctly', () {
         // Arrange
         final hydrationList = [
-          HydrationData(id: '1', amount: 250, timestamp: DateTime.now(), isSynced: true),
+          HydrationData(
+            id: '1',
+            amount: 250,
+            timestamp: DateTime.now(),
+            isSynced: true,
+          ),
           HydrationData(id: '2', amount: 300, timestamp: DateTime.now()),
           HydrationData(id: '3', amount: 150, timestamp: DateTime.now()),
         ];
@@ -487,11 +520,11 @@ void main() {
 
         // Act
         final stopwatch = Stopwatch()..start();
-        
+
         for (var i = 0; i < instanceCount; i++) {
           instances.add(HydrationData.create(amount: i));
         }
-        
+
         stopwatch.stop();
 
         // Assert
@@ -499,22 +532,32 @@ void main() {
         expect(stopwatch.elapsedMilliseconds, lessThan(1000)); // Should be fast
       });
 
-      test('should handle JSON serialization of many instances efficiently', () {
-        // Arrange
-        const instanceCount = 100;
-        final instances = List.generate(instanceCount, (i) => HydrationData.create(amount: i));
+      test(
+        'should handle JSON serialization of many instances efficiently',
+        () {
+          // Arrange
+          const instanceCount = 100;
+          final instances = List.generate(
+            instanceCount,
+            (i) => HydrationData.create(amount: i),
+          );
 
-        // Act
-        final stopwatch = Stopwatch()..start();
-        
-        final jsonList = instances.map((instance) => instance.toJson()).toList();
-        
-        stopwatch.stop();
+          // Act
+          final stopwatch = Stopwatch()..start();
 
-        // Assert
-        expect(jsonList.length, equals(instanceCount));
-        expect(stopwatch.elapsedMilliseconds, lessThan(500)); // Should be reasonably fast
-      });
+          final jsonList =
+              instances.map((instance) => instance.toJson()).toList();
+
+          stopwatch.stop();
+
+          // Assert
+          expect(jsonList.length, equals(instanceCount));
+          expect(
+            stopwatch.elapsedMilliseconds,
+            lessThan(500),
+          ); // Should be reasonably fast
+        },
+      );
     });
 
     group('Complex Scenarios', () {
@@ -525,15 +568,12 @@ void main() {
 
         // Act
         for (final drinkType in drinkTypes) {
-          instances.add(HydrationData.create(
-            amount: 200,
-            type: drinkType,
-          ));
+          instances.add(HydrationData.create(amount: 200, type: drinkType));
         }
 
         // Assert
         expect(instances.length, equals(drinkTypes.length));
-        
+
         // Verify all drink types are present
         for (final drinkType in drinkTypes) {
           expect(

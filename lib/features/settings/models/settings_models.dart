@@ -17,9 +17,11 @@ class NotificationSettings extends Equatable {
       startHour: json['startHour'] as int? ?? 8,
       endHour: json['endHour'] as int? ?? 22,
       interval: json['interval'] as int? ?? 2,
-      customReminders: (json['customReminders'] as List<dynamic>?)
-          ?.map((r) => CustomReminder.fromJson(r as Map<String, dynamic>))
-          .toList() ?? [],
+      customReminders:
+          (json['customReminders'] as List<dynamic>?)
+              ?.map((r) => CustomReminder.fromJson(r as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
@@ -56,7 +58,13 @@ class NotificationSettings extends Equatable {
   }
 
   @override
-  List<Object?> get props => [enabled, startHour, endHour, interval, customReminders];
+  List<Object?> get props => [
+    enabled,
+    startHour,
+    endHour,
+    interval,
+    customReminders,
+  ];
 }
 
 /// Model for custom reminder
@@ -79,11 +87,14 @@ class CustomReminder extends Equatable {
       minute: json['minute'] as int,
       title: json['title'] as String,
       body: json['body'] as String,
-      days: (json['days'] as List<dynamic>?)?.cast<int>() ?? [1, 2, 3, 4, 5, 6, 7],
+      days:
+          (json['days'] as List<dynamic>?)?.cast<int>() ??
+          [1, 2, 3, 4, 5, 6, 7],
       enabled: json['enabled'] as bool? ?? true,
-      createdAt: json['createdAt'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int)
-          : null,
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int)
+              : null,
     );
   }
 
@@ -150,7 +161,16 @@ class CustomReminder extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, hour, minute, title, body, days, enabled, createdAt];
+  List<Object?> get props => [
+    id,
+    hour,
+    minute,
+    title,
+    body,
+    days,
+    enabled,
+    createdAt,
+  ];
 }
 
 /// Model for app preferences
@@ -177,7 +197,8 @@ class AppPreferences extends Equatable {
       ),
       soundEnabled: json['soundEnabled'] as bool? ?? true,
       hapticFeedbackEnabled: json['hapticFeedbackEnabled'] as bool? ?? true,
-      showProgressInNotifications: json['showProgressInNotifications'] as bool? ?? true,
+      showProgressInNotifications:
+          json['showProgressInNotifications'] as bool? ?? true,
     );
   }
 
@@ -201,8 +222,10 @@ class AppPreferences extends Equatable {
       dailyGoal: dailyGoal ?? this.dailyGoal,
       units: units ?? this.units,
       soundEnabled: soundEnabled ?? this.soundEnabled,
-      hapticFeedbackEnabled: hapticFeedbackEnabled ?? this.hapticFeedbackEnabled,
-      showProgressInNotifications: showProgressInNotifications ?? this.showProgressInNotifications,
+      hapticFeedbackEnabled:
+          hapticFeedbackEnabled ?? this.hapticFeedbackEnabled,
+      showProgressInNotifications:
+          showProgressInNotifications ?? this.showProgressInNotifications,
     );
   }
 
@@ -219,8 +242,12 @@ class AppPreferences extends Equatable {
 
   @override
   List<Object?> get props => [
-    selectedAvatar, dailyGoal, units, soundEnabled, 
-    hapticFeedbackEnabled, showProgressInNotifications
+    selectedAvatar,
+    dailyGoal,
+    units,
+    soundEnabled,
+    hapticFeedbackEnabled,
+    showProgressInNotifications,
   ];
 }
 
@@ -327,7 +354,12 @@ class DataManagementOptions extends Equatable {
   }
 
   @override
-  List<Object?> get props => [autoBackupEnabled, backupFrequency, cloudSyncEnabled, dataRetentionDays];
+  List<Object?> get props => [
+    autoBackupEnabled,
+    backupFrequency,
+    cloudSyncEnabled,
+    dataRetentionDays,
+  ];
 }
 
 /// Enum for backup frequency

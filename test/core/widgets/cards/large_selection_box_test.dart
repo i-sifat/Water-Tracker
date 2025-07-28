@@ -8,7 +8,9 @@ void main() {
     const testSubtitle = 'Test Subtitle';
     const testIcon = Icon(Icons.water_drop);
 
-    testWidgets('renders with title, subtitle, and icon correctly', (WidgetTester tester) async {
+    testWidgets('renders with title, subtitle, and icon correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -72,7 +74,9 @@ void main() {
       expect(find.byType(LargeSelectionBox), findsOneWidget);
     });
 
-    testWidgets('shows unselected state correctly', (WidgetTester tester) async {
+    testWidgets('shows unselected state correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -90,7 +94,9 @@ void main() {
       expect(find.byType(LargeSelectionBox), findsOneWidget);
     });
 
-    testWidgets('uses custom icon background color when provided', (WidgetTester tester) async {
+    testWidgets('uses custom icon background color when provided', (
+      WidgetTester tester,
+    ) async {
       const customColor = Colors.red;
 
       await tester.pumpWidget(
@@ -130,7 +136,7 @@ void main() {
 
       // Check for Row layout
       expect(find.byType(Row), findsOneWidget);
-      
+
       // Check for icon container by looking for decorated containers
       final containers = tester.widgetList<Container>(find.byType(Container));
       final iconContainer = containers.firstWhere(
@@ -146,7 +152,9 @@ void main() {
       expect(find.byType(Column), findsOneWidget);
     });
 
-    testWidgets('has correct spacing between elements', (WidgetTester tester) async {
+    testWidgets('has correct spacing between elements', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -163,7 +171,7 @@ void main() {
 
       // Check for SizedBox spacing
       final sizedBoxes = tester.widgetList<SizedBox>(find.byType(SizedBox));
-      
+
       // Should have spacing between icon and text (width: 16)
       final horizontalSpacing = sizedBoxes.where((box) => box.width == 16);
       expect(horizontalSpacing, isNotEmpty);
@@ -173,7 +181,9 @@ void main() {
       expect(verticalSpacing, isNotEmpty);
     });
 
-    testWidgets('icon container has correct border radius', (WidgetTester tester) async {
+    testWidgets('icon container has correct border radius', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -194,7 +204,9 @@ void main() {
       expect(find.byType(Column), findsOneWidget);
     });
 
-    testWidgets('text has correct cross axis alignment', (WidgetTester tester) async {
+    testWidgets('text has correct cross axis alignment', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

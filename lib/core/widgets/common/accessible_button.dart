@@ -6,9 +6,9 @@ import 'package:watertracker/core/utils/rtl_utils.dart';
 /// An accessible button widget that ensures proper touch targets,
 /// focus management, and semantic labels
 class AccessibleButton extends StatefulWidget {
-
   const AccessibleButton({
-    required this.child, super.key,
+    required this.child,
+    super.key,
     this.onPressed,
     this.semanticLabel,
     this.tooltip,
@@ -70,7 +70,7 @@ class _AccessibleButtonState extends State<AccessibleButton> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     Widget button = Container(
       constraints: const BoxConstraints(
         minWidth: AccessibilityService.minimumTouchTargetSize,
@@ -79,12 +79,10 @@ class _AccessibleButtonState extends State<AccessibleButton> {
       decoration: BoxDecoration(
         color: widget.backgroundColor ?? theme.colorScheme.primary,
         borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
-        border: _isFocused 
-            ? Border.all(
-                color: theme.colorScheme.onSurface,
-                width: 2,
-              )
-            : null,
+        border:
+            _isFocused
+                ? Border.all(color: theme.colorScheme.onSurface, width: 2)
+                : null,
       ),
       child: Material(
         color: Colors.transparent,
@@ -94,12 +92,14 @@ class _AccessibleButtonState extends State<AccessibleButton> {
           autofocus: widget.autofocus,
           borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
           child: Padding(
-            padding: widget.padding ?? RTLUtils.getDirectionalPadding(
-              start: 24,
-              end: 24,
-              top: 16,
-              bottom: 16,
-            ),
+            padding:
+                widget.padding ??
+                RTLUtils.getDirectionalPadding(
+                  start: 24,
+                  end: 24,
+                  top: 16,
+                  bottom: 16,
+                ),
             child: DefaultTextStyle(
               style: TextStyle(
                 color: widget.foregroundColor ?? theme.colorScheme.onPrimary,
@@ -124,10 +124,7 @@ class _AccessibleButtonState extends State<AccessibleButton> {
 
     // Add tooltip if provided
     if (widget.tooltip != null) {
-      button = Tooltip(
-        message: widget.tooltip,
-        child: button,
-      );
+      button = Tooltip(message: widget.tooltip, child: button);
     }
 
     return button;
@@ -136,9 +133,9 @@ class _AccessibleButtonState extends State<AccessibleButton> {
 
 /// An accessible icon button with proper touch targets
 class AccessibleIconButton extends StatefulWidget {
-
   const AccessibleIconButton({
-    required this.icon, super.key,
+    required this.icon,
+    super.key,
     this.onPressed,
     this.semanticLabel,
     this.tooltip,
@@ -196,18 +193,16 @@ class _AccessibleIconButtonState extends State<AccessibleIconButton> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     Widget button = Container(
       width: AccessibilityService.minimumTouchTargetSize,
       height: AccessibilityService.minimumTouchTargetSize,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: _isFocused 
-            ? Border.all(
-                color: theme.colorScheme.onSurface,
-                width: 2,
-              )
-            : null,
+        border:
+            _isFocused
+                ? Border.all(color: theme.colorScheme.onSurface, width: 2)
+                : null,
       ),
       child: Material(
         color: Colors.transparent,
@@ -238,10 +233,7 @@ class _AccessibleIconButtonState extends State<AccessibleIconButton> {
 
     // Add tooltip if provided
     if (widget.tooltip != null) {
-      button = Tooltip(
-        message: widget.tooltip,
-        child: button,
-      );
+      button = Tooltip(message: widget.tooltip, child: button);
     }
 
     return button;
@@ -250,7 +242,6 @@ class _AccessibleIconButtonState extends State<AccessibleIconButton> {
 
 /// An accessible text field with proper focus management
 class AccessibleTextField extends StatefulWidget {
-
   const AccessibleTextField({
     super.key,
     this.controller,

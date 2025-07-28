@@ -6,24 +6,18 @@ void main() {
   group('CelebrationAnimation Widget Tests', () {
     testWidgets('renders without errors', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: CelebrationAnimation(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: CelebrationAnimation())),
       );
 
       expect(find.byType(CelebrationAnimation), findsOneWidget);
       expect(find.byType(CustomPaint), findsOneWidget);
     });
 
-    testWidgets('uses default parameters correctly', (WidgetTester tester) async {
+    testWidgets('uses default parameters correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: CelebrationAnimation(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: CelebrationAnimation())),
       );
 
       final celebrationAnimation = tester.widget<CelebrationAnimation>(
@@ -61,13 +55,11 @@ void main() {
       expect(celebrationAnimation.colors, equals(customColors));
     });
 
-    testWidgets('animation controller starts automatically', (WidgetTester tester) async {
+    testWidgets('animation controller starts automatically', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: CelebrationAnimation(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: CelebrationAnimation())),
       );
 
       // Pump a few frames to let animation start
@@ -80,11 +72,7 @@ void main() {
 
     testWidgets('custom paint has infinite size', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: CelebrationAnimation(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: CelebrationAnimation())),
       );
 
       final customPaint = tester.widget<CustomPaint>(find.byType(CustomPaint));
@@ -98,15 +86,14 @@ void main() {
 
     testWidgets('renders with default content', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: GoalAchievementDialog(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: GoalAchievementDialog())),
       );
 
       expect(find.text('Goal Achieved!'), findsOneWidget);
-      expect(find.text('Congratulations on reaching your hydration goal!'), findsOneWidget);
+      expect(
+        find.text('Congratulations on reaching your hydration goal!'),
+        findsOneWidget,
+      );
       expect(find.text('Continue'), findsOneWidget);
       expect(find.byIcon(Icons.emoji_events), findsOneWidget);
     });
@@ -115,10 +102,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: GoalAchievementDialog(
-              title: testTitle,
-              message: testMessage,
-            ),
+            body: GoalAchievementDialog(title: testTitle, message: testMessage),
           ),
         ),
       );
@@ -128,15 +112,15 @@ void main() {
       expect(find.text('Continue'), findsOneWidget);
     });
 
-    testWidgets('calls onContinue when continue button is pressed', (WidgetTester tester) async {
+    testWidgets('calls onContinue when continue button is pressed', (
+      WidgetTester tester,
+    ) async {
       var wasCalled = false;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: GoalAchievementDialog(
-              onContinue: () => wasCalled = true,
-            ),
+            body: GoalAchievementDialog(onContinue: () => wasCalled = true),
           ),
         ),
       );
@@ -147,13 +131,11 @@ void main() {
       expect(wasCalled, isTrue);
     });
 
-    testWidgets('has celebration animation in background', (WidgetTester tester) async {
+    testWidgets('has celebration animation in background', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: GoalAchievementDialog(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: GoalAchievementDialog())),
       );
 
       expect(find.byType(CelebrationAnimation), findsOneWidget);
@@ -162,11 +144,7 @@ void main() {
 
     testWidgets('has correct dialog structure', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: GoalAchievementDialog(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: GoalAchievementDialog())),
       );
 
       expect(find.byType(Dialog), findsOneWidget);
@@ -176,46 +154,45 @@ void main() {
 
     testWidgets('trophy icon is animated', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: GoalAchievementDialog(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: GoalAchievementDialog())),
       );
 
       expect(find.byType(AnimatedBuilder), findsWidgets);
       expect(find.byType(Transform), findsWidgets);
     });
 
-    testWidgets('continue button spans full width', (WidgetTester tester) async {
+    testWidgets('continue button spans full width', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: GoalAchievementDialog(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: GoalAchievementDialog())),
       );
 
       final sizedBox = tester.widget<SizedBox>(
-        find.ancestor(
-          of: find.byType(ElevatedButton),
-          matching: find.byType(SizedBox),
-        ).first,
+        find
+            .ancestor(
+              of: find.byType(ElevatedButton),
+              matching: find.byType(SizedBox),
+            )
+            .first,
       );
       expect(sizedBox.width, equals(double.infinity));
     });
   });
 
   group('showGoalAchievementDialog Function Tests', () {
-    testWidgets('shows dialog with default parameters', (WidgetTester tester) async {
+    testWidgets('shows dialog with default parameters', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => showGoalAchievementDialog(context),
-                child: const Text('Show Dialog'),
-              ),
+              builder:
+                  (context) => ElevatedButton(
+                    onPressed: () => showGoalAchievementDialog(context),
+                    child: const Text('Show Dialog'),
+                  ),
             ),
           ),
         ),
@@ -225,10 +202,15 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Goal Achieved!'), findsOneWidget);
-      expect(find.text('Congratulations on reaching your hydration goal!'), findsOneWidget);
+      expect(
+        find.text('Congratulations on reaching your hydration goal!'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('shows dialog with custom parameters', (WidgetTester tester) async {
+    testWidgets('shows dialog with custom parameters', (
+      WidgetTester tester,
+    ) async {
       const customTitle = 'Custom Achievement!';
       const customMessage = 'Custom message here!';
 
@@ -236,14 +218,16 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => showGoalAchievementDialog(
-                  context,
-                  title: customTitle,
-                  message: customMessage,
-                ),
-                child: const Text('Show Dialog'),
-              ),
+              builder:
+                  (context) => ElevatedButton(
+                    onPressed:
+                        () => showGoalAchievementDialog(
+                          context,
+                          title: customTitle,
+                          message: customMessage,
+                        ),
+                    child: const Text('Show Dialog'),
+                  ),
             ),
           ),
         ),
@@ -256,15 +240,18 @@ void main() {
       expect(find.text(customMessage), findsOneWidget);
     });
 
-    testWidgets('dialog is not dismissible by barrier', (WidgetTester tester) async {
+    testWidgets('dialog is not dismissible by barrier', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => showGoalAchievementDialog(context),
-                child: const Text('Show Dialog'),
-              ),
+              builder:
+                  (context) => ElevatedButton(
+                    onPressed: () => showGoalAchievementDialog(context),
+                    child: const Text('Show Dialog'),
+                  ),
             ),
           ),
         ),
@@ -281,15 +268,18 @@ void main() {
       expect(find.text('Goal Achieved!'), findsOneWidget);
     });
 
-    testWidgets('dialog closes when continue is pressed', (WidgetTester tester) async {
+    testWidgets('dialog closes when continue is pressed', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => showGoalAchievementDialog(context),
-                child: const Text('Show Dialog'),
-              ),
+              builder:
+                  (context) => ElevatedButton(
+                    onPressed: () => showGoalAchievementDialog(context),
+                    child: const Text('Show Dialog'),
+                  ),
             ),
           ),
         ),

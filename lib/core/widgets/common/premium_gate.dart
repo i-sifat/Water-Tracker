@@ -30,12 +30,13 @@ class PremiumGate extends StatelessWidget {
           return child;
         }
 
-        return lockedChild ?? PremiumLockedWidget(
-          feature: feature,
-          onUnlockPressed: onUnlockPressed,
-          title: title,
-          description: description,
-        );
+        return lockedChild ??
+            PremiumLockedWidget(
+              feature: feature,
+              onUnlockPressed: onUnlockPressed,
+              title: title,
+              description: description,
+            );
       },
     );
   }
@@ -60,7 +61,7 @@ class PremiumLockedWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final premium = context.read<PremiumProvider>();
     final featureInfo = _getFeatureInfo(feature, premium);
-    
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -81,9 +82,9 @@ class PremiumLockedWidget extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Title
             Text(
               title ?? featureInfo.title,
@@ -93,9 +94,9 @@ class PremiumLockedWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Description
             Text(
               description ?? featureInfo.description,
@@ -104,9 +105,9 @@ class PremiumLockedWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Unlock button
             PrimaryButton(
               onPressed: onUnlockPressed ?? () => _navigateToPremium(context),
@@ -118,14 +119,14 @@ class PremiumLockedWidget extends StatelessWidget {
     );
   }
 
-  _FeatureInfo _getFeatureInfo(PremiumFeature feature, PremiumProvider premium) {
+  _FeatureInfo _getFeatureInfo(
+    PremiumFeature feature,
+    PremiumProvider premium,
+  ) {
     final name = premium.getFeatureName(feature);
     final description = premium.getFeatureDescription(feature);
-    
-    return _FeatureInfo(
-      title: name,
-      description: description,
-    );
+
+    return _FeatureInfo(title: name, description: description);
   }
 
   void _navigateToPremium(BuildContext context) {
@@ -135,10 +136,7 @@ class PremiumLockedWidget extends StatelessWidget {
 }
 
 class _FeatureInfo {
-  const _FeatureInfo({
-    required this.title,
-    required this.description,
-  });
+  const _FeatureInfo({required this.title, required this.description});
 
   final String title;
   final String description;

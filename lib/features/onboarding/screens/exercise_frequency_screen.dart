@@ -81,7 +81,6 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                   ),
                 ),
                 const SizedBox(height: 60), // Reduced from 100
-
                 // Made image smaller
                 SizedBox(
                   height: 200, // Reduced from 300
@@ -107,7 +106,7 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                           borderRadius: BorderRadius.circular(32),
                         ),
                       ),
-                      
+
                       // Vertical divider lines (ash color)
                       Positioned(
                         top: 20,
@@ -131,10 +130,15 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
                         left: _getSliderPosition(context),
                         child: GestureDetector(
                           onHorizontalDragUpdate: (details) {
-                            final width = MediaQuery.of(context).size.width - 48;
-                            final segmentWidth = width / 2; // Only 2 segments for 3 positions
+                            final width =
+                                MediaQuery.of(context).size.width - 48;
+                            final segmentWidth =
+                                width / 2; // Only 2 segments for 3 positions
                             final dx = details.globalPosition.dx - 24;
-                            final newLevel = (dx / segmentWidth).round().clamp(0, 2);
+                            final newLevel = (dx / segmentWidth).round().clamp(
+                              0,
+                              2,
+                            );
                             if (newLevel != _selectedLevel) {
                               setState(() {
                                 _selectedLevel = newLevel;
@@ -239,7 +243,12 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
           ),
 
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 32), // Moved button up
+            padding: const EdgeInsets.fromLTRB(
+              24,
+              0,
+              24,
+              32,
+            ), // Moved button up
             child: ContinueButton(
               onPressed: () async {
                 await _saveFitnessLevel();
@@ -260,9 +269,10 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
 
   // Helper method to calculate slider position
   double _getSliderPosition(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width - 48; // Account for padding
+    final screenWidth =
+        MediaQuery.of(context).size.width - 48; // Account for padding
     const circleWidth = 60.0;
-    
+
     // Calculate positions for 3 stops: start, middle, end
     switch (_selectedLevel) {
       case 0: // Frequent - leftmost position

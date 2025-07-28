@@ -67,7 +67,7 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return TextFormField(
       controller: widget.controller,
       focusNode: widget.focusNode,
@@ -92,19 +92,20 @@ class _AppTextFieldState extends State<AppTextField> {
         helperText: widget.helperText,
         errorText: widget.errorText,
         prefixIcon: widget.prefixIcon,
-        suffixIcon: widget.obscureText
-            ? IconButton(
-                icon: Icon(
-                  _obscureText ? Icons.visibility : Icons.visibility_off,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscureText = !_obscureText;
-                  });
-                },
-              )
-            : widget.suffixIcon,
+        suffixIcon:
+            widget.obscureText
+                ? IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                )
+                : widget.suffixIcon,
         counterText: widget.maxLength != null ? null : '',
       ),
     );

@@ -205,13 +205,14 @@ void main() {
 
   group('HydrationDataBuilder', () {
     test('should build HydrationData with fluent interface', () {
-      final data = HydrationDataBuilder()
-          .withAmount(300)
-          .asCoffee()
-          .synced()
-          .today()
-          .withNotes('Morning coffee')
-          .build();
+      final data =
+          HydrationDataBuilder()
+              .withAmount(300)
+              .asCoffee()
+              .synced()
+              .today()
+              .withNotes('Morning coffee')
+              .build();
 
       expect(data.amount, equals(300));
       expect(data.type, equals(DrinkType.coffee));

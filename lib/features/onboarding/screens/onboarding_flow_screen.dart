@@ -25,7 +25,7 @@ class OnboardingFlowScreen extends StatefulWidget {
 
 class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
   final PageController _pageController = PageController();
-  
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -40,8 +40,9 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
         builder: (context, onboardingProvider, child) {
           // Listen to step changes and animate to the correct page
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (_pageController.hasClients && 
-                _pageController.page?.round() != onboardingProvider.currentStep) {
+            if (_pageController.hasClients &&
+                _pageController.page?.round() !=
+                    onboardingProvider.currentStep) {
               _pageController.animateToPage(
                 onboardingProvider.currentStep,
                 duration: const Duration(milliseconds: 300),
@@ -57,9 +58,7 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(
-                      color: AppColors.waterFull,
-                    ),
+                    CircularProgressIndicator(color: AppColors.waterFull),
                     SizedBox(height: 16),
                     Text(
                       'Loading your data...',
@@ -99,9 +98,8 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
                       const SizedBox(height: 24),
                       Text(
                         'Something went wrong',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 12),
@@ -147,7 +145,8 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
             backgroundColor: AppColors.background,
             body: PageView.builder(
               controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(), // Disable swipe navigation
+              physics:
+                  const NeverScrollableScrollPhysics(), // Disable swipe navigation
               itemCount: OnboardingProvider.totalSteps,
               itemBuilder: (context, index) {
                 return _getScreenForStep(index);
@@ -202,23 +201,19 @@ class OnboardingEntryScreen extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 
         final isCompleted = snapshot.data ?? false;
-        
+
         if (isCompleted) {
           // Navigate to home screen if onboarding is already completed
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.of(context).pushReplacementNamed('/home');
           });
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 

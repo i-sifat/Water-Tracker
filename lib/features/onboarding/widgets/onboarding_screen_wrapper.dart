@@ -53,7 +53,10 @@ class OnboardingScreenWrapper extends StatelessWidget {
               // Progress indicator
               if (showProgress)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   child: AnimatedOnboardingProgressIndicator(
                     currentStep: onboardingProvider.currentStep,
                     totalSteps: onboardingProvider.totalStepsCount,
@@ -64,12 +67,17 @@ class OnboardingScreenWrapper extends StatelessWidget {
               // Error message
               if (onboardingProvider.error != null)
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: Colors.red.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -107,17 +115,13 @@ class OnboardingScreenWrapper extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (title != null)
-                        Text(
-                          title!,
-                          style: AppTypography.headline,
-                        ),
+                        Text(title!, style: AppTypography.headline),
                       if (subtitle != null) ...[
                         const SizedBox(height: 8),
                         Text(
                           subtitle!,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSubtitle,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: AppColors.textSubtitle),
                         ),
                       ],
                     ],
@@ -125,12 +129,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
                 ),
 
               // Main content
-              Expanded(
-                child: Padding(
-                  padding: padding,
-                  child: child,
-                ),
-              ),
+              Expanded(child: Padding(padding: padding, child: child)),
 
               // Bottom navigation
               _buildBottomNavigation(context, onboardingProvider),
@@ -141,27 +140,34 @@ class OnboardingScreenWrapper extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget? _buildAppBar(BuildContext context, OnboardingProvider provider) {
+  PreferredSizeWidget? _buildAppBar(
+    BuildContext context,
+    OnboardingProvider provider,
+  ) {
     if (!showBackButton && provider.currentStep == 0) return null;
 
     return AppBar(
       backgroundColor: backgroundColor ?? AppColors.background,
       elevation: 0,
-      leading: showBackButton && provider.currentStep > 0
-          ? Container(
-              margin: const EdgeInsets.only(left: 16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-                onPressed: () {
-                  provider.navigatePrevious();
-                },
-              ),
-            )
-          : null,
+      leading:
+          showBackButton && provider.currentStep > 0
+              ? Container(
+                margin: const EdgeInsets.only(left: 16),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: AppColors.assessmentText,
+                  ),
+                  onPressed: () {
+                    provider.navigatePrevious();
+                  },
+                ),
+              )
+              : null,
       title: const Text('Assessment', style: AppTypography.subtitle),
       actions: [
         Container(
@@ -184,7 +190,10 @@ class OnboardingScreenWrapper extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNavigation(BuildContext context, OnboardingProvider provider) {
+  Widget _buildBottomNavigation(
+    BuildContext context,
+    OnboardingProvider provider,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -197,7 +206,8 @@ class OnboardingScreenWrapper extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: TextButton(
-                  onPressed: isLoading ? null : (onSkip ?? () => provider.skipStep()),
+                  onPressed:
+                      isLoading ? null : (onSkip ?? () => provider.skipStep()),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.textSubtitle,
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -217,10 +227,15 @@ class OnboardingScreenWrapper extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: (canContinue && !isLoading) ? (onContinue ?? () => provider.navigateNext()) : null,
+              onPressed:
+                  (canContinue && !isLoading)
+                      ? (onContinue ?? () => provider.navigateNext())
+                      : null,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
                 backgroundColor: AppColors.waterFull,
                 foregroundColor: Colors.white,
               ),
@@ -239,7 +254,8 @@ class OnboardingScreenWrapper extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: TextButton(
-                onPressed: isLoading ? null : () => _showSkipOnboardingDialog(context),
+                onPressed:
+                    isLoading ? null : () => _showSkipOnboardingDialog(context),
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.waterFull,
                 ),
@@ -297,5 +313,3 @@ class OnboardingScreenWrapper extends StatelessWidget {
     );
   }
 }
-
-

@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 /// Localization delegate for the app
 class AppLocalizations {
-
   AppLocalizations(this.locale);
   final Locale locale;
 
@@ -11,7 +10,7 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = 
+  static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
 
   // Supported locales
@@ -45,78 +44,118 @@ class AppLocalizations {
 
   // Onboarding
   String get welcome => _localizedValues[locale.languageCode]!['welcome']!;
-  String get welcomeMessage => _localizedValues[locale.languageCode]!['welcome_message']!;
-  String get getStarted => _localizedValues[locale.languageCode]!['get_started']!;
-  String get selectGender => _localizedValues[locale.languageCode]!['select_gender']!;
+  String get welcomeMessage =>
+      _localizedValues[locale.languageCode]!['welcome_message']!;
+  String get getStarted =>
+      _localizedValues[locale.languageCode]!['get_started']!;
+  String get selectGender =>
+      _localizedValues[locale.languageCode]!['select_gender']!;
   String get male => _localizedValues[locale.languageCode]!['male']!;
   String get female => _localizedValues[locale.languageCode]!['female']!;
-  String get preferNotToAnswer => _localizedValues[locale.languageCode]!['prefer_not_to_answer']!;
+  String get preferNotToAnswer =>
+      _localizedValues[locale.languageCode]!['prefer_not_to_answer']!;
   String get selectAge => _localizedValues[locale.languageCode]!['select_age']!;
-  String get selectWeight => _localizedValues[locale.languageCode]!['select_weight']!;
-  String get selectGoal => _localizedValues[locale.languageCode]!['select_goal']!;
-  String get exerciseFrequency => _localizedValues[locale.languageCode]!['exercise_frequency']!;
-  String get pregnancyStatus => _localizedValues[locale.languageCode]!['pregnancy_status']!;
-  String get sugarDrinks => _localizedValues[locale.languageCode]!['sugar_drinks']!;
-  String get vegetableIntake => _localizedValues[locale.languageCode]!['vegetable_intake']!;
-  String get weatherPreference => _localizedValues[locale.languageCode]!['weather_preference']!;
-  String get notificationSetup => _localizedValues[locale.languageCode]!['notification_setup']!;
-  String get onboardingComplete => _localizedValues[locale.languageCode]!['onboarding_complete']!;
+  String get selectWeight =>
+      _localizedValues[locale.languageCode]!['select_weight']!;
+  String get selectGoal =>
+      _localizedValues[locale.languageCode]!['select_goal']!;
+  String get exerciseFrequency =>
+      _localizedValues[locale.languageCode]!['exercise_frequency']!;
+  String get pregnancyStatus =>
+      _localizedValues[locale.languageCode]!['pregnancy_status']!;
+  String get sugarDrinks =>
+      _localizedValues[locale.languageCode]!['sugar_drinks']!;
+  String get vegetableIntake =>
+      _localizedValues[locale.languageCode]!['vegetable_intake']!;
+  String get weatherPreference =>
+      _localizedValues[locale.languageCode]!['weather_preference']!;
+  String get notificationSetup =>
+      _localizedValues[locale.languageCode]!['notification_setup']!;
+  String get onboardingComplete =>
+      _localizedValues[locale.languageCode]!['onboarding_complete']!;
 
   // Hydration
   String get dailyGoal => _localizedValues[locale.languageCode]!['daily_goal']!;
-  String get currentIntake => _localizedValues[locale.languageCode]!['current_intake']!;
+  String get currentIntake =>
+      _localizedValues[locale.languageCode]!['current_intake']!;
   String get remaining => _localizedValues[locale.languageCode]!['remaining']!;
   String get addWater => _localizedValues[locale.languageCode]!['add_water']!;
-  String get goalAchieved => _localizedValues[locale.languageCode]!['goal_achieved']!;
-  String get congratulations => _localizedValues[locale.languageCode]!['congratulations']!;
+  String get goalAchieved =>
+      _localizedValues[locale.languageCode]!['goal_achieved']!;
+  String get congratulations =>
+      _localizedValues[locale.languageCode]!['congratulations']!;
   String get keepItUp => _localizedValues[locale.languageCode]!['keep_it_up']!;
   String get ml => _localizedValues[locale.languageCode]!['ml']!;
   String get liters => _localizedValues[locale.languageCode]!['liters']!;
 
   // History
-  String get weeklyProgress => _localizedValues[locale.languageCode]!['weekly_progress']!;
-  String get monthlyTrend => _localizedValues[locale.languageCode]!['monthly_trend']!;
+  String get weeklyProgress =>
+      _localizedValues[locale.languageCode]!['weekly_progress']!;
+  String get monthlyTrend =>
+      _localizedValues[locale.languageCode]!['monthly_trend']!;
   String get streak => _localizedValues[locale.languageCode]!['streak']!;
   String get days => _localizedValues[locale.languageCode]!['days']!;
   String get average => _localizedValues[locale.languageCode]!['average']!;
-  String get noDataAvailable => _localizedValues[locale.languageCode]!['no_data_available']!;
+  String get noDataAvailable =>
+      _localizedValues[locale.languageCode]!['no_data_available']!;
 
   // Settings
   String get profile => _localizedValues[locale.languageCode]!['profile']!;
-  String get notifications => _localizedValues[locale.languageCode]!['notifications']!;
+  String get notifications =>
+      _localizedValues[locale.languageCode]!['notifications']!;
   String get theme => _localizedValues[locale.languageCode]!['theme']!;
   String get language => _localizedValues[locale.languageCode]!['language']!;
-  String get accessibility => _localizedValues[locale.languageCode]!['accessibility']!;
-  String get highContrast => _localizedValues[locale.languageCode]!['high_contrast']!;
+  String get accessibility =>
+      _localizedValues[locale.languageCode]!['accessibility']!;
+  String get highContrast =>
+      _localizedValues[locale.languageCode]!['high_contrast']!;
   String get textSize => _localizedValues[locale.languageCode]!['text_size']!;
-  String get reducedMotion => _localizedValues[locale.languageCode]!['reduced_motion']!;
-  String get dataManagement => _localizedValues[locale.languageCode]!['data_management']!;
+  String get reducedMotion =>
+      _localizedValues[locale.languageCode]!['reduced_motion']!;
+  String get dataManagement =>
+      _localizedValues[locale.languageCode]!['data_management']!;
   String get backup => _localizedValues[locale.languageCode]!['backup']!;
   String get restore => _localizedValues[locale.languageCode]!['restore']!;
   String get clearData => _localizedValues[locale.languageCode]!['clear_data']!;
   String get premium => _localizedValues[locale.languageCode]!['premium']!;
 
   // Premium
-  String get unlockPremium => _localizedValues[locale.languageCode]!['unlock_premium']!;
-  String get donationRequired => _localizedValues[locale.languageCode]!['donation_required']!;
-  String get deviceCode => _localizedValues[locale.languageCode]!['device_code']!;
-  String get submitProof => _localizedValues[locale.languageCode]!['submit_proof']!;
-  String get enterUnlockCode => _localizedValues[locale.languageCode]!['enter_unlock_code']!;
-  String get premiumUnlocked => _localizedValues[locale.languageCode]!['premium_unlocked']!;
+  String get unlockPremium =>
+      _localizedValues[locale.languageCode]!['unlock_premium']!;
+  String get donationRequired =>
+      _localizedValues[locale.languageCode]!['donation_required']!;
+  String get deviceCode =>
+      _localizedValues[locale.languageCode]!['device_code']!;
+  String get submitProof =>
+      _localizedValues[locale.languageCode]!['submit_proof']!;
+  String get enterUnlockCode =>
+      _localizedValues[locale.languageCode]!['enter_unlock_code']!;
+  String get premiumUnlocked =>
+      _localizedValues[locale.languageCode]!['premium_unlocked']!;
 
   // Notifications
-  String get reminderTitle => _localizedValues[locale.languageCode]!['reminder_title']!;
-  String get reminderBody => _localizedValues[locale.languageCode]!['reminder_body']!;
-  String get goalAchievedTitle => _localizedValues[locale.languageCode]!['goal_achieved_title']!;
-  String get goalAchievedBody => _localizedValues[locale.languageCode]!['goal_achieved_body']!;
+  String get reminderTitle =>
+      _localizedValues[locale.languageCode]!['reminder_title']!;
+  String get reminderBody =>
+      _localizedValues[locale.languageCode]!['reminder_body']!;
+  String get goalAchievedTitle =>
+      _localizedValues[locale.languageCode]!['goal_achieved_title']!;
+  String get goalAchievedBody =>
+      _localizedValues[locale.languageCode]!['goal_achieved_body']!;
 
   // Accessibility
-  String get increaseWaterButton => _localizedValues[locale.languageCode]!['increase_water_button']!;
-  String get decreaseWaterButton => _localizedValues[locale.languageCode]!['decrease_water_button']!;
-  String get waterProgressIndicator => _localizedValues[locale.languageCode]!['water_progress_indicator']!;
-  String get navigationTab => _localizedValues[locale.languageCode]!['navigation_tab']!;
-  String get backButton => _localizedValues[locale.languageCode]!['back_button']!;
-  String get menuButton => _localizedValues[locale.languageCode]!['menu_button']!;
+  String get increaseWaterButton =>
+      _localizedValues[locale.languageCode]!['increase_water_button']!;
+  String get decreaseWaterButton =>
+      _localizedValues[locale.languageCode]!['decrease_water_button']!;
+  String get waterProgressIndicator =>
+      _localizedValues[locale.languageCode]!['water_progress_indicator']!;
+  String get navigationTab =>
+      _localizedValues[locale.languageCode]!['navigation_tab']!;
+  String get backButton =>
+      _localizedValues[locale.languageCode]!['back_button']!;
+  String get menuButton =>
+      _localizedValues[locale.languageCode]!['menu_button']!;
 
   // Date formatting
   String formatDate(DateTime date) {
@@ -176,7 +215,8 @@ class AppLocalizations {
       'history': 'History',
       'settings': 'Settings',
       'welcome': 'Welcome',
-      'welcome_message': 'Stay hydrated and healthy with our water tracking app',
+      'welcome_message':
+          'Stay hydrated and healthy with our water tracking app',
       'get_started': 'Get Started',
       'select_gender': 'Select Gender',
       'male': 'Male',
@@ -276,13 +316,15 @@ class AppLocalizations {
   };
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) {
-    return AppLocalizations.supportedLocales
-        .any((supportedLocale) => supportedLocale.languageCode == locale.languageCode);
+    return AppLocalizations.supportedLocales.any(
+      (supportedLocale) => supportedLocale.languageCode == locale.languageCode,
+    );
   }
 
   @override

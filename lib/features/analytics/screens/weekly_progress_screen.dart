@@ -1,7 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/constants/premium_features.dart' as premium_constants;
+import 'package:watertracker/core/constants/premium_features.dart'
+    as premium_constants;
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
@@ -60,7 +61,8 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
             if (weeklyData == null) {
               return const EmptyStateWidget(
                 title: 'No Data Available',
-                subtitle: 'Start tracking your water intake to see weekly progress.',
+                subtitle:
+                    'Start tracking your water intake to see weekly progress.',
               );
             }
 
@@ -92,7 +94,7 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
   Widget _buildWeekHeader(WeeklyAnalytics data) {
     final startDate = data.weekStart;
     final endDate = data.weekEnd;
-    
+
     return AppCard(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -147,7 +149,9 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
                     touchTooltipData: BarTouchTooltipData(
                       tooltipBgColor: AppColors.darkBlue,
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                        final date = data.weekStart.add(Duration(days: groupIndex));
+                        final date = data.weekStart.add(
+                          Duration(days: groupIndex),
+                        );
                         final intake = data.dailyIntakes[date] ?? 0;
                         return BarTooltipItem(
                           '${_getDayName(date)}\n${intake}ml',
@@ -160,17 +164,15 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
                     ),
                   ),
                   titlesData: FlTitlesData(
-                    rightTitles: const AxisTitles(
-                      
-                    ),
-                    topTitles: const AxisTitles(
-                      
-                    ),
+                    rightTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
-                          final date = data.weekStart.add(Duration(days: value.toInt()));
+                          final date = data.weekStart.add(
+                            Duration(days: value.toInt()),
+                          );
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
@@ -299,7 +301,8 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
               final date = entry.key;
               final intake = entry.value;
               final goal = data.dailyGoals[date] ?? 2000;
-              final percentage = goal > 0 ? (intake / goal).clamp(0.0, 1.0) : 0.0;
+              final percentage =
+                  goal > 0 ? (intake / goal).clamp(0.0, 1.0) : 0.0;
               final achieved = intake >= goal;
 
               return Padding(
@@ -329,7 +332,10 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
-                              color: achieved ? AppColors.waterFull : AppColors.lightBlue,
+                              color:
+                                  achieved
+                                      ? AppColors.waterFull
+                                      : AppColors.lightBlue,
                             ),
                           ),
                         ),
@@ -344,7 +350,10 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: achieved ? AppColors.waterFull : AppColors.textSubtitle,
+                          color:
+                              achieved
+                                  ? AppColors.waterFull
+                                  : AppColors.textSubtitle,
                         ),
                       ),
                     ),
@@ -352,7 +361,10 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
                     Icon(
                       achieved ? Icons.check_circle : Icons.circle_outlined,
                       size: 16,
-                      color: achieved ? AppColors.waterFull : AppColors.textSubtitle,
+                      color:
+                          achieved
+                              ? AppColors.waterFull
+                              : AppColors.textSubtitle,
                     ),
                   ],
                 ),
@@ -389,9 +401,7 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
             Text(
               analytics.lastError?.message ?? 'An error occurred',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.textSubtitle,
-              ),
+              style: const TextStyle(color: AppColors.textSubtitle),
             ),
             const SizedBox(height: 24),
             PrimaryButton(
@@ -432,9 +442,7 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
             const Text(
               'Get detailed insights into your hydration patterns with weekly progress charts and statistics.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.textSubtitle,
-              ),
+              style: TextStyle(color: AppColors.textSubtitle),
             ),
             const SizedBox(height: 24),
             PrimaryButton(
@@ -482,14 +490,32 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }
 
   String _getDayName(DateTime date) {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
     return days[date.weekday - 1];
   }
 

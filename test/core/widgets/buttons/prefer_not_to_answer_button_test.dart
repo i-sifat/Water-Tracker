@@ -4,15 +4,15 @@ import 'package:watertracker/core/widgets/buttons/prefer_not_to_answer_button.da
 
 void main() {
   group('PreferNotToAnswerButton Widget Tests', () {
-    testWidgets('renders with skip text correctly', (WidgetTester tester) async {
+    testWidgets('renders with skip text correctly', (
+      WidgetTester tester,
+    ) async {
       var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PreferNotToAnswerButton(
-              onPressed: () => wasPressed = true,
-            ),
+            body: PreferNotToAnswerButton(onPressed: () => wasPressed = true),
           ),
         ),
       );
@@ -27,9 +27,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PreferNotToAnswerButton(
-              onPressed: () => wasPressed = true,
-            ),
+            body: PreferNotToAnswerButton(onPressed: () => wasPressed = true),
           ),
         ),
       );
@@ -43,11 +41,7 @@ void main() {
     testWidgets('has correct styling and layout', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: PreferNotToAnswerButton(
-              onPressed: () {},
-            ),
-          ),
+          home: Scaffold(body: PreferNotToAnswerButton(onPressed: () {})),
         ),
       );
 
@@ -64,11 +58,7 @@ void main() {
     testWidgets('has correct text styling', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: PreferNotToAnswerButton(
-              onPressed: () {},
-            ),
-          ),
+          home: Scaffold(body: PreferNotToAnswerButton(onPressed: () {})),
         ),
       );
 
@@ -76,14 +66,12 @@ void main() {
       expect(textWidget.style?.fontWeight, equals(FontWeight.w500));
     });
 
-    testWidgets('has proper spacing in row layout', (WidgetTester tester) async {
+    testWidgets('has proper spacing in row layout', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: PreferNotToAnswerButton(
-              onPressed: () {},
-            ),
-          ),
+          home: Scaffold(body: PreferNotToAnswerButton(onPressed: () {})),
         ),
       );
 
@@ -99,11 +87,7 @@ void main() {
     testWidgets('has row with center alignment', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: PreferNotToAnswerButton(
-              onPressed: () {},
-            ),
-          ),
+          home: Scaffold(body: PreferNotToAnswerButton(onPressed: () {})),
         ),
       );
 

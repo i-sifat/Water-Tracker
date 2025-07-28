@@ -7,79 +7,67 @@ void main() {
   group('AppTextField Widget Tests', () {
     testWidgets('renders with basic properties', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppTextField())),
       );
 
       expect(find.byType(TextFormField), findsOneWidget);
     });
 
-    testWidgets('displays label text when provided', (WidgetTester tester) async {
+    testWidgets('displays label text when provided', (
+      WidgetTester tester,
+    ) async {
       const labelText = 'Test Label';
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              labelText: labelText,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(labelText: labelText)),
         ),
       );
 
       expect(find.text(labelText), findsOneWidget);
     });
 
-    testWidgets('displays hint text when provided', (WidgetTester tester) async {
+    testWidgets('displays hint text when provided', (
+      WidgetTester tester,
+    ) async {
       const hintText = 'Test Hint';
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              hintText: hintText,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(hintText: hintText)),
         ),
       );
 
       // Tap the text field to show the hint text
       await tester.tap(find.byType(TextFormField));
       await tester.pump();
-      
+
       // Check if hint text is present in the widget tree
       expect(find.text(hintText), findsOneWidget);
     });
 
-    testWidgets('displays helper text when provided', (WidgetTester tester) async {
+    testWidgets('displays helper text when provided', (
+      WidgetTester tester,
+    ) async {
       const helperText = 'Test Helper';
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              helperText: helperText,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(helperText: helperText)),
         ),
       );
 
       expect(find.text(helperText), findsOneWidget);
     });
 
-    testWidgets('displays error text when provided', (WidgetTester tester) async {
+    testWidgets('displays error text when provided', (
+      WidgetTester tester,
+    ) async {
       const errorText = 'Test Error';
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              errorText: errorText,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(errorText: errorText)),
         ),
       );
 
@@ -91,55 +79,45 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              prefixIcon: prefixIcon,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(prefixIcon: prefixIcon)),
         ),
       );
 
       expect(find.byIcon(Icons.email), findsOneWidget);
     });
 
-    testWidgets('shows suffix icon when provided and not obscure text', (WidgetTester tester) async {
+    testWidgets('shows suffix icon when provided and not obscure text', (
+      WidgetTester tester,
+    ) async {
       const suffixIcon = Icon(Icons.clear);
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              suffixIcon: suffixIcon,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(suffixIcon: suffixIcon)),
         ),
       );
 
       expect(find.byIcon(Icons.clear), findsOneWidget);
     });
 
-    testWidgets('shows visibility toggle for obscure text', (WidgetTester tester) async {
+    testWidgets('shows visibility toggle for obscure text', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              obscureText: true,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(obscureText: true)),
         ),
       );
 
       expect(find.byIcon(Icons.visibility), findsOneWidget);
     });
 
-    testWidgets('toggles visibility when visibility icon is tapped', (WidgetTester tester) async {
+    testWidgets('toggles visibility when visibility icon is tapped', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              obscureText: true,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(obscureText: true)),
         ),
       );
 
@@ -154,15 +132,15 @@ void main() {
       expect(find.byIcon(Icons.visibility_off), findsOneWidget);
     });
 
-    testWidgets('calls onChanged when text changes', (WidgetTester tester) async {
+    testWidgets('calls onChanged when text changes', (
+      WidgetTester tester,
+    ) async {
       String? changedValue;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: AppTextField(
-              onChanged: (value) => changedValue = value,
-            ),
+            body: AppTextField(onChanged: (value) => changedValue = value),
           ),
         ),
       );
@@ -171,15 +149,15 @@ void main() {
       expect(changedValue, equals('test input'));
     });
 
-    testWidgets('calls onSubmitted when submitted', (WidgetTester tester) async {
+    testWidgets('calls onSubmitted when submitted', (
+      WidgetTester tester,
+    ) async {
       String? submittedValue;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: AppTextField(
-              onSubmitted: (value) => submittedValue = value,
-            ),
+            body: AppTextField(onSubmitted: (value) => submittedValue = value),
           ),
         ),
       );
@@ -194,11 +172,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              onTap: () => wasTapped = true,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(onTap: () => wasTapped = true)),
         ),
       );
 
@@ -206,7 +180,9 @@ void main() {
       expect(wasTapped, isTrue);
     });
 
-    testWidgets('validates input when validator is provided', (WidgetTester tester) async {
+    testWidgets('validates input when validator is provided', (
+      WidgetTester tester,
+    ) async {
       final formKey = GlobalKey<FormState>();
 
       await tester.pumpWidget(
@@ -239,13 +215,7 @@ void main() {
 
     testWidgets('respects enabled property', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              enabled: false,
-            ),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppTextField(enabled: false))),
       );
 
       // Try to tap and enter text - should not work when disabled
@@ -253,20 +223,14 @@ void main() {
       await tester.pump();
       await tester.enterText(find.byType(TextFormField), 'test');
       await tester.pump();
-      
+
       // Text should not appear since field is disabled
       expect(find.text('test'), findsNothing);
     });
 
     testWidgets('respects readOnly property', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              readOnly: true,
-            ),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppTextField(readOnly: true))),
       );
 
       // Try to enter text - should not work when readOnly
@@ -274,7 +238,7 @@ void main() {
       await tester.pump();
       await tester.enterText(find.byType(TextFormField), 'test');
       await tester.pump();
-      
+
       // Text should not appear since field is readOnly
       expect(find.text('test'), findsNothing);
     });
@@ -284,18 +248,17 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              maxLines: maxLines,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(maxLines: maxLines)),
         ),
       );
 
       // Enter multiline text to test maxLines behavior
-      await tester.enterText(find.byType(TextFormField), 'Line 1\nLine 2\nLine 3\nLine 4');
+      await tester.enterText(
+        find.byType(TextFormField),
+        'Line 1\nLine 2\nLine 3\nLine 4',
+      );
       await tester.pump();
-      
+
       // Verify the text field exists and can handle multiple lines
       expect(find.byType(TextFormField), findsOneWidget);
       expect(find.text('Line 1\nLine 2\nLine 3\nLine 4'), findsOneWidget);
@@ -306,22 +269,21 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              maxLength: maxLength,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(maxLength: maxLength)),
         ),
       );
 
       // Try to enter text longer than maxLength
-      await tester.enterText(find.byType(TextFormField), 'This is a very long text that exceeds the limit');
+      await tester.enterText(
+        find.byType(TextFormField),
+        'This is a very long text that exceeds the limit',
+      );
       await tester.pump();
-      
+
       // Find the actual text in the field (should be truncated to maxLength)
       final textField = find.byType(TextFormField);
       expect(textField, findsOneWidget);
-      
+
       // The text should be limited by maxLength
       final controller = tester.widget<TextFormField>(textField).controller;
       if (controller != null) {
@@ -334,27 +296,25 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              keyboardType: keyboardType,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(keyboardType: keyboardType)),
         ),
       );
 
       // Test that the widget renders correctly with email keyboard type
       expect(find.byType(TextFormField), findsOneWidget);
-      
+
       // Focus the field to potentially trigger keyboard
       await tester.tap(find.byType(TextFormField));
       await tester.pump();
-      
+
       // Verify the field accepts email-like input
       await tester.enterText(find.byType(TextFormField), 'test@example.com');
       expect(find.text('test@example.com'), findsOneWidget);
     });
 
-    testWidgets('respects textInputAction property', (WidgetTester tester) async {
+    testWidgets('respects textInputAction property', (
+      WidgetTester tester,
+    ) async {
       String? submittedValue;
       const textInputAction = TextInputAction.search;
 
@@ -372,72 +332,64 @@ void main() {
       // Enter text and trigger the input action
       await tester.enterText(find.byType(TextFormField), 'search query');
       await tester.testTextInput.receiveAction(textInputAction);
-      
+
       expect(submittedValue, equals('search query'));
     });
 
-    testWidgets('respects textCapitalization property', (WidgetTester tester) async {
+    testWidgets('respects textCapitalization property', (
+      WidgetTester tester,
+    ) async {
       const textCapitalization = TextCapitalization.words;
 
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: AppTextField(
-              textCapitalization: textCapitalization,
-            ),
+            body: AppTextField(textCapitalization: textCapitalization),
           ),
         ),
       );
 
       // Test that the widget renders correctly
       expect(find.byType(TextFormField), findsOneWidget);
-      
+
       // Enter text to test capitalization behavior
       await tester.enterText(find.byType(TextFormField), 'hello world');
       await tester.pump();
-      
+
       // The widget should exist and accept the text
       expect(find.text('hello world'), findsOneWidget);
     });
 
-    testWidgets('respects inputFormatters property', (WidgetTester tester) async {
+    testWidgets('respects inputFormatters property', (
+      WidgetTester tester,
+    ) async {
       final inputFormatters = [FilteringTextInputFormatter.digitsOnly];
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              inputFormatters: inputFormatters,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(inputFormatters: inputFormatters)),
         ),
       );
 
       // Try to enter text with letters and numbers
       await tester.enterText(find.byType(TextFormField), 'abc123def456');
       await tester.pump();
-      
+
       // Only digits should remain due to the formatter
       expect(find.text('123456'), findsOneWidget);
     });
 
     testWidgets('respects autofocus property', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              autofocus: true,
-            ),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppTextField(autofocus: true))),
       );
 
       // With autofocus, the field should be focused immediately
       await tester.pump();
-      
+
       // Verify the text field exists
       expect(find.byType(TextFormField), findsOneWidget);
-      
+
       // Enter text without tapping (should work due to autofocus)
       await tester.enterText(find.byType(TextFormField), 'autofocus test');
       expect(find.text('autofocus test'), findsOneWidget);
@@ -447,13 +399,7 @@ void main() {
       final controller = TextEditingController(text: 'initial text');
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              controller: controller,
-            ),
-          ),
-        ),
+        MaterialApp(home: Scaffold(body: AppTextField(controller: controller))),
       );
 
       expect(find.text('initial text'), findsOneWidget);
@@ -463,59 +409,47 @@ void main() {
       final focusNode = FocusNode();
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              focusNode: focusNode,
-            ),
-          ),
-        ),
+        MaterialApp(home: Scaffold(body: AppTextField(focusNode: focusNode))),
       );
 
       // Initially not focused
       expect(focusNode.hasFocus, isFalse);
-      
+
       // Request focus programmatically
       focusNode.requestFocus();
       await tester.pump();
-      
+
       // Now should be focused
       expect(focusNode.hasFocus, isTrue);
     });
 
-    testWidgets('hides counter text when maxLength is null', (WidgetTester tester) async {
+    testWidgets('hides counter text when maxLength is null', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppTextField())),
       );
 
       // Enter some text
       await tester.enterText(find.byType(TextFormField), 'test text');
       await tester.pump();
-      
+
       // Should not show any counter text since maxLength is null
       expect(find.textContaining('/'), findsNothing);
       expect(find.byType(TextFormField), findsOneWidget);
     });
 
-    testWidgets('shows counter text when maxLength is provided', (WidgetTester tester) async {
+    testWidgets('shows counter text when maxLength is provided', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              maxLength: 10,
-            ),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppTextField(maxLength: 10))),
       );
 
       // Enter some text
       await tester.enterText(find.byType(TextFormField), 'test');
       await tester.pump();
-      
+
       // Should show counter text when maxLength is set
       expect(find.textContaining('4/10'), findsOneWidget);
     });

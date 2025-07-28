@@ -10,10 +10,12 @@ class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
+  State<NotificationSettingsScreen> createState() =>
+      _NotificationSettingsScreenState();
 }
 
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
+class _NotificationSettingsScreenState
+    extends State<NotificationSettingsScreen> {
   late int _startHour;
   late int _endHour;
   late int _interval;
@@ -21,9 +23,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   @override
   void initState() {
     super.initState();
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    final settingsProvider = Provider.of<SettingsProvider>(
+      context,
+      listen: false,
+    );
     final settings = settingsProvider.notificationSettings;
-    
+
     _startHour = settings.startHour;
     _endHour = settings.endHour;
     _interval = settings.interval;
@@ -64,13 +69,10 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             const SizedBox(height: 8),
             const Text(
               'Set when you want to receive water reminders',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textSubtitle,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.textSubtitle),
             ),
             const SizedBox(height: 24),
-            
+
             AppCard(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -113,9 +115,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             AppCard(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -155,9 +157,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             AppCard(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -197,9 +199,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             AppCard(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -226,9 +228,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             Consumer<SettingsProvider>(
               builder: (context, settingsProvider, child) {
                 return PrimaryButton(
@@ -250,11 +252,11 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       if (hour > _endHour) break;
       reminderTimes.add('${hour.toString().padLeft(2, '0')}:00');
     }
-    
+
     if (reminderTimes.isEmpty) {
       return 'No reminders with current settings';
     }
-    
+
     return 'You will receive ${reminderTimes.length} reminders at: ${reminderTimes.join(', ')}';
   }
 
@@ -266,7 +268,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       interval: _interval,
     );
 
-    final success = await settingsProvider.updateNotificationSettings(updatedSettings);
+    final success = await settingsProvider.updateNotificationSettings(
+      updatedSettings,
+    );
 
     if (!mounted) return;
 

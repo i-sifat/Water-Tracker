@@ -16,10 +16,7 @@ class DonationInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Unlock Premium'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Unlock Premium'), centerTitle: true),
       body: Consumer<PremiumProvider>(
         builder: (context, premiumProvider, child) {
           return SingleChildScrollView(
@@ -30,23 +27,23 @@ class DonationInfoScreen extends StatelessWidget {
                 // Header
                 const _HeaderSection(),
                 const SizedBox(height: 24),
-                
+
                 // Device Code Display
                 _DeviceCodeCard(deviceCode: premiumProvider.deviceCode),
                 const SizedBox(height: 24),
-                
+
                 // bKash Payment Info
                 const _BkashPaymentCard(),
                 const SizedBox(height: 24),
-                
+
                 // Instructions
                 const _InstructionsCard(),
                 const SizedBox(height: 32),
-                
+
                 // Action Buttons
                 _ActionButtons(premiumProvider: premiumProvider),
                 const SizedBox(height: 16),
-                
+
                 // Already have code button
                 SecondaryButton(
                   text: 'Already have unlock code?',
@@ -71,7 +68,7 @@ class _HeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       children: [
         Icon(
@@ -108,17 +105,14 @@ class _DeviceCodeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.smartphone,
-                color: theme.colorScheme.primary,
-              ),
+              Icon(Icons.smartphone, color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 'Your Device Code',
@@ -187,7 +181,7 @@ class _BkashPaymentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,11 +195,7 @@ class _BkashPaymentCard extends StatelessWidget {
                   color: const Color(0xFFE2136E), // bKash pink
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Icon(
-                  Icons.payment,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                child: const Icon(Icons.payment, color: Colors.white, size: 20),
               ),
               const SizedBox(width: 8),
               Text(
@@ -217,7 +207,7 @@ class _BkashPaymentCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Payment Number
           const _PaymentDetailRow(
             label: 'bKash Number',
@@ -225,30 +215,27 @@ class _BkashPaymentCard extends StatelessWidget {
             canCopy: true,
           ),
           const SizedBox(height: 12),
-          
+
           // Account Type
-          const _PaymentDetailRow(
-            label: 'Account Type',
-            value: 'Personal',
-          ),
+          const _PaymentDetailRow(label: 'Account Type', value: 'Personal'),
           const SizedBox(height: 12),
-          
+
           // Account Name
           const _PaymentDetailRow(
             label: 'Account Name',
             value: 'Water Tracker Developer',
           ),
           const SizedBox(height: 12),
-          
+
           // Suggested Amount
           const _PaymentDetailRow(
             label: 'Suggested Amount',
             value: '100 BDT',
             highlight: true,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // QR Code placeholder
           Container(
             width: double.infinity,
@@ -300,7 +287,7 @@ class _PaymentDetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -326,10 +313,7 @@ class _PaymentDetailRow extends StatelessWidget {
           IconButton(
             onPressed: () => _copyValue(context),
             icon: const Icon(Icons.copy, size: 16),
-            constraints: const BoxConstraints(
-              minWidth: 32,
-              minHeight: 32,
-            ),
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             padding: EdgeInsets.zero,
           ),
       ],
@@ -353,17 +337,14 @@ class _InstructionsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.info_outline,
-                color: theme.colorScheme.primary,
-              ),
+              Icon(Icons.info_outline, color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 'How to Unlock Premium',
@@ -374,7 +355,7 @@ class _InstructionsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           ..._buildInstructionSteps(context),
         ],
       ),
@@ -383,7 +364,7 @@ class _InstructionsCard extends StatelessWidget {
 
   List<Widget> _buildInstructionSteps(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     final steps = [
       'Send money to the bKash number above',
       'Take a screenshot of the successful transaction',
@@ -396,7 +377,7 @@ class _InstructionsCard extends StatelessWidget {
     return steps.asMap().entries.map((entry) {
       final index = entry.key;
       final step = entry.value;
-      
+
       return Padding(
         padding: EdgeInsets.only(bottom: index < steps.length - 1 ? 12 : 0),
         child: Row(
@@ -420,12 +401,7 @@ class _InstructionsCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                step,
-                style: theme.textTheme.bodyMedium,
-              ),
-            ),
+            Expanded(child: Text(step, style: theme.textTheme.bodyMedium)),
           ],
         ),
       );
@@ -445,9 +421,10 @@ class _ActionButtons extends StatelessWidget {
       children: [
         PrimaryButton(
           text: 'Submit Donation Proof',
-          onPressed: premiumProvider.isSubmittingProof 
-              ? null 
-              : () => _navigateToDonationProof(context),
+          onPressed:
+              premiumProvider.isSubmittingProof
+                  ? null
+                  : () => _navigateToDonationProof(context),
           isLoading: premiumProvider.isSubmittingProof,
         ),
       ],
@@ -457,9 +434,7 @@ class _ActionButtons extends StatelessWidget {
   void _navigateToDonationProof(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const DonationProofScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const DonationProofScreen()),
     );
   }
 }

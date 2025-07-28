@@ -24,9 +24,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    final settingsProvider = Provider.of<SettingsProvider>(
+      context,
+      listen: false,
+    );
     final profile = settingsProvider.userProfile;
-    
+
     if (profile != null) {
       _weightController.text = profile.weight?.toString() ?? '';
       _ageController.text = profile.age?.toString() ?? '';
@@ -75,7 +78,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               AppCard(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -116,9 +119,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Reopen onboarding button
               AppCard(
                 child: ListTile(
@@ -157,9 +160,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   onTap: _reopenOnboarding,
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               Consumer<SettingsProvider>(
                 builder: (context, settingsProvider, child) {
                   return PrimaryButton(
@@ -208,10 +211,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         if (mounted) {
           await Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (context) => ChangeNotifierProvider.value(
-                value: onboardingProvider,
-                child: const OnboardingFlowScreen(),
-              ),
+              builder:
+                  (context) => ChangeNotifierProvider.value(
+                    value: onboardingProvider,
+                    child: const OnboardingFlowScreen(),
+                  ),
             ),
           );
         }
@@ -237,11 +241,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     if (weight == null || age == null) return;
 
     final currentProfile = settingsProvider.userProfile;
-    final updatedProfile = (currentProfile ?? 
-        const UserProfile(id: 'default')).copyWith(
-      weight: weight,
-      age: age,
-    );
+    final updatedProfile = (currentProfile ?? const UserProfile(id: 'default'))
+        .copyWith(weight: weight, age: age);
 
     final success = await settingsProvider.updateUserProfile(updatedProfile);
 

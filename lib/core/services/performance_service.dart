@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
-
 /// Service for monitoring and optimizing app performance
 class PerformanceService {
   factory PerformanceService() => _instance;
@@ -21,10 +20,10 @@ class PerformanceService {
   /// Initialize performance monitoring
   void initialize() {
     if (_isMonitoring) return;
-    
+
     _isMonitoring = true;
     _startMemoryMonitoring();
-    
+
     if (kDebugMode) {
       debugPrint('PerformanceService initialized');
     }
@@ -41,12 +40,12 @@ class PerformanceService {
   /// Record current memory usage
   void _recordMemoryUsage() {
     if (!kDebugMode) return;
-    
+
     try {
       // Use ProcessInfo for memory monitoring instead of deprecated Service methods
       final rss = ProcessInfo.currentRss;
       final maxRss = ProcessInfo.maxRss;
-      
+
       final metric = PerformanceMetric(
         name: 'memory_usage',
         value: rss,
@@ -54,9 +53,9 @@ class PerformanceService {
         unit: 'bytes',
         metadata: {'maxRss': maxRss},
       );
-      
+
       _metrics.add(metric);
-      
+
       // Keep only last 100 metrics
       if (_metrics.length > 100) {
         _metrics.removeAt(0);
@@ -77,17 +76,17 @@ class PerformanceService {
     if (startTime == null) return;
 
     final duration = DateTime.now().difference(startTime).inMilliseconds;
-    
-    _operationDurations[operationName] = 
+
+    _operationDurations[operationName] =
         (_operationDurations[operationName] ?? [])..add(duration);
-    
+
     // Keep only last 50 measurements per operation
     if (_operationDurations[operationName]!.length > 50) {
       _operationDurations[operationName]!.removeAt(0);
     }
-    
+
     _operationStartTimes.remove(operationName);
-    
+
     // Log slow operations in debug mode
     if (kDebugMode && duration > 100) {
       debugPrint('Slow operation: $operationName took ${duration}ms');
@@ -98,7 +97,7 @@ class PerformanceService {
   double getAverageOperationDuration(String operationName) {
     final durations = _operationDurations[operationName];
     if (durations == null || durations.isEmpty) return 0;
-    
+
     final sum = durations.reduce((a, b) => a + b);
     return sum / durations.length;
   }
@@ -106,7 +105,7 @@ class PerformanceService {
   /// Get performance statistics
   Map<String, dynamic> getPerformanceStats() {
     final stats = <String, dynamic>{};
-    
+
     // Operation statistics
     final operationStats = <String, Map<String, dynamic>>{};
     for (final entry in _operationDurations.entries) {
@@ -123,9 +122,10 @@ class PerformanceService {
       }
     }
     stats['operations'] = operationStats;
-    
+
     // Memory statistics
-    final memoryMetrics = _metrics.where((m) => m.name == 'memory_usage').toList();
+    final memoryMetrics =
+        _metrics.where((m) => m.name == 'memory_usage').toList();
     if (memoryMetrics.isNotEmpty) {
       final values = memoryMetrics.map((m) => m.value).toList()..sort();
       stats['memory'] = {
@@ -136,27 +136,30 @@ class PerformanceService {
         'samples': values.length,
       };
     }
-    
+
     return stats;
   }
 
   /// Log performance warning
-  void logPerformanceWarning(String operation, int durationMs, {String? details}) {
+  void logPerformanceWarning(
+    String operation,
+    int durationMs, {
+    String? details,
+  }) {
     if (kDebugMode) {
-      debugPrint('Performance Warning: $operation took ${durationMs}ms${details != null ? ' - $details' : ''}');
+      debugPrint(
+        'Performance Warning: $operation took ${durationMs}ms${details != null ? ' - $details' : ''}',
+      );
     }
-    
+
     final metric = PerformanceMetric(
       name: 'performance_warning',
       value: durationMs,
       timestamp: DateTime.now(),
       unit: 'ms',
-      metadata: {
-        'operation': operation,
-        'details': details,
-      },
+      metadata: {'operation': operation, 'details': details},
     );
-    
+
     _metrics.add(metric);
   }
 
@@ -166,11 +169,11 @@ class PerformanceService {
       // Clear image cache if memory is low
       PaintingBinding.instance.imageCache.clear();
       PaintingBinding.instance.imageCache.clearLiveImages();
-      
+
       // Set reasonable cache limits
       PaintingBinding.instance.imageCache.maximumSize = 100;
       PaintingBinding.instance.imageCache.maximumSizeBytes = 50 << 20; // 50MB
-      
+
       if (kDebugMode) {
         debugPrint('Image cache optimized');
       }
@@ -185,7 +188,10 @@ class PerformanceService {
       // Use System.gc() for garbage collection instead of deprecated Service methods
       try {
         // This is a hint to the system to run garbage collection
-        developer.log('Requesting garbage collection', name: 'PerformanceService');
+        developer.log(
+          'Requesting garbage collection',
+          name: 'PerformanceService',
+        );
       } catch (e) {
         debugPrint('Error requesting garbage collection: $e');
       }
@@ -241,7 +247,11 @@ mixin PerformanceMonitorMixin {
 
   void logSlowOperation(String operation, int durationMs, {String? details}) {
     if (durationMs > 100) {
-      _performanceService.logPerformanceWarning(operation, durationMs, details: details);
+      _performanceService.logPerformanceWarning(
+        operation,
+        durationMs,
+        details: details,
+      );
     }
   }
 }

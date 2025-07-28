@@ -82,7 +82,6 @@ class MockPremiumProvider extends ChangeNotifier implements PremiumProvider {
 
   @override
   String getFeatureDescription(dynamic feature) => 'Test Description';
-
 }
 
 void main() {
@@ -112,7 +111,9 @@ void main() {
       );
     }
 
-    testWidgets('shows nothing when not initialized', (WidgetTester tester) async {
+    testWidgets('shows nothing when not initialized', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setInitialized(false);
 
       await tester.pumpWidget(createTestWidget());
@@ -122,7 +123,9 @@ void main() {
       expect(find.text('Free'), findsNothing);
     });
 
-    testWidgets('shows Free status when not premium', (WidgetTester tester) async {
+    testWidgets('shows Free status when not premium', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setPremium(false);
 
       await tester.pumpWidget(createTestWidget());
@@ -131,7 +134,9 @@ void main() {
       expect(find.byIcon(Icons.lock_outline), findsOneWidget);
     });
 
-    testWidgets('shows Premium status when premium', (WidgetTester tester) async {
+    testWidgets('shows Premium status when premium', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setPremium(true);
 
       await tester.pumpWidget(createTestWidget());
@@ -140,7 +145,9 @@ void main() {
       expect(find.byIcon(Icons.workspace_premium), findsOneWidget);
     });
 
-    testWidgets('hides label when showLabel is false', (WidgetTester tester) async {
+    testWidgets('hides label when showLabel is false', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setPremium(false);
 
       await tester.pumpWidget(createTestWidget(showLabel: false));
@@ -149,7 +156,9 @@ void main() {
       expect(find.byIcon(Icons.lock_outline), findsOneWidget);
     });
 
-    testWidgets('shows only icon when showLabel is false', (WidgetTester tester) async {
+    testWidgets('shows only icon when showLabel is false', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setPremium(true);
 
       await tester.pumpWidget(createTestWidget(showLabel: false));
@@ -158,13 +167,13 @@ void main() {
       expect(find.byIcon(Icons.workspace_premium), findsOneWidget);
     });
 
-    testWidgets('calls custom onTap when provided', (WidgetTester tester) async {
+    testWidgets('calls custom onTap when provided', (
+      WidgetTester tester,
+    ) async {
       var wasTapped = false;
       mockPremiumProvider.setPremium(false);
 
-      await tester.pumpWidget(createTestWidget(
-        onTap: () => wasTapped = true,
-      ));
+      await tester.pumpWidget(createTestWidget(onTap: () => wasTapped = true));
 
       await tester.tap(find.byType(GestureDetector));
       await tester.pump();
@@ -172,22 +181,26 @@ void main() {
       expect(wasTapped, isTrue);
     });
 
-    testWidgets('responds to tap when not premium', (WidgetTester tester) async {
+    testWidgets('responds to tap when not premium', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setPremium(false);
 
       await tester.pumpWidget(createTestWidget());
 
       expect(find.byType(GestureDetector), findsOneWidget);
-      
+
       // Tap should be handled (would navigate to donation screen in real app)
       await tester.tap(find.byType(GestureDetector));
       await tester.pump();
-      
+
       // No exception should be thrown
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('shows dialog when premium and tapped', (WidgetTester tester) async {
+    testWidgets('shows dialog when premium and tapped', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setPremium(true);
 
       await tester.pumpWidget(createTestWidget());
@@ -200,7 +213,9 @@ void main() {
       expect(find.text('Premium Status'), findsOneWidget);
     });
 
-    testWidgets('updates when premium status changes', (WidgetTester tester) async {
+    testWidgets('updates when premium status changes', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setPremium(false);
 
       await tester.pumpWidget(createTestWidget());
@@ -218,15 +233,21 @@ void main() {
       expect(find.text('Free'), findsNothing);
     });
 
-    testWidgets('applies different sizes correctly', (WidgetTester tester) async {
+    testWidgets('applies different sizes correctly', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setPremium(true);
 
       // Test small size
-      await tester.pumpWidget(createTestWidget(size: PremiumIndicatorSize.small));
+      await tester.pumpWidget(
+        createTestWidget(size: PremiumIndicatorSize.small),
+      );
       expect(find.byType(PremiumStatusIndicator), findsOneWidget);
 
       // Test large size
-      await tester.pumpWidget(createTestWidget(size: PremiumIndicatorSize.large));
+      await tester.pumpWidget(
+        createTestWidget(size: PremiumIndicatorSize.large),
+      );
       expect(find.byType(PremiumStatusIndicator), findsOneWidget);
     });
   });
@@ -242,14 +263,14 @@ void main() {
       return MaterialApp(
         home: ChangeNotifierProvider<PremiumProvider>.value(
           value: mockPremiumProvider,
-          child: Scaffold(
-            body: PremiumBadge(onTap: onTap),
-          ),
+          child: Scaffold(body: PremiumBadge(onTap: onTap)),
         ),
       );
     }
 
-    testWidgets('shows nothing when not initialized', (WidgetTester tester) async {
+    testWidgets('shows nothing when not initialized', (
+      WidgetTester tester,
+    ) async {
       mockPremiumProvider.setInitialized(false);
 
       await tester.pumpWidget(createTestWidget());
@@ -280,9 +301,7 @@ void main() {
       var wasTapped = false;
       mockPremiumProvider.setPremium(true);
 
-      await tester.pumpWidget(createTestWidget(
-        onTap: () => wasTapped = true,
-      ));
+      await tester.pumpWidget(createTestWidget(onTap: () => wasTapped = true));
 
       await tester.tap(find.byType(GestureDetector));
       await tester.pump();
@@ -310,7 +329,10 @@ void main() {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.text('Premium Feature'), findsOneWidget);
-      expect(find.text('Unlock premium features to access this content'), findsOneWidget);
+      expect(
+        find.text('Unlock premium features to access this content'),
+        findsOneWidget,
+      );
       expect(find.byIcon(Icons.lock_outline), findsOneWidget);
       expect(find.text('Unlock Premium'), findsOneWidget);
     });
@@ -323,12 +345,14 @@ void main() {
       expect(find.text(customMessage), findsOneWidget);
     });
 
-    testWidgets('calls custom onUnlockTap when provided', (WidgetTester tester) async {
+    testWidgets('calls custom onUnlockTap when provided', (
+      WidgetTester tester,
+    ) async {
       var wasTapped = false;
 
-      await tester.pumpWidget(createTestWidget(
-        onUnlockTap: () => wasTapped = true,
-      ));
+      await tester.pumpWidget(
+        createTestWidget(onUnlockTap: () => wasTapped = true),
+      );
 
       await tester.tap(find.text('Unlock Premium'));
       await tester.pump();
@@ -345,19 +369,23 @@ void main() {
       expect(find.byType(TextButton), findsOneWidget);
     });
 
-    testWidgets('has correct spacing between elements', (WidgetTester tester) async {
+    testWidgets('has correct spacing between elements', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
 
       // Check for SizedBox widgets with specific heights for spacing
       final sizedBoxes = tester.widgetList<SizedBox>(find.byType(SizedBox));
-      
+
       // Should have spacing boxes with heights 8, 4, and 12
       expect(sizedBoxes.any((box) => box.height == 8), isTrue);
       expect(sizedBoxes.any((box) => box.height == 4), isTrue);
       expect(sizedBoxes.any((box) => box.height == 12), isTrue);
     });
 
-    testWidgets('button has correct icon and text', (WidgetTester tester) async {
+    testWidgets('button has correct icon and text', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.byIcon(Icons.workspace_premium), findsOneWidget);

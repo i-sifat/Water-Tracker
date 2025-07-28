@@ -10,7 +10,11 @@ class SimpleStorageService {
     return _storage[key] as String?;
   }
 
-  Future<bool> saveString(String key, String value, {bool encrypted = true}) async {
+  Future<bool> saveString(
+    String key,
+    String value, {
+    bool encrypted = true,
+  }) async {
     _storage[key] = value;
     return true;
   }
@@ -28,7 +32,11 @@ class SimpleStorageService {
     return _storage[key] as bool?;
   }
 
-  Future<bool> saveBool(String key, bool value, {bool encrypted = false}) async {
+  Future<bool> saveBool(
+    String key,
+    bool value, {
+    bool encrypted = false,
+  }) async {
     _storage[key] = value;
     return true;
   }

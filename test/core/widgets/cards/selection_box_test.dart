@@ -11,10 +11,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SelectionBox(
-              title: title,
-              onTap: () => wasTapped = true,
-            ),
+            body: SelectionBox(title: title, onTap: () => wasTapped = true),
           ),
         ),
       );
@@ -29,11 +26,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SelectionBox(
-              title: title,
-              subtitle: subtitle,
-              onTap: () {},
-            ),
+            body: SelectionBox(title: title, subtitle: subtitle, onTap: () {}),
           ),
         ),
       );
@@ -42,17 +35,14 @@ void main() {
       expect(find.text(subtitle), findsOneWidget);
     });
 
-    testWidgets('does not render subtitle when not provided', (WidgetTester tester) async {
+    testWidgets('does not render subtitle when not provided', (
+      WidgetTester tester,
+    ) async {
       const title = 'Test Title';
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: SelectionBox(
-              title: title,
-              onTap: () {},
-            ),
-          ),
+          home: Scaffold(body: SelectionBox(title: title, onTap: () {})),
         ),
       );
 
@@ -68,11 +58,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SelectionBox(
-              title: title,
-              icon: icon,
-              onTap: () {},
-            ),
+            body: SelectionBox(title: title, icon: icon, onTap: () {}),
           ),
         ),
       );
@@ -81,17 +67,14 @@ void main() {
       expect(find.text(title), findsOneWidget);
     });
 
-    testWidgets('does not render icon when not provided', (WidgetTester tester) async {
+    testWidgets('does not render icon when not provided', (
+      WidgetTester tester,
+    ) async {
       const title = 'Test Title';
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: SelectionBox(
-              title: title,
-              onTap: () {},
-            ),
-          ),
+          home: Scaffold(body: SelectionBox(title: title, onTap: () {})),
         ),
       );
 
@@ -118,7 +101,9 @@ void main() {
       expect(wasTapped, isTrue);
     });
 
-    testWidgets('applies selected styling when isSelected is true', (WidgetTester tester) async {
+    testWidgets('applies selected styling when isSelected is true', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -132,27 +117,30 @@ void main() {
       );
 
       // The AppCard should be marked as selected
-      final selectionBox = tester.widget<SelectionBox>(find.byType(SelectionBox));
+      final selectionBox = tester.widget<SelectionBox>(
+        find.byType(SelectionBox),
+      );
       expect(selectionBox.isSelected, isTrue);
     });
 
-    testWidgets('applies unselected styling when isSelected is false', (WidgetTester tester) async {
+    testWidgets('applies unselected styling when isSelected is false', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: SelectionBox(
-              title: 'Test Title',
-              onTap: () {},
-            ),
-          ),
+          home: Scaffold(body: SelectionBox(title: 'Test Title', onTap: () {})),
         ),
       );
 
-      final selectionBox = tester.widget<SelectionBox>(find.byType(SelectionBox));
+      final selectionBox = tester.widget<SelectionBox>(
+        find.byType(SelectionBox),
+      );
       expect(selectionBox.isSelected, isFalse);
     });
 
-    testWidgets('respects custom width and height', (WidgetTester tester) async {
+    testWidgets('respects custom width and height', (
+      WidgetTester tester,
+    ) async {
       const customWidth = 200.0;
       const customHeight = 150.0;
 
@@ -174,7 +162,9 @@ void main() {
       expect(sizedBox.height, equals(customHeight));
     });
 
-    testWidgets('uses custom background color when provided', (WidgetTester tester) async {
+    testWidgets('uses custom background color when provided', (
+      WidgetTester tester,
+    ) async {
       const customColor = Colors.red;
 
       await tester.pumpWidget(
@@ -189,31 +179,43 @@ void main() {
         ),
       );
 
-      final selectionBox = tester.widget<SelectionBox>(find.byType(SelectionBox));
+      final selectionBox = tester.widget<SelectionBox>(
+        find.byType(SelectionBox),
+      );
       expect(selectionBox.backgroundColor, equals(customColor));
     });
 
-    testWidgets('uses custom selected background color when provided and selected', (WidgetTester tester) async {
-      const customSelectedColor = Colors.green;
+    testWidgets(
+      'uses custom selected background color when provided and selected',
+      (WidgetTester tester) async {
+        const customSelectedColor = Colors.green;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SelectionBox(
-              title: 'Test Title',
-              selectedBackgroundColor: customSelectedColor,
-              isSelected: true,
-              onTap: () {},
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SelectionBox(
+                title: 'Test Title',
+                selectedBackgroundColor: customSelectedColor,
+                isSelected: true,
+                onTap: () {},
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      final selectionBox = tester.widget<SelectionBox>(find.byType(SelectionBox));
-      expect(selectionBox.selectedBackgroundColor, equals(customSelectedColor));
-    });
+        final selectionBox = tester.widget<SelectionBox>(
+          find.byType(SelectionBox),
+        );
+        expect(
+          selectionBox.selectedBackgroundColor,
+          equals(customSelectedColor),
+        );
+      },
+    );
 
-    testWidgets('has proper layout structure with icon, title, and subtitle', (WidgetTester tester) async {
+    testWidgets('has proper layout structure with icon, title, and subtitle', (
+      WidgetTester tester,
+    ) async {
       const title = 'Test Title';
       const subtitle = 'Test Subtitle';
       const icon = Icons.water_drop;
@@ -243,12 +245,7 @@ void main() {
     testWidgets('centers content properly', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: SelectionBox(
-              title: 'Test Title',
-              onTap: () {},
-            ),
-          ),
+          home: Scaffold(body: SelectionBox(title: 'Test Title', onTap: () {})),
         ),
       );
 
@@ -256,18 +253,16 @@ void main() {
       expect(column.mainAxisAlignment, equals(MainAxisAlignment.center));
     });
 
-    testWidgets('applies text alignment correctly', (WidgetTester tester) async {
+    testWidgets('applies text alignment correctly', (
+      WidgetTester tester,
+    ) async {
       const title = 'Test Title';
       const subtitle = 'Test Subtitle';
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SelectionBox(
-              title: title,
-              subtitle: subtitle,
-              onTap: () {},
-            ),
+            body: SelectionBox(title: title, subtitle: subtitle, onTap: () {}),
           ),
         ),
       );

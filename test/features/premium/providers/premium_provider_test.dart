@@ -12,20 +12,18 @@ class MockPremiumService {
     _shouldSucceed = succeed;
   }
 
-  Future<bool> submitDonationProof({
-    String? additionalMessage,
-  }) async {
+  Future<bool> submitDonationProof({String? additionalMessage}) async {
     await Future.delayed(const Duration(milliseconds: 50));
     return _shouldSucceed;
   }
 
   Future<bool> validateUnlockCode(String unlockCode) async {
     await Future.delayed(const Duration(milliseconds: 50));
-    
+
     if (_shouldSucceed && unlockCode == 'VALID123456789ABC') {
       return true;
     }
-    
+
     return false;
   }
 }
@@ -55,12 +53,19 @@ class MockStorageService {
     return _storage[key] as String?;
   }
 
-  Future<bool> saveString(String key, String value, {bool encrypted = true}) async {
+  Future<bool> saveString(
+    String key,
+    String value, {
+    bool encrypted = true,
+  }) async {
     _storage[key] = value;
     return true;
   }
 
-  Future<Map<String, dynamic>?> getJson(String key, {bool encrypted = true}) async {
+  Future<Map<String, dynamic>?> getJson(
+    String key, {
+    bool encrypted = true,
+  }) async {
     final jsonString = _storage[key] as String?;
     if (jsonString != null) {
       // Simple mock JSON parsing
@@ -69,7 +74,11 @@ class MockStorageService {
     return null;
   }
 
-  Future<bool> saveJson(String key, Map<String, dynamic> data, {bool encrypted = true}) async {
+  Future<bool> saveJson(
+    String key,
+    Map<String, dynamic> data, {
+    bool encrypted = true,
+  }) async {
     _storage[key] = data.toString(); // Simple mock
     return true;
   }
@@ -90,7 +99,7 @@ void main() {
       mockPremiumService = MockPremiumService();
       mockDeviceService = MockDeviceService();
       mockStorageService = MockStorageService();
-      
+
       provider = PremiumProvider(
         premiumService: mockPremiumService,
         deviceService: mockDeviceService,
@@ -138,9 +147,19 @@ void main() {
       test('should provide feature descriptions', () async {
         await Future.delayed(const Duration(milliseconds: 200));
 
-        final description = provider.getFeatureDescription(PremiumFeature.advancedAnalytics);
+        final description = provider.getFeatureDescription(
+          PremiumFeature.advancedAnalytics,
+        );
         expect(description, isNotEmpty);
-        expect(description, anyOf(contains('charts'), contains('tracking'), contains('analytics'), contains('Analytics')));
+        expect(
+          description,
+          anyOf(
+            contains('charts'),
+            contains('tracking'),
+            contains('analytics'),
+            contains('Analytics'),
+          ),
+        );
 
         final name = provider.getFeatureName(PremiumFeature.advancedAnalytics);
         expect(name, equals('Advanced Analytics'));
@@ -167,7 +186,10 @@ void main() {
         expect(success, isTrue);
         expect(provider.submittedProofs.length, equals(1));
         expect(provider.submittedProofs.first.amount, equals(50.0));
-        expect(provider.submittedProofs.first.transactionId, equals('TXN123456'));
+        expect(
+          provider.submittedProofs.first.transactionId,
+          equals('TXN123456'),
+        );
         expect(provider.pendingProofId, isNotNull);
         expect(provider.lastError, isNull);
 

@@ -9,12 +9,7 @@ void main() {
     testWidgets('renders child widget correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: TapAnimation(
-              onTap: () {},
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: TapAnimation(onTap: () {}, child: testChild)),
         ),
       );
 
@@ -28,10 +23,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TapAnimation(
-              onTap: () => wasTapped = true,
-              child: testChild,
-            ),
+            body: TapAnimation(onTap: () => wasTapped = true, child: testChild),
           ),
         ),
       );
@@ -45,16 +37,13 @@ void main() {
     testWidgets('uses default scale value', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: TapAnimation(
-              onTap: () {},
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: TapAnimation(onTap: () {}, child: testChild)),
         ),
       );
 
-      final tapAnimation = tester.widget<TapAnimation>(find.byType(TapAnimation));
+      final tapAnimation = tester.widget<TapAnimation>(
+        find.byType(TapAnimation),
+      );
       expect(tapAnimation.scale, equals(0.95));
     });
 
@@ -73,34 +62,30 @@ void main() {
         ),
       );
 
-      final tapAnimation = tester.widget<TapAnimation>(find.byType(TapAnimation));
+      final tapAnimation = tester.widget<TapAnimation>(
+        find.byType(TapAnimation),
+      );
       expect(tapAnimation.scale, equals(customScale));
     });
 
-    testWidgets('has gesture detector for tap handling', (WidgetTester tester) async {
+    testWidgets('has gesture detector for tap handling', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: TapAnimation(
-              onTap: () {},
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: TapAnimation(onTap: () {}, child: testChild)),
         ),
       );
 
       expect(find.byType(GestureDetector), findsOneWidget);
     });
 
-    testWidgets('has animated builder for scale animation', (WidgetTester tester) async {
+    testWidgets('has animated builder for scale animation', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: TapAnimation(
-              onTap: () {},
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: TapAnimation(onTap: () {}, child: testChild)),
         ),
       );
 
@@ -115,11 +100,7 @@ void main() {
     testWidgets('renders child widget correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: PulseAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: PulseAnimation(child: testChild)),
         ),
       );
 
@@ -130,15 +111,13 @@ void main() {
     testWidgets('uses default parameters', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: PulseAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: PulseAnimation(child: testChild)),
         ),
       );
 
-      final pulseAnimation = tester.widget<PulseAnimation>(find.byType(PulseAnimation));
+      final pulseAnimation = tester.widget<PulseAnimation>(
+        find.byType(PulseAnimation),
+      );
       expect(pulseAnimation.duration, equals(const Duration(seconds: 1)));
       expect(pulseAnimation.minScale, equals(0.95));
       expect(pulseAnimation.maxScale, equals(1.05));
@@ -165,21 +144,21 @@ void main() {
         ),
       );
 
-      final pulseAnimation = tester.widget<PulseAnimation>(find.byType(PulseAnimation));
+      final pulseAnimation = tester.widget<PulseAnimation>(
+        find.byType(PulseAnimation),
+      );
       expect(pulseAnimation.duration, equals(customDuration));
       expect(pulseAnimation.minScale, equals(customMinScale));
       expect(pulseAnimation.maxScale, equals(customMaxScale));
       expect(pulseAnimation.curve, equals(customCurve));
     });
 
-    testWidgets('has animated builder for pulse animation', (WidgetTester tester) async {
+    testWidgets('has animated builder for pulse animation', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: PulseAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: PulseAnimation(child: testChild)),
         ),
       );
 
@@ -194,11 +173,7 @@ void main() {
     testWidgets('renders child widget correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: ShakeAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: ShakeAnimation(child: testChild)),
         ),
       );
 
@@ -209,16 +184,17 @@ void main() {
     testWidgets('uses default parameters', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: ShakeAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: ShakeAnimation(child: testChild)),
         ),
       );
 
-      final shakeAnimation = tester.widget<ShakeAnimation>(find.byType(ShakeAnimation));
-      expect(shakeAnimation.duration, equals(const Duration(milliseconds: 500)));
+      final shakeAnimation = tester.widget<ShakeAnimation>(
+        find.byType(ShakeAnimation),
+      );
+      expect(
+        shakeAnimation.duration,
+        equals(const Duration(milliseconds: 500)),
+      );
       expect(shakeAnimation.shakeCount, equals(3));
       expect(shakeAnimation.shakeOffset, equals(10.0));
     });
@@ -241,20 +217,20 @@ void main() {
         ),
       );
 
-      final shakeAnimation = tester.widget<ShakeAnimation>(find.byType(ShakeAnimation));
+      final shakeAnimation = tester.widget<ShakeAnimation>(
+        find.byType(ShakeAnimation),
+      );
       expect(shakeAnimation.duration, equals(customDuration));
       expect(shakeAnimation.shakeCount, equals(customShakeCount));
       expect(shakeAnimation.shakeOffset, equals(customShakeOffset));
     });
 
-    testWidgets('has animated builder for shake animation', (WidgetTester tester) async {
+    testWidgets('has animated builder for shake animation', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: ShakeAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: ShakeAnimation(child: testChild)),
         ),
       );
 
@@ -269,11 +245,7 @@ void main() {
     testWidgets('renders child widget correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: FadeInAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: FadeInAnimation(child: testChild)),
         ),
       );
 
@@ -288,16 +260,17 @@ void main() {
     testWidgets('uses default parameters', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: FadeInAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: FadeInAnimation(child: testChild)),
         ),
       );
 
-      final fadeInAnimation = tester.widget<FadeInAnimation>(find.byType(FadeInAnimation));
-      expect(fadeInAnimation.duration, equals(const Duration(milliseconds: 500)));
+      final fadeInAnimation = tester.widget<FadeInAnimation>(
+        find.byType(FadeInAnimation),
+      );
+      expect(
+        fadeInAnimation.duration,
+        equals(const Duration(milliseconds: 500)),
+      );
       expect(fadeInAnimation.delay, equals(Duration.zero));
       expect(fadeInAnimation.curve, equals(Curves.easeIn));
     });
@@ -320,7 +293,9 @@ void main() {
         ),
       );
 
-      final fadeInAnimation = tester.widget<FadeInAnimation>(find.byType(FadeInAnimation));
+      final fadeInAnimation = tester.widget<FadeInAnimation>(
+        find.byType(FadeInAnimation),
+      );
       expect(fadeInAnimation.duration, equals(customDuration));
       expect(fadeInAnimation.delay, equals(customDelay));
       expect(fadeInAnimation.curve, equals(customCurve));
@@ -329,11 +304,7 @@ void main() {
     testWidgets('has fade transition', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: FadeInAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: FadeInAnimation(child: testChild)),
         ),
       );
 
@@ -347,11 +318,7 @@ void main() {
     testWidgets('renders child widget correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: SlideInAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: SlideInAnimation(child: testChild)),
         ),
       );
 
@@ -366,16 +333,17 @@ void main() {
     testWidgets('uses default parameters', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: SlideInAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: SlideInAnimation(child: testChild)),
         ),
       );
 
-      final slideInAnimation = tester.widget<SlideInAnimation>(find.byType(SlideInAnimation));
-      expect(slideInAnimation.duration, equals(const Duration(milliseconds: 500)));
+      final slideInAnimation = tester.widget<SlideInAnimation>(
+        find.byType(SlideInAnimation),
+      );
+      expect(
+        slideInAnimation.duration,
+        equals(const Duration(milliseconds: 500)),
+      );
       expect(slideInAnimation.delay, equals(Duration.zero));
       expect(slideInAnimation.direction, equals(SlideDirection.fromBottom));
       expect(slideInAnimation.offset, equals(50.0));
@@ -404,7 +372,9 @@ void main() {
         ),
       );
 
-      final slideInAnimation = tester.widget<SlideInAnimation>(find.byType(SlideInAnimation));
+      final slideInAnimation = tester.widget<SlideInAnimation>(
+        find.byType(SlideInAnimation),
+      );
       expect(slideInAnimation.duration, equals(customDuration));
       expect(slideInAnimation.delay, equals(customDelay));
       expect(slideInAnimation.direction, equals(customDirection));
@@ -412,14 +382,12 @@ void main() {
       expect(slideInAnimation.curve, equals(customCurve));
     });
 
-    testWidgets('has animated builder for slide animation', (WidgetTester tester) async {
+    testWidgets('has animated builder for slide animation', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: SlideInAnimation(
-              child: testChild,
-            ),
-          ),
+          home: Scaffold(body: SlideInAnimation(child: testChild)),
         ),
       );
 
@@ -432,15 +400,14 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: SlideInAnimation(
-                direction: direction,
-                child: testChild,
-              ),
+              body: SlideInAnimation(direction: direction, child: testChild),
             ),
           ),
         );
 
-        final slideInAnimation = tester.widget<SlideInAnimation>(find.byType(SlideInAnimation));
+        final slideInAnimation = tester.widget<SlideInAnimation>(
+          find.byType(SlideInAnimation),
+        );
         expect(slideInAnimation.direction, equals(direction));
 
         // Clear the widget tree for next iteration

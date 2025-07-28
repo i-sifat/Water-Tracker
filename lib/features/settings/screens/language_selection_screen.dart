@@ -4,12 +4,12 @@ import 'package:watertracker/core/widgets/common/accessible_button.dart';
 import 'package:watertracker/l10n/app_localizations.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
-
   const LanguageSelectionScreen({super.key});
   static const String routeName = '/language-selection';
 
   @override
-  State<LanguageSelectionScreen> createState() => _LanguageSelectionScreenState();
+  State<LanguageSelectionScreen> createState() =>
+      _LanguageSelectionScreenState();
 }
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
@@ -83,53 +83,64 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
 
           // Language Options
           Card(
             child: Column(
-              children: AppLocalizations.supportedLocales.map((locale) {
-                final isSelected = locale.languageCode == _selectedLanguageCode;
-                final languageName = _getLanguageDisplayName(locale);
-                final nativeName = _getNativeLanguageName(locale);
-                
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: isSelected 
-                        ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                        : theme.colorScheme.surface,
-                    child: Text(
-                      _getLanguageFlag(locale),
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                  ),
-                  title: Text(
-                    languageName,
-                    style: TextStyle(
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: isSelected 
-                          ? theme.colorScheme.primary 
-                          : theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  subtitle: nativeName != languageName 
-                      ? Text(
-                          nativeName,
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                          ),
-                        )
-                      : null,
-                  trailing: isSelected 
-                      ? Icon(
-                          Icons.check_circle,
-                          color: theme.colorScheme.primary,
-                        )
-                      : null,
-                  onTap: () => _selectLanguage(locale.languageCode),
-                );
-              }).toList(),
+              children:
+                  AppLocalizations.supportedLocales.map((locale) {
+                    final isSelected =
+                        locale.languageCode == _selectedLanguageCode;
+                    final languageName = _getLanguageDisplayName(locale);
+                    final nativeName = _getNativeLanguageName(locale);
+
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor:
+                            isSelected
+                                ? theme.colorScheme.primary.withValues(
+                                  alpha: 0.1,
+                                )
+                                : theme.colorScheme.surface,
+                        child: Text(
+                          _getLanguageFlag(locale),
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      title: Text(
+                        languageName,
+                        style: TextStyle(
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.w400,
+                          color:
+                              isSelected
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      subtitle:
+                          nativeName != languageName
+                              ? Text(
+                                nativeName,
+                                style: TextStyle(
+                                  color: theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.7,
+                                  ),
+                                ),
+                              )
+                              : null,
+                      trailing:
+                          isSelected
+                              ? Icon(
+                                Icons.check_circle,
+                                color: theme.colorScheme.primary,
+                              )
+                              : null,
+                      onTap: () => _selectLanguage(locale.languageCode),
+                    );
+                  }).toList(),
             ),
           ),
 
@@ -170,19 +181,25 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
 
           // Apply Changes Button
           AccessibleButton(
-            onPressed: _selectedLanguageCode != Localizations.localeOf(context).languageCode
-                ? () => _applyLanguageChange(context)
-                : null,
+            onPressed:
+                _selectedLanguageCode !=
+                        Localizations.localeOf(context).languageCode
+                    ? () => _applyLanguageChange(context)
+                    : null,
             semanticLabel: 'Apply language changes',
-            backgroundColor: _selectedLanguageCode != Localizations.localeOf(context).languageCode
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSurface.withValues(alpha: 0.12),
+            backgroundColor:
+                _selectedLanguageCode !=
+                        Localizations.localeOf(context).languageCode
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.12),
             child: Text(
               'Apply Changes',
               style: TextStyle(
-                color: _selectedLanguageCode != Localizations.localeOf(context).languageCode
-                    ? theme.colorScheme.onPrimary
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.38),
+                color:
+                    _selectedLanguageCode !=
+                            Localizations.localeOf(context).languageCode
+                        ? theme.colorScheme.onPrimary
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.38),
               ),
             ),
           ),

@@ -59,7 +59,7 @@ class _OptimizedListViewState<T> extends State<OptimizedListView<T>>
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    
+
     if (widget.enablePerformanceMonitoring) {
       startPerformanceTimer('list_view_init');
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -79,7 +79,7 @@ class _OptimizedListViewState<T> extends State<OptimizedListView<T>>
   void _onScroll() {
     // Cancel previous timer
     _scrollEndTimer?.cancel();
-    
+
     // Set new timer for scroll end detection
     _scrollEndTimer = Timer(const Duration(milliseconds: 150), () {
       _checkLoadMore();
@@ -90,7 +90,8 @@ class _OptimizedListViewState<T> extends State<OptimizedListView<T>>
     if (!widget.hasMore || _isLoadingMore || widget.onLoadMore == null) return;
 
     final position = _scrollController.position;
-    final threshold = position.maxScrollExtent - (widget.loadMoreThreshold * 100);
+    final threshold =
+        position.maxScrollExtent - (widget.loadMoreThreshold * 100);
 
     if (position.pixels >= threshold) {
       _loadMore();
@@ -153,7 +154,7 @@ class _OptimizedListViewState<T> extends State<OptimizedListView<T>>
   @override
   void didUpdateWidget(OptimizedListView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // Clear cache if items changed significantly
     if (widget.items.length != oldWidget.items.length ||
         widget.items.hashCode != oldWidget.items.hashCode) {
@@ -166,7 +167,7 @@ class _OptimizedListViewState<T> extends State<OptimizedListView<T>>
     super.build(context);
 
     if (widget.items.isEmpty) {
-      return widget.emptyBuilder?.call(context) ?? 
+      return widget.emptyBuilder?.call(context) ??
           const Center(child: Text('No items'));
     }
 
@@ -189,7 +190,8 @@ class _OptimizedListViewState<T> extends State<OptimizedListView<T>>
         reverse: widget.reverse,
         cacheExtent: widget.cacheExtent,
         itemCount: widget.items.length + (_isLoadingMore ? 1 : 0),
-        separatorBuilder: widget.separatorBuilder ?? (_, __) => const SizedBox.shrink(),
+        separatorBuilder:
+            widget.separatorBuilder ?? (_, __) => const SizedBox.shrink(),
         itemBuilder: (context, index) {
           if (index >= widget.items.length) {
             // Loading indicator
@@ -269,7 +271,7 @@ class _OptimizedGridViewState<T> extends State<OptimizedGridView<T>>
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    
+
     if (widget.enablePerformanceMonitoring) {
       startPerformanceTimer('grid_view_init');
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -297,7 +299,8 @@ class _OptimizedGridViewState<T> extends State<OptimizedGridView<T>>
     if (!widget.hasMore || _isLoadingMore || widget.onLoadMore == null) return;
 
     final position = _scrollController.position;
-    final threshold = position.maxScrollExtent - (widget.loadMoreThreshold * 100);
+    final threshold =
+        position.maxScrollExtent - (widget.loadMoreThreshold * 100);
 
     if (position.pixels >= threshold) {
       _loadMore();
@@ -357,7 +360,7 @@ class _OptimizedGridViewState<T> extends State<OptimizedGridView<T>>
   @override
   void didUpdateWidget(OptimizedGridView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (widget.items.length != oldWidget.items.length ||
         widget.items.hashCode != oldWidget.items.hashCode) {
       _clearCache();
@@ -369,7 +372,7 @@ class _OptimizedGridViewState<T> extends State<OptimizedGridView<T>>
     super.build(context);
 
     if (widget.items.isEmpty) {
-      return widget.emptyBuilder?.call(context) ?? 
+      return widget.emptyBuilder?.call(context) ??
           const Center(child: Text('No items'));
     }
 
@@ -454,7 +457,7 @@ class CachedLazyDataSource<T> extends LazyDataSource<T> {
 
     // Load from source
     final items = await loadPageCallback(page, pageSize);
-    
+
     // Update state
     _pageCache[page] = items;
     _hasMore = items.length == pageSize;
@@ -476,7 +479,7 @@ class CachedLazyDataSource<T> extends LazyDataSource<T> {
 
   Future<void> loadMore() async {
     if (!_hasMore) return;
-    
+
     final nextPage = _currentPage + 1;
     await loadPage(nextPage, pageSize);
   }

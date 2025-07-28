@@ -8,10 +8,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: OnboardingProgressIndicator(
-              currentStep: 2,
-              totalSteps: 5,
-            ),
+            body: OnboardingProgressIndicator(currentStep: 2, totalSteps: 5),
           ),
         ),
       );
@@ -20,14 +17,13 @@ void main() {
       expect(find.byType(Column), findsOneWidget);
     });
 
-    testWidgets('shows step numbers when showStepNumbers is true', (WidgetTester tester) async {
+    testWidgets('shows step numbers when showStepNumbers is true', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: OnboardingProgressIndicator(
-              currentStep: 2,
-              totalSteps: 5,
-            ),
+            body: OnboardingProgressIndicator(currentStep: 2, totalSteps: 5),
           ),
         ),
       );
@@ -36,7 +32,9 @@ void main() {
       expect(find.text('60%'), findsOneWidget);
     });
 
-    testWidgets('hides step numbers when showStepNumbers is false', (WidgetTester tester) async {
+    testWidgets('hides step numbers when showStepNumbers is false', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -53,14 +51,13 @@ void main() {
       expect(find.text('60%'), findsNothing);
     });
 
-    testWidgets('calculates progress percentage correctly', (WidgetTester tester) async {
+    testWidgets('calculates progress percentage correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: OnboardingProgressIndicator(
-              currentStep: 1,
-              totalSteps: 4,
-            ),
+            body: OnboardingProgressIndicator(currentStep: 1, totalSteps: 4),
           ),
         ),
       );
@@ -90,7 +87,9 @@ void main() {
       expect(progressIndicator.height, equals(customHeight));
     });
 
-    testWidgets('uses custom colors when provided', (WidgetTester tester) async {
+    testWidgets('uses custom colors when provided', (
+      WidgetTester tester,
+    ) async {
       const customBackgroundColor = Colors.red;
       const customProgressColor = Colors.blue;
 
@@ -114,14 +113,13 @@ void main() {
       expect(progressIndicator.progressColor, equals(customProgressColor));
     });
 
-    testWidgets('shows correct progress for first step', (WidgetTester tester) async {
+    testWidgets('shows correct progress for first step', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: OnboardingProgressIndicator(
-              currentStep: 0,
-              totalSteps: 3,
-            ),
+            body: OnboardingProgressIndicator(currentStep: 0, totalSteps: 3),
           ),
         ),
       );
@@ -130,14 +128,13 @@ void main() {
       expect(find.text('33%'), findsOneWidget);
     });
 
-    testWidgets('shows correct progress for last step', (WidgetTester tester) async {
+    testWidgets('shows correct progress for last step', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: OnboardingProgressIndicator(
-              currentStep: 2,
-              totalSteps: 3,
-            ),
+            body: OnboardingProgressIndicator(currentStep: 2, totalSteps: 3),
           ),
         ),
       );
@@ -148,7 +145,9 @@ void main() {
   });
 
   group('AnimatedOnboardingProgressIndicator Tests', () {
-    testWidgets('renders with animation controller', (WidgetTester tester) async {
+    testWidgets('renders with animation controller', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -164,7 +163,9 @@ void main() {
       expect(find.byType(AnimatedBuilder), findsOneWidget);
     });
 
-    testWidgets('shows step numbers when showStepNumbers is true', (WidgetTester tester) async {
+    testWidgets('shows step numbers when showStepNumbers is true', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -179,7 +180,9 @@ void main() {
       expect(find.text('Step 2 of 4'), findsOneWidget);
     });
 
-    testWidgets('hides step numbers when showStepNumbers is false', (WidgetTester tester) async {
+    testWidgets('hides step numbers when showStepNumbers is false', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -195,7 +198,9 @@ void main() {
       expect(find.text('Step 2 of 4'), findsNothing);
     });
 
-    testWidgets('applies custom animation duration', (WidgetTester tester) async {
+    testWidgets('applies custom animation duration', (
+      WidgetTester tester,
+    ) async {
       const customDuration = Duration(milliseconds: 500);
 
       await tester.pumpWidget(
@@ -210,13 +215,16 @@ void main() {
         ),
       );
 
-      final progressIndicator = tester.widget<AnimatedOnboardingProgressIndicator>(
-        find.byType(AnimatedOnboardingProgressIndicator),
-      );
+      final progressIndicator = tester
+          .widget<AnimatedOnboardingProgressIndicator>(
+            find.byType(AnimatedOnboardingProgressIndicator),
+          );
       expect(progressIndicator.animationDuration, equals(customDuration));
     });
 
-    testWidgets('updates animation when currentStep changes', (WidgetTester tester) async {
+    testWidgets('updates animation when currentStep changes', (
+      WidgetTester tester,
+    ) async {
       var currentStep = 0;
 
       await tester.pumpWidget(
@@ -257,7 +265,9 @@ void main() {
       expect(find.text('Step 2 of 3'), findsOneWidget);
     });
 
-    testWidgets('disposes animation controller properly', (WidgetTester tester) async {
+    testWidgets('disposes animation controller properly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -271,11 +281,7 @@ void main() {
 
       // Remove the widget to trigger dispose
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SizedBox(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: SizedBox())),
       );
 
       // Should not throw any errors
@@ -288,10 +294,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: StepProgressIndicator(
-              currentStep: 1,
-              totalSteps: 3,
-            ),
+            body: StepProgressIndicator(currentStep: 1, totalSteps: 3),
           ),
         ),
       );
@@ -300,14 +303,13 @@ void main() {
       expect(find.byType(Row), findsOneWidget);
     });
 
-    testWidgets('shows correct number of step circles', (WidgetTester tester) async {
+    testWidgets('shows correct number of step circles', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: StepProgressIndicator(
-              currentStep: 1,
-              totalSteps: 4,
-            ),
+            body: StepProgressIndicator(currentStep: 1, totalSteps: 4),
           ),
         ),
       );
@@ -321,7 +323,9 @@ void main() {
       expect(stepContainers.length, equals(4));
     });
 
-    testWidgets('shows check icon for completed steps', (WidgetTester tester) async {
+    testWidgets('shows check icon for completed steps', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -337,14 +341,13 @@ void main() {
       expect(find.byIcon(Icons.check), findsNWidgets(2));
     });
 
-    testWidgets('shows step numbers for incomplete steps', (WidgetTester tester) async {
+    testWidgets('shows step numbers for incomplete steps', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: StepProgressIndicator(
-              currentStep: 1,
-              totalSteps: 3,
-            ),
+            body: StepProgressIndicator(currentStep: 1, totalSteps: 3),
           ),
         ),
       );
@@ -375,7 +378,9 @@ void main() {
       expect(progressIndicator.stepSize, equals(customStepSize));
     });
 
-    testWidgets('shows labels when provided and showLabels is true', (WidgetTester tester) async {
+    testWidgets('shows labels when provided and showLabels is true', (
+      WidgetTester tester,
+    ) async {
       const labels = ['Start', 'Middle', 'End'];
 
       await tester.pumpWidget(
@@ -396,7 +401,9 @@ void main() {
       expect(find.text('End'), findsOneWidget);
     });
 
-    testWidgets('hides labels when showLabels is false', (WidgetTester tester) async {
+    testWidgets('hides labels when showLabels is false', (
+      WidgetTester tester,
+    ) async {
       const labels = ['Start', 'Middle', 'End'];
 
       await tester.pumpWidget(
@@ -416,7 +423,9 @@ void main() {
       expect(find.text('End'), findsNothing);
     });
 
-    testWidgets('uses custom colors when provided', (WidgetTester tester) async {
+    testWidgets('uses custom colors when provided', (
+      WidgetTester tester,
+    ) async {
       const customCompletedColor = Colors.green;
       const customActiveColor = Colors.blue;
       const customInactiveColor = Colors.grey;

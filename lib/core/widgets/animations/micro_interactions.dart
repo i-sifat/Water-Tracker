@@ -31,17 +31,11 @@ class _TapAnimationState extends State<TapAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
     _scaleAnimation = Tween<double>(
       begin: 1,
       end: widget.scale,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
   }
 
   @override
@@ -105,18 +99,13 @@ class _PulseAnimationState extends State<PulseAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    )..repeat(reverse: true);
+    _controller = AnimationController(duration: widget.duration, vsync: this)
+      ..repeat(reverse: true);
 
     _scaleAnimation = Tween<double>(
       begin: widget.minScale,
       end: widget.maxScale,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
   }
 
   @override
@@ -165,15 +154,9 @@ class _ShakeAnimationState extends State<ShakeAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
-    _offsetAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(_controller);
+    _offsetAnimation = Tween<double>(begin: 0, end: 1).animate(_controller);
   }
 
   void shake() {
@@ -191,10 +174,11 @@ class _ShakeAnimationState extends State<ShakeAnimation>
     return AnimatedBuilder(
       animation: _offsetAnimation,
       builder: (context, child) {
-        final offset = widget.shakeOffset *
+        final offset =
+            widget.shakeOffset *
             (1 - _offsetAnimation.value) *
             (2 * ((_offsetAnimation.value * widget.shakeCount) % 1) - 1);
-        
+
         return Transform.translate(
           offset: Offset(offset, 0),
           child: widget.child,
@@ -230,18 +214,12 @@ class _FadeInAnimationState extends State<FadeInAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
     _fadeAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
 
     // Start animation with delay
     Future.delayed(widget.delay, () {
@@ -259,10 +237,7 @@ class _FadeInAnimationState extends State<FadeInAnimation>
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: widget.child,
-    );
+    return FadeTransition(opacity: _fadeAnimation, child: widget.child);
   }
 }
 
@@ -296,19 +271,13 @@ class _SlideInAnimationState extends State<SlideInAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
     final begin = _getBeginOffset();
     _slideAnimation = Tween<Offset>(
       begin: begin,
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
 
     // Start animation with delay
     Future.delayed(widget.delay, () {
@@ -351,9 +320,4 @@ class _SlideInAnimationState extends State<SlideInAnimation>
   }
 }
 
-enum SlideDirection {
-  fromLeft,
-  fromRight,
-  fromTop,
-  fromBottom,
-}
+enum SlideDirection { fromLeft, fromRight, fromTop, fromBottom }

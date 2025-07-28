@@ -18,27 +18,30 @@ class PremiumStatus extends Equatable {
       isPremium: json['isPremium'] as bool,
       deviceCode: json['deviceCode'] as String,
       unlockCode: json['unlockCode'] as String?,
-      unlockedAt: json['unlockedAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(json['unlockedAt'] as int)
-          : null,
-      expiresAt: json['expiresAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(json['expiresAt'] as int)
-          : null,
-      unlockedFeatures: (json['unlockedFeatures'] as List<dynamic>?)
-          ?.map((f) => PremiumFeature.values.firstWhere(
-                (e) => e.name == f,
-                orElse: () => PremiumFeature.advancedAnalytics,
-              ))
-          .toList() ?? [],
+      unlockedAt:
+          json['unlockedAt'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(json['unlockedAt'] as int)
+              : null,
+      expiresAt:
+          json['expiresAt'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(json['expiresAt'] as int)
+              : null,
+      unlockedFeatures:
+          (json['unlockedFeatures'] as List<dynamic>?)
+              ?.map(
+                (f) => PremiumFeature.values.firstWhere(
+                  (e) => e.name == f,
+                  orElse: () => PremiumFeature.advancedAnalytics,
+                ),
+              )
+              .toList() ??
+          [],
     );
   }
 
   /// Create a free status with device code
   factory PremiumStatus.free(String deviceCode) {
-    return PremiumStatus(
-      isPremium: false,
-      deviceCode: deviceCode,
-    );
+    return PremiumStatus(isPremium: false, deviceCode: deviceCode);
   }
 
   /// Create a premium status
@@ -130,7 +133,12 @@ class PremiumStatus extends Equatable {
 
   @override
   List<Object?> get props => [
-    isPremium, deviceCode, unlockCode, unlockedAt, expiresAt, unlockedFeatures,
+    isPremium,
+    deviceCode,
+    unlockCode,
+    unlockedAt,
+    expiresAt,
+    unlockedFeatures,
   ];
 
   @override
@@ -158,7 +166,9 @@ class DonationProof extends Equatable {
       id: json['id'] as String,
       deviceCode: json['deviceCode'] as String,
       imagePath: json['imagePath'] as String,
-      submittedAt: DateTime.fromMillisecondsSinceEpoch(json['submittedAt'] as int),
+      submittedAt: DateTime.fromMillisecondsSinceEpoch(
+        json['submittedAt'] as int,
+      ),
       amount: json['amount'] as double?,
       transactionId: json['transactionId'] as String?,
       notes: json['notes'] as String?,
@@ -251,7 +261,14 @@ class DonationProof extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, deviceCode, imagePath, submittedAt, amount, transactionId, notes, status,
+    id,
+    deviceCode,
+    imagePath,
+    submittedAt,
+    amount,
+    transactionId,
+    notes,
+    status,
   ];
 
   @override
@@ -353,7 +370,12 @@ class UnlockCodeValidation extends Equatable {
 
   @override
   List<Object?> get props => [
-    isValid, deviceCode, unlockCode, features, expiresAt, errorMessage,
+    isValid,
+    deviceCode,
+    unlockCode,
+    features,
+    expiresAt,
+    errorMessage,
   ];
 
   @override

@@ -31,7 +31,10 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
       _isLoadingStats = true;
     });
 
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    final settingsProvider = Provider.of<SettingsProvider>(
+      context,
+      listen: false,
+    );
     final stats = await settingsProvider.getStorageStats();
 
     if (mounted) {
@@ -78,35 +81,47 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 AppCard(
-                  child: _isLoadingStats
-                      ? const Padding(
-                          padding: EdgeInsets.all(32),
-                          child: Center(child: CircularProgressIndicator()),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildStatRow('Regular Keys', '${_storageStats['regular_keys_count'] ?? 0}'),
-                              const SizedBox(height: 8),
-                              _buildStatRow('Encrypted Keys', '${_storageStats['encrypted_keys_count'] ?? 0}'),
-                              const SizedBox(height: 8),
-                              _buildStatRow('Storage Version', (_storageStats['storage_version'] as String?) ?? 'Unknown'),
-                              const SizedBox(height: 16),
-                              SecondaryButton(
-                                text: 'Refresh Stats',
-                                onPressed: _loadStorageStats,
-                              ),
-                            ],
+                  child:
+                      _isLoadingStats
+                          ? const Padding(
+                            padding: EdgeInsets.all(32),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                          : Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildStatRow(
+                                  'Regular Keys',
+                                  '${_storageStats['regular_keys_count'] ?? 0}',
+                                ),
+                                const SizedBox(height: 8),
+                                _buildStatRow(
+                                  'Encrypted Keys',
+                                  '${_storageStats['encrypted_keys_count'] ?? 0}',
+                                ),
+                                const SizedBox(height: 8),
+                                _buildStatRow(
+                                  'Storage Version',
+                                  (_storageStats['storage_version']
+                                          as String?) ??
+                                      'Unknown',
+                                ),
+                                const SizedBox(height: 16),
+                                SecondaryButton(
+                                  text: 'Refresh Stats',
+                                  onPressed: _loadStorageStats,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Data Export (Premium)
                 const Text(
                   'Data Export',
@@ -117,7 +132,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 PremiumGate(
                   feature: PremiumFeature.dataExport,
                   lockedChild: AppCard(
@@ -138,9 +153,14 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                               ),
                               const SizedBox(width: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.waterFull.withValues(alpha: 0.1),
+                                  color: AppColors.waterFull.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Text(
@@ -206,14 +226,18 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                               Expanded(
                                 child: SecondaryButton(
                                   text: 'Export JSON',
-                                  onPressed: () => _exportData(settingsProvider, 'json'),
+                                  onPressed:
+                                      () =>
+                                          _exportData(settingsProvider, 'json'),
                                 ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: PrimaryButton(
                                   text: 'Export CSV',
-                                  onPressed: () => _exportData(settingsProvider, 'csv'),
+                                  onPressed:
+                                      () =>
+                                          _exportData(settingsProvider, 'csv'),
                                   isLoading: settingsProvider.isLoading,
                                 ),
                               ),
@@ -224,9 +248,9 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Data Retention
                 const Text(
                   'Data Retention',
@@ -237,7 +261,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 AppCard(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -263,15 +287,16 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                         const SizedBox(height: 16),
                         SecondaryButton(
                           text: 'Change Retention Period',
-                          onPressed: () => _showRetentionDialog(settingsProvider),
+                          onPressed:
+                              () => _showRetentionDialog(settingsProvider),
                         ),
                       ],
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Danger Zone
                 const Text(
                   'Danger Zone',
@@ -282,7 +307,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 AppCard(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -308,7 +333,8 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                         const SizedBox(height: 16),
                         SecondaryButton(
                           text: 'Clear All Data',
-                          onPressed: () => _showClearDataDialog(settingsProvider),
+                          onPressed:
+                              () => _showClearDataDialog(settingsProvider),
                         ),
                       ],
                     ),
@@ -328,10 +354,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
-            color: AppColors.textSubtitle,
-          ),
+          style: const TextStyle(fontSize: 14, color: AppColors.textSubtitle),
         ),
         Text(
           value,
@@ -345,7 +368,10 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
     );
   }
 
-  Future<void> _exportData(SettingsProvider settingsProvider, String format) async {
+  Future<void> _exportData(
+    SettingsProvider settingsProvider,
+    String format,
+  ) async {
     final dataTypes = settingsProvider.getAvailableDataTypes();
     final filePath = await settingsProvider.exportDataWithFormat(
       dataTypes: dataTypes,
@@ -364,7 +390,9 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
             onPressed: () {
               // In a real app, you would use share_plus package
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Share functionality coming soon')),
+                const SnackBar(
+                  content: Text('Share functionality coming soon'),
+                ),
               );
             },
           ),
@@ -382,92 +410,95 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
 
   void _showRetentionDialog(SettingsProvider settingsProvider) {
     final controller = TextEditingController();
-    controller.text = settingsProvider.dataManagement.dataRetentionDays.toString();
+    controller.text =
+        settingsProvider.dataManagement.dataRetentionDays.toString();
 
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Data Retention Period'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Days',
-                border: OutlineInputBorder(),
-                helperText: 'Number of days to keep data (1-3650)',
-              ),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Data Retention Period'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Days',
+                    border: OutlineInputBorder(),
+                    helperText: 'Number of days to keep data (1-3650)',
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              PrimaryButton(
+                text: 'Save',
+                onPressed: () {
+                  final days = int.tryParse(controller.text);
+                  if (days != null && days > 0 && days <= 3650) {
+                    settingsProvider.updateDataRetention(days);
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ],
           ),
-          PrimaryButton(
-            text: 'Save',
-            onPressed: () {
-              final days = int.tryParse(controller.text);
-              if (days != null && days > 0 && days <= 3650) {
-                settingsProvider.updateDataRetention(days);
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        ],
-      ),
     );
   }
 
   void _showClearDataDialog(SettingsProvider settingsProvider) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          'Clear All Data',
-          style: TextStyle(color: Colors.red),
-        ),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Are you sure you want to clear all data?'),
-            SizedBox(height: 16),
-            Text(
-              'This will permanently delete:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+      builder:
+          (context) => AlertDialog(
+            title: const Text(
+              'Clear All Data',
+              style: TextStyle(color: Colors.red),
             ),
-            Text('• All hydration records'),
-            Text('• User profile information'),
-            Text('• App preferences'),
-            Text('• Notification settings'),
-            SizedBox(height: 16),
-            Text(
-              'This action cannot be undone.',
-              style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Are you sure you want to clear all data?'),
+                SizedBox(height: 16),
+                Text(
+                  'This will permanently delete:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text('• All hydration records'),
+                Text('• User profile information'),
+                Text('• App preferences'),
+                Text('• Notification settings'),
+                SizedBox(height: 16),
+                Text(
+                  'This action cannot be undone.',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+              PrimaryButton(
+                text: 'Clear All Data',
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _clearAllData(settingsProvider);
+                },
+              ),
+            ],
           ),
-          PrimaryButton(
-            text: 'Clear All Data',
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await _clearAllData(settingsProvider);
-            },
-          ),
-        ],
-      ),
     );
   }
 

@@ -10,27 +10,30 @@ class OnboardingProvider extends ChangeNotifier {
     _loadExistingData();
   }
 
-
-  
   // Current onboarding step (0-based index)
   int _currentStep = 0;
-  
+
   // Total number of onboarding steps
   static const int totalSteps = 10;
-  
+
   // User profile being built during onboarding
   UserProfile _userProfile = UserProfile.create();
-  
+
   // Track which steps are optional and can be skipped
-  final Set<int> _optionalSteps = {2, 6, 7, 8}; // pregnancy, vegetable, sugary drinks, weather
-  
+  final Set<int> _optionalSteps = {
+    2,
+    6,
+    7,
+    8,
+  }; // pregnancy, vegetable, sugary drinks, weather
+
   // Track completed steps
   final Set<int> _completedSteps = {};
-  
+
   // Loading states
   bool _isLoading = false;
   bool _isSaving = false;
-  
+
   // Error handling
   String? _error;
 
@@ -45,7 +48,7 @@ class OnboardingProvider extends ChangeNotifier {
   bool get canSkipCurrent => _optionalSteps.contains(_currentStep);
   double get progress => (_currentStep + 1) / totalSteps;
   bool get isLastStep => _currentStep == totalSteps - 1;
-  
+
   /// Check if current step has valid data
   bool _isStepValid(int step) {
     switch (step) {
@@ -79,9 +82,9 @@ class OnboardingProvider extends ChangeNotifier {
   /// Move to next step
   Future<void> nextStep() async {
     if (!canGoNext) return;
-    
+
     _completedSteps.add(_currentStep);
-    
+
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
       await _saveProgress();
@@ -103,7 +106,7 @@ class OnboardingProvider extends ChangeNotifier {
   /// Skip current step (only if optional)
   Future<void> skipStep() async {
     if (!canSkipCurrent) return;
-    
+
     // Set default values for skipped steps
     _setDefaultForStep(_currentStep);
     await nextStep();
@@ -180,13 +183,19 @@ class OnboardingProvider extends ChangeNotifier {
       case 2: // Gender
         _userProfile = _userProfile.copyWith(gender: Gender.notSpecified);
       case 6: // Pregnancy
-        _userProfile = _userProfile.copyWith(pregnancyStatus: PregnancyStatus.preferNotToSay);
+        _userProfile = _userProfile.copyWith(
+          pregnancyStatus: PregnancyStatus.preferNotToSay,
+        );
       case 7: // Exercise
-        _userProfile = _userProfile.copyWith(activityLevel: ActivityLevel.moderatelyActive);
+        _userProfile = _userProfile.copyWith(
+          activityLevel: ActivityLevel.moderatelyActive,
+        );
       case 8: // Vegetables
         _userProfile = _userProfile.copyWith(vegetableIntake: 3); // Average
       case 9: // Weather
-        _userProfile = _userProfile.copyWith(weatherPreference: WeatherPreference.moderate);
+        _userProfile = _userProfile.copyWith(
+          weatherPreference: WeatherPreference.moderate,
+        );
     }
   }
 
@@ -211,7 +220,6 @@ class OnboardingProvider extends ChangeNotifier {
 
       // Clear temporary onboarding data
       await _clearOnboardingProgress();
-
     } catch (e) {
       _error = 'Failed to complete onboarding: $e';
       debugPrint(_error);
@@ -226,7 +234,10 @@ class OnboardingProvider extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('onboarding_current_step', _currentStep);
-      await prefs.setString('onboarding_user_data', _userProfile.toJson().toString());
+      await prefs.setString(
+        'onboarding_user_data',
+        _userProfile.toJson().toString(),
+      );
     } catch (e) {
       debugPrint('Error saving onboarding progress: $e');
     }
@@ -239,7 +250,7 @@ class OnboardingProvider extends ChangeNotifier {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Check if onboarding is already completed
       final isCompleted = prefs.getBool('onboarding_completed') ?? false;
       if (isCompleted) {
@@ -256,7 +267,7 @@ class OnboardingProvider extends ChangeNotifier {
       } else {
         // Load in-progress onboarding data
         _currentStep = prefs.getInt('onboarding_current_step') ?? 0;
-        
+
         // Try to load partial user data
         final userData = prefs.getString('onboarding_user_data');
         if (userData != null) {
@@ -281,22 +292,23 @@ class OnboardingProvider extends ChangeNotifier {
   /// Load individual fields from SharedPreferences (legacy support)
   void _loadIndividualFields(SharedPreferences prefs) {
     final goals = prefs.getStringList('selected_goals') ?? [];
-    final goalEnums = goals.map((g) {
-      switch (g) {
-        case 'Drink More Water':
-          return Goal.generalHealth;
-        case 'Improve digestions':
-          return Goal.generalHealth;
-        case 'Lead a Healty Lifestyle':
-          return Goal.generalHealth;
-        case 'Lose weight':
-          return Goal.weightLoss;
-        case 'Just trying out the app, mate!':
-          return Goal.generalHealth;
-        default:
-          return Goal.generalHealth;
-      }
-    }).toList();
+    final goalEnums =
+        goals.map((g) {
+          switch (g) {
+            case 'Drink More Water':
+              return Goal.generalHealth;
+            case 'Improve digestions':
+              return Goal.generalHealth;
+            case 'Lead a Healty Lifestyle':
+              return Goal.generalHealth;
+            case 'Lose weight':
+              return Goal.weightLoss;
+            case 'Just trying out the app, mate!':
+              return Goal.generalHealth;
+            default:
+              return Goal.generalHealth;
+          }
+        }).toList();
 
     final genderString = prefs.getString('selected_gender');
     var gender = Gender.notSpecified;
@@ -320,7 +332,7 @@ class OnboardingProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('onboarding_current_step');
       await prefs.remove('onboarding_user_data');
-      
+
       // Clear legacy individual fields
       await prefs.remove('selected_goals');
       await prefs.remove('selected_gender');
@@ -337,11 +349,11 @@ class OnboardingProvider extends ChangeNotifier {
     _userProfile = UserProfile.create();
     _completedSteps.clear();
     _error = null;
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_completed', false);
     await _clearOnboardingProgress();
-    
+
     notifyListeners();
   }
 
@@ -475,7 +487,7 @@ class OnboardingProvider extends ChangeNotifier {
   Future<void> reopenOnboardingForEditing() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Load existing user profile
       final profileData = prefs.getString('user_profile');
       if (profileData != null) {
@@ -485,12 +497,12 @@ class OnboardingProvider extends ChangeNotifier {
 
       // Set onboarding as not completed to allow editing
       await prefs.setBool('onboarding_completed', false);
-      
+
       // Start from first step
       _currentStep = 0;
       _completedSteps.clear();
       _error = null;
-      
+
       notifyListeners();
     } catch (e) {
       _error = 'Failed to reopen onboarding: $e';
@@ -502,7 +514,8 @@ class OnboardingProvider extends ChangeNotifier {
   /// Get completion percentage
   double get completionPercentage {
     final requiredSteps = totalSteps - _optionalSteps.length;
-    final completedRequiredSteps = _completedSteps.where((step) => !_optionalSteps.contains(step)).length;
+    final completedRequiredSteps =
+        _completedSteps.where((step) => !_optionalSteps.contains(step)).length;
     return completedRequiredSteps / requiredSteps;
   }
 
@@ -511,7 +524,12 @@ class OnboardingProvider extends ChangeNotifier {
 
   /// Check if all required steps are completed
   bool get areRequiredStepsCompleted {
-    final requiredSteps = List.generate(totalSteps, (i) => i).where((step) => !_optionalSteps.contains(step));
-    return requiredSteps.every((step) => _completedSteps.contains(step) || step == _currentStep);
+    final requiredSteps = List.generate(
+      totalSteps,
+      (i) => i,
+    ).where((step) => !_optionalSteps.contains(step));
+    return requiredSteps.every(
+      (step) => _completedSteps.contains(step) || step == _currentStep,
+    );
   }
 }

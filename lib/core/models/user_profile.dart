@@ -232,12 +232,16 @@ class UserProfile extends Equatable {
         (e) => e.name == json['weatherPreference'],
         orElse: () => WeatherPreference.moderate,
       ),
-      goals: (json['goals'] as List<dynamic>?)
-          ?.map((g) => Goal.values.firstWhere(
-                (e) => e.name == g,
-                orElse: () => Goal.generalHealth,
-              ))
-          .toList() ?? [],
+      goals:
+          (json['goals'] as List<dynamic>?)
+              ?.map(
+                (g) => Goal.values.firstWhere(
+                  (e) => e.name == g,
+                  orElse: () => Goal.generalHealth,
+                ),
+              )
+              .toList() ??
+          [],
       pregnancyStatus: PregnancyStatus.values.firstWhere(
         (e) => e.name == json['pregnancyStatus'],
         orElse: () => PregnancyStatus.notPregnant,
@@ -247,15 +251,19 @@ class UserProfile extends Equatable {
       dailyGoal: json['dailyGoal'] as int?,
       customDailyGoal: json['customDailyGoal'] as int?,
       notificationsEnabled: json['notificationsEnabled'] as bool? ?? true,
-      reminderTimes: (json['reminderTimes'] as List<dynamic>?)
-          ?.map((t) => DateTime.fromMillisecondsSinceEpoch(t as int))
-          .toList() ?? [],
-      createdAt: json['createdAt'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int)
-          : null,
-      updatedAt: json['updatedAt'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(json['updatedAt'] as int)
-          : null,
+      reminderTimes:
+          (json['reminderTimes'] as List<dynamic>?)
+              ?.map((t) => DateTime.fromMillisecondsSinceEpoch(t as int))
+              .toList() ??
+          [],
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int)
+              : null,
+      updatedAt:
+          json['updatedAt'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(json['updatedAt'] as int)
+              : null,
     );
   }
 
@@ -322,10 +330,10 @@ class UserProfile extends Equatable {
 
   /// Check if profile is complete
   bool get isComplete {
-    return weight != null && 
-           age != null && 
-           gender != Gender.notSpecified &&
-           dailyGoal != null;
+    return weight != null &&
+        age != null &&
+        gender != Gender.notSpecified &&
+        dailyGoal != null;
   }
 
   /// Calculate water intake goal based on profile data
@@ -421,7 +429,8 @@ class UserProfile extends Equatable {
       'dailyGoal': dailyGoal,
       'customDailyGoal': customDailyGoal,
       'notificationsEnabled': notificationsEnabled,
-      'reminderTimes': reminderTimes.map((t) => t.millisecondsSinceEpoch).toList(),
+      'reminderTimes':
+          reminderTimes.map((t) => t.millisecondsSinceEpoch).toList(),
       'createdAt': createdAt?.millisecondsSinceEpoch,
       'updatedAt': updatedAt?.millisecondsSinceEpoch,
     };
@@ -429,10 +438,22 @@ class UserProfile extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, weight, age, gender, activityLevel, weatherPreference,
-    goals, pregnancyStatus, vegetableIntake, sugarDrinkIntake,
-    dailyGoal, customDailyGoal, notificationsEnabled, reminderTimes,
-    createdAt, updatedAt,
+    id,
+    weight,
+    age,
+    gender,
+    activityLevel,
+    weatherPreference,
+    goals,
+    pregnancyStatus,
+    vegetableIntake,
+    sugarDrinkIntake,
+    dailyGoal,
+    customDailyGoal,
+    notificationsEnabled,
+    reminderTimes,
+    createdAt,
+    updatedAt,
   ];
 
   @override

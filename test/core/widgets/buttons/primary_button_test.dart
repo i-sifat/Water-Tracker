@@ -43,7 +43,9 @@ void main() {
       expect(wasPressed, isTrue);
     });
 
-    testWidgets('shows loading indicator when isLoading is true', (WidgetTester tester) async {
+    testWidgets('shows loading indicator when isLoading is true', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -60,7 +62,9 @@ void main() {
       expect(find.text('Test Button'), findsNothing);
     });
 
-    testWidgets('is disabled when isDisabled is true', (WidgetTester tester) async {
+    testWidgets('is disabled when isDisabled is true', (
+      WidgetTester tester,
+    ) async {
       var wasPressed = false;
 
       await tester.pumpWidget(
@@ -101,7 +105,9 @@ void main() {
       expect(find.text('Test Button'), findsOneWidget);
     });
 
-    testWidgets('respects custom width and height', (WidgetTester tester) async {
+    testWidgets('respects custom width and height', (
+      WidgetTester tester,
+    ) async {
       const customWidth = 300.0;
       const customHeight = 80.0;
 
@@ -127,10 +133,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PrimaryButton(
-              onPressed: () {},
-              text: 'Test Button',
-            ),
+            body: PrimaryButton(onPressed: () {}, text: 'Test Button'),
           ),
         ),
       );

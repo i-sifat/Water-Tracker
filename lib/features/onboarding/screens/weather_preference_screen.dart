@@ -16,7 +16,8 @@ class WeatherSelectionScreen extends StatefulWidget {
 class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
   String? _selectedWeather = 'normal'; // Initialize with middle option
   final PageController _pageController = PageController(
-    viewportFraction: 0.7, // Increased to show more of main card while keeping hints of adjacent cards
+    viewportFraction:
+        0.7, // Increased to show more of main card while keeping hints of adjacent cards
     initialPage: 1, // Start with middle card (Normal weather)
   );
 
@@ -108,7 +109,9 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
 
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 8), // Reduced margin for better spacing
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                    ), // Reduced margin for better spacing
                     decoration: BoxDecoration(
                       color:
                           isSelected

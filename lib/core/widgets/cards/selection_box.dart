@@ -28,16 +28,18 @@ class SelectionBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return SizedBox(
       width: width,
       height: height,
       child: AppCard(
         onTap: onTap,
         isSelected: isSelected,
-        backgroundColor: isSelected 
-            ? (selectedBackgroundColor ?? theme.colorScheme.primaryContainer)
-            : backgroundColor,
+        backgroundColor:
+            isSelected
+                ? (selectedBackgroundColor ??
+                    theme.colorScheme.primaryContainer)
+                : backgroundColor,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -45,18 +47,20 @@ class SelectionBox extends StatelessWidget {
               Icon(
                 icon,
                 size: 32,
-                color: isSelected 
-                    ? theme.colorScheme.primary 
-                    : theme.colorScheme.onSurface,
+                color:
+                    isSelected
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurface,
               ),
               const SizedBox(height: 12),
             ],
             Text(
               title,
               style: theme.textTheme.titleMedium?.copyWith(
-                color: isSelected 
-                    ? theme.colorScheme.primary 
-                    : theme.colorScheme.onSurface,
+                color:
+                    isSelected
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurface,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
               textAlign: TextAlign.center,
@@ -66,9 +70,10 @@ class SelectionBox extends StatelessWidget {
               Text(
                 subtitle!,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: isSelected 
-                      ? theme.colorScheme.primary.withValues(alpha: 0.8)
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  color:
+                      isSelected
+                          ? theme.colorScheme.primary.withValues(alpha: 0.8)
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
               ),

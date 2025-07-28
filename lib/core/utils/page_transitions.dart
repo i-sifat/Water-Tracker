@@ -17,14 +17,12 @@ class PageTransitions {
       transitionDuration: duration,
       reverseTransitionDuration: duration,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final tween = Tween(begin: begin, end: end).chain(
-          CurveTween(curve: curve),
-        );
-        
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+        final tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+
+        return SlideTransition(position: animation.drive(tween), child: child);
       },
     );
   }
@@ -66,14 +64,16 @@ class PageTransitions {
       transitionDuration: duration,
       reverseTransitionDuration: duration,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final scaleTween = Tween(begin: begin, end: end).chain(
-          CurveTween(curve: curve),
-        );
-        
-        final fadeTween = Tween(begin: 0, end: 1).chain(
-          CurveTween(curve: Curves.easeIn),
-        );
-        
+        final scaleTween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+
+        final fadeTween = Tween(
+          begin: 0,
+          end: 1,
+        ).chain(CurveTween(curve: Curves.easeIn));
+
         return ScaleTransition(
           scale: animation.drive(scaleTween),
           alignment: alignment,
@@ -107,7 +107,8 @@ class PageTransitions {
       Animation<double> animation,
       Animation<double> secondaryAnimation,
       Widget child,
-    ) transitionsBuilder,
+    )
+    transitionsBuilder,
     RouteSettings? settings,
     Duration duration = const Duration(milliseconds: 300),
     bool maintainState = true,
@@ -143,11 +144,8 @@ class PageTransitions {
           begin: const Offset(0, 1),
           end: Offset.zero,
         ).chain(CurveTween(curve: curve));
-        
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+
+        return SlideTransition(position: animation.drive(tween), child: child);
       },
     );
   }
@@ -165,10 +163,7 @@ class PageTransitions {
       transitionDuration: duration,
       reverseTransitionDuration: duration,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       },
     );
   }
@@ -183,12 +178,14 @@ extension NavigatorExtensions on NavigatorState {
     Duration? duration,
     Offset? begin,
   }) {
-    return push<T>(PageTransitions.slideTransition<T>(
-      page: page,
-      settings: settings,
-      duration: duration ?? const Duration(milliseconds: 250),
-      begin: begin ?? const Offset(1, 0),
-    ));
+    return push<T>(
+      PageTransitions.slideTransition<T>(
+        page: page,
+        settings: settings,
+        duration: duration ?? const Duration(milliseconds: 250),
+        begin: begin ?? const Offset(1, 0),
+      ),
+    );
   }
 
   /// Push with fade transition
@@ -197,11 +194,13 @@ extension NavigatorExtensions on NavigatorState {
     RouteSettings? settings,
     Duration? duration,
   }) {
-    return push<T>(PageTransitions.fadeTransition<T>(
-      page: page,
-      settings: settings,
-      duration: duration ?? const Duration(milliseconds: 200),
-    ));
+    return push<T>(
+      PageTransitions.fadeTransition<T>(
+        page: page,
+        settings: settings,
+        duration: duration ?? const Duration(milliseconds: 200),
+      ),
+    );
   }
 
   /// Push with scale transition
@@ -211,12 +210,14 @@ extension NavigatorExtensions on NavigatorState {
     Duration? duration,
     double? begin,
   }) {
-    return push<T>(PageTransitions.scaleTransition<T>(
-      page: page,
-      settings: settings,
-      duration: duration ?? const Duration(milliseconds: 300),
-      begin: begin ?? 0.8,
-    ));
+    return push<T>(
+      PageTransitions.scaleTransition<T>(
+        page: page,
+        settings: settings,
+        duration: duration ?? const Duration(milliseconds: 300),
+        begin: begin ?? 0.8,
+      ),
+    );
   }
 
   /// Push with no transition (instant)
@@ -224,10 +225,9 @@ extension NavigatorExtensions on NavigatorState {
     Widget page, {
     RouteSettings? settings,
   }) {
-    return push<T>(PageTransitions.noTransition<T>(
-      page: page,
-      settings: settings,
-    ));
+    return push<T>(
+      PageTransitions.noTransition<T>(page: page, settings: settings),
+    );
   }
 
   /// Push replacement with slide transition
@@ -237,11 +237,14 @@ extension NavigatorExtensions on NavigatorState {
     TO? result,
     Duration? duration,
   }) {
-    return pushReplacement<T, TO>(PageTransitions.slideTransition<T>(
-      page: page,
-      settings: settings,
-      duration: duration ?? const Duration(milliseconds: 250),
-    ), result: result);
+    return pushReplacement<T, TO>(
+      PageTransitions.slideTransition<T>(
+        page: page,
+        settings: settings,
+        duration: duration ?? const Duration(milliseconds: 250),
+      ),
+      result: result,
+    );
   }
 
   /// Push replacement with fade transition
@@ -251,11 +254,14 @@ extension NavigatorExtensions on NavigatorState {
     TO? result,
     Duration? duration,
   }) {
-    return pushReplacement<T, TO>(PageTransitions.fadeTransition<T>(
-      page: page,
-      settings: settings,
-      duration: duration ?? const Duration(milliseconds: 200),
-    ), result: result);
+    return pushReplacement<T, TO>(
+      PageTransitions.fadeTransition<T>(
+        page: page,
+        settings: settings,
+        duration: duration ?? const Duration(milliseconds: 200),
+      ),
+      result: result,
+    );
   }
 
   /// Push replacement with no transition (instant)
@@ -264,10 +270,10 @@ extension NavigatorExtensions on NavigatorState {
     RouteSettings? settings,
     TO? result,
   }) {
-    return pushReplacement<T, TO>(PageTransitions.noTransition<T>(
-      page: page,
-      settings: settings,
-    ), result: result);
+    return pushReplacement<T, TO>(
+      PageTransitions.noTransition<T>(page: page, settings: settings),
+      result: result,
+    );
   }
 }
 
@@ -281,28 +287,36 @@ mixin OptimizedNavigationMixin<T extends StatefulWidget> on State<T> {
     Duration? duration,
   }) async {
     final operation = operationName ?? 'navigation_${page.runtimeType}';
-    
+
     // Start performance monitoring
     final stopwatch = Stopwatch()..start();
-    
+
     try {
-      final result = useSlideTransition
-          ? await Navigator.of(context).pushSlide<R>(page, duration: duration)
-          : await Navigator.of(context).pushFade<R>(page, duration: duration);
-      
+      final result =
+          useSlideTransition
+              ? await Navigator.of(
+                context,
+              ).pushSlide<R>(page, duration: duration)
+              : await Navigator.of(
+                context,
+              ).pushFade<R>(page, duration: duration);
+
       return result;
     } finally {
       stopwatch.stop();
-      
+
       // Log slow navigations
       if (stopwatch.elapsedMilliseconds > 500) {
-        debugPrint('Slow navigation to ${page.runtimeType}: ${stopwatch.elapsedMilliseconds}ms');
+        debugPrint(
+          'Slow navigation to ${page.runtimeType}: ${stopwatch.elapsedMilliseconds}ms',
+        );
       }
     }
   }
 
   /// Navigate and replace with performance monitoring
-  Future<R?> navigateAndReplaceWithPerformance<R extends Object?, TO extends Object?>(
+  Future<R?>
+  navigateAndReplaceWithPerformance<R extends Object?, TO extends Object?>(
     Widget page, {
     TO? result,
     String? operationName,
@@ -310,28 +324,31 @@ mixin OptimizedNavigationMixin<T extends StatefulWidget> on State<T> {
     Duration? duration,
   }) async {
     final operation = operationName ?? 'navigation_replace_${page.runtimeType}';
-    
+
     final stopwatch = Stopwatch()..start();
-    
+
     try {
-      final navigationResult = useSlideTransition
-          ? await Navigator.of(context).pushReplacementSlide<R, TO>(
-              page,
-              result: result,
-              duration: duration,
-            )
-          : await Navigator.of(context).pushReplacementFade<R, TO>(
-              page,
-              result: result,
-              duration: duration,
-            );
-      
+      final navigationResult =
+          useSlideTransition
+              ? await Navigator.of(context).pushReplacementSlide<R, TO>(
+                page,
+                result: result,
+                duration: duration,
+              )
+              : await Navigator.of(context).pushReplacementFade<R, TO>(
+                page,
+                result: result,
+                duration: duration,
+              );
+
       return navigationResult;
     } finally {
       stopwatch.stop();
-      
+
       if (stopwatch.elapsedMilliseconds > 500) {
-        debugPrint('Slow navigation replace to ${page.runtimeType}: ${stopwatch.elapsedMilliseconds}ms');
+        debugPrint(
+          'Slow navigation replace to ${page.runtimeType}: ${stopwatch.elapsedMilliseconds}ms',
+        );
       }
     }
   }

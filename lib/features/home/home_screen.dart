@@ -67,7 +67,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.of(context).pushNamed(SettingsScreen.routeName);
+                          Navigator.of(
+                            context,
+                          ).pushNamed(SettingsScreen.routeName);
                         },
                       ),
                     ),

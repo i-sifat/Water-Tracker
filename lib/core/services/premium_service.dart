@@ -17,15 +17,15 @@ class PremiumService {
   static const String _deviceCodeKey = 'device_code';
   static const String _unlockCodeKey = 'unlock_code';
   static const String _unlockTimestampKey = 'unlock_timestamp';
-  
+
   // Developer email for donation proof submission
   static const String _developerEmail = 'developer@watertracker.com';
-  
+
   // Secret key for unlock code validation (in production, this should be more secure)
   static const String _secretKey = 'WaterTracker2024Premium';
 
   final DeviceService _deviceService = DeviceService();
-  
+
   bool? _cachedPremiumStatus;
   String? _cachedDeviceCode;
 
@@ -38,7 +38,7 @@ class PremiumService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final isPremium = prefs.getBool(_premiumStatusKey) ?? false;
-      
+
       if (isPremium) {
         // Verify the unlock is still valid by checking the stored unlock code
         final storedUnlockCode = prefs.getString(_unlockCodeKey);
@@ -52,7 +52,7 @@ class PremiumService {
           }
         }
       }
-      
+
       _cachedPremiumStatus = isPremium;
       return isPremium;
     } catch (e) {
@@ -71,13 +71,13 @@ class PremiumService {
     try {
       final prefs = await SharedPreferences.getInstance();
       var deviceCode = prefs.getString(_deviceCodeKey);
-      
+
       if (deviceCode == null) {
         // Generate new device code
         deviceCode = await _deviceService.generateUniqueCode();
         await prefs.setString(_deviceCodeKey, deviceCode);
       }
-      
+
       _cachedDeviceCode = deviceCode;
       return deviceCode;
     } catch (e) {
@@ -92,10 +92,10 @@ class PremiumService {
     try {
       final deviceId = await _deviceService.getDeviceId();
       final deviceCode = await generateDeviceCode();
-      
+
       // Generate expected unlock code
       final expectedCode = await _generateUnlockCode(deviceId, deviceCode);
-      
+
       return unlockCode.toUpperCase() == expectedCode.toUpperCase();
     } catch (e) {
       debugPrint('Error validating unlock code: $e');
@@ -107,15 +107,18 @@ class PremiumService {
   Future<bool> unlockPremium(String unlockCode) async {
     try {
       final isValid = await validateUnlockCode(unlockCode);
-      
+
       if (isValid) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool(_premiumStatusKey, true);
         await prefs.setString(_unlockCodeKey, unlockCode.toUpperCase());
-        await prefs.setInt(_unlockTimestampKey, DateTime.now().millisecondsSinceEpoch);
-        
+        await prefs.setInt(
+          _unlockTimestampKey,
+          DateTime.now().millisecondsSinceEpoch,
+        );
+
         _cachedPremiumStatus = true;
-        
+
         debugPrint('Premium features unlocked successfully');
         return true;
       } else {
@@ -129,15 +132,15 @@ class PremiumService {
   }
 
   /// Composes and launches email for donation proof submission
-  Future<bool> submitDonationProof({
-    String? additionalMessage,
-  }) async {
+  Future<bool> submitDonationProof({String? additionalMessage}) async {
     try {
       final deviceCode = await generateDeviceCode();
       final deviceInfo = await _deviceService.getDeviceInfo();
-      
-      final subject = Uri.encodeComponent('Water Tracker Premium Unlock Request');
-      
+
+      final subject = Uri.encodeComponent(
+        'Water Tracker Premium Unlock Request',
+      );
+
       final body = Uri.encodeComponent('''
 Hello,
 
@@ -184,7 +187,8 @@ Thank you!
       'accountType': 'Personal',
       'accountName': 'Water Tracker Developer',
       'suggestedAmount': '100 BDT',
-      'instructions': 'Send money to the above bKash number and take a screenshot of the transaction.',
+      'instructions':
+          'Send money to the above bKash number and take a screenshot of the transaction.',
     };
   }
 
@@ -197,20 +201,21 @@ Thank you!
   Future<Map<String, dynamic>> getPremiumInfo() async {
     final deviceCode = await generateDeviceCode();
     final isPremium = await isPremiumUnlocked();
-    
+
     String? unlockTimestamp;
     if (isPremium) {
       try {
         final prefs = await SharedPreferences.getInstance();
         final timestamp = prefs.getInt(_unlockTimestampKey);
         if (timestamp != null) {
-          unlockTimestamp = DateTime.fromMillisecondsSinceEpoch(timestamp).toString();
+          unlockTimestamp =
+              DateTime.fromMillisecondsSinceEpoch(timestamp).toString();
         }
       } catch (e) {
         debugPrint('Error getting unlock timestamp: $e');
       }
     }
-    
+
     return {
       'isPremium': isPremium,
       'deviceCode': deviceCode,
@@ -232,7 +237,7 @@ Thank you!
       final combined = '$deviceId-$deviceCode-$_secretKey';
       final bytes = utf8.encode(combined);
       final digest = sha256.convert(bytes);
-      
+
       // Take first 16 characters and format as XXXX-XXXX-XXXX-XXXX
       final code = digest.toString().substring(0, 16).toUpperCase();
       return '${code.substring(0, 4)}-${code.substring(4, 8)}-${code.substring(8, 12)}-${code.substring(12, 16)}';
@@ -248,7 +253,7 @@ Thank you!
       final deviceId = await _deviceService.getDeviceId();
       final deviceCode = await generateDeviceCode();
       final expectedCode = await _generateUnlockCode(deviceId, deviceCode);
-      
+
       return storedCode.toUpperCase() == expectedCode.toUpperCase();
     } catch (e) {
       debugPrint('Error validating stored unlock code: $e');
@@ -263,14 +268,12 @@ Thank you!
       await prefs.remove(_premiumStatusKey);
       await prefs.remove(_unlockCodeKey);
       await prefs.remove(_unlockTimestampKey);
-      
+
       _cachedPremiumStatus = false;
-      
+
       debugPrint('Premium status reset');
     } catch (e) {
       debugPrint('Error resetting premium status: $e');
     }
   }
 }
-
-

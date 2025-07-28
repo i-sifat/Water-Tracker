@@ -24,12 +24,14 @@ class CustomDrinkType extends Equatable {
       color: json['color'] as int?,
       description: json['description'] as String?,
       isActive: json['isActive'] as bool? ?? true,
-      createdAt: json['createdAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int)
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(json['updatedAt'] as int)
-          : null,
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int)
+              : null,
+      updatedAt:
+          json['updatedAt'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(json['updatedAt'] as int)
+              : null,
     );
   }
 
@@ -126,16 +128,16 @@ class CustomDrinkType extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        waterPercentage,
-        icon,
-        color,
-        description,
-        isActive,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    name,
+    waterPercentage,
+    icon,
+    color,
+    description,
+    isActive,
+    createdAt,
+    updatedAt,
+  ];
 
   @override
   String toString() {
@@ -151,7 +153,9 @@ extension CustomDrinkTypeList on List<CustomDrinkType> {
   /// Find by name
   CustomDrinkType? findByName(String name) {
     try {
-      return firstWhere((type) => type.name.toLowerCase() == name.toLowerCase());
+      return firstWhere(
+        (type) => type.name.toLowerCase() == name.toLowerCase(),
+      );
     } catch (e) {
       return null;
     }

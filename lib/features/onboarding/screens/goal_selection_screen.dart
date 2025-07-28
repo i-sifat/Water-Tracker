@@ -74,7 +74,10 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
         return OnboardingScreenWrapper(
           title: 'Select Your Goals',
           subtitle: 'Choose one or more goals to personalize your experience',
-          onContinue: _selectedGoals.isNotEmpty ? () => _handleContinue(onboardingProvider) : null,
+          onContinue:
+              _selectedGoals.isNotEmpty
+                  ? () => _handleContinue(onboardingProvider)
+                  : null,
           canContinue: _selectedGoals.isNotEmpty,
           isLoading: onboardingProvider.isSaving,
           child: ListView.separated(
@@ -102,20 +105,24 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isSelected
-                          ? AppColors.selectedBorder
-                          : AppColors.unselectedBorder,
+                      color:
+                          isSelected
+                              ? AppColors.selectedBorder
+                              : AppColors.unselectedBorder,
                       width: isSelected ? 2 : 1,
                     ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: AppColors.selectedBorder.withValues(alpha: 0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : null,
+                    boxShadow:
+                        isSelected
+                            ? [
+                              BoxShadow(
+                                color: AppColors.selectedBorder.withValues(
+                                  alpha: 0.1,
+                                ),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                            : null,
                   ),
                   child: Row(
                     children: [
@@ -143,9 +150,10 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: isSelected
-                                    ? AppColors.selectedBorder
-                                    : AppColors.assessmentText,
+                                color:
+                                    isSelected
+                                        ? AppColors.selectedBorder
+                                        : AppColors.assessmentText,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -165,22 +173,25 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isSelected
-                                ? AppColors.selectedBorder
-                                : AppColors.unselectedBorder,
+                            color:
+                                isSelected
+                                    ? AppColors.selectedBorder
+                                    : AppColors.unselectedBorder,
                             width: 2,
                           ),
-                          color: isSelected
-                              ? AppColors.selectedBorder
-                              : Colors.transparent,
+                          color:
+                              isSelected
+                                  ? AppColors.selectedBorder
+                                  : Colors.transparent,
                         ),
-                        child: isSelected
-                            ? const Icon(
-                                Icons.check,
-                                size: 16,
-                                color: Colors.white,
-                              )
-                            : null,
+                        child:
+                            isSelected
+                                ? const Icon(
+                                  Icons.check,
+                                  size: 16,
+                                  color: Colors.white,
+                                )
+                                : null,
                       ),
                     ],
                   ),

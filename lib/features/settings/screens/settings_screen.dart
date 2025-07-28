@@ -38,7 +38,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     // Initialize settings provider if not already done
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+      final settingsProvider = Provider.of<SettingsProvider>(
+        context,
+        listen: false,
+      );
       if (!settingsProvider.isInitialized) {
         settingsProvider.reloadSettings();
       }
@@ -147,7 +150,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildUserProfileCard(BuildContext context, SettingsProvider settingsProvider) {
+  Widget _buildUserProfileCard(
+    BuildContext context,
+    SettingsProvider settingsProvider,
+  ) {
     final userProfile = settingsProvider.userProfile;
     final avatar = settingsProvider.appPreferences.selectedAvatar;
 
@@ -158,14 +164,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: CircleAvatar(
               radius: 24,
               backgroundColor: AppColors.waterFull.withValues(alpha: 0.1),
-              child: SvgPicture.asset(
-                avatar.assetPath,
-                width: 32,
-                height: 32,
-              ),
+              child: SvgPicture.asset(avatar.assetPath, width: 32, height: 32),
             ),
             title: Text(
-              userProfile?.isComplete == true 
+              userProfile?.isComplete == true
                   ? '${userProfile!.age} years old, ${userProfile.gender.displayName}'
                   : 'Complete your profile',
               style: const TextStyle(
@@ -177,7 +179,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Daily Goal: ${settingsProvider.getFormattedDailyGoal()}',
               style: const TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSubtitle,
+            ),
             onTap: () => _navigateToUserProfile(context),
           ),
           const Divider(height: 1),
@@ -194,7 +200,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               avatar.displayName,
               style: const TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSubtitle,
+            ),
             onTap: () => _navigateToAvatarSelection(context),
           ),
         ],
@@ -202,14 +212,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildNotificationCard(BuildContext context, SettingsProvider settingsProvider) {
+  Widget _buildNotificationCard(
+    BuildContext context,
+    SettingsProvider settingsProvider,
+  ) {
     final notificationSettings = settingsProvider.notificationSettings;
 
     return AppCard(
       child: Column(
         children: [
           SwitchListTile(
-            secondary: const Icon(Icons.notifications, color: AppColors.waterFull),
+            secondary: const Icon(
+              Icons.notifications,
+              color: AppColors.waterFull,
+            ),
             title: const Text(
               'Notifications',
               style: TextStyle(
@@ -218,13 +234,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             subtitle: Text(
-              notificationSettings.enabled 
+              notificationSettings.enabled
                   ? 'Every ${notificationSettings.interval}h from ${notificationSettings.startHour}:00 to ${notificationSettings.endHour}:00'
                   : 'Disabled',
               style: const TextStyle(color: AppColors.textSubtitle),
             ),
             value: notificationSettings.enabled,
-            onChanged: (value) => settingsProvider.toggleNotifications(enabled: value),
+            onChanged:
+                (value) => settingsProvider.toggleNotifications(enabled: value),
             activeColor: AppColors.waterFull,
           ),
           if (notificationSettings.enabled) ...[
@@ -242,14 +259,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'Customize timing and frequency',
                 style: TextStyle(color: AppColors.textSubtitle),
               ),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: AppColors.textSubtitle,
+              ),
               onTap: () => _navigateToNotificationSettings(context),
             ),
             const Divider(height: 1),
             PremiumGate(
               feature: PremiumFeature.customReminders,
               lockedChild: ListTile(
-                leading: Icon(Icons.alarm_add, color: AppColors.textSubtitle.withValues(alpha: 0.5)),
+                leading: Icon(
+                  Icons.alarm_add,
+                  color: AppColors.textSubtitle.withValues(alpha: 0.5),
+                ),
                 title: Text(
                   'Custom Reminders',
                   style: TextStyle(
@@ -265,7 +289,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.waterFull.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -280,13 +307,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(Icons.lock, size: 16, color: AppColors.textSubtitle),
+                    const Icon(
+                      Icons.lock,
+                      size: 16,
+                      color: AppColors.textSubtitle,
+                    ),
                   ],
                 ),
                 onTap: () => _showPremiumDialog(context),
               ),
               child: ListTile(
-                leading: const Icon(Icons.alarm_add, color: AppColors.waterFull),
+                leading: const Icon(
+                  Icons.alarm_add,
+                  color: AppColors.waterFull,
+                ),
                 title: const Text(
                   'Custom Reminders',
                   style: TextStyle(
@@ -302,7 +336,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.waterFull.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -317,7 +354,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: AppColors.textSubtitle,
+                    ),
                   ],
                 ),
                 onTap: () => _navigateToCustomReminders(context),
@@ -329,7 +370,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildPreferencesCard(BuildContext context, SettingsProvider settingsProvider) {
+  Widget _buildPreferencesCard(
+    BuildContext context,
+    SettingsProvider settingsProvider,
+  ) {
     final preferences = settingsProvider.appPreferences;
 
     return AppCard(
@@ -348,12 +392,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               preferences.units.displayName,
               style: const TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSubtitle,
+            ),
             onTap: () => _showUnitsDialog(context, settingsProvider),
           ),
           const Divider(height: 1),
           ListTile(
-            leading: const Icon(Icons.track_changes, color: AppColors.waterFull),
+            leading: const Icon(
+              Icons.track_changes,
+              color: AppColors.waterFull,
+            ),
             title: const Text(
               'Daily Goal',
               style: TextStyle(
@@ -365,7 +416,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               settingsProvider.getFormattedDailyGoal(),
               style: const TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSubtitle,
+            ),
             onTap: () => _showDailyGoalDialog(context, settingsProvider),
           ),
           const Divider(height: 1),
@@ -401,7 +456,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: TextStyle(color: AppColors.textSubtitle),
             ),
             value: preferences.hapticFeedbackEnabled,
-            onChanged: (value) => settingsProvider.toggleHapticFeedback(enabled: value),
+            onChanged:
+                (value) =>
+                    settingsProvider.toggleHapticFeedback(enabled: value),
             activeColor: AppColors.waterFull,
           ),
         ],
@@ -429,7 +486,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               themeProvider.themeModeDisplayName,
               style: const TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSubtitle,
+            ),
             onTap: () => _showThemeDialog(context, themeProvider),
           ),
         );
@@ -437,7 +498,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildDataManagementCard(BuildContext context, SettingsProvider settingsProvider) {
+  Widget _buildDataManagementCard(
+    BuildContext context,
+    SettingsProvider settingsProvider,
+  ) {
     final dataManagement = settingsProvider.dataManagement;
 
     return AppCard(
@@ -453,12 +517,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             subtitle: Text(
-              dataManagement.autoBackupEnabled 
+              dataManagement.autoBackupEnabled
                   ? 'Auto backup: ${dataManagement.backupFrequency.displayName}'
                   : 'Auto backup disabled',
               style: const TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSubtitle,
+            ),
             onTap: () => _navigateToBackupRestore(context),
           ),
           const Divider(height: 1),
@@ -475,7 +543,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Export, clear, and manage your data',
               style: TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSubtitle,
+            ),
             onTap: () => _navigateToDataManagement(context),
           ),
         ],
@@ -483,7 +555,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildPremiumCard(BuildContext context, SettingsProvider settingsProvider) {
+  Widget _buildPremiumCard(
+    BuildContext context,
+    SettingsProvider settingsProvider,
+  ) {
     return FutureBuilder<bool>(
       future: settingsProvider.isPremiumUnlocked(),
       builder: (context, snapshot) {
@@ -503,14 +578,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             subtitle: Text(
-              isPremium 
+              isPremium
                   ? 'Thank you for supporting the app!'
                   : 'Unlock advanced features with a donation',
               style: const TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: isPremium 
-                ? const Icon(Icons.check_circle, color: Colors.green)
-                : const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing:
+                isPremium
+                    ? const Icon(Icons.check_circle, color: Colors.green)
+                    : const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: AppColors.textSubtitle,
+                    ),
             onTap: isPremium ? null : () => _navigateToPremium(context),
           ),
         );
@@ -535,7 +615,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Version 1.0.0',
               style: TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSubtitle,
+            ),
             onTap: () => _showAboutDialog(context),
           ),
           const Divider(height: 1),
@@ -552,7 +636,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Get help and contact support',
               style: TextStyle(color: AppColors.textSubtitle),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSubtitle,
+            ),
             onTap: () => _showHelpDialog(context),
           ),
         ],
@@ -564,12 +652,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         final l10n = AppLocalizations.of(context)!;
-        
+
         return AppCard(
           child: Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.accessibility, color: AppColors.waterFull),
+                leading: const Icon(
+                  Icons.accessibility,
+                  color: AppColors.waterFull,
+                ),
                 title: Text(
                   l10n.accessibility,
                   style: const TextStyle(
@@ -578,17 +669,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 subtitle: Text(
-                  themeProvider.isHighContrastEnabled 
+                  themeProvider.isHighContrastEnabled
                       ? 'High contrast enabled'
                       : 'Configure accessibility options',
                   style: const TextStyle(color: AppColors.textSubtitle),
                 ),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: AppColors.textSubtitle,
+                ),
                 onTap: () => _navigateToAccessibilitySettings(context),
               ),
               const Divider(height: 1),
               ListTile(
-                leading: const Icon(Icons.text_fields, color: AppColors.waterFull),
+                leading: const Icon(
+                  Icons.text_fields,
+                  color: AppColors.waterFull,
+                ),
                 title: Text(
                   l10n.textSize,
                   style: const TextStyle(
@@ -611,7 +709,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: AppColors.textSubtitle,
+                    ),
                   ],
                 ),
                 onTap: () => _navigateToAccessibilitySettings(context),
@@ -626,7 +728,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildLanguageCard(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final currentLocale = Localizations.localeOf(context);
-    
+
     return AppCard(
       child: ListTile(
         leading: const Icon(Icons.language, color: AppColors.waterFull),
@@ -641,7 +743,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _getLanguageDisplayName(currentLocale),
           style: const TextStyle(color: AppColors.textSubtitle),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSubtitle),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: AppColors.textSubtitle,
+        ),
         onTap: () => _navigateToLanguageSelection(context),
       ),
     );
@@ -683,9 +789,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _navigateToUserProfile(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (context) => const UserProfileScreen(),
-      ),
+      MaterialPageRoute<void>(builder: (context) => const UserProfileScreen()),
     );
   }
 
@@ -736,7 +840,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showLanguageDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final currentLocale = Localizations.localeOf(context);
-    
+
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -744,23 +848,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: Text(l10n.language),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: AppLocalizations.supportedLocales.map((locale) {
-              final isSelected = locale.languageCode == currentLocale.languageCode;
-              return ListTile(
-                title: Text(_getLanguageDisplayName(locale)),
-                trailing: isSelected ? const Icon(Icons.check, color: AppColors.waterFull) : null,
-                onTap: () {
-                  Navigator.of(context).pop();
-                  // Note: Language switching would require app restart or more complex state management
-                  // For now, we'll show a message that this feature is coming soon
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Language switching will be available in a future update'),
-                    ),
+            children:
+                AppLocalizations.supportedLocales.map((locale) {
+                  final isSelected =
+                      locale.languageCode == currentLocale.languageCode;
+                  return ListTile(
+                    title: Text(_getLanguageDisplayName(locale)),
+                    trailing:
+                        isSelected
+                            ? const Icon(
+                              Icons.check,
+                              color: AppColors.waterFull,
+                            )
+                            : null,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      // Note: Language switching would require app restart or more complex state management
+                      // For now, we'll show a message that this feature is coming soon
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Language switching will be available in a future update',
+                          ),
+                        ),
+                      );
+                    },
                   );
-                },
-              );
-            }).toList(),
+                }).toList(),
           ),
           actions: [
             TextButton(
@@ -774,211 +888,228 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // Dialog methods
-  void _showUnitsDialog(BuildContext context, SettingsProvider settingsProvider) {
+  void _showUnitsDialog(
+    BuildContext context,
+    SettingsProvider settingsProvider,
+  ) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Select Units'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: WaterUnits.values.map((unit) {
-            return RadioListTile<WaterUnits>(
-              title: Text(unit.displayName),
-              value: unit,
-              groupValue: settingsProvider.appPreferences.units,
-              onChanged: (value) {
-                if (value != null) {
-                  settingsProvider.updateWaterUnits(value);
-                  Navigator.of(context).pop();
-                }
-              },
-              activeColor: AppColors.waterFull,
-            );
-          }).toList(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Select Units'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  WaterUnits.values.map((unit) {
+                    return RadioListTile<WaterUnits>(
+                      title: Text(unit.displayName),
+                      value: unit,
+                      groupValue: settingsProvider.appPreferences.units,
+                      onChanged: (value) {
+                        if (value != null) {
+                          settingsProvider.updateWaterUnits(value);
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      activeColor: AppColors.waterFull,
+                    );
+                  }).toList(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
-  void _showDailyGoalDialog(BuildContext context, SettingsProvider settingsProvider) {
+  void _showDailyGoalDialog(
+    BuildContext context,
+    SettingsProvider settingsProvider,
+  ) {
     final controller = TextEditingController();
     final currentGoal = settingsProvider.appPreferences.dailyGoal;
     final units = settingsProvider.appPreferences.units;
     final convertedGoal = units.fromMilliliters(currentGoal);
-    
-    controller.text = units == WaterUnits.milliliters 
-        ? convertedGoal.toInt().toString()
-        : convertedGoal.toStringAsFixed(1);
+
+    controller.text =
+        units == WaterUnits.milliliters
+            ? convertedGoal.toInt().toString()
+            : convertedGoal.toStringAsFixed(1);
 
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Set Daily Goal'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Daily Goal',
-                suffixText: units.shortName,
-                border: const OutlineInputBorder(),
-              ),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Set Daily Goal'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Daily Goal',
+                    suffixText: units.shortName,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Recommended: ${units.fromMilliliters(2000).toStringAsFixed(1)} ${units.shortName}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSubtitle,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Recommended: ${units.fromMilliliters(2000).toStringAsFixed(1)} ${units.shortName}',
-              style: const TextStyle(
-                fontSize: 12,
-                color: AppColors.textSubtitle,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+              PrimaryButton(
+                text: 'Save',
+                onPressed: () {
+                  final value = double.tryParse(controller.text);
+                  if (value != null && value > 0) {
+                    final goalInMl = units.toMilliliters(value);
+                    settingsProvider.updateDailyGoal(goalInMl);
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ],
           ),
-          PrimaryButton(
-            text: 'Save',
-            onPressed: () {
-              final value = double.tryParse(controller.text);
-              if (value != null && value > 0) {
-                final goalInMl = units.toMilliliters(value);
-                settingsProvider.updateDailyGoal(goalInMl);
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        ],
-      ),
     );
   }
 
   void _showThemeDialog(BuildContext context, ThemeProvider themeProvider) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Select Theme'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: themeProvider.availableThemes.entries.map((entry) {
-            return RadioListTile<ThemeMode>(
-              title: Text(entry.value),
-              value: entry.key,
-              groupValue: themeProvider.themeMode,
-              onChanged: (value) {
-                if (value != null) {
-                  themeProvider.setThemeMode(value);
-                  Navigator.of(context).pop();
-                }
-              },
-              activeColor: AppColors.waterFull,
-            );
-          }).toList(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Select Theme'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  themeProvider.availableThemes.entries.map((entry) {
+                    return RadioListTile<ThemeMode>(
+                      title: Text(entry.value),
+                      value: entry.key,
+                      groupValue: themeProvider.themeMode,
+                      onChanged: (value) {
+                        if (value != null) {
+                          themeProvider.setThemeMode(value);
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      activeColor: AppColors.waterFull,
+                    );
+                  }).toList(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _showPremiumDialog(BuildContext context) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Premium Feature'),
-        content: const Text(
-          'This feature requires premium unlock. Support the app development by making a donation to unlock all premium features.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Premium Feature'),
+            content: const Text(
+              'This feature requires premium unlock. Support the app development by making a donation to unlock all premium features.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              PrimaryButton(
+                text: 'Unlock Premium',
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _navigateToPremium(context);
+                },
+              ),
+            ],
           ),
-          PrimaryButton(
-            text: 'Unlock Premium',
-            onPressed: () {
-              Navigator.of(context).pop();
-              _navigateToPremium(context);
-            },
-          ),
-        ],
-      ),
     );
   }
 
   void _showAboutDialog(BuildContext context) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('About Water Tracker'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Water Tracker v1.0.0'),
-            SizedBox(height: 8),
-            Text('A simple and effective way to track your daily water intake and stay hydrated.'),
-            SizedBox(height: 16),
-            Text('Features:'),
-            Text('• Track daily water intake'),
-            Text('• Smart reminders'),
-            Text('• Progress analytics'),
-            Text('• Premium features available'),
-            SizedBox(height: 16),
-            Text('Made with ❤️ for your health'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('About Water Tracker'),
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Water Tracker v1.0.0'),
+                SizedBox(height: 8),
+                Text(
+                  'A simple and effective way to track your daily water intake and stay hydrated.',
+                ),
+                SizedBox(height: 16),
+                Text('Features:'),
+                Text('• Track daily water intake'),
+                Text('• Smart reminders'),
+                Text('• Progress analytics'),
+                Text('• Premium features available'),
+                SizedBox(height: 16),
+                Text('Made with ❤️ for your health'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _showHelpDialog(BuildContext context) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Help & Support'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Need help with the app?'),
-            SizedBox(height: 16),
-            Text('Common Questions:'),
-            Text('• How to set up notifications?'),
-            Text('• How to unlock premium features?'),
-            Text('• How to backup my data?'),
-            SizedBox(height: 16),
-            Text('For support, please contact:'),
-            Text('developer@watertracker.com'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Help & Support'),
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Need help with the app?'),
+                SizedBox(height: 16),
+                Text('Common Questions:'),
+                Text('• How to set up notifications?'),
+                Text('• How to unlock premium features?'),
+                Text('• How to backup my data?'),
+                SizedBox(height: 16),
+                Text('For support, please contact:'),
+                Text('developer@watertracker.com'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

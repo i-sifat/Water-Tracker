@@ -148,26 +148,31 @@ class _CompileDataScreenState extends State<CompileDataScreen>
     // Complete onboarding after a delay
     Future.delayed(const Duration(seconds: 3), () async {
       if (!mounted) return;
-      
-      final onboardingProvider = Provider.of<OnboardingProvider>(context, listen: false);
-      final hydrationProvider = Provider.of<HydrationProvider>(context, listen: false);
-      
+
+      final onboardingProvider = Provider.of<OnboardingProvider>(
+        context,
+        listen: false,
+      );
+      final hydrationProvider = Provider.of<HydrationProvider>(
+        context,
+        listen: false,
+      );
+
       try {
         // Complete onboarding process
         await onboardingProvider.completeOnboarding();
-        
+
         // Update hydration provider with calculated goal
         final dailyGoal = onboardingProvider.userProfile.effectiveDailyGoal;
         await hydrationProvider.setDailyGoal(dailyGoal);
-        
+
         if (!mounted) return;
-        
+
         // Navigate to completion screen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute<void>(
-            builder: (context) => OnboardingCompletionScreen(
-              dailyGoal: dailyGoal,
-            ),
+            builder:
+                (context) => OnboardingCompletionScreen(dailyGoal: dailyGoal),
           ),
         );
       } catch (e) {

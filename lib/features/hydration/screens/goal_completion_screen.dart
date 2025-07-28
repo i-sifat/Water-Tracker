@@ -91,8 +91,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute<void>(
                     builder:
-                        (BuildContext context) =>
-                            const HistoryScreenContent(),
+                        (BuildContext context) => const HistoryScreenContent(),
                   ),
                 );
               },

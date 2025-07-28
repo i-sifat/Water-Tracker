@@ -4,7 +4,8 @@ import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/models/app_error.dart';
 import 'package:watertracker/core/models/premium_models.dart';
 import 'package:watertracker/core/services/device_service.dart';
-import 'package:watertracker/core/services/premium_service.dart' as premium_service;
+import 'package:watertracker/core/services/premium_service.dart'
+    as premium_service;
 import 'package:watertracker/core/services/storage_service.dart';
 
 /// Provider for managing premium features and donation-based unlock system
@@ -13,9 +14,9 @@ class PremiumProvider extends ChangeNotifier {
     dynamic premiumService,
     dynamic deviceService,
     dynamic storageService,
-  })  : _premiumService = premiumService ?? premium_service.PremiumService(),
-        _deviceService = deviceService ?? DeviceService(),
-        _storageService = storageService ?? StorageService() {
+  }) : _premiumService = premiumService ?? premium_service.PremiumService(),
+       _deviceService = deviceService ?? DeviceService(),
+       _storageService = storageService ?? StorageService() {
     _initialize();
   }
 
@@ -30,7 +31,7 @@ class PremiumProvider extends ChangeNotifier {
   bool _isSubmittingProof = false;
   bool _isValidatingCode = false;
   AppError? _lastError;
-  
+
   // Donation proof submission state
   List<DonationProof> _submittedProofs = [];
   String? _pendingProofId;
@@ -43,10 +44,11 @@ class PremiumProvider extends ChangeNotifier {
   bool get isValidatingCode => _isValidatingCode;
   String get deviceCode => _premiumStatus.deviceCode;
   PremiumStatus get premiumStatus => _premiumStatus;
-  List<DonationProof> get submittedProofs => List.unmodifiable(_submittedProofs);
+  List<DonationProof> get submittedProofs =>
+      List.unmodifiable(_submittedProofs);
   String? get pendingProofId => _pendingProofId;
   AppError? get lastError => _lastError;
-  
+
   // Premium feature access
   List<PremiumFeature> get unlockedFeatures => _premiumStatus.unlockedFeatures;
   DateTime? get unlockedAt => _premiumStatus.unlockedAt;
@@ -63,17 +65,18 @@ class PremiumProvider extends ChangeNotifier {
     try {
       // Generate or load device code
       await _loadOrGenerateDeviceCode();
-      
+
       // Load premium status
       await _loadPremiumStatus();
-      
+
       // Load submitted proofs
       await _loadSubmittedProofs();
-      
+
       _isInitialized = true;
       _lastError = null;
     } catch (e, stackTrace) {
-      _lastError = e is AppError ? e : PremiumError.donationProofFailed(e.toString());
+      _lastError =
+          e is AppError ? e : PremiumError.donationProofFailed(e.toString());
       debugPrint('Failed to initialize PremiumProvider: $e');
       debugPrint('Stack trace: $stackTrace');
     } finally {
@@ -85,15 +88,23 @@ class PremiumProvider extends ChangeNotifier {
   /// Load or generate device code
   Future<void> _loadOrGenerateDeviceCode() async {
     try {
-      final deviceCodeData = await _storageService.getString('device_code', encrypted: false);
-      String? deviceCode = (deviceCodeData is String) ? deviceCodeData as String : null;
-      
+      final deviceCodeData = await _storageService.getString(
+        'device_code',
+        encrypted: false,
+      );
+      String? deviceCode =
+          (deviceCodeData is String) ? deviceCodeData as String : null;
+
       if (deviceCode == null) {
         final generatedCode = await _deviceService.generateUniqueCode();
         deviceCode = generatedCode as String;
-        await _storageService.saveString('device_code', generatedCode as String, encrypted: false);
+        await _storageService.saveString(
+          'device_code',
+          generatedCode as String,
+          encrypted: false,
+        );
       }
-      
+
       _premiumStatus = _premiumStatus.copyWith(deviceCode: deviceCode!);
     } catch (e) {
       throw DeviceError.codeGenerationFailed();
@@ -128,12 +139,18 @@ class PremiumProvider extends ChangeNotifier {
   Future<void> _loadSubmittedProofs() async {
     try {
       final proofsJson = await _storageService.getJson('donation_proofs_list');
-      if (proofsJson != null && proofsJson is Map<String, dynamic> && proofsJson.containsKey('proofs')) {
+      if (proofsJson != null &&
+          proofsJson is Map<String, dynamic> &&
+          proofsJson.containsKey('proofs')) {
         final proofsList = proofsJson['proofs'] as List<dynamic>;
-        _submittedProofs = proofsList
-            .map((json) => DonationProof.fromJson(json as Map<String, dynamic>))
-            .toList();
-        
+        _submittedProofs =
+            proofsList
+                .map(
+                  (json) =>
+                      DonationProof.fromJson(json as Map<String, dynamic>),
+                )
+                .toList();
+
         // Sort by submission date (newest first)
         _submittedProofs.sort((a, b) => b.submittedAt.compareTo(a.submittedAt));
       }
@@ -146,8 +163,11 @@ class PremiumProvider extends ChangeNotifier {
   /// Save submitted donation proofs
   Future<void> _saveSubmittedProofs() async {
     try {
-      final proofsJson = _submittedProofs.map((proof) => proof.toJson()).toList();
-      await _storageService.saveJson('donation_proofs_list', {'proofs': proofsJson});
+      final proofsJson =
+          _submittedProofs.map((proof) => proof.toJson()).toList();
+      await _storageService.saveJson('donation_proofs_list', {
+        'proofs': proofsJson,
+      });
     } catch (e) {
       throw StorageError.writeFailed('Failed to save donation proofs: $e');
     }
@@ -186,7 +206,10 @@ class PremiumProvider extends ChangeNotifier {
     try {
       // Validate image file
       if (!await imageFile.exists()) {
-        throw ValidationError.invalidInput('imageFile', 'Image file does not exist');
+        throw ValidationError.invalidInput(
+          'imageFile',
+          'Image file does not exist',
+        );
       }
 
       // Create donation proof record
@@ -221,7 +244,8 @@ class PremiumProvider extends ChangeNotifier {
       _lastError = null;
       return true;
     } catch (e, stackTrace) {
-      _lastError = e is AppError ? e : PremiumError.donationProofFailed(e.toString());
+      _lastError =
+          e is AppError ? e : PremiumError.donationProofFailed(e.toString());
       debugPrint('Failed to submit donation proof: $e');
       debugPrint('Stack trace: $stackTrace');
       return false;
@@ -245,7 +269,9 @@ class PremiumProvider extends ChangeNotifier {
       }
 
       // Validate unlock code with premium service
-      final isValid = await _premiumService.validateUnlockCode(unlockCode.trim().toUpperCase());
+      final isValid = await _premiumService.validateUnlockCode(
+        unlockCode.trim().toUpperCase(),
+      );
 
       if (isValid != true) {
         throw PremiumError.invalidUnlockCode();
@@ -282,19 +308,23 @@ class PremiumProvider extends ChangeNotifier {
     try {
       final newDeviceCode = await _deviceService.generateUniqueCode();
       final deviceCodeString = newDeviceCode as String;
-      
+
       // Update premium status with new device code
       _premiumStatus = PremiumStatus.free(deviceCodeString);
-      
+
       // Save new device code and reset premium status
-      await _storageService.saveString('device_code', deviceCodeString, encrypted: false);
+      await _storageService.saveString(
+        'device_code',
+        deviceCodeString,
+        encrypted: false,
+      );
       await _savePremiumStatus();
-      
+
       // Clear submitted proofs as they're tied to the old device code
       _submittedProofs.clear();
       _pendingProofId = null;
       await _saveSubmittedProofs();
-      
+
       _lastError = null;
       notifyListeners();
     } catch (e, stackTrace) {
@@ -311,10 +341,10 @@ class PremiumProvider extends ChangeNotifier {
       _premiumStatus = PremiumStatus.free(_premiumStatus.deviceCode);
       _submittedProofs.clear();
       _pendingProofId = null;
-      
+
       await _savePremiumStatus();
       await _saveSubmittedProofs();
-      
+
       _lastError = null;
       notifyListeners();
     } catch (e, stackTrace) {
@@ -333,7 +363,9 @@ class PremiumProvider extends ChangeNotifier {
       _lastError = null;
       notifyListeners();
     } catch (e) {
-      _lastError = PremiumError.donationProofFailed('Failed to open donation instructions');
+      _lastError = PremiumError.donationProofFailed(
+        'Failed to open donation instructions',
+      );
       notifyListeners();
     }
   }
@@ -366,11 +398,11 @@ class PremiumProvider extends ChangeNotifier {
     if (!isPremium) {
       return 'Free Version';
     }
-    
+
     if (expiresAt == null) {
       return 'Premium (Lifetime)';
     }
-    
+
     final days = daysRemaining ?? 0;
     if (days <= 0) {
       return 'Premium (Expired)';
@@ -390,10 +422,10 @@ class PremiumProvider extends ChangeNotifier {
   /// Force refresh premium status
   Future<void> refresh() async {
     if (_isLoading) return;
-    
+
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       await _loadPremiumStatus();
       await _loadSubmittedProofs();

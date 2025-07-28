@@ -42,10 +42,7 @@ class _UnlockCodeScreenState extends State<UnlockCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Enter Unlock Code'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Enter Unlock Code'), centerTitle: true),
       body: Consumer<PremiumProvider>(
         builder: (context, premiumProvider, child) {
           return SingleChildScrollView(
@@ -58,40 +55,42 @@ class _UnlockCodeScreenState extends State<UnlockCodeScreen> {
                   // Header
                   const _HeaderSection(),
                   const SizedBox(height: 24),
-                  
+
                   // Device Code Display
                   _DeviceCodeDisplay(deviceCode: premiumProvider.deviceCode),
                   const SizedBox(height: 24),
-                  
+
                   // Unlock Code Input
                   _UnlockCodeInput(
                     controller: _unlockCodeController,
                     focusNode: _focusNode,
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Instructions
                   const _InstructionsCard(),
                   const SizedBox(height: 32),
-                  
+
                   // Unlock Button
                   PrimaryButton(
                     text: 'Unlock Premium',
-                    onPressed: premiumProvider.isValidatingCode
-                        ? null
-                        : () => _unlockPremium(context, premiumProvider),
+                    onPressed:
+                        premiumProvider.isValidatingCode
+                            ? null
+                            : () => _unlockPremium(context, premiumProvider),
                     isLoading: premiumProvider.isValidatingCode,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Back Button
                   SecondaryButton(
                     text: 'Back to Donation Info',
-                    onPressed: premiumProvider.isValidatingCode 
-                        ? null 
-                        : () => Navigator.pop(context),
+                    onPressed:
+                        premiumProvider.isValidatingCode
+                            ? null
+                            : () => Navigator.pop(context),
                   ),
-                  
+
                   // Error Display
                   if (premiumProvider.lastError != null) ...[
                     const SizedBox(height: 16),
@@ -106,22 +105,23 @@ class _UnlockCodeScreenState extends State<UnlockCodeScreen> {
     );
   }
 
-  Future<void> _unlockPremium(BuildContext context, PremiumProvider premiumProvider) async {
+  Future<void> _unlockPremium(
+    BuildContext context,
+    PremiumProvider premiumProvider,
+  ) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
     final unlockCode = _unlockCodeController.text.trim().toUpperCase();
-    
+
     final success = await premiumProvider.unlockWithCode(unlockCode);
-    
+
     if (success && mounted) {
       // Navigate to success screen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const PremiumSuccessScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const PremiumSuccessScreen()),
       );
     }
   }
@@ -135,9 +135,7 @@ class _UnlockCodeScreenState extends State<UnlockCodeScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to paste from clipboard'),
-          ),
+          const SnackBar(content: Text('Failed to paste from clipboard')),
         );
       }
     }
@@ -150,14 +148,10 @@ class _HeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       children: [
-        Icon(
-          Icons.vpn_key,
-          size: 48,
-          color: theme.colorScheme.primary,
-        ),
+        Icon(Icons.vpn_key, size: 48, color: theme.colorScheme.primary),
         const SizedBox(height: 16),
         Text(
           'Enter Your Unlock Code',
@@ -187,7 +181,7 @@ class _DeviceCodeDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,10 +222,7 @@ class _DeviceCodeDisplay extends StatelessWidget {
 }
 
 class _UnlockCodeInput extends StatelessWidget {
-  const _UnlockCodeInput({
-    required this.controller,
-    required this.focusNode,
-  });
+  const _UnlockCodeInput({required this.controller, required this.focusNode});
 
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -239,7 +230,7 @@ class _UnlockCodeInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,7 +242,7 @@ class _UnlockCodeInput extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           AppTextField(
             controller: controller,
             focusNode: focusNode,
@@ -266,17 +257,17 @@ class _UnlockCodeInput extends StatelessWidget {
               if (value == null || value.isEmpty) {
                 return 'Please enter the unlock code';
               }
-              
+
               // Remove dashes for validation
               final cleanCode = value.replaceAll('-', '');
               if (cleanCode.length != 16) {
                 return 'Unlock code must be 16 characters long';
               }
-              
+
               if (!RegExp(r'^[A-Z0-9]+$').hasMatch(cleanCode)) {
                 return 'Unlock code can only contain letters and numbers';
               }
-              
+
               return null;
             },
             suffixIcon: IconButton(
@@ -285,7 +276,7 @@ class _UnlockCodeInput extends StatelessWidget {
               tooltip: 'Paste from clipboard',
             ),
           ),
-          
+
           const SizedBox(height: 8),
           Text(
             'Format: XXXX-XXXX-XXXX-XXXX (dashes will be added automatically)',
@@ -307,9 +298,7 @@ class _UnlockCodeInput extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to paste from clipboard'),
-          ),
+          const SnackBar(content: Text('Failed to paste from clipboard')),
         );
       }
     }
@@ -322,17 +311,14 @@ class _InstructionsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.info_outline,
-                color: theme.colorScheme.primary,
-              ),
+              Icon(Icons.info_outline, color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 'Important Notes',
@@ -343,7 +329,7 @@ class _InstructionsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           ..._buildNotes(context),
         ],
       ),
@@ -352,7 +338,7 @@ class _InstructionsCard extends StatelessWidget {
 
   List<Widget> _buildNotes(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     final notes = [
       'The unlock code is tied to your specific device',
       'Codes are usually sent within 24 hours of donation proof submission',
@@ -363,7 +349,7 @@ class _InstructionsCard extends StatelessWidget {
     return notes.asMap().entries.map((entry) {
       final index = entry.key;
       final note = entry.value;
-      
+
       return Padding(
         padding: EdgeInsets.only(bottom: index < notes.length - 1 ? 8 : 0),
         child: Row(
@@ -379,12 +365,7 @@ class _InstructionsCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                note,
-                style: theme.textTheme.bodyMedium,
-              ),
-            ),
+            Expanded(child: Text(note, style: theme.textTheme.bodyMedium)),
           ],
         ),
       );
@@ -400,7 +381,7 @@ class _ErrorDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -410,10 +391,7 @@ class _ErrorDisplay extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.error_outline,
-            color: theme.colorScheme.onErrorContainer,
-          ),
+          Icon(Icons.error_outline, color: theme.colorScheme.onErrorContainer),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -437,11 +415,11 @@ class _UnlockCodeFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final text = newValue.text.replaceAll('-', '').toUpperCase();
-    
+
     if (text.length > 16) {
       return oldValue;
     }
-    
+
     var formatted = '';
     for (var i = 0; i < text.length; i++) {
       if (i > 0 && i % 4 == 0) {
@@ -449,7 +427,7 @@ class _UnlockCodeFormatter extends TextInputFormatter {
       }
       formatted += text[i];
     }
-    
+
     return TextEditingValue(
       text: formatted,
       selection: TextSelection.collapsed(offset: formatted.length),

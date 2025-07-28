@@ -22,7 +22,7 @@ class LargeSelectionBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppCard(
       onTap: onTap,
       isSelected: isSelected,
@@ -35,9 +35,10 @@ class LargeSelectionBox extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: iconBackgroundColor ?? 
-                  (isSelected 
-                      ? theme.colorScheme.primaryContainer 
+              color:
+                  iconBackgroundColor ??
+                  (isSelected
+                      ? theme.colorScheme.primaryContainer
                       : AppColors.boxIconBackground),
               borderRadius: BorderRadius.circular(16),
             ),
@@ -51,9 +52,10 @@ class LargeSelectionBox extends StatelessWidget {
                 Text(
                   title,
                   style: theme.textTheme.titleLarge?.copyWith(
-                    color: isSelected
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface,
+                    color:
+                        isSelected
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),

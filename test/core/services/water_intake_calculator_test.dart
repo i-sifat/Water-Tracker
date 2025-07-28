@@ -84,12 +84,20 @@ void main() {
           gender: Gender.male,
         );
 
-        final sedentaryProfile = baseProfile.copyWith(activityLevel: ActivityLevel.sedentary);
-        final activeProfile = baseProfile.copyWith(activityLevel: ActivityLevel.veryActive);
+        final sedentaryProfile = baseProfile.copyWith(
+          activityLevel: ActivityLevel.sedentary,
+        );
+        final activeProfile = baseProfile.copyWith(
+          activityLevel: ActivityLevel.veryActive,
+        );
 
         // Act
-        final sedentaryIntake = WaterIntakeCalculator.calculateBasicIntake(sedentaryProfile);
-        final activeIntake = WaterIntakeCalculator.calculateBasicIntake(activeProfile);
+        final sedentaryIntake = WaterIntakeCalculator.calculateBasicIntake(
+          sedentaryProfile,
+        );
+        final activeIntake = WaterIntakeCalculator.calculateBasicIntake(
+          activeProfile,
+        );
 
         // Assert
         expect(activeIntake, greaterThan(sedentaryIntake));
@@ -111,8 +119,12 @@ void main() {
         );
 
         // Act
-        final normalIntake = WaterIntakeCalculator.calculateBasicIntake(normalProfile);
-        final pregnantIntake = WaterIntakeCalculator.calculateBasicIntake(pregnantProfile);
+        final normalIntake = WaterIntakeCalculator.calculateBasicIntake(
+          normalProfile,
+        );
+        final pregnantIntake = WaterIntakeCalculator.calculateBasicIntake(
+          pregnantProfile,
+        );
 
         // Assert
         expect(pregnantIntake, greaterThan(normalIntake));
@@ -132,8 +144,12 @@ void main() {
         );
 
         // Act
-        final normalIntake = WaterIntakeCalculator.calculateBasicIntake(normalProfile);
-        final breastfeedingIntake = WaterIntakeCalculator.calculateBasicIntake(breastfeedingProfile);
+        final normalIntake = WaterIntakeCalculator.calculateBasicIntake(
+          normalProfile,
+        );
+        final breastfeedingIntake = WaterIntakeCalculator.calculateBasicIntake(
+          breastfeedingProfile,
+        );
 
         // Assert
         expect(breastfeedingIntake, greaterThan(normalIntake));
@@ -200,7 +216,9 @@ void main() {
         );
 
         // Act
-        final advancedIntake = WaterIntakeCalculator.calculateAdvancedIntake(profile);
+        final advancedIntake = WaterIntakeCalculator.calculateAdvancedIntake(
+          profile,
+        );
 
         // Assert
         expect(advancedIntake, greaterThan(2000));
@@ -244,11 +262,12 @@ void main() {
 
       test('should adjust for environmental conditions', () {
         // Act
-        final normalConditions = WaterIntakeCalculator.calculateActivityHydration(
-          activityType: 'running',
-          durationMinutes: 60,
-          bodyWeight: 70,
-        );
+        final normalConditions =
+            WaterIntakeCalculator.calculateActivityHydration(
+              activityType: 'running',
+              durationMinutes: 60,
+              bodyWeight: 70,
+            );
 
         final hotConditions = WaterIntakeCalculator.calculateActivityHydration(
           activityType: 'running',
@@ -304,7 +323,8 @@ void main() {
         );
 
         // Act
-        final reminderTimes = WaterIntakeCalculator.calculateOptimalReminderTimes(profile);
+        final reminderTimes =
+            WaterIntakeCalculator.calculateOptimalReminderTimes(profile);
 
         // Assert
         expect(reminderTimes, isNotEmpty);
@@ -331,11 +351,18 @@ void main() {
         );
 
         // Act
-        final lowGoalReminders = WaterIntakeCalculator.calculateOptimalReminderTimes(lowGoalProfile);
-        final highGoalReminders = WaterIntakeCalculator.calculateOptimalReminderTimes(highGoalProfile);
+        final lowGoalReminders =
+            WaterIntakeCalculator.calculateOptimalReminderTimes(lowGoalProfile);
+        final highGoalReminders =
+            WaterIntakeCalculator.calculateOptimalReminderTimes(
+              highGoalProfile,
+            );
 
         // Assert
-        expect(highGoalReminders.length, greaterThanOrEqualTo(lowGoalReminders.length));
+        expect(
+          highGoalReminders.length,
+          greaterThanOrEqualTo(lowGoalReminders.length),
+        );
       });
 
       test('should respect custom wake and sleep times', () {
@@ -352,11 +379,12 @@ void main() {
         final bedTime = DateTime(2023, 1, 1, 23);
 
         // Act
-        final reminderTimes = WaterIntakeCalculator.calculateOptimalReminderTimes(
-          profile,
-          wakeUpTime: wakeTime,
-          bedTime: bedTime,
-        );
+        final reminderTimes =
+            WaterIntakeCalculator.calculateOptimalReminderTimes(
+              profile,
+              wakeUpTime: wakeTime,
+              bedTime: bedTime,
+            );
 
         // Assert
         expect(reminderTimes, isNotEmpty);
@@ -383,10 +411,11 @@ void main() {
         ];
 
         // Act
-        final reminderTimes = WaterIntakeCalculator.calculateOptimalReminderTimes(
-          profile,
-          mealTimes: mealTimes,
-        );
+        final reminderTimes =
+            WaterIntakeCalculator.calculateOptimalReminderTimes(
+              profile,
+              mealTimes: mealTimes,
+            );
 
         // Assert
         expect(reminderTimes, isNotEmpty);
@@ -408,10 +437,11 @@ void main() {
         ];
 
         // Act
-        final reminderTimes = WaterIntakeCalculator.calculateOptimalReminderTimes(
-          profile,
-          workoutTimes: workoutTimes,
-        );
+        final reminderTimes =
+            WaterIntakeCalculator.calculateOptimalReminderTimes(
+              profile,
+              workoutTimes: workoutTimes,
+            );
 
         // Assert
         expect(reminderTimes, isNotEmpty);
@@ -507,7 +537,10 @@ void main() {
         );
 
         // Assert
-        expect(hydrationNeeds, greaterThanOrEqualTo(100)); // Should respect lower bound
+        expect(
+          hydrationNeeds,
+          greaterThanOrEqualTo(100),
+        ); // Should respect lower bound
       });
 
       test('should handle very long activity duration', () {
@@ -519,7 +552,10 @@ void main() {
         );
 
         // Assert
-        expect(hydrationNeeds, lessThanOrEqualTo(2000)); // Should respect upper bound
+        expect(
+          hydrationNeeds,
+          lessThanOrEqualTo(2000),
+        ); // Should respect upper bound
       });
     });
   });

@@ -71,7 +71,9 @@ class SettingsProvider extends ChangeNotifier {
       }
 
       // Load notification settings
-      final notificationJson = await _storageService.getJson(_notificationSettingsKey);
+      final notificationJson = await _storageService.getJson(
+        _notificationSettingsKey,
+      );
       if (notificationJson != null) {
         _notificationSettings = NotificationSettings.fromJson(notificationJson);
       }
@@ -83,7 +85,9 @@ class SettingsProvider extends ChangeNotifier {
       }
 
       // Load data management options
-      final dataManagementJson = await _storageService.getJson(_dataManagementKey);
+      final dataManagementJson = await _storageService.getJson(
+        _dataManagementKey,
+      );
       if (dataManagementJson != null) {
         _dataManagement = DataManagementOptions.fromJson(dataManagementJson);
       }
@@ -124,7 +128,10 @@ class SettingsProvider extends ChangeNotifier {
   Future<bool> updateAvatar(AvatarOption avatar) async {
     try {
       _appPreferences = _appPreferences.copyWith(selectedAvatar: avatar);
-      await _storageService.saveJson(_appPreferencesKey, _appPreferences.toJson());
+      await _storageService.saveJson(
+        _appPreferencesKey,
+        _appPreferences.toJson(),
+      );
       notifyListeners();
       return true;
     } catch (e) {
@@ -137,14 +144,17 @@ class SettingsProvider extends ChangeNotifier {
   Future<bool> updateDailyGoal(int goal) async {
     try {
       _appPreferences = _appPreferences.copyWith(dailyGoal: goal);
-      await _storageService.saveJson(_appPreferencesKey, _appPreferences.toJson());
-      
+      await _storageService.saveJson(
+        _appPreferencesKey,
+        _appPreferences.toJson(),
+      );
+
       // Also update user profile if it exists
       if (_userProfile != null) {
         _userProfile = _userProfile!.copyWith(customDailyGoal: goal);
         await _storageService.saveJson(_userProfileKey, _userProfile!.toJson());
       }
-      
+
       notifyListeners();
       return true;
     } catch (e) {
@@ -159,8 +169,11 @@ class SettingsProvider extends ChangeNotifier {
   Future<bool> updateNotificationSettings(NotificationSettings settings) async {
     try {
       _notificationSettings = settings;
-      await _storageService.saveJson(_notificationSettingsKey, settings.toJson());
-      
+      await _storageService.saveJson(
+        _notificationSettingsKey,
+        settings.toJson(),
+      );
+
       // Update notification service settings
       await _notificationService.updateNotificationSettings(
         startHour: settings.startHour,
@@ -168,7 +181,7 @@ class SettingsProvider extends ChangeNotifier {
         interval: settings.interval,
         enabled: settings.enabled,
       );
-      
+
       notifyListeners();
       return true;
     } catch (e) {
@@ -207,13 +220,14 @@ class SettingsProvider extends ChangeNotifier {
     }
 
     try {
-      final updatedReminders = List<CustomReminder>.from(_notificationSettings.customReminders)
-        ..add(reminder);
-      
+      final updatedReminders = List<CustomReminder>.from(
+        _notificationSettings.customReminders,
+      )..add(reminder);
+
       final updatedSettings = _notificationSettings.copyWith(
         customReminders: updatedReminders,
       );
-      
+
       final success = await updateNotificationSettings(updatedSettings);
       if (success) {
         // Add to notification service
@@ -226,7 +240,7 @@ class SettingsProvider extends ChangeNotifier {
           enabled: reminder.enabled,
         );
       }
-      
+
       return success;
     } catch (e) {
       debugPrint('Error adding custom reminder: $e');
@@ -240,14 +254,15 @@ class SettingsProvider extends ChangeNotifier {
     if (!isPremium) return false;
 
     try {
-      final updatedReminders = _notificationSettings.customReminders
-          .map((r) => r.id == reminder.id ? reminder : r)
-          .toList();
-      
+      final updatedReminders =
+          _notificationSettings.customReminders
+              .map((r) => r.id == reminder.id ? reminder : r)
+              .toList();
+
       final updatedSettings = _notificationSettings.copyWith(
         customReminders: updatedReminders,
       );
-      
+
       final success = await updateNotificationSettings(updatedSettings);
       if (success) {
         // Update in notification service
@@ -261,7 +276,7 @@ class SettingsProvider extends ChangeNotifier {
           enabled: reminder.enabled,
         );
       }
-      
+
       return success;
     } catch (e) {
       debugPrint('Error updating custom reminder: $e');
@@ -275,20 +290,21 @@ class SettingsProvider extends ChangeNotifier {
     if (!isPremium) return false;
 
     try {
-      final updatedReminders = _notificationSettings.customReminders
-          .where((r) => r.id != reminderId)
-          .toList();
-      
+      final updatedReminders =
+          _notificationSettings.customReminders
+              .where((r) => r.id != reminderId)
+              .toList();
+
       final updatedSettings = _notificationSettings.copyWith(
         customReminders: updatedReminders,
       );
-      
+
       final success = await updateNotificationSettings(updatedSettings);
       if (success) {
         // Delete from notification service
         await _notificationService.deleteCustomReminder(reminderId);
       }
-      
+
       return success;
     } catch (e) {
       debugPrint('Error deleting custom reminder: $e');
@@ -325,13 +341,17 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Toggle haptic feedback
   Future<bool> toggleHapticFeedback({required bool enabled}) async {
-    final updatedPreferences = _appPreferences.copyWith(hapticFeedbackEnabled: enabled);
+    final updatedPreferences = _appPreferences.copyWith(
+      hapticFeedbackEnabled: enabled,
+    );
     return updateAppPreferences(updatedPreferences);
   }
 
   /// Toggle progress in notifications
   Future<bool> toggleProgressInNotifications({required bool enabled}) async {
-    final updatedPreferences = _appPreferences.copyWith(showProgressInNotifications: enabled);
+    final updatedPreferences = _appPreferences.copyWith(
+      showProgressInNotifications: enabled,
+    );
     return updateAppPreferences(updatedPreferences);
   }
 
@@ -486,9 +506,18 @@ class SettingsProvider extends ChangeNotifier {
       _appPreferences = const AppPreferences();
       _dataManagement = const DataManagementOptions();
 
-      await _storageService.saveJson(_notificationSettingsKey, _notificationSettings.toJson());
-      await _storageService.saveJson(_appPreferencesKey, _appPreferences.toJson());
-      await _storageService.saveJson(_dataManagementKey, _dataManagement.toJson());
+      await _storageService.saveJson(
+        _notificationSettingsKey,
+        _notificationSettings.toJson(),
+      );
+      await _storageService.saveJson(
+        _appPreferencesKey,
+        _appPreferences.toJson(),
+      );
+      await _storageService.saveJson(
+        _dataManagementKey,
+        _dataManagement.toJson(),
+      );
 
       // Reset notification service settings
       await _notificationService.updateNotificationSettings(
@@ -511,7 +540,7 @@ class SettingsProvider extends ChangeNotifier {
     final goal = _appPreferences.dailyGoal;
     final units = _appPreferences.units;
     final convertedGoal = units.fromMilliliters(goal);
-    
+
     if (units == WaterUnits.milliliters) {
       return '${convertedGoal.toInt()} ${units.shortName}';
     } else {

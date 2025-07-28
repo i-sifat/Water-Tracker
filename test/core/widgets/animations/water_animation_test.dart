@@ -130,11 +130,7 @@ void main() {
 
       // Remove the widget to trigger dispose
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SizedBox(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: SizedBox())),
       );
 
       // Should not throw any errors
@@ -179,7 +175,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('uses ClipRect for proper clipping', (WidgetTester tester) async {
+    testWidgets('uses ClipRect for proper clipping', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

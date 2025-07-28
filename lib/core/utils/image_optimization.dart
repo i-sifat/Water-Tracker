@@ -19,9 +19,11 @@ class ImageOptimization {
     // Configure Flutter's image cache
     PaintingBinding.instance.imageCache.maximumSize = 100;
     PaintingBinding.instance.imageCache.maximumSizeBytes = _maxCacheSize;
-    
+
     if (kDebugMode) {
-      debugPrint('ImageOptimization initialized with ${_maxCacheSize ~/ (1024 * 1024)}MB cache');
+      debugPrint(
+        'ImageOptimization initialized with ${_maxCacheSize ~/ (1024 * 1024)}MB cache',
+      );
     }
   }
 
@@ -49,7 +51,10 @@ class ImageOptimization {
   }
 
   /// Preload and optimize an image
-  static Future<void> preloadImage(String imagePath, BuildContext context) async {
+  static Future<void> preloadImage(
+    String imagePath,
+    BuildContext context,
+  ) async {
     try {
       final imageProvider = _getOptimizedImageProvider(imagePath);
       await precacheImage(imageProvider, context);
@@ -82,14 +87,14 @@ class ImageOptimization {
         targetWidth: maxWidth ?? _maxImageDimension,
         targetHeight: maxHeight ?? _maxImageDimension,
       );
-      
+
       final frame = await codec.getNextFrame();
       final resizedImage = frame.image;
-      
+
       final byteData = await resizedImage.toByteData(
         format: ui.ImageByteFormat.png,
       );
-      
+
       return byteData!.buffer.asUint8List();
     } catch (e) {
       debugPrint('Error resizing image: $e');
@@ -99,16 +104,18 @@ class ImageOptimization {
 
   /// Cache image in memory
   static void _cacheInMemory(String key, Uint8List data) {
-    if (!kIsWeb && data.length < 5 << 20) { // Don't cache images > 5MB
+    if (!kIsWeb && data.length < 5 << 20) {
+      // Don't cache images > 5MB
       // Remove old entries if cache is full
-      while (_currentCacheSize + data.length > _maxCacheSize && _memoryCache.isNotEmpty) {
+      while (_currentCacheSize + data.length > _maxCacheSize &&
+          _memoryCache.isNotEmpty) {
         final oldestKey = _memoryCache.keys.first;
         final oldData = _memoryCache.remove(oldestKey);
         if (oldData != null) {
           _currentCacheSize -= oldData.length;
         }
       }
-      
+
       _memoryCache[key] = data;
       _currentCacheSize += data.length;
     }
@@ -123,11 +130,11 @@ class ImageOptimization {
   static void clearMemoryCache() {
     _memoryCache.clear();
     _currentCacheSize = 0;
-    
+
     // Also clear Flutter's image cache
     PaintingBinding.instance.imageCache.clear();
     PaintingBinding.instance.imageCache.clearLiveImages();
-    
+
     if (kDebugMode) {
       debugPrint('Image caches cleared');
     }
@@ -138,9 +145,11 @@ class ImageOptimization {
     return {
       'memory_cache_size': _currentCacheSize,
       'memory_cache_count': _memoryCache.length,
-      'flutter_cache_size': PaintingBinding.instance.imageCache.currentSizeBytes,
+      'flutter_cache_size':
+          PaintingBinding.instance.imageCache.currentSizeBytes,
       'flutter_cache_count': PaintingBinding.instance.imageCache.currentSize,
-      'flutter_cache_live_count': PaintingBinding.instance.imageCache.liveImageCount,
+      'flutter_cache_live_count':
+          PaintingBinding.instance.imageCache.liveImageCount,
     };
   }
 
@@ -159,11 +168,13 @@ class ImageOptimization {
         maxHeight: maxHeight,
         quality: quality,
       );
-      
+
       final tempDir = await getTemporaryDirectory();
-      final optimizedFile = File('${tempDir.path}/optimized_${DateTime.now().millisecondsSinceEpoch}.png');
+      final optimizedFile = File(
+        '${tempDir.path}/optimized_${DateTime.now().millisecondsSinceEpoch}.png',
+      );
       await optimizedFile.writeAsBytes(optimizedData);
-      
+
       return optimizedFile;
     } catch (e) {
       debugPrint('Error optimizing image file: $e');
@@ -205,7 +216,6 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
   bool _isLoading = true;
   bool _hasError = false;
 
-
   @override
   bool get wantKeepAlive => true;
 
@@ -234,7 +244,9 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
     try {
       // Check memory cache first
       if (widget.enableMemoryCache) {
-        final cachedData = ImageOptimization._getFromMemoryCache(widget.imagePath);
+        final cachedData = ImageOptimization._getFromMemoryCache(
+          widget.imagePath,
+        );
         if (cachedData != null) {
           _imageProvider = MemoryImage(cachedData);
           if (mounted) {
@@ -247,17 +259,19 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
       }
 
       // Load image
-      _imageProvider = ImageOptimization._getOptimizedImageProvider(widget.imagePath);
-      
+      _imageProvider = ImageOptimization._getOptimizedImageProvider(
+        widget.imagePath,
+      );
+
       // Preload to check for errors
       if (mounted) {
         await precacheImage(_imageProvider!, context);
-        
+
         // Cache in memory if enabled
         if (widget.enableMemoryCache && !widget.imagePath.startsWith('http')) {
           try {
             Uint8List? imageData;
-            
+
             if (widget.imagePath.startsWith('assets/')) {
               final byteData = await rootBundle.load(widget.imagePath);
               imageData = byteData.buffer.asUint8List();
@@ -267,7 +281,7 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
                 imageData = await file.readAsBytes();
               }
             }
-            
+
             if (imageData != null) {
               ImageOptimization._cacheInMemory(widget.imagePath, imageData);
             }
@@ -297,7 +311,7 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
     super.build(context);
 
     if (_isLoading) {
-      return widget.placeholder ?? 
+      return widget.placeholder ??
           Container(
             width: widget.width,
             height: widget.height,
@@ -314,10 +328,7 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
             width: widget.width,
             height: widget.height,
             color: Colors.grey[200],
-            child: const Icon(
-              Icons.error_outline,
-              color: Colors.grey,
-            ),
+            child: const Icon(Icons.error_outline, color: Colors.grey),
           );
     }
 
@@ -328,7 +339,7 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
       fit: widget.fit,
       frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
         if (wasSynchronouslyLoaded) return child;
-        
+
         return AnimatedOpacity(
           opacity: frame == null ? 0 : 1,
           duration: const Duration(milliseconds: 300),
@@ -342,10 +353,7 @@ class _OptimizedImageWidgetState extends State<OptimizedImageWidget>
               width: widget.width,
               height: widget.height,
               color: Colors.grey[200],
-              child: const Icon(
-                Icons.error_outline,
-                color: Colors.grey,
-              ),
+              child: const Icon(Icons.error_outline, color: Colors.grey),
             );
       },
     );
@@ -363,19 +371,22 @@ class ImagePreloader {
     int maxConcurrent = 3,
   }) async {
     final futures = <Future<void>>[];
-    
+
     for (int i = 0; i < imagePaths.length; i += maxConcurrent) {
       final batch = imagePaths.skip(i).take(maxConcurrent);
       final batchFutures = batch.map((path) => _preloadSingle(path, context));
-      
+
       futures.addAll(batchFutures);
-      
+
       // Wait for current batch before starting next
       await Future.wait(batchFutures);
     }
   }
 
-  static Future<void> _preloadSingle(String imagePath, BuildContext context) async {
+  static Future<void> _preloadSingle(
+    String imagePath,
+    BuildContext context,
+  ) async {
     // Avoid duplicate preloading
     if (_preloadingTasks.containsKey(imagePath)) {
       return _preloadingTasks[imagePath]!;

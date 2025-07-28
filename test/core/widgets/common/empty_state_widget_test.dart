@@ -13,10 +13,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: EmptyStateWidget(
-              title: testTitle,
-              subtitle: testSubtitle,
-            ),
+            body: EmptyStateWidget(title: testTitle, subtitle: testSubtitle),
           ),
         ),
       );
@@ -43,7 +40,9 @@ void main() {
       expect(find.text(testTitle), findsOneWidget);
     });
 
-    testWidgets('renders with custom illustration when provided', (WidgetTester tester) async {
+    testWidgets('renders with custom illustration when provided', (
+      WidgetTester tester,
+    ) async {
       const customIllustration = Icon(Icons.star, size: 100);
 
       await tester.pumpWidget(
@@ -62,7 +61,9 @@ void main() {
       expect(find.text(testTitle), findsOneWidget);
     });
 
-    testWidgets('renders action button when provided', (WidgetTester tester) async {
+    testWidgets('renders action button when provided', (
+      WidgetTester tester,
+    ) async {
       var wasPressed = false;
 
       await tester.pumpWidget(
@@ -87,7 +88,9 @@ void main() {
       expect(wasPressed, isTrue);
     });
 
-    testWidgets('does not render action button when onActionPressed is null', (WidgetTester tester) async {
+    testWidgets('does not render action button when onActionPressed is null', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -103,7 +106,9 @@ void main() {
       expect(find.byType(PrimaryButton), findsNothing);
     });
 
-    testWidgets('does not render action button when actionText is null', (WidgetTester tester) async {
+    testWidgets('does not render action button when actionText is null', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -154,18 +159,20 @@ void main() {
 
       // Should be centered
       expect(find.byType(Center), findsWidgets);
-      
+
       // Should have padding
       expect(find.byType(Padding), findsWidgets);
-      
+
       // Should have column layout
       expect(find.byType(Column), findsOneWidget);
-      
+
       final column = tester.widget<Column>(find.byType(Column));
       expect(column.mainAxisAlignment, equals(MainAxisAlignment.center));
     });
 
-    testWidgets('has correct spacing between elements', (WidgetTester tester) async {
+    testWidgets('has correct spacing between elements', (
+      WidgetTester tester,
+    ) async {
       var wasPressed = false;
 
       await tester.pumpWidget(
@@ -183,7 +190,7 @@ void main() {
       );
 
       final sizedBoxes = tester.widgetList<SizedBox>(find.byType(SizedBox));
-      
+
       // Should have spacing after icon (height: 24)
       final iconSpacing = sizedBoxes.where((box) => box.height == 24);
       expect(iconSpacing, isNotEmpty);
@@ -197,7 +204,9 @@ void main() {
       expect(actionSpacing, isNotEmpty);
     });
 
-    testWidgets('icon container has correct styling', (WidgetTester tester) async {
+    testWidgets('icon container has correct styling', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -234,7 +243,9 @@ void main() {
         ),
       );
 
-      final primaryButton = tester.widget<PrimaryButton>(find.byType(PrimaryButton));
+      final primaryButton = tester.widget<PrimaryButton>(
+        find.byType(PrimaryButton),
+      );
       expect(primaryButton.width, equals(200));
     });
 
@@ -242,10 +253,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: EmptyStateWidget(
-              title: testTitle,
-              subtitle: testSubtitle,
-            ),
+            body: EmptyStateWidget(title: testTitle, subtitle: testSubtitle),
           ),
         ),
       );

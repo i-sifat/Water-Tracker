@@ -32,25 +32,30 @@ class PremiumStatusIndicator extends StatelessWidget {
     );
   }
 
-  Widget _buildIndicator(BuildContext context, PremiumProvider premiumProvider) {
+  Widget _buildIndicator(
+    BuildContext context,
+    PremiumProvider premiumProvider,
+  ) {
     final theme = Theme.of(context);
     final isPremium = premiumProvider.isPremium;
-    
+
     final iconSize = _getIconSize();
     final textStyle = _getTextStyle(theme);
-    
+
     if (showLabel) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: isPremium 
-              ? theme.colorScheme.primaryContainer
-              : theme.colorScheme.surfaceContainerHighest,
+          color:
+              isPremium
+                  ? theme.colorScheme.primaryContainer
+                  : theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isPremium 
-                ? theme.colorScheme.primary.withValues(alpha: 0.3)
-                : theme.colorScheme.outline.withValues(alpha: 0.3),
+            color:
+                isPremium
+                    ? theme.colorScheme.primary.withValues(alpha: 0.3)
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -59,17 +64,19 @@ class PremiumStatusIndicator extends StatelessWidget {
             Icon(
               isPremium ? Icons.workspace_premium : Icons.lock_outline,
               size: iconSize,
-              color: isPremium 
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurfaceVariant,
+              color:
+                  isPremium
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: 4),
             Text(
               isPremium ? 'Premium' : 'Free',
               style: textStyle?.copyWith(
-                color: isPremium 
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurfaceVariant,
+                color:
+                    isPremium
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -80,9 +87,10 @@ class PremiumStatusIndicator extends StatelessWidget {
       return Icon(
         isPremium ? Icons.workspace_premium : Icons.lock_outline,
         size: iconSize,
-        color: isPremium 
-            ? theme.colorScheme.primary
-            : theme.colorScheme.onSurfaceVariant,
+        color:
+            isPremium
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurfaceVariant,
       );
     }
   }
@@ -114,9 +122,7 @@ class PremiumStatusIndicator extends StatelessWidget {
       // Navigate to donation info screen
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => const DonationInfoScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const DonationInfoScreen()),
       );
     } else {
       // Show premium status dialog
@@ -124,19 +130,19 @@ class PremiumStatusIndicator extends StatelessWidget {
     }
   }
 
-  void _showPremiumStatusDialog(BuildContext context, PremiumProvider premiumProvider) {
+  void _showPremiumStatusDialog(
+    BuildContext context,
+    PremiumProvider premiumProvider,
+  ) {
     showDialog(
       context: context,
-      builder: (context) => _PremiumStatusDialog(premiumProvider: premiumProvider),
+      builder:
+          (context) => _PremiumStatusDialog(premiumProvider: premiumProvider),
     );
   }
 }
 
-enum PremiumIndicatorSize {
-  small,
-  normal,
-  large,
-}
+enum PremiumIndicatorSize { small, normal, large }
 
 class _PremiumStatusDialog extends StatelessWidget {
   const _PremiumStatusDialog({required this.premiumProvider});
@@ -146,7 +152,7 @@ class _PremiumStatusDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AlertDialog(
       icon: Icon(
         Icons.workspace_premium,
@@ -158,15 +164,9 @@ class _PremiumStatusDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _StatusRow(
-            label: 'Status',
-            value: premiumProvider.statusSummary,
-          ),
+          _StatusRow(label: 'Status', value: premiumProvider.statusSummary),
           const SizedBox(height: 8),
-          _StatusRow(
-            label: 'Device Code',
-            value: premiumProvider.deviceCode,
-          ),
+          _StatusRow(label: 'Device Code', value: premiumProvider.deviceCode),
           if (premiumProvider.unlockedAt != null) ...[
             const SizedBox(height: 8),
             _StatusRow(
@@ -205,10 +205,7 @@ class _PremiumStatusDialog extends StatelessWidget {
 }
 
 class _StatusRow extends StatelessWidget {
-  const _StatusRow({
-    required this.label,
-    required this.value,
-  });
+  const _StatusRow({required this.label, required this.value});
 
   final String label;
   final String value;
@@ -216,7 +213,7 @@ class _StatusRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -244,10 +241,7 @@ class _StatusRow extends StatelessWidget {
 
 /// Compact premium badge for use in app bars or small spaces
 class PremiumBadge extends StatelessWidget {
-  const PremiumBadge({
-    super.key,
-    this.onTap,
-  });
+  const PremiumBadge({super.key, this.onTap});
 
   final VoidCallback? onTap;
 
@@ -296,7 +290,7 @@ class PremiumLockedIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -345,9 +339,7 @@ class PremiumLockedIndicator extends StatelessWidget {
   void _navigateToUnlock(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const DonationInfoScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const DonationInfoScreen()),
     );
   }
 }

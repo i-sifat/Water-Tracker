@@ -10,7 +10,8 @@ class OnboardingSettingsScreen extends StatefulWidget {
   const OnboardingSettingsScreen({super.key});
 
   @override
-  State<OnboardingSettingsScreen> createState() => _OnboardingSettingsScreenState();
+  State<OnboardingSettingsScreen> createState() =>
+      _OnboardingSettingsScreenState();
 }
 
 class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
@@ -77,9 +78,9 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
             const SizedBox(height: 8),
             Text(
               'Update your profile to get more accurate hydration recommendations',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSubtitle,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.textSubtitle),
             ),
             const SizedBox(height: 32),
 
@@ -95,7 +96,10 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
             // Weight setting
             _buildSettingCard(
               title: 'Weight',
-              value: _profile.weight != null ? '${_profile.weight!.toStringAsFixed(1)} kg' : 'Not set',
+              value:
+                  _profile.weight != null
+                      ? '${_profile.weight!.toStringAsFixed(1)} kg'
+                      : 'Not set',
               onTap: _showWeightDialog,
             ),
 
@@ -131,9 +135,10 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
             // Goals setting
             _buildSettingCard(
               title: 'Goals',
-              value: _profile.goals.isEmpty 
-                  ? 'None selected' 
-                  : _profile.goals.map((g) => g.displayName).join(', '),
+              value:
+                  _profile.goals.isEmpty
+                      ? 'None selected'
+                      : _profile.goals.map((g) => g.displayName).join(', '),
               onTap: _showGoalsDialog,
             ),
 
@@ -204,10 +209,7 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
                 ],
               ),
             ),
-            const Icon(
-              Icons.chevron_right,
-              color: AppColors.textSubtitle,
-            ),
+            const Icon(Icons.chevron_right, color: AppColors.textSubtitle),
           ],
         ),
       ),
@@ -217,241 +219,257 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
   void _showAgeDialog() {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Update Age'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              initialValue: _profile.age?.toString() ?? '',
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Age',
-                suffixText: 'years',
-              ),
-              onChanged: (value) {
-                final age = int.tryParse(value);
-                if (age != null && age > 0 && age < 120) {
-                  setState(() {
-                    _profile = _profile.copyWith(age: age);
-                    _hasChanges = true;
-                  });
-                }
-              },
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Update Age'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  initialValue: _profile.age?.toString() ?? '',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Age',
+                    suffixText: 'years',
+                  ),
+                  onChanged: (value) {
+                    final age = int.tryParse(value);
+                    if (age != null && age > 0 && age < 120) {
+                      setState(() {
+                        _profile = _profile.copyWith(age: age);
+                        _hasChanges = true;
+                      });
+                    }
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Done'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Done'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _showWeightDialog() {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Update Weight'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              initialValue: _profile.weight?.toString() ?? '',
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Weight',
-                suffixText: 'kg',
-              ),
-              onChanged: (value) {
-                final weight = double.tryParse(value);
-                if (weight != null && weight > 0 && weight < 300) {
-                  setState(() {
-                    _profile = _profile.copyWith(weight: weight);
-                    _hasChanges = true;
-                  });
-                }
-              },
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Update Weight'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  initialValue: _profile.weight?.toString() ?? '',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Weight',
+                    suffixText: 'kg',
+                  ),
+                  onChanged: (value) {
+                    final weight = double.tryParse(value);
+                    if (weight != null && weight > 0 && weight < 300) {
+                      setState(() {
+                        _profile = _profile.copyWith(weight: weight);
+                        _hasChanges = true;
+                      });
+                    }
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Done'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Done'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _showGenderDialog() {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Update Gender'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: Gender.values.map((gender) {
-            return RadioListTile<Gender>(
-              title: Text(gender.displayName),
-              value: gender,
-              groupValue: _profile.gender,
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _profile = _profile.copyWith(gender: value);
-                    _hasChanges = true;
-                  });
-                  Navigator.of(context).pop();
-                }
-              },
-            );
-          }).toList(),
-        ),
-      ),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Update Gender'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  Gender.values.map((gender) {
+                    return RadioListTile<Gender>(
+                      title: Text(gender.displayName),
+                      value: gender,
+                      groupValue: _profile.gender,
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _profile = _profile.copyWith(gender: value);
+                            _hasChanges = true;
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    );
+                  }).toList(),
+            ),
+          ),
     );
   }
 
   void _showActivityLevelDialog() {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Update Activity Level'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: ActivityLevel.values.map((level) {
-            return RadioListTile<ActivityLevel>(
-              title: Text(level.displayName),
-              subtitle: Text(level.description),
-              value: level,
-              groupValue: _profile.activityLevel,
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _profile = _profile.copyWith(activityLevel: value);
-                    _hasChanges = true;
-                  });
-                  Navigator.of(context).pop();
-                }
-              },
-            );
-          }).toList(),
-        ),
-      ),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Update Activity Level'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  ActivityLevel.values.map((level) {
+                    return RadioListTile<ActivityLevel>(
+                      title: Text(level.displayName),
+                      subtitle: Text(level.description),
+                      value: level,
+                      groupValue: _profile.activityLevel,
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _profile = _profile.copyWith(activityLevel: value);
+                            _hasChanges = true;
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    );
+                  }).toList(),
+            ),
+          ),
     );
   }
 
   void _showGoalsDialog() {
     final selectedGoals = Set<Goal>.from(_profile.goals);
-    
+
     showDialog<void>(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Update Goals'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: Goal.values.map((goal) {
-              return CheckboxListTile(
-                title: Text(goal.displayName),
-                subtitle: Text(goal.description),
-                value: selectedGoals.contains(goal),
-                onChanged: (value) {
-                  setDialogState(() {
-                    if (value == true) {
-                      selectedGoals.add(goal);
-                    } else {
-                      selectedGoals.remove(goal);
-                    }
-                  });
-                },
-              );
-            }).toList(),
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setDialogState) => AlertDialog(
+                  title: const Text('Update Goals'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children:
+                        Goal.values.map((goal) {
+                          return CheckboxListTile(
+                            title: Text(goal.displayName),
+                            subtitle: Text(goal.description),
+                            value: selectedGoals.contains(goal),
+                            onChanged: (value) {
+                              setDialogState(() {
+                                if (value == true) {
+                                  selectedGoals.add(goal);
+                                } else {
+                                  selectedGoals.remove(goal);
+                                }
+                              });
+                            },
+                          );
+                        }).toList(),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _profile = _profile.copyWith(
+                            goals: selectedGoals.toList(),
+                          );
+                          _hasChanges = true;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Save'),
+                    ),
+                  ],
+                ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _profile = _profile.copyWith(goals: selectedGoals.toList());
-                  _hasChanges = true;
-                });
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
   void _showDailyGoalDialog() {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Update Daily Goal'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              initialValue: _profile.customDailyGoal?.toString() ?? _profile.dailyGoal?.toString() ?? '',
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Daily Goal',
-                suffixText: 'ml',
-                helperText: 'Leave empty to use calculated goal',
-              ),
-              onChanged: (value) {
-                final goal = int.tryParse(value);
-                setState(() {
-                  _profile = _profile.copyWith(customDailyGoal: goal);
-                  _hasChanges = true;
-                });
-              },
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Update Daily Goal'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  initialValue:
+                      _profile.customDailyGoal?.toString() ??
+                      _profile.dailyGoal?.toString() ??
+                      '',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Daily Goal',
+                    suffixText: 'ml',
+                    helperText: 'Leave empty to use calculated goal',
+                  ),
+                  onChanged: (value) {
+                    final goal = int.tryParse(value);
+                    setState(() {
+                      _profile = _profile.copyWith(customDailyGoal: goal);
+                      _hasChanges = true;
+                    });
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Done'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Done'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _showResetDialog() {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Reset All Settings'),
-        content: const Text(
-          "This will reset all your profile settings and you'll need to go through onboarding again. Are you sure?",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Reset All Settings'),
+            content: const Text(
+              "This will reset all your profile settings and you'll need to go through onboarding again. Are you sure?",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _resetOnboarding();
+                },
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Reset'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await _resetOnboarding();
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Reset'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -459,7 +477,7 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
     try {
       final provider = OnboardingProvider();
       await provider.resetOnboarding();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -491,10 +509,13 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
 
       // Save to storage (simplified)
       // In a real app, you'd use the storage service
-      
+
       // Update hydration provider with new goal
       if (mounted) {
-        final hydrationProvider = Provider.of<HydrationProvider>(context, listen: false);
+        final hydrationProvider = Provider.of<HydrationProvider>(
+          context,
+          listen: false,
+        );
         await hydrationProvider.setDailyGoal(_profile.effectiveDailyGoal);
       }
 

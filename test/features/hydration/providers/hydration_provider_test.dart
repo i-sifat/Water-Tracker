@@ -12,7 +12,11 @@ class MockStorageService {
     return _storage[key] as String?;
   }
 
-  Future<bool> saveString(String key, String value, {bool encrypted = true}) async {
+  Future<bool> saveString(
+    String key,
+    String value, {
+    bool encrypted = true,
+  }) async {
     _storage[key] = value;
     return true;
   }
@@ -30,7 +34,11 @@ class MockStorageService {
     return _storage[key] as bool?;
   }
 
-  Future<bool> saveBool(String key, bool value, {bool encrypted = false}) async {
+  Future<bool> saveBool(
+    String key,
+    bool value, {
+    bool encrypted = false,
+  }) async {
     _storage[key] = value;
     return true;
   }
@@ -126,10 +134,7 @@ void main() {
       test('should throw error for invalid amount', () async {
         await Future.delayed(const Duration(milliseconds: 100));
 
-        expect(
-          () => provider.addHydration(0),
-          throwsA(isA<ValidationError>()),
-        );
+        expect(() => provider.addHydration(0), throwsA(isA<ValidationError>()));
 
         expect(
           () => provider.addHydration(-100),
@@ -218,12 +223,12 @@ void main() {
 
         // Add entries for different days
         await provider.addHydration(250);
-        
+
         // Manually add yesterday's entry to history
         final yesterdayEntry = HydrationData.create(amount: 300);
-        provider.hydrationHistory.add(yesterdayEntry.copyWith(
-          timestamp: yesterday,
-        ));
+        provider.hydrationHistory.add(
+          yesterdayEntry.copyWith(timestamp: yesterday),
+        );
 
         final todaysEntries = provider.getEntriesForDate(today);
         final yesterdaysEntries = provider.getEntriesForDate(yesterday);
@@ -236,7 +241,7 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 100));
 
         final weekStart = DateTime.now().subtract(const Duration(days: 6));
-        
+
         // Add some entries
         await provider.addHydration(250);
         await provider.addHydration(200);
@@ -275,13 +280,13 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 100));
 
         await provider.setDailyGoal(500);
-        
+
         // Simulate achieving goal
         await provider.addHydration(600);
-        
+
         // Manually set a higher longest streak to test update
         await mockStorage.saveInt('longestStreak', 5);
-        
+
         // Current streak should not exceed longest streak initially
         expect(provider.currentStreak, equals(1));
       });
@@ -296,7 +301,10 @@ void main() {
 
         final csvData = await provider.exportData();
 
-        expect(csvData, contains('Date,Time,Amount (ml),Drink Type,Water Content (ml),Notes'));
+        expect(
+          csvData,
+          contains('Date,Time,Amount (ml),Drink Type,Water Content (ml),Notes'),
+        );
         expect(csvData, contains('250,Water,250,Morning water'));
         expect(csvData, contains('200,Coffee,190'));
       });
@@ -323,10 +331,7 @@ void main() {
       test('should throw error for invalid daily goal', () async {
         await Future.delayed(const Duration(milliseconds: 100));
 
-        expect(
-          () => provider.setDailyGoal(0),
-          throwsA(isA<ValidationError>()),
-        );
+        expect(() => provider.setDailyGoal(0), throwsA(isA<ValidationError>()));
 
         expect(
           () => provider.setDailyGoal(-100),
@@ -420,12 +425,12 @@ void main() {
     test('should work with factory-created data', () async {
       final mockStorage = MockStorageService();
       final provider = HydrationProvider(storageService: mockStorage);
-      
+
       await Future.delayed(const Duration(milliseconds: 100));
 
       // Create test data using factories
       final testEntries = ModelFactories.createHydrationDataList(count: 5);
-      
+
       // Add entries to provider
       for (final entry in testEntries) {
         await provider.addHydration(

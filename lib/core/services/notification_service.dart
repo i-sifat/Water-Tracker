@@ -22,18 +22,19 @@ class NotificationService {
 
   static const String _notificationChannelId = 'water_reminder';
   static const String _notificationChannelName = 'Water Reminder';
-  static const String _notificationChannelDescription = 'Reminds you to drink water';
-  
+  static const String _notificationChannelDescription =
+      'Reminds you to drink water';
+
   // Storage keys
   static const String _lastNotificationKey = 'last_notification_time';
   static const String _notificationCountKey = 'notification_count';
-  static const String _notificationInteractionsKey = 'notification_interactions';
+  static const String _notificationInteractionsKey =
+      'notification_interactions';
   static const String _customRemindersKey = 'custom_reminders';
   static const String _notificationSettingsKey = 'notification_settings';
   static const String _usagePatternKey = 'usage_pattern';
 
   bool _isInitialized = false;
-
 
   /// Initialize the notification service
   Future<void> initialize() async {
@@ -58,7 +59,7 @@ class NotificationService {
 
       await _notifications.initialize(initSettings);
       await _storageService.initialize();
-      
+
       _isInitialized = true;
       debugPrint('Enhanced NotificationService initialized successfully');
     } catch (e) {
@@ -67,29 +68,27 @@ class NotificationService {
     }
   }
 
-
-
   /// Request notification permissions
   Future<bool> requestPermissions() async {
     try {
       // Check current permission status
       final permissionStatus = await Permission.notification.status;
-      
+
       if (permissionStatus.isGranted) {
         return true;
       }
-      
+
       if (permissionStatus.isDenied) {
         final status = await Permission.notification.request();
         return status.isGranted;
       }
-      
+
       // Handle permanently denied case
       if (permissionStatus.isPermanentlyDenied) {
         debugPrint('Notification permission permanently denied');
         return false;
       }
-      
+
       return false;
     } catch (e) {
       debugPrint('Error requesting notification permissions: $e');
@@ -125,7 +124,7 @@ class NotificationService {
       }
 
       final isPremium = await _premiumService.isPremiumUnlocked();
-      
+
       if (isPremium) {
         await _scheduleCustomReminders();
       } else {
@@ -148,7 +147,7 @@ class NotificationService {
   Future<void> _scheduleBasicReminders() async {
     final settings = await _getNotificationSettings();
     final usagePattern = await _getUsagePattern();
-    
+
     // Default schedule: every 2 hours between 8 AM and 10 PM
     final startHour = (settings['startHour'] as int?) ?? 8;
     final endHour = (settings['endHour'] as int?) ?? 22;
@@ -156,7 +155,7 @@ class NotificationService {
 
     final now = DateTime.now();
     var scheduledDate = DateTime(now.year, now.month, now.day, startHour);
-    
+
     // If current time is past start time, schedule for next day
     if (now.hour >= startHour) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
@@ -174,7 +173,10 @@ class NotificationService {
       );
 
       // Adjust timing based on usage pattern
-      final adjustedTime = _adjustTimeBasedOnUsage(notificationTime, usagePattern);
+      final adjustedTime = _adjustTimeBasedOnUsage(
+        notificationTime,
+        usagePattern,
+      );
 
       await _scheduleNotification(
         id: notificationId++,
@@ -189,7 +191,7 @@ class NotificationService {
   /// Schedule custom reminders for premium users
   Future<void> _scheduleCustomReminders() async {
     final customReminders = await _getCustomReminders();
-    
+
     if (customReminders.isEmpty) {
       // Fall back to smart basic reminders if no custom reminders set
       await _scheduleBasicReminders();
@@ -197,18 +199,22 @@ class NotificationService {
     }
 
     var notificationId = 100; // Start from 100 to avoid conflicts
-    
+
     for (final reminder in customReminders) {
       if (!(reminder['enabled'] as bool? ?? false)) continue;
 
       final hour = reminder['hour'] as int;
       final minute = reminder['minute'] as int;
       final title = reminder['title'] as String? ?? 'Time to Hydrate!';
-      final body = reminder['body'] as String? ?? 'Remember to drink water and stay healthy.';
-      final days = reminder['days'] as List<int>? ?? [1, 2, 3, 4, 5, 6, 7]; // All days by default
+      final body =
+          reminder['body'] as String? ??
+          'Remember to drink water and stay healthy.';
+      final days =
+          reminder['days'] as List<int>? ??
+          [1, 2, 3, 4, 5, 6, 7]; // All days by default
 
       final now = DateTime.now();
-      
+
       for (final dayOfWeek in days) {
         var scheduledDate = _getNextDateForDayOfWeek(now, dayOfWeek);
         final scheduledTime = DateTime(
@@ -229,7 +235,7 @@ class NotificationService {
             hour,
             minute,
           );
-          
+
           await _scheduleNotification(
             id: notificationId++,
             title: title,
@@ -320,7 +326,6 @@ class NotificationService {
 
       // Track scheduled notification
       await _trackNotificationScheduled(id, title, scheduledTime);
-      
     } catch (e) {
       debugPrint('Error scheduling notification $id: $e');
     }
@@ -404,7 +409,10 @@ class NotificationService {
   }
 
   /// Adjust notification time based on usage patterns
-  DateTime _adjustTimeBasedOnUsage(DateTime originalTime, Map<String, dynamic> usagePattern) {
+  DateTime _adjustTimeBasedOnUsage(
+    DateTime originalTime,
+    Map<String, dynamic> usagePattern,
+  ) {
     // For now, return original time
     // In the future, this could analyze when user typically drinks water
     // and adjust timing accordingly
@@ -415,11 +423,11 @@ class NotificationService {
   DateTime _getNextDateForDayOfWeek(DateTime from, int dayOfWeek) {
     final currentDayOfWeek = from.weekday;
     final daysUntilTarget = (dayOfWeek - currentDayOfWeek) % 7;
-    
+
     if (daysUntilTarget == 0) {
       return from; // Today
     }
-    
+
     return from.add(Duration(days: daysUntilTarget));
   }
 
@@ -500,7 +508,7 @@ class NotificationService {
 
     try {
       final customReminders = await _getCustomReminders();
-      
+
       final newReminder = {
         'id': DateTime.now().millisecondsSinceEpoch,
         'hour': hour,
@@ -514,10 +522,10 @@ class NotificationService {
 
       customReminders.add(newReminder);
       await _saveCustomReminders(customReminders);
-      
+
       // Reschedule all reminders
       await scheduleSmartReminders();
-      
+
       return true;
     } catch (e) {
       debugPrint('Error adding custom reminder: $e');
@@ -541,7 +549,7 @@ class NotificationService {
     try {
       final customReminders = await _getCustomReminders();
       final reminderIndex = customReminders.indexWhere((r) => r['id'] == id);
-      
+
       if (reminderIndex == -1) return false;
 
       final reminder = customReminders[reminderIndex];
@@ -555,7 +563,7 @@ class NotificationService {
 
       await _saveCustomReminders(customReminders);
       await scheduleSmartReminders();
-      
+
       return true;
     } catch (e) {
       debugPrint('Error updating custom reminder: $e');
@@ -571,10 +579,10 @@ class NotificationService {
     try {
       final customReminders = await _getCustomReminders();
       customReminders.removeWhere((r) => r['id'] == id);
-      
+
       await _saveCustomReminders(customReminders);
       await scheduleSmartReminders();
-      
+
       return true;
     } catch (e) {
       debugPrint('Error deleting custom reminder: $e');
@@ -592,13 +600,18 @@ class NotificationService {
 
   // MARK: - Analytics and Tracking
 
-
-
   /// Track notification scheduled
-  Future<void> _trackNotificationScheduled(int id, String title, DateTime scheduledTime) async {
+  Future<void> _trackNotificationScheduled(
+    int id,
+    String title,
+    DateTime scheduledTime,
+  ) async {
     try {
-      await _storageService.saveInt(_lastNotificationKey, DateTime.now().millisecondsSinceEpoch);
-      
+      await _storageService.saveInt(
+        _lastNotificationKey,
+        DateTime.now().millisecondsSinceEpoch,
+      );
+
       final count = await _storageService.getInt(_notificationCountKey) ?? 0;
       await _storageService.saveInt(_notificationCountKey, count + 1);
     } catch (e) {
@@ -618,9 +631,11 @@ class NotificationService {
     }
 
     try {
-      final interactions = await _storageService.getJson(_notificationInteractionsKey) ?? {};
-      final totalScheduled = await _storageService.getInt(_notificationCountKey) ?? 0;
-      
+      final interactions =
+          await _storageService.getJson(_notificationInteractionsKey) ?? {};
+      final totalScheduled =
+          await _storageService.getInt(_notificationCountKey) ?? 0;
+
       var totalInteractions = 0;
       for (final dayData in interactions.values) {
         if (dayData is Map<String, dynamic>) {
@@ -631,7 +646,8 @@ class NotificationService {
       return {
         'totalScheduled': totalScheduled,
         'totalInteractions': totalInteractions,
-        'interactionRate': totalScheduled > 0 ? totalInteractions / totalScheduled : 0.0,
+        'interactionRate':
+            totalScheduled > 0 ? totalInteractions / totalScheduled : 0.0,
         'dailyInteractions': interactions,
       };
     } catch (e) {
@@ -655,14 +671,14 @@ class NotificationService {
   }) async {
     try {
       final settings = await _getNotificationSettings();
-      
+
       if (startHour != null) settings['startHour'] = startHour;
       if (endHour != null) settings['endHour'] = endHour;
       if (interval != null) settings['interval'] = interval;
       if (enabled != null) settings['enabled'] = enabled;
-      
+
       await _storageService.saveJson(_notificationSettingsKey, settings);
-      
+
       // Reschedule notifications with new settings
       if (settings['enabled'] == true) {
         await scheduleSmartReminders();
@@ -683,23 +699,21 @@ class NotificationService {
 
   Future<Map<String, dynamic>> _getNotificationSettings() async {
     final settings = await _storageService.getJson(_notificationSettingsKey);
-    return settings ?? {
-      'enabled': true,
-      'startHour': 8,
-      'endHour': 22,
-      'interval': 2,
-    };
+    return settings ??
+        {'enabled': true, 'startHour': 8, 'endHour': 22, 'interval': 2};
   }
 
   Future<List<Map<String, dynamic>>> _getCustomReminders() async {
     final reminders = await _storageService.getJson(_customRemindersKey);
     if (reminders == null) return [];
-    
+
     final remindersList = reminders['reminders'] as List<dynamic>?;
     return remindersList?.cast<Map<String, dynamic>>() ?? [];
   }
 
-  Future<void> _saveCustomReminders(List<Map<String, dynamic>> reminders) async {
+  Future<void> _saveCustomReminders(
+    List<Map<String, dynamic>> reminders,
+  ) async {
     await _storageService.saveJson(_customRemindersKey, {
       'reminders': reminders,
       'updated': DateTime.now().toIso8601String(),
@@ -708,11 +722,12 @@ class NotificationService {
 
   Future<Map<String, dynamic>> _getUsagePattern() async {
     final pattern = await _storageService.getJson(_usagePatternKey);
-    return pattern ?? {
-      'lastIntakeHour': null,
-      'averageIntakeHours': <int>[],
-      'preferredTimes': <int>[],
-    };
+    return pattern ??
+        {
+          'lastIntakeHour': null,
+          'averageIntakeHours': <int>[],
+          'preferredTimes': <int>[],
+        };
   }
 
   /// Update usage pattern based on hydration data
@@ -722,11 +737,11 @@ class NotificationService {
   }) async {
     try {
       final pattern = await _getUsagePattern();
-      
+
       if (lastIntakeHour != null) {
         pattern['lastIntakeHour'] = lastIntakeHour;
       }
-      
+
       if (recentIntakeHours != null) {
         pattern['averageIntakeHours'] = recentIntakeHours;
         // Calculate preferred times based on frequency
@@ -734,13 +749,15 @@ class NotificationService {
         for (final hour in recentIntakeHours) {
           hourCounts[hour] = (hourCounts[hour] ?? 0) + 1;
         }
-        
+
         // Get top 3 most frequent hours
-        final sortedHours = hourCounts.entries.toList()
-          ..sort((a, b) => b.value.compareTo(a.value));
-        pattern['preferredTimes'] = sortedHours.take(3).map((e) => e.key).toList();
+        final sortedHours =
+            hourCounts.entries.toList()
+              ..sort((a, b) => b.value.compareTo(a.value));
+        pattern['preferredTimes'] =
+            sortedHours.take(3).map((e) => e.key).toList();
       }
-      
+
       await _storageService.saveJson(_usagePatternKey, pattern);
     } catch (e) {
       debugPrint('Error updating usage pattern: $e');

@@ -33,10 +33,7 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
     _initializeParticles();
     _controller.forward();
@@ -123,9 +120,10 @@ class CelebrationPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     for (final particle in particles) {
       if (particle.life > 0) {
-        final paint = Paint()
-          ..color = particle.color.withValues(alpha: particle.life)
-          ..style = PaintingStyle.fill;
+        final paint =
+            Paint()
+              ..color = particle.color.withValues(alpha: particle.life)
+              ..style = PaintingStyle.fill;
 
         final position = Offset(
           particle.x * size.width,
@@ -167,32 +165,24 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog>
   @override
   void initState() {
     super.initState();
-    
+
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
 
-    _rotationAnimation = Tween<double>(
-      begin: 0,
-      end: 2 * pi,
-    ).animate(CurvedAnimation(
-      parent: _rotationController,
-      curve: Curves.easeInOut,
-    ));
+    _rotationAnimation = Tween<double>(begin: 0, end: 2 * pi).animate(
+      CurvedAnimation(parent: _rotationController, curve: Curves.easeInOut),
+    );
 
     // Start animations
     _scaleController.forward();
@@ -211,16 +201,14 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Stack(
         children: [
           // Celebration particles
-          const Positioned.fill(
-            child: CelebrationAnimation(),
-          ),
-          
+          const Positioned.fill(child: CelebrationAnimation()),
+
           // Dialog content
           Center(
             child: AnimatedBuilder(
@@ -255,7 +243,9 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog>
                                 width: 80,
                                 height: 80,
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                                  color: theme.colorScheme.primary.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -267,9 +257,9 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog>
                             );
                           },
                         ),
-                        
+
                         const SizedBox(height: 20),
-                        
+
                         // Title
                         Text(
                           widget.title,
@@ -279,9 +269,9 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog>
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        
+
                         const SizedBox(height: 12),
-                        
+
                         // Message
                         Text(
                           widget.message,
@@ -290,9 +280,9 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog>
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Continue button
                         SizedBox(
                           width: double.infinity,
@@ -327,10 +317,12 @@ void showGoalAchievementDialog(
   showDialog(
     context: context,
     barrierDismissible: false,
-    builder: (context) => GoalAchievementDialog(
-      title: title ?? 'Goal Achieved!',
-      message: message ?? 'Congratulations on reaching your hydration goal!',
-      onContinue: onContinue,
-    ),
+    builder:
+        (context) => GoalAchievementDialog(
+          title: title ?? 'Goal Achieved!',
+          message:
+              message ?? 'Congratulations on reaching your hydration goal!',
+          onContinue: onContinue,
+        ),
   );
 }

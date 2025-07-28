@@ -6,7 +6,6 @@ import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/core/widgets/cards/selection_box.dart';
 import 'package:watertracker/features/onboarding/screens/gender_selection_screen.dart';
 
-
 class VegetablesFruitsScreen extends StatefulWidget {
   const VegetablesFruitsScreen({super.key});
 
@@ -18,9 +17,24 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
   String _selectedFrequency = '';
 
   final List<Map<String, dynamic>> _frequencies = [
-    {'title': 'Rarely', 'subtitle': 'Few times a week', 'icon': Icons.eco, 'emoji': '🥗'},
-    {'title': 'Often', 'subtitle': 'Several per day', 'icon': Icons.local_florist, 'emoji': '🥬'},
-    {'title': 'Regularly', 'subtitle': 'Every day', 'icon': Icons.grass, 'emoji': '🥦'},
+    {
+      'title': 'Rarely',
+      'subtitle': 'Few times a week',
+      'icon': Icons.eco,
+      'emoji': '🥗',
+    },
+    {
+      'title': 'Often',
+      'subtitle': 'Several per day',
+      'icon': Icons.local_florist,
+      'emoji': '🥬',
+    },
+    {
+      'title': 'Regularly',
+      'subtitle': 'Every day',
+      'icon': Icons.grass,
+      'emoji': '🥦',
+    },
   ];
 
   Future<void> _saveFrequency() async {

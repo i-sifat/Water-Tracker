@@ -22,13 +22,15 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
       'value': Gender.male,
       'title': 'I am Male',
       'subtitle': 'Select if you identify as male',
-      'icon': 'assets/images/icons/onboarding_elements/onboarding_maleavater_icon.svg',
+      'icon':
+          'assets/images/icons/onboarding_elements/onboarding_maleavater_icon.svg',
     },
     {
       'value': Gender.female,
       'title': 'I am Female',
       'subtitle': 'Select if you identify as female',
-      'icon': 'assets/images/icons/onboarding_elements/onboarding_femaleavater_icon.svg',
+      'icon':
+          'assets/images/icons/onboarding_elements/onboarding_femaleavater_icon.svg',
     },
   ];
 
@@ -52,7 +54,10 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
           title: 'Select your Gender',
           subtitle: 'This helps us personalize your hydration needs (optional)',
           showSkipButton: true,
-          onContinue: _selectedGender != null ? () => _handleContinue(onboardingProvider) : null,
+          onContinue:
+              _selectedGender != null
+                  ? () => _handleContinue(onboardingProvider)
+                  : null,
           canContinue: _selectedGender != null,
           isLoading: onboardingProvider.isSaving,
           child: Column(
@@ -60,7 +65,8 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
               Expanded(
                 child: ListView.separated(
                   itemCount: _genderOptions.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 16),
+                  separatorBuilder:
+                      (context, index) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
                     final option = _genderOptions[index];
                     return LargeSelectionBox(
@@ -81,9 +87,9 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                   },
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Prefer not to answer button
               SizedBox(
                 width: double.infinity,

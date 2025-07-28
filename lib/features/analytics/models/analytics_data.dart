@@ -24,14 +24,14 @@ class WeeklyAnalytics extends Equatable {
 
   @override
   List<Object?> get props => [
-        weekStart,
-        dailyIntakes,
-        dailyGoals,
-        averageIntake,
-        goalAchievementRate,
-        totalIntake,
-        streak,
-      ];
+    weekStart,
+    dailyIntakes,
+    dailyGoals,
+    averageIntake,
+    goalAchievementRate,
+    totalIntake,
+    streak,
+  ];
 }
 
 /// Model for monthly analytics data
@@ -63,16 +63,16 @@ class MonthlyAnalytics extends Equatable {
 
   @override
   List<Object?> get props => [
-        month,
-        year,
-        dailyIntakes,
-        weeklyAverages,
-        goalAchievementRate,
-        totalIntake,
-        averageIntake,
-        bestStreak,
-        currentStreak,
-      ];
+    month,
+    year,
+    dailyIntakes,
+    weeklyAverages,
+    goalAchievementRate,
+    totalIntake,
+    averageIntake,
+    bestStreak,
+    currentStreak,
+  ];
 }
 
 /// Model for streak data
@@ -91,11 +91,11 @@ class StreakData extends Equatable {
 
   @override
   List<Object?> get props => [
-        currentStreak,
-        longestStreak,
-        streakHistory,
-        lastGoalAchievedDate,
-      ];
+    currentStreak,
+    longestStreak,
+    streakHistory,
+    lastGoalAchievedDate,
+  ];
 }
 
 /// Model for a streak period
@@ -142,15 +142,15 @@ class DetailedStatistics extends Equatable {
 
   @override
   List<Object?> get props => [
-        totalDaysTracked,
-        totalWaterConsumed,
-        averageDailyIntake,
-        goalAchievementRate,
-        currentStreak,
-        longestStreak,
-        favoriteHour,
-        drinkTypeBreakdown,
-        weeklyTrend,
-        monthlyTrend,
-      ];
+    totalDaysTracked,
+    totalWaterConsumed,
+    averageDailyIntake,
+    goalAchievementRate,
+    currentStreak,
+    longestStreak,
+    favoriteHour,
+    drinkTypeBreakdown,
+    weeklyTrend,
+    monthlyTrend,
+  ];
 }

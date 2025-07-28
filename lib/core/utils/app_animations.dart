@@ -25,13 +25,11 @@ class AppAnimations {
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionDuration: duration,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final tween = Tween(begin: begin, end: end).chain(
-          CurveTween(curve: curve),
-        );
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+        final tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+        return SlideTransition(position: animation.drive(tween), child: child);
       },
     );
   }
@@ -64,13 +62,11 @@ class AppAnimations {
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionDuration: duration,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final tween = Tween(begin: begin, end: end).chain(
-          CurveTween(curve: curve),
-        );
-        return ScaleTransition(
-          scale: animation.drive(tween),
-          child: child,
-        );
+        final tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+        return ScaleTransition(scale: animation.drive(tween), child: child);
       },
     );
   }
@@ -148,17 +144,11 @@ class _ButtonPressAnimationState extends State<_ButtonPressAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
     _scaleAnimation = Tween<double>(
       begin: 1,
       end: widget.scale,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -217,26 +207,17 @@ class _StaggeredListItemState extends State<_StaggeredListItem>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
     _fadeAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _slideAnimation = Tween<Offset>(
       begin: widget.slideOffset,
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     // Start animation with delay
     Future.delayed(
@@ -275,7 +256,8 @@ class _StaggeredListItemState extends State<_StaggeredListItem>
 class _ShimmerLoading extends StatefulWidget {
   const _ShimmerLoading({
     required this.child,
-    required this.duration, this.baseColor,
+    required this.duration,
+    this.baseColor,
     this.highlightColor,
   });
 
@@ -296,18 +278,13 @@ class _ShimmerLoadingState extends State<_ShimmerLoading>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    )..repeat();
+    _controller = AnimationController(duration: widget.duration, vsync: this)
+      ..repeat();
 
     _animation = Tween<double>(
       begin: -1,
       end: 2,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -320,7 +297,8 @@ class _ShimmerLoadingState extends State<_ShimmerLoading>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final baseColor = widget.baseColor ?? theme.colorScheme.surface;
-    final highlightColor = widget.highlightColor ?? 
+    final highlightColor =
+        widget.highlightColor ??
         theme.colorScheme.onSurface.withValues(alpha: 0.1);
 
     return AnimatedBuilder(
@@ -329,16 +307,13 @@ class _ShimmerLoadingState extends State<_ShimmerLoading>
         return ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [
-                baseColor,
-                highlightColor,
-                baseColor,
-              ],
-              stops: [
-                _animation.value - 0.3,
-                _animation.value,
-                _animation.value + 0.3,
-              ].map((stop) => stop.clamp(0.0, 1.0)).toList(),
+              colors: [baseColor, highlightColor, baseColor],
+              stops:
+                  [
+                    _animation.value - 0.3,
+                    _animation.value,
+                    _animation.value + 0.3,
+                  ].map((stop) => stop.clamp(0.0, 1.0)).toList(),
             ).createShader(bounds);
           },
           child: widget.child,

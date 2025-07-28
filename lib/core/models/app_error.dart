@@ -100,10 +100,7 @@ class StorageError extends AppError {
 
   /// Storage is full
   factory StorageError.storageFull() {
-    return const StorageError(
-      message: 'Storage is full',
-      code: 'STORAGE_FULL',
-    );
+    return const StorageError(message: 'Storage is full', code: 'STORAGE_FULL');
   }
 
   /// Data corruption detected

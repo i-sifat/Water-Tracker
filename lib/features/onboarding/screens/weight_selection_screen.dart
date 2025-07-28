@@ -215,9 +215,12 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
 }
 
 class CustomRulerPicker extends StatefulWidget {
-
   const CustomRulerPicker({
-    required this.value, required this.minValue, required this.maxValue, required this.onValueChanged, super.key,
+    required this.value,
+    required this.minValue,
+    required this.maxValue,
+    required this.onValueChanged,
+    super.key,
   });
   final double value;
   final double minValue;
@@ -270,7 +273,8 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final totalTicks = ((widget.maxValue - widget.minValue) * _ticksPerUnit).toInt();
+    final totalTicks =
+        ((widget.maxValue - widget.minValue) * _ticksPerUnit).toInt();
     final screenWidth = MediaQuery.of(context).size.width;
     final centerOffset = screenWidth / 2;
 
@@ -280,7 +284,9 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
           onNotification: (notification) {
             if (notification is ScrollUpdateNotification) {
               final offset = _scrollController.offset + centerOffset;
-              final newValue = _offsetToValue(offset).clamp(widget.minValue, widget.maxValue);
+              final newValue = _offsetToValue(
+                offset,
+              ).clamp(widget.minValue, widget.maxValue);
               if (newValue != widget.value) {
                 widget.onValueChanged(newValue);
               }
@@ -300,7 +306,10 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
                   tickSpacing: _tickSpacing,
                   ticksPerUnit: _ticksPerUnit,
                   centerOffset: centerOffset,
-                  scrollOffset: _scrollController.hasClients ? _scrollController.offset : 0,
+                  scrollOffset:
+                      _scrollController.hasClients
+                          ? _scrollController.offset
+                          : 0,
                   currentValue: widget.value,
                 ),
                 size: Size(totalTicks * _tickSpacing + screenWidth, 80),
@@ -327,7 +336,6 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
 }
 
 class RulerPainter extends CustomPainter {
-
   RulerPainter({
     required this.minValue,
     required this.maxValue,
@@ -347,9 +355,10 @@ class RulerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..strokeWidth = 1.5
-      ..strokeCap = StrokeCap.round;
+    final paint =
+        Paint()
+          ..strokeWidth = 1.5
+          ..strokeCap = StrokeCap.round;
 
     final totalTicks = ((maxValue - minValue) * ticksPerUnit).toInt();
     final currentPosition = centerOffset + scrollOffset;
@@ -358,7 +367,7 @@ class RulerPainter extends CustomPainter {
       final x = centerOffset + (i * tickSpacing);
       final tickValue = minValue + (i / ticksPerUnit);
       final isBigTick = i % ticksPerUnit.toInt() == 0;
-      
+
       // Determine tick color based on position relative to current selection
       final isPassed = x < currentPosition;
       paint.color = isPassed ? AppColors.selectedBorder : Colors.grey.shade400;
@@ -370,25 +379,28 @@ class RulerPainter extends CustomPainter {
           Offset(x, size.height),
           paint,
         );
-        
+
         // Draw number labels for big ticks
-        if (tickValue % 5 == 0) { // Show labels every 5 units to avoid crowding
+        if (tickValue % 5 == 0) {
+          // Show labels every 5 units to avoid crowding
           final textPainter = TextPainter(
             text: TextSpan(
               text: tickValue.toInt().toString(),
               style: TextStyle(
-                color: isPassed ? AppColors.selectedBorder : Colors.grey.shade600,
+                color:
+                    isPassed ? AppColors.selectedBorder : Colors.grey.shade600,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
             ),
             textDirection: TextDirection.ltr,
           );
-          textPainter..layout()
-          ..paint(
-            canvas,
-            Offset(x - textPainter.width / 2, size.height - 35),
-          );
+          textPainter
+            ..layout()
+            ..paint(
+              canvas,
+              Offset(x - textPainter.width / 2, size.height - 35),
+            );
         }
       } else {
         // Small tick (0.1 precision)

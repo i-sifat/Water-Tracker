@@ -5,7 +5,7 @@ import 'package:watertracker/l10n/app_localizations.dart';
 /// Provider to manage app locale and language settings
 class LocaleProvider extends ChangeNotifier {
   static const String _localeKey = 'selected_language';
-  
+
   Locale _locale = const Locale('en', 'US');
   bool _isInitialized = false;
 
@@ -15,11 +15,11 @@ class LocaleProvider extends ChangeNotifier {
   /// Initialize locale provider and load saved language preference
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedLanguageCode = prefs.getString(_localeKey);
-      
+
       if (savedLanguageCode != null) {
         final supportedLocale = AppLocalizations.supportedLocales.firstWhere(
           (locale) => locale.languageCode == savedLanguageCode,
@@ -27,7 +27,7 @@ class LocaleProvider extends ChangeNotifier {
         );
         _locale = supportedLocale;
       }
-      
+
       _isInitialized = true;
       notifyListeners();
     } catch (e) {
@@ -40,19 +40,20 @@ class LocaleProvider extends ChangeNotifier {
   /// Set locale and persist to storage
   Future<void> setLocale(Locale locale) async {
     if (_locale == locale) return;
-    
+
     // Check if locale is supported
-    final isSupported = AppLocalizations.supportedLocales
-        .any((supportedLocale) => supportedLocale.languageCode == locale.languageCode);
-    
+    final isSupported = AppLocalizations.supportedLocales.any(
+      (supportedLocale) => supportedLocale.languageCode == locale.languageCode,
+    );
+
     if (!isSupported) {
       debugPrint('Unsupported locale: ${locale.languageCode}');
       return;
     }
-    
+
     _locale = locale;
     notifyListeners();
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_localeKey, locale.languageCode);
@@ -74,7 +75,8 @@ class LocaleProvider extends ChangeNotifier {
   bool get isRTL => _locale.languageCode == 'ar';
 
   /// Get text direction based on current locale
-  TextDirection get textDirection => isRTL ? TextDirection.rtl : TextDirection.ltr;
+  TextDirection get textDirection =>
+      isRTL ? TextDirection.rtl : TextDirection.ltr;
 
   /// Get all supported locales with display names
   Map<Locale, String> get supportedLocalesWithNames {

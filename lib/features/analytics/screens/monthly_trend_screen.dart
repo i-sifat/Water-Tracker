@@ -1,7 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/constants/premium_features.dart' as premium_constants;
+import 'package:watertracker/core/constants/premium_features.dart'
+    as premium_constants;
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
@@ -60,7 +61,8 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
             if (monthlyData == null) {
               return const EmptyStateWidget(
                 title: 'No Data Available',
-                subtitle: 'Start tracking your water intake to see monthly trends.',
+                subtitle:
+                    'Start tracking your water intake to see monthly trends.',
               );
             }
 
@@ -151,12 +153,8 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
                     },
                   ),
                   titlesData: FlTitlesData(
-                    rightTitles: const AxisTitles(
-                      
-                    ),
-                    topTitles: const AxisTitles(
-                      
-                    ),
+                    rightTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -343,12 +341,8 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
                     ),
                   ),
                   titlesData: FlTitlesData(
-                    rightTitles: const AxisTitles(
-                      
-                    ),
-                    topTitles: const AxisTitles(
-                      
-                    ),
+                    rightTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -453,11 +447,10 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: goalAchieved ? AppColors.waterFull : AppColors.waterLow,
+                  color:
+                      goalAchieved ? AppColors.waterFull : AppColors.waterLow,
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(
-                    color: AppColors.unselectedBorder,
-                  ),
+                  border: Border.all(color: AppColors.unselectedBorder),
                 ),
                 child: Center(
                   child: Text(
@@ -465,7 +458,8 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: goalAchieved ? Colors.white : AppColors.textSubtitle,
+                      color:
+                          goalAchieved ? Colors.white : AppColors.textSubtitle,
                     ),
                   ),
                 ),
@@ -503,10 +497,7 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
         const SizedBox(width: 4),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textSubtitle,
-          ),
+          style: const TextStyle(fontSize: 12, color: AppColors.textSubtitle),
         ),
       ],
     );
@@ -537,9 +528,7 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
             Text(
               analytics.lastError?.message ?? 'An error occurred',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.textSubtitle,
-              ),
+              style: const TextStyle(color: AppColors.textSubtitle),
             ),
             const SizedBox(height: 24),
             PrimaryButton(
@@ -562,11 +551,7 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.trending_up,
-              size: 64,
-              color: AppColors.lightBlue,
-            ),
+            const Icon(Icons.trending_up, size: 64, color: AppColors.lightBlue),
             const SizedBox(height: 16),
             const Text(
               'Monthly Trends',
@@ -580,9 +565,7 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
             const Text(
               'Track your monthly progress with detailed trend analysis and goal achievement heatmaps.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.textSubtitle,
-              ),
+              style: TextStyle(color: AppColors.textSubtitle),
             ),
             const SizedBox(height: 24),
             PrimaryButton(
@@ -633,14 +616,26 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
 
   double _getMaxWeeklyAverage(MonthlyAnalytics data) {
     if (data.weeklyAverages.isEmpty) return 3000;
-    final maxAverage = data.weeklyAverages.values.reduce((a, b) => a > b ? a : b);
+    final maxAverage = data.weeklyAverages.values.reduce(
+      (a, b) => a > b ? a : b,
+    );
     return (maxAverage * 1.2).ceilToDouble();
   }
 
   String _getMonthName(int month, int year) {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return '${months[month - 1]} $year';
   }

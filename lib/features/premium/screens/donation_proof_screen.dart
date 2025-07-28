@@ -24,7 +24,7 @@ class _DonationProofScreenState extends State<DonationProofScreen> {
   final _transactionIdController = TextEditingController();
   final _notesController = TextEditingController();
   final _imagePicker = ImagePicker();
-  
+
   File? _selectedImage;
   bool _isSubmitting = false;
 
@@ -55,18 +55,18 @@ class _DonationProofScreenState extends State<DonationProofScreen> {
                   // Header
                   const _HeaderSection(),
                   const SizedBox(height: 24),
-                  
+
                   // Device Code Display
                   _DeviceCodeDisplay(deviceCode: premiumProvider.deviceCode),
                   const SizedBox(height: 24),
-                  
+
                   // Image Upload Section
                   _ImageUploadSection(
                     selectedImage: _selectedImage,
                     onImageSelected: _onImageSelected,
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Transaction Details Form
                   _TransactionDetailsForm(
                     amountController: _amountController,
@@ -74,23 +74,25 @@ class _DonationProofScreenState extends State<DonationProofScreen> {
                     notesController: _notesController,
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // Submit Button
                   PrimaryButton(
                     text: 'Submit Proof',
-                    onPressed: _selectedImage != null && !_isSubmitting
-                        ? () => _submitProof(context, premiumProvider)
-                        : null,
+                    onPressed:
+                        _selectedImage != null && !_isSubmitting
+                            ? () => _submitProof(context, premiumProvider)
+                            : null,
                     isLoading: _isSubmitting,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Cancel Button
                   SecondaryButton(
                     text: 'Cancel',
-                    onPressed: _isSubmitting ? null : () => Navigator.pop(context),
+                    onPressed:
+                        _isSubmitting ? null : () => Navigator.pop(context),
                   ),
-                  
+
                   // Error Display
                   if (premiumProvider.lastError != null) ...[
                     const SizedBox(height: 16),
@@ -113,7 +115,7 @@ class _DonationProofScreenState extends State<DonationProofScreen> {
         maxHeight: 1080,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
@@ -131,7 +133,10 @@ class _DonationProofScreenState extends State<DonationProofScreen> {
     }
   }
 
-  Future<void> _submitProof(BuildContext context, PremiumProvider premiumProvider) async {
+  Future<void> _submitProof(
+    BuildContext context,
+    PremiumProvider premiumProvider,
+  ) async {
     if (!_formKey.currentState!.validate() || _selectedImage == null) {
       return;
     }
@@ -143,21 +148,21 @@ class _DonationProofScreenState extends State<DonationProofScreen> {
     try {
       final success = await premiumProvider.submitDonationProof(
         imageFile: _selectedImage!,
-        amount: _amountController.text.isNotEmpty 
-            ? double.tryParse(_amountController.text) 
-            : null,
-        transactionId: _transactionIdController.text.isNotEmpty 
-            ? _transactionIdController.text 
-            : null,
-        notes: _notesController.text.isNotEmpty 
-            ? _notesController.text 
-            : null,
+        amount:
+            _amountController.text.isNotEmpty
+                ? double.tryParse(_amountController.text)
+                : null,
+        transactionId:
+            _transactionIdController.text.isNotEmpty
+                ? _transactionIdController.text
+                : null,
+        notes: _notesController.text.isNotEmpty ? _notesController.text : null,
       );
 
       if (success && mounted) {
         // Show success dialog
         await _showSuccessDialog(context);
-        
+
         // Navigate back to donation info screen
         Navigator.pop(context);
       }
@@ -203,14 +208,10 @@ class _HeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       children: [
-        Icon(
-          Icons.upload_file,
-          size: 48,
-          color: theme.colorScheme.primary,
-        ),
+        Icon(Icons.upload_file, size: 48, color: theme.colorScheme.primary),
         const SizedBox(height: 16),
         Text(
           'Upload Transaction Screenshot',
@@ -240,7 +241,7 @@ class _DeviceCodeDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,7 +286,7 @@ class _ImageUploadSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,7 +298,7 @@ class _ImageUploadSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           if (selectedImage != null) ...[
             // Show selected image
             Container(
@@ -311,10 +312,7 @@ class _ImageUploadSection extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.file(
-                  selectedImage!,
-                  fit: BoxFit.cover,
-                ),
+                child: Image.file(selectedImage!, fit: BoxFit.cover),
               ),
             ),
             const SizedBox(height: 12),
@@ -373,7 +371,7 @@ class _ImageUploadSection extends StatelessWidget {
               ),
             ),
           ],
-          
+
           const SizedBox(height: 8),
           Text(
             'Upload a clear screenshot showing the successful bKash transaction',
@@ -406,12 +404,12 @@ class _TransactionDetailsForm extends StatelessWidget {
         children: [
           Text(
             'Transaction Details (Optional)',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          
+
           // Amount Field
           AppTextField(
             controller: amountController,
@@ -429,7 +427,7 @@ class _TransactionDetailsForm extends StatelessWidget {
             },
           ),
           const SizedBox(height: 16),
-          
+
           // Transaction ID Field
           AppTextField(
             controller: transactionIdController,
@@ -437,7 +435,7 @@ class _TransactionDetailsForm extends StatelessWidget {
             hintText: 'bKash transaction ID',
           ),
           const SizedBox(height: 16),
-          
+
           // Notes Field
           AppTextField(
             controller: notesController,
@@ -460,7 +458,7 @@ class _ErrorDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -470,10 +468,7 @@ class _ErrorDisplay extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.error_outline,
-            color: theme.colorScheme.onErrorContainer,
-          ),
+          Icon(Icons.error_outline, color: theme.colorScheme.onErrorContainer),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

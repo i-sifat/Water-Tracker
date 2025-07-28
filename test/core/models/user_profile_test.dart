@@ -79,16 +79,9 @@ void main() {
     });
 
     test('should create copy with updated fields', () {
-      const original = UserProfile(
-        id: 'test',
-        weight: 70,
-        age: 30,
-      );
+      const original = UserProfile(id: 'test', weight: 70, age: 30);
 
-      final copy = original.copyWith(
-        weight: 75,
-        gender: Gender.female,
-      );
+      final copy = original.copyWith(weight: 75, gender: Gender.female);
 
       expect(copy.id, equals(original.id));
       expect(copy.weight, equals(75.0));
@@ -130,7 +123,10 @@ void main() {
       expect(restored.sugarDrinkIntake, equals(original.sugarDrinkIntake));
       expect(restored.dailyGoal, equals(original.dailyGoal));
       expect(restored.customDailyGoal, equals(original.customDailyGoal));
-      expect(restored.notificationsEnabled, equals(original.notificationsEnabled));
+      expect(
+        restored.notificationsEnabled,
+        equals(original.notificationsEnabled),
+      );
       expect(restored.reminderTimes, equals(original.reminderTimes));
       expect(restored.createdAt, equals(original.createdAt));
       expect(restored.updatedAt, equals(original.updatedAt));
@@ -211,14 +207,15 @@ void main() {
 
   group('UserProfileBuilder', () {
     test('should build UserProfile with fluent interface', () {
-      final profile = UserProfileBuilder()
-          .withWeight(80)
-          .withAge(35)
-          .male()
-          .active()
-          .withGoals([Goal.weightLoss, Goal.generalHealth])
-          .withDailyGoal(2400)
-          .build();
+      final profile =
+          UserProfileBuilder()
+              .withWeight(80)
+              .withAge(35)
+              .male()
+              .active()
+              .withGoals([Goal.weightLoss, Goal.generalHealth])
+              .withDailyGoal(2400)
+              .build();
 
       expect(profile.weight, equals(80.0));
       expect(profile.age, equals(35));
