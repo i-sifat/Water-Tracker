@@ -468,7 +468,7 @@ class OnboardingProvider extends ChangeNotifier {
 
   /// Check if user can modify onboarding data after completion
   Future<bool> canModifyOnboardingData() async {
-    return await isOnboardingCompleted();
+    return isOnboardingCompleted();
   }
 
   /// Reopen onboarding for editing (preserving existing data)

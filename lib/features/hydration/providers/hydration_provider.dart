@@ -139,15 +139,30 @@ class HydrationProvider extends ChangeNotifier {
     }
   }
 
-  /// Load historical hydration data
+  /// Load historical hydration data with pagination for better performance
   Future<void> _loadHistoricalData() async {
     try {
       final historyJson = await _storageService.getString('hydrationHistory') as String?;
       if (historyJson != null) {
         final historyList = jsonDecode(historyJson) as List<dynamic>;
-        _hydrationHistory = historyList
-            .map((json) => HydrationData.fromJson(json as Map<String, dynamic>))
-            .toList();
+        
+        // Load data in chunks to avoid blocking UI
+        const chunkSize = 100;
+        _hydrationHistory.clear();
+        
+        for (int i = 0; i < historyList.length; i += chunkSize) {
+          final chunk = historyList.skip(i).take(chunkSize);
+          final chunkData = chunk
+              .map((json) => HydrationData.fromJson(json as Map<String, dynamic>))
+              .toList();
+          
+          _hydrationHistory.addAll(chunkData);
+          
+          // Allow UI to update between chunks
+          if (i + chunkSize < historyList.length) {
+            await Future.delayed(const Duration(milliseconds: 1));
+          }
+        }
         
         // Sort by timestamp (newest first)
         _hydrationHistory.sort((a, b) => b.timestamp.compareTo(a.timestamp));
@@ -711,7 +726,7 @@ class HydrationProvider extends ChangeNotifier {
 
   /// Get all available drink types (built-in + custom)
   List<dynamic> getAllDrinkTypes() {
-    final builtInTypes = DrinkType.values;
+    const builtInTypes = DrinkType.values;
     final customTypes = _customDrinkTypes.where((dt) => dt.isActive).toList();
     return [...builtInTypes, ...customTypes];
   }
@@ -739,7 +754,6 @@ class HydrationProvider extends ChangeNotifier {
         amount: amount,
         timestamp: entry.timestamp,
         type: DrinkType.other,
-        isSynced: false,
         notes: '${customType.name}${notes != null ? ' - $notes' : ''}',
       );
 
@@ -916,14 +930,15 @@ class HydrationProvider extends ChangeNotifier {
 
   /// Get health sync statistics (Premium feature)
   Future<Map<String, dynamic>> getHealthSyncStats() async {
-    return await _healthService.getHealthSyncStats();
+    return _healthService.getHealthSyncStats();
   }
 
   /// Load health sync settings
   Future<void> loadHealthSyncSettings() async {
     try {
       await _healthService.initialize();
-      _healthSyncEnabled = await _storageService.getBool('healthSyncEnabled') ?? false;
+      final syncEnabled = await _storageService.getBool('healthSyncEnabled');
+      _healthSyncEnabled = (syncEnabled is bool) ? syncEnabled : false;
       
       if (_healthSyncEnabled) {
         // Perform auto sync if enabled

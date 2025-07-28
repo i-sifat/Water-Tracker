@@ -58,7 +58,7 @@ class MonthlyAnalytics extends Equatable {
   final int bestStreak;
   final int currentStreak;
 
-  DateTime get monthStart => DateTime(year, month, 1);
+  DateTime get monthStart => DateTime(year, month);
   DateTime get monthEnd => DateTime(year, month + 1, 0);
 
   @override

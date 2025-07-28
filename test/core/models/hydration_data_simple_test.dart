@@ -37,7 +37,6 @@ void main() {
           id: 'test-id',
           amount: amount,
           timestamp: timestamp,
-          type: drinkType,
         );
 
         // Assert
@@ -95,7 +94,6 @@ void main() {
           id: 'test-id',
           amount: 250,
           timestamp: timestamp,
-          type: DrinkType.water,
           isSynced: true,
           notes: 'Test entry',
         );
@@ -156,7 +154,7 @@ void main() {
 
       test('should calculate water content correctly', () {
         // Arrange
-        final waterEntry = HydrationData.create(amount: 250, type: DrinkType.water);
+        final waterEntry = HydrationData.create(amount: 250);
         final coffeeEntry = HydrationData.create(amount: 250, type: DrinkType.coffee);
         final juiceEntry = HydrationData.create(amount: 250, type: DrinkType.juice);
 
@@ -178,19 +176,16 @@ void main() {
           id: 'same-id',
           amount: 250,
           timestamp: timestamp,
-          type: DrinkType.water,
         );
         final entry2 = HydrationData(
           id: 'same-id',
           amount: 250,
           timestamp: timestamp,
-          type: DrinkType.water,
         );
         final entry3 = HydrationData(
           id: 'different-id',
           amount: 250,
           timestamp: timestamp,
-          type: DrinkType.water,
         );
 
         // Act & Assert
@@ -202,7 +197,6 @@ void main() {
         // Arrange
         final original = HydrationData.create(
           amount: 250,
-          type: DrinkType.water,
           notes: 'Original notes',
         );
 
@@ -244,7 +238,7 @@ void main() {
 
         // Assert
         expect(entry.amount, equals(999999));
-        expect(() => entry.toJson(), returnsNormally);
+        expect(entry.toJson, returnsNormally);
       });
 
       test('should handle zero amount', () {

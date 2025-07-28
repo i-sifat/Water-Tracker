@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/accessibility_service.dart';
+import 'package:watertracker/core/services/accessibility_service.dart';
 
 class ThemeProvider extends ChangeNotifier {
   static const String _themeKey = 'theme_mode';
@@ -118,7 +118,7 @@ class ThemeProvider extends ChangeNotifier {
 
   /// Set high contrast mode
   Future<void> setHighContrastMode(bool enabled) async {
-    await _accessibilityService?.setHighContrastMode(enabled);
+    await _accessibilityService?.setHighContrastMode(enabled: enabled);
     notifyListeners();
   }
 
@@ -130,7 +130,7 @@ class ThemeProvider extends ChangeNotifier {
 
   /// Set reduced motion
   Future<void> setReducedMotion(bool enabled) async {
-    await _accessibilityService?.setReducedMotion(enabled);
+    await _accessibilityService?.setReducedMotion(enabled: enabled);
     notifyListeners();
   }
 

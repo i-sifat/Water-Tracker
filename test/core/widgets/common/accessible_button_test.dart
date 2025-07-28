@@ -105,7 +105,6 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: AccessibleButton(
-              onPressed: null,
               label: testLabel,
               child: Text('Button Text'),
             ),
@@ -140,7 +139,6 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: AccessibleButton(
-              onPressed: null,
               label: testLabel,
               child: Text('Button Text'),
             ),
@@ -212,7 +210,6 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: AccessibleButton(
-              onPressed: null,
               label: testLabel,
               child: Text('Button Text'),
             ),

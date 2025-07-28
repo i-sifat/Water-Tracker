@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Enhanced storage service with encryption, backup, and migration support
+/// Enhanced storage service with encryption, backup, migration, and performance optimizations
 class StorageService {
   factory StorageService() => _instance;
   StorageService._internal();
@@ -20,6 +21,13 @@ class StorageService {
   EncryptedSharedPreferences? _encryptedPrefs;
   SharedPreferences? _regularPrefs;
   bool _isInitialized = false;
+  
+  // Performance optimizations
+  final Map<String, dynamic> _memoryCache = {};
+  final Map<String, DateTime> _cacheTimestamps = {};
+  static const Duration _cacheExpiry = Duration(minutes: 5);
+  final List<_BatchOperation> _pendingOperations = [];
+  Timer? _batchTimer;
 
   /// Initialize the storage service
   Future<void> initialize() async {
@@ -211,8 +219,9 @@ class StorageService {
     try {
       if (encrypted && _encryptedPrefs != null) {
         final jsonString = await _encryptedPrefs!.getString(key);
-        if (jsonString != null) {
-          final List<dynamic> decoded = jsonDecode(jsonString);
+        if (jsonString == null) return null;
+        final decoded = jsonDecode(jsonString);
+        if (decoded is List) {
           return decoded.cast<String>();
         }
         return null;
@@ -607,6 +616,109 @@ class StorageService {
     ];
   }
 
+  // MARK: - Performance Optimizations
+
+  /// Get value from memory cache if available and not expired
+  T? _getFromCache<T>(String key) {
+    final timestamp = _cacheTimestamps[key];
+    if (timestamp != null && DateTime.now().difference(timestamp) < _cacheExpiry) {
+      return _memoryCache[key] as T?;
+    }
+    
+    // Remove expired cache entry
+    if (timestamp != null) {
+      _memoryCache.remove(key);
+      _cacheTimestamps.remove(key);
+    }
+    
+    return null;
+  }
+
+  /// Cache value in memory
+  void _cacheValue(String key, dynamic value) {
+    _memoryCache[key] = value;
+    _cacheTimestamps[key] = DateTime.now();
+    
+    // Limit cache size
+    if (_memoryCache.length > 100) {
+      final oldestKey = _cacheTimestamps.entries
+          .reduce((a, b) => a.value.isBefore(b.value) ? a : b)
+          .key;
+      _memoryCache.remove(oldestKey);
+      _cacheTimestamps.remove(oldestKey);
+    }
+  }
+
+  /// Add operation to batch queue
+  void _addToBatch(_BatchOperation operation) {
+    _pendingOperations.add(operation);
+    
+    // Start batch timer if not already running
+    _batchTimer ??= Timer(const Duration(milliseconds: 100), _executeBatch);
+  }
+
+  /// Execute all pending batch operations
+  Future<void> _executeBatch() async {
+    if (_pendingOperations.isEmpty) return;
+    
+    final operations = List<_BatchOperation>.from(_pendingOperations);
+    _pendingOperations.clear();
+    _batchTimer = null;
+    
+    try {
+      // Group operations by type for better performance
+      final regularOps = operations.where((op) => !op.encrypted).toList();
+      final encryptedOps = operations.where((op) => op.encrypted).toList();
+      
+      // Execute regular operations
+      for (final op in regularOps) {
+        await op.execute(_regularPrefs!, null);
+      }
+      
+      // Execute encrypted operations
+      if (_encryptedPrefs != null) {
+        for (final op in encryptedOps) {
+          await op.execute(null, _encryptedPrefs!);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error executing batch operations: $e');
+    }
+  }
+
+  /// Optimized getString with caching
+  Future<String?> getStringCached(String key, {bool encrypted = true}) async {
+    // Check cache first
+    final cached = _getFromCache<String>(key);
+    if (cached != null) return cached;
+    
+    // Get from storage
+    final value = await getString(key, encrypted: encrypted);
+    
+    // Cache the result
+    if (value != null) {
+      _cacheValue(key, value);
+    }
+    
+    return value;
+  }
+
+  /// Clear memory cache
+  void clearMemoryCache() {
+    _memoryCache.clear();
+    _cacheTimestamps.clear();
+  }
+
+  /// Get cache statistics
+  Map<String, dynamic> getCacheStats() {
+    return {
+      'cache_size': _memoryCache.length,
+      'pending_operations': _pendingOperations.length,
+      'cache_hit_ratio': _memoryCache.isNotEmpty ? 
+          _memoryCache.length / (_memoryCache.length + _pendingOperations.length) : 0.0,
+    };
+  }
+
   /// Check if storage service is healthy
   Future<bool> isHealthy() async {
     try {
@@ -642,4 +754,66 @@ class StorageService {
       return false;
     }
   }
+
+  /// Dispose resources
+  void dispose() {
+    _batchTimer?.cancel();
+    _pendingOperations.clear();
+    clearMemoryCache();
+  }
+}
+
+/// Batch operation for performance optimization
+class _BatchOperation {
+  final String key;
+  final dynamic value;
+  final bool encrypted;
+  final _OperationType type;
+
+  _BatchOperation({
+    required this.key,
+    required this.value,
+    required this.encrypted,
+    required this.type,
+  });
+
+  Future<void> execute(SharedPreferences? regularPrefs, EncryptedSharedPreferences? encryptedPrefs) async {
+    switch (type) {
+      case _OperationType.setString:
+        if (encrypted && encryptedPrefs != null) {
+          await encryptedPrefs.setString(key, value as String);
+        } else if (!encrypted && regularPrefs != null) {
+          await regularPrefs.setString(key, value as String);
+        }
+        break;
+      case _OperationType.setInt:
+        if (encrypted && encryptedPrefs != null) {
+          await encryptedPrefs.setString(key, (value as int).toString());
+        } else if (!encrypted && regularPrefs != null) {
+          await regularPrefs.setInt(key, value as int);
+        }
+        break;
+      case _OperationType.setBool:
+        if (encrypted && encryptedPrefs != null) {
+          await encryptedPrefs.setString(key, (value as bool).toString());
+        } else if (!encrypted && regularPrefs != null) {
+          await regularPrefs.setBool(key, value as bool);
+        }
+        break;
+      case _OperationType.remove:
+        if (encrypted && encryptedPrefs != null) {
+          await encryptedPrefs.remove(key);
+        } else if (!encrypted && regularPrefs != null) {
+          await regularPrefs.remove(key);
+        }
+        break;
+    }
+  }
+}
+
+enum _OperationType {
+  setString,
+  setInt,
+  setBool,
+  remove,
 }

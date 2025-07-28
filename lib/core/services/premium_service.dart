@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/services/device_service.dart';
 
 /// Service for managing premium features and donation unlock system

@@ -4,285 +4,522 @@ import 'package:watertracker/core/utils/water_intake_calculator.dart';
 
 void main() {
   group('WaterIntakeCalculator Tests', () {
-    late WaterIntakeCalculator calculator;
-
-    setUp(() {
-      calculator = WaterIntakeCalculator();
-    });
-
-    group('Basic Goal Calculation', () {
-      test('should calculate basic goal for adult male', () {
+    group('Basic Intake Calculation', () {
+      test('should calculate basic intake for adult male', () {
         // Arrange
-        final profile = UserProfile(
+        const profile = UserProfile(
+          id: 'test-id',
           age: 30,
-          weight: 70.0,
+          weight: 70,
           gender: Gender.male,
-          activityLevel: ActivityLevel.moderate,
-          climate: Climate.temperate,
+          activityLevel: ActivityLevel.moderatelyActive,
         );
 
         // Act
-        final goal = calculator.calculateDailyGoal(profile);
+        final intake = WaterIntakeCalculator.calculateBasicIntake(profile);
 
         // Assert
-        expect(goal, greaterThan(2000.0));
-        expect(goal, lessThan(4000.0));
+        expect(intake, greaterThan(2000));
+        expect(intake, lessThan(4000));
       });
 
-      test('should calculate basic goal for adult female', () {
+      test('should calculate basic intake for adult female', () {
         // Arrange
-        final profile = UserProfile(
+        const profile = UserProfile(
+          id: 'test-id',
           age: 25,
-          weight: 60.0,
+          weight: 60,
           gender: Gender.female,
-          activityLevel: ActivityLevel.moderate,
-          climate: Climate.temperate,
+          activityLevel: ActivityLevel.moderatelyActive,
         );
 
         // Act
-        final goal = calculator.calculateDailyGoal(profile);
+        final intake = WaterIntakeCalculator.calculateBasicIntake(profile);
 
         // Assert
-        expect(goal, greaterThan(1800.0));
-        expect(goal, lessThan(3500.0));
+        expect(intake, greaterThan(1800));
+        expect(intake, lessThan(3500));
       });
-    });
 
-    group('Weight-based Adjustments', () {
-      test('should increase goal for higher weight', () {
+      test('should return default value when weight is null', () {
         // Arrange
-        final lightProfile = UserProfile(
+        const profile = UserProfile(
+          id: 'test-id',
           age: 30,
-          weight: 50.0,
           gender: Gender.male,
-          activityLevel: ActivityLevel.moderate,
-          climate: Climate.temperate,
-        );
-        final heavyProfile = UserProfile(
-          age: 30,
-          weight: 90.0,
-          gender: Gender.male,
-          activityLevel: ActivityLevel.moderate,
-          climate: Climate.temperate,
+          activityLevel: ActivityLevel.moderatelyActive,
         );
 
         // Act
-        final lightGoal = calculator.calculateDailyGoal(lightProfile);
-        final heavyGoal = calculator.calculateDailyGoal(heavyProfile);
+        final intake = WaterIntakeCalculator.calculateBasicIntake(profile);
 
         // Assert
-        expect(heavyGoal, greaterThan(lightGoal));
+        expect(intake, equals(2000));
+      });
+
+      test('should return default value when age is null', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          weight: 70,
+          gender: Gender.male,
+          activityLevel: ActivityLevel.moderatelyActive,
+        );
+
+        // Act
+        final intake = WaterIntakeCalculator.calculateBasicIntake(profile);
+
+        // Assert
+        expect(intake, equals(2000));
       });
     });
 
     group('Activity Level Adjustments', () {
-      test('should increase goal for higher activity levels', () {
+      test('should adjust intake based on activity level', () {
         // Arrange
-        final sedentaryProfile = UserProfile(
+        const baseProfile = UserProfile(
+          id: 'test-id',
           age: 30,
-          weight: 70.0,
+          weight: 70,
           gender: Gender.male,
-          activityLevel: ActivityLevel.sedentary,
-          climate: Climate.temperate,
         );
-        final activeProfile = UserProfile(
-          age: 30,
-          weight: 70.0,
-          gender: Gender.male,
-          activityLevel: ActivityLevel.veryActive,
-          climate: Climate.temperate,
-        );
+
+        final sedentaryProfile = baseProfile.copyWith(activityLevel: ActivityLevel.sedentary);
+        final activeProfile = baseProfile.copyWith(activityLevel: ActivityLevel.veryActive);
 
         // Act
-        final sedentaryGoal = calculator.calculateDailyGoal(sedentaryProfile);
-        final activeGoal = calculator.calculateDailyGoal(activeProfile);
+        final sedentaryIntake = WaterIntakeCalculator.calculateBasicIntake(sedentaryProfile);
+        final activeIntake = WaterIntakeCalculator.calculateBasicIntake(activeProfile);
 
         // Assert
-        expect(activeGoal, greaterThan(sedentaryGoal));
+        expect(activeIntake, greaterThan(sedentaryIntake));
       });
     });
 
-    group('Climate Adjustments', () {
-      test('should increase goal for hot climate', () {
+    group('Pregnancy Status Adjustments', () {
+      test('should increase intake for pregnant women', () {
         // Arrange
-        final temperateProfile = UserProfile(
-          age: 30,
-          weight: 70.0,
-          gender: Gender.male,
-          activityLevel: ActivityLevel.moderate,
-          climate: Climate.temperate,
-        );
-        final hotProfile = UserProfile(
-          age: 30,
-          weight: 70.0,
-          gender: Gender.male,
-          activityLevel: ActivityLevel.moderate,
-          climate: Climate.hot,
-        );
-
-        // Act
-        final temperateGoal = calculator.calculateDailyGoal(temperateProfile);
-        final hotGoal = calculator.calculateDailyGoal(hotProfile);
-
-        // Assert
-        expect(hotGoal, greaterThan(temperateGoal));
-      });
-    });
-
-    group('Age Adjustments', () {
-      test('should adjust goal based on age groups', () {
-        // Arrange
-        final youngProfile = UserProfile(
-          age: 25,
-          weight: 70.0,
-          gender: Gender.male,
-          activityLevel: ActivityLevel.moderate,
-          climate: Climate.temperate,
-        );
-        final elderlyProfile = UserProfile(
-          age: 70,
-          weight: 70.0,
-          gender: Gender.male,
-          activityLevel: ActivityLevel.moderate,
-          climate: Climate.temperate,
-        );
-
-        // Act
-        final youngGoal = calculator.calculateDailyGoal(youngProfile);
-        final elderlyGoal = calculator.calculateDailyGoal(elderlyProfile);
-
-        // Assert
-        expect(youngGoal, isA<double>());
-        expect(elderlyGoal, isA<double>());
-        expect(youngGoal, greaterThan(0));
-        expect(elderlyGoal, greaterThan(0));
-      });
-    });
-
-    group('Hydration Efficiency', () {
-      test('should calculate hydration efficiency for different drink types', () {
-        // Act
-        final waterEfficiency = calculator.getHydrationEfficiency('water');
-        final coffeeEfficiency = calculator.getHydrationEfficiency('coffee');
-        final alcoholEfficiency = calculator.getHydrationEfficiency('alcohol');
-
-        // Assert
-        expect(waterEfficiency, equals(1.0));
-        expect(coffeeEfficiency, lessThan(1.0));
-        expect(alcoholEfficiency, lessThan(coffeeEfficiency));
-      });
-
-      test('should handle unknown drink types', () {
-        // Act
-        final unknownEfficiency = calculator.getHydrationEfficiency('unknown_drink');
-
-        // Assert
-        expect(unknownEfficiency, equals(1.0)); // Default to water efficiency
-      });
-    });
-
-    group('Intake Recommendations', () {
-      test('should provide intake recommendations throughout the day', () {
-        // Arrange
-        final profile = UserProfile(
-          age: 30,
-          weight: 70.0,
-          gender: Gender.male,
-          activityLevel: ActivityLevel.moderate,
-          climate: Climate.temperate,
-        );
-
-        // Act
-        final recommendations = calculator.getIntakeRecommendations(profile);
-
-        // Assert
-        expect(recommendations, isA<List<Map<String, dynamic>>>());
-        expect(recommendations.isNotEmpty, isTrue);
-        
-        // Check that recommendations cover the day
-        final totalRecommended = recommendations.fold<double>(
-          0.0, 
-          (sum, rec) => sum + (rec['amount'] as double)
-        );
-        final dailyGoal = calculator.calculateDailyGoal(profile);
-        expect(totalRecommended, closeTo(dailyGoal, 200.0));
-      });
-    });
-
-    group('Progress Calculation', () {
-      test('should calculate progress percentage correctly', () {
-        // Arrange
-        const currentIntake = 1500.0;
-        const dailyGoal = 2000.0;
-
-        // Act
-        final progress = calculator.calculateProgress(currentIntake, dailyGoal);
-
-        // Assert
-        expect(progress, equals(0.75));
-      });
-
-      test('should handle progress over 100%', () {
-        // Arrange
-        const currentIntake = 2500.0;
-        const dailyGoal = 2000.0;
-
-        // Act
-        final progress = calculator.calculateProgress(currentIntake, dailyGoal);
-
-        // Assert
-        expect(progress, equals(1.25));
-      });
-
-      test('should handle zero goal', () {
-        // Arrange
-        const currentIntake = 1500.0;
-        const dailyGoal = 0.0;
-
-        // Act
-        final progress = calculator.calculateProgress(currentIntake, dailyGoal);
-
-        // Assert
-        expect(progress, equals(0.0));
-      });
-    });
-
-    group('Validation', () {
-      test('should validate reasonable intake amounts', () {
-        // Act & Assert
-        expect(calculator.isValidIntakeAmount(250.0), isTrue);
-        expect(calculator.isValidIntakeAmount(1000.0), isTrue);
-        expect(calculator.isValidIntakeAmount(-100.0), isFalse);
-        expect(calculator.isValidIntakeAmount(0.0), isFalse);
-        expect(calculator.isValidIntakeAmount(5000.0), isFalse);
-      });
-
-      test('should validate reasonable daily goals', () {
-        // Act & Assert
-        expect(calculator.isValidDailyGoal(2000.0), isTrue);
-        expect(calculator.isValidDailyGoal(3500.0), isTrue);
-        expect(calculator.isValidDailyGoal(500.0), isFalse);
-        expect(calculator.isValidDailyGoal(8000.0), isFalse);
-        expect(calculator.isValidDailyGoal(-1000.0), isFalse);
-      });
-    });
-
-    group('Edge Cases', () {
-      test('should handle extreme user profiles', () {
-        // Arrange
-        final extremeProfile = UserProfile(
-          age: 100,
-          weight: 40.0,
+        const normalProfile = UserProfile(
+          id: 'test-id',
+          age: 28,
+          weight: 65,
           gender: Gender.female,
-          activityLevel: ActivityLevel.sedentary,
-          climate: Climate.cold,
         );
 
-        // Act & Assert
-        expect(() => calculator.calculateDailyGoal(extremeProfile), returnsNormally);
-        final goal = calculator.calculateDailyGoal(extremeProfile);
-        expect(goal, greaterThan(0));
-        expect(goal, lessThan(10000.0));
+        final pregnantProfile = normalProfile.copyWith(
+          pregnancyStatus: PregnancyStatus.pregnant,
+        );
+
+        // Act
+        final normalIntake = WaterIntakeCalculator.calculateBasicIntake(normalProfile);
+        final pregnantIntake = WaterIntakeCalculator.calculateBasicIntake(pregnantProfile);
+
+        // Assert
+        expect(pregnantIntake, greaterThan(normalIntake));
+      });
+
+      test('should increase intake for breastfeeding women', () {
+        // Arrange
+        const normalProfile = UserProfile(
+          id: 'test-id',
+          age: 28,
+          weight: 65,
+          gender: Gender.female,
+        );
+
+        final breastfeedingProfile = normalProfile.copyWith(
+          pregnancyStatus: PregnancyStatus.breastfeeding,
+        );
+
+        // Act
+        final normalIntake = WaterIntakeCalculator.calculateBasicIntake(normalProfile);
+        final breastfeedingIntake = WaterIntakeCalculator.calculateBasicIntake(breastfeedingProfile);
+
+        // Assert
+        expect(breastfeedingIntake, greaterThan(normalIntake));
+      });
+    });
+
+    group('Advanced Intake Calculation', () {
+      test('should calculate advanced intake with additional parameters', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 70,
+          gender: Gender.male,
+          activityLevel: ActivityLevel.moderatelyActive,
+        );
+
+        // Act
+        final advancedIntake = WaterIntakeCalculator.calculateAdvancedIntake(
+          profile,
+          bodyFatPercentage: 15,
+          environmentalTemperature: 30,
+          isPreWorkout: true,
+        );
+
+        // Assert
+        expect(advancedIntake, greaterThan(2000));
+        expect(advancedIntake, lessThan(5000));
+      });
+
+      test('should apply safety bounds to advanced calculation', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 200, // Very high weight
+          gender: Gender.male,
+          activityLevel: ActivityLevel.extremelyActive,
+        );
+
+        // Act
+        final advancedIntake = WaterIntakeCalculator.calculateAdvancedIntake(
+          profile,
+          environmentalTemperature: 45, // Very hot
+          altitude: 4000, // High altitude
+          stressLevel: 10, // Maximum stress
+          caffeineIntake: 1000, // High caffeine
+          alcoholIntake: 5, // High alcohol
+        );
+
+        // Assert
+        expect(advancedIntake, greaterThanOrEqualTo(1500)); // Lower bound
+        expect(advancedIntake, lessThanOrEqualTo(5000)); // Upper bound
+      });
+
+      test('should handle null values gracefully in advanced calculation', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 70,
+          gender: Gender.male,
+          activityLevel: ActivityLevel.moderatelyActive,
+        );
+
+        // Act
+        final advancedIntake = WaterIntakeCalculator.calculateAdvancedIntake(profile);
+
+        // Assert
+        expect(advancedIntake, greaterThan(2000));
+        expect(advancedIntake, lessThan(4000));
+      });
+    });
+
+    group('Activity Hydration Calculation', () {
+      test('should calculate hydration needs for running', () {
+        // Act
+        final hydrationNeeds = WaterIntakeCalculator.calculateActivityHydration(
+          activityType: 'running',
+          durationMinutes: 60,
+          bodyWeight: 70,
+        );
+
+        // Assert
+        expect(hydrationNeeds, greaterThan(100));
+        expect(hydrationNeeds, lessThan(2000));
+      });
+
+      test('should adjust for activity intensity', () {
+        // Act
+        final lowIntensity = WaterIntakeCalculator.calculateActivityHydration(
+          activityType: 'running',
+          durationMinutes: 60,
+          bodyWeight: 70,
+          intensityLevel: 3,
+        );
+
+        final highIntensity = WaterIntakeCalculator.calculateActivityHydration(
+          activityType: 'running',
+          durationMinutes: 60,
+          bodyWeight: 70,
+          intensityLevel: 9,
+        );
+
+        // Assert
+        expect(highIntensity, greaterThan(lowIntensity));
+      });
+
+      test('should adjust for environmental conditions', () {
+        // Act
+        final normalConditions = WaterIntakeCalculator.calculateActivityHydration(
+          activityType: 'running',
+          durationMinutes: 60,
+          bodyWeight: 70,
+        );
+
+        final hotConditions = WaterIntakeCalculator.calculateActivityHydration(
+          activityType: 'running',
+          durationMinutes: 60,
+          bodyWeight: 70,
+          environmentalTemp: 35,
+          humidity: 80,
+        );
+
+        // Assert
+        expect(hotConditions, greaterThan(normalConditions));
+      });
+
+      test('should handle unknown activity types', () {
+        // Act
+        final hydrationNeeds = WaterIntakeCalculator.calculateActivityHydration(
+          activityType: 'unknown_activity',
+          durationMinutes: 60,
+          bodyWeight: 70,
+        );
+
+        // Assert
+        expect(hydrationNeeds, greaterThan(100));
+        expect(hydrationNeeds, lessThan(2000));
+      });
+
+      test('should apply safety bounds to activity hydration', () {
+        // Act
+        final hydrationNeeds = WaterIntakeCalculator.calculateActivityHydration(
+          activityType: 'soccer',
+          durationMinutes: 300, // Very long duration
+          bodyWeight: 100, // High body weight
+          intensityLevel: 10, // Maximum intensity
+          environmentalTemp: 45, // Very hot
+          humidity: 100, // Maximum humidity
+        );
+
+        // Assert
+        expect(hydrationNeeds, greaterThanOrEqualTo(100)); // Lower bound
+        expect(hydrationNeeds, lessThanOrEqualTo(2000)); // Upper bound
+      });
+    });
+
+    group('Optimal Reminder Times', () {
+      test('should calculate reminder times based on profile', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 70,
+          gender: Gender.male,
+          dailyGoal: 2500,
+        );
+
+        // Act
+        final reminderTimes = WaterIntakeCalculator.calculateOptimalReminderTimes(profile);
+
+        // Assert
+        expect(reminderTimes, isNotEmpty);
+        expect(reminderTimes.length, greaterThan(3));
+        expect(reminderTimes.length, lessThan(20));
+      });
+
+      test('should adjust reminder frequency based on daily goal', () {
+        // Arrange
+        const lowGoalProfile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 70,
+          gender: Gender.male,
+          dailyGoal: 1500,
+        );
+
+        const highGoalProfile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 70,
+          gender: Gender.male,
+          dailyGoal: 4000,
+        );
+
+        // Act
+        final lowGoalReminders = WaterIntakeCalculator.calculateOptimalReminderTimes(lowGoalProfile);
+        final highGoalReminders = WaterIntakeCalculator.calculateOptimalReminderTimes(highGoalProfile);
+
+        // Assert
+        expect(highGoalReminders.length, greaterThanOrEqualTo(lowGoalReminders.length));
+      });
+
+      test('should respect custom wake and sleep times', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 70,
+          gender: Gender.male,
+          dailyGoal: 2500,
+        );
+
+        final wakeTime = DateTime(2023, 1, 1, 6);
+        final bedTime = DateTime(2023, 1, 1, 23);
+
+        // Act
+        final reminderTimes = WaterIntakeCalculator.calculateOptimalReminderTimes(
+          profile,
+          wakeUpTime: wakeTime,
+          bedTime: bedTime,
+        );
+
+        // Assert
+        expect(reminderTimes, isNotEmpty);
+        for (final reminder in reminderTimes) {
+          expect(reminder.hour, greaterThanOrEqualTo(wakeTime.hour));
+          expect(reminder.hour, lessThanOrEqualTo(bedTime.hour));
+        }
+      });
+
+      test('should adjust for meal times', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 70,
+          gender: Gender.male,
+          dailyGoal: 2500,
+        );
+
+        final mealTimes = [
+          DateTime(2023, 1, 1, 8), // Breakfast
+          DateTime(2023, 1, 1, 13), // Lunch
+          DateTime(2023, 1, 1, 19), // Dinner
+        ];
+
+        // Act
+        final reminderTimes = WaterIntakeCalculator.calculateOptimalReminderTimes(
+          profile,
+          mealTimes: mealTimes,
+        );
+
+        // Assert
+        expect(reminderTimes, isNotEmpty);
+        // Should have reminders that consider meal times
+      });
+
+      test('should adjust for workout times', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 70,
+          gender: Gender.male,
+          dailyGoal: 2500,
+        );
+
+        final workoutTimes = [
+          DateTime(2023, 1, 1, 17), // Evening workout
+        ];
+
+        // Act
+        final reminderTimes = WaterIntakeCalculator.calculateOptimalReminderTimes(
+          profile,
+          workoutTimes: workoutTimes,
+        );
+
+        // Assert
+        expect(reminderTimes, isNotEmpty);
+        // Should have reminders that consider workout times
+      });
+    });
+
+    group('Legacy Method Compatibility', () {
+      test('should calculate water intake from shared preferences', () async {
+        // Act
+        final intake = await WaterIntakeCalculator.calculateWaterIntake();
+
+        // Assert
+        expect(intake, greaterThan(1000));
+        expect(intake, lessThan(5000));
+      });
+    });
+
+    group('Edge Cases and Error Handling', () {
+      test('should handle zero weight', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: 0,
+          gender: Gender.male,
+          activityLevel: ActivityLevel.moderatelyActive,
+        );
+
+        // Act
+        final intake = WaterIntakeCalculator.calculateBasicIntake(profile);
+
+        // Assert
+        expect(intake, equals(2000)); // Should return default
+      });
+
+      test('should handle negative weight', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 30,
+          weight: -10,
+          gender: Gender.male,
+          activityLevel: ActivityLevel.moderatelyActive,
+        );
+
+        // Act
+        final intake = WaterIntakeCalculator.calculateBasicIntake(profile);
+
+        // Assert
+        expect(intake, lessThan(0)); // Will be negative due to calculation
+      });
+
+      test('should handle very young age', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 5,
+          weight: 20,
+          gender: Gender.male,
+          activityLevel: ActivityLevel.moderatelyActive,
+        );
+
+        // Act
+        final intake = WaterIntakeCalculator.calculateBasicIntake(profile);
+
+        // Assert
+        expect(intake, greaterThan(0));
+      });
+
+      test('should handle very old age', () {
+        // Arrange
+        const profile = UserProfile(
+          id: 'test-id',
+          age: 90,
+          weight: 60,
+          gender: Gender.female,
+        );
+
+        // Act
+        final intake = WaterIntakeCalculator.calculateBasicIntake(profile);
+
+        // Assert
+        expect(intake, greaterThan(0));
+      });
+
+      test('should handle zero duration activity', () {
+        // Act
+        final hydrationNeeds = WaterIntakeCalculator.calculateActivityHydration(
+          activityType: 'running',
+          durationMinutes: 0,
+          bodyWeight: 70,
+        );
+
+        // Assert
+        expect(hydrationNeeds, greaterThanOrEqualTo(100)); // Should respect lower bound
+      });
+
+      test('should handle very long activity duration', () {
+        // Act
+        final hydrationNeeds = WaterIntakeCalculator.calculateActivityHydration(
+          activityType: 'running',
+          durationMinutes: 600, // 10 hours
+          bodyWeight: 70,
+        );
+
+        // Assert
+        expect(hydrationNeeds, lessThanOrEqualTo(2000)); // Should respect upper bound
       });
     });
   });

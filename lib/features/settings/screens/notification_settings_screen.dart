@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
-import 'package:watertracker/features/settings/models/settings_models.dart';
 import 'package:watertracker/features/settings/providers/settings_provider.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
@@ -136,7 +135,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       value: _endHour.toDouble(),
                       min: (_startHour + 1).toDouble(),
                       max: 23,
-                      divisions: (23 - _startHour - 1),
+                      divisions: 23 - _startHour - 1,
                       label: '${_endHour.toString().padLeft(2, '0')}:00',
                       onChanged: (value) {
                         setState(() {
@@ -247,7 +246,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
 
   String _getPreviewText() {
     final reminderTimes = <String>[];
-    for (int hour = _startHour; hour <= _endHour; hour += _interval) {
+    for (var hour = _startHour; hour <= _endHour; hour += _interval) {
       if (hour > _endHour) break;
       reminderTimes.add('${hour.toString().padLeft(2, '0')}:00');
     }

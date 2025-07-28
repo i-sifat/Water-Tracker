@@ -149,7 +149,7 @@ class RTLUtils {
   /// Get appropriate transform for RTL mirroring
   static Matrix4 getMirrorTransform(BuildContext context) {
     if (isRTL(context)) {
-      return Matrix4.identity()..scale(-1.0, 1.0, 1.0);
+      return Matrix4.identity()..scale(-1.0, 1, 1);
     }
     return Matrix4.identity();
   }

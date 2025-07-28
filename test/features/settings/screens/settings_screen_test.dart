@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 import 'package:watertracker/features/settings/providers/settings_provider.dart';
 import 'package:watertracker/features/settings/screens/settings_screen.dart';
-import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 
 void main() {
   group('SettingsScreen Widget Tests', () {

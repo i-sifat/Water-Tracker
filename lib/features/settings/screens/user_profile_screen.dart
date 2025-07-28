@@ -199,14 +199,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       },
     );
 
-    if (confirmed == true && mounted) {
+    if (confirmed ?? false && mounted) {
       try {
         // Create onboarding provider and reopen for editing
         final onboardingProvider = OnboardingProvider();
         await onboardingProvider.reopenOnboardingForEditing();
 
         if (mounted) {
-          Navigator.of(context).push(
+          await Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (context) => ChangeNotifierProvider.value(
                 value: onboardingProvider,

@@ -31,6 +31,39 @@ class CustomRemindersScreen extends StatelessWidget {
       ),
       body: PremiumGate(
         feature: PremiumFeature.customReminders,
+        lockedChild: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.lock,
+                  size: 64,
+                  color: AppColors.textSubtitle,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Premium Feature',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Custom reminders are available with premium unlock. Support the app development to access this feature.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSubtitle,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
         child: Consumer<SettingsProvider>(
           builder: (context, settingsProvider, child) {
             final reminders = settingsProvider.notificationSettings.customReminders;
@@ -67,7 +100,7 @@ class CustomRemindersScreen extends StatelessWidget {
                             Icon(
                               Icons.alarm_add,
                               size: 64,
-                              color: AppColors.textSubtitle.withOpacity(0.5),
+                              color: AppColors.textSubtitle.withValues(alpha: 0.5),
                             ),
                             const SizedBox(height: 16),
                             const Text(
@@ -135,42 +168,10 @@ class CustomRemindersScreen extends StatelessWidget {
             );
           },
         ),
-        lockedWidget: const Center(
-          child: Padding(
-            padding: EdgeInsets.all(32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.lock,
-                  size: 64,
-                  color: AppColors.textSubtitle,
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Premium Feature',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Custom reminders are available with premium unlock. Support the app development to access this feature.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSubtitle,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
       floatingActionButton: PremiumGate(
         feature: PremiumFeature.customReminders,
+        lockedChild: const SizedBox.shrink(),
         child: FloatingActionButton(
           onPressed: () {
             // TODO: Implement add reminder dialog
@@ -183,7 +184,6 @@ class CustomRemindersScreen extends StatelessWidget {
           backgroundColor: AppColors.waterFull,
           child: const Icon(Icons.add, color: Colors.white),
         ),
-        lockedWidget: const SizedBox.shrink(),
       ),
     );
   }

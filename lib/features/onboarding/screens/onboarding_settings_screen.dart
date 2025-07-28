@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/models/user_profile.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 
@@ -88,7 +87,7 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
             _buildSettingCard(
               title: 'Age',
               value: _profile.age?.toString() ?? 'Not set',
-              onTap: () => _showAgeDialog(),
+              onTap: _showAgeDialog,
             ),
 
             const SizedBox(height: 16),
@@ -97,7 +96,7 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
             _buildSettingCard(
               title: 'Weight',
               value: _profile.weight != null ? '${_profile.weight!.toStringAsFixed(1)} kg' : 'Not set',
-              onTap: () => _showWeightDialog(),
+              onTap: _showWeightDialog,
             ),
 
             const SizedBox(height: 16),
@@ -106,7 +105,7 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
             _buildSettingCard(
               title: 'Gender',
               value: _profile.gender.displayName,
-              onTap: () => _showGenderDialog(),
+              onTap: _showGenderDialog,
             ),
 
             const SizedBox(height: 16),
@@ -115,7 +114,7 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
             _buildSettingCard(
               title: 'Activity Level',
               value: _profile.activityLevel.displayName,
-              onTap: () => _showActivityLevelDialog(),
+              onTap: _showActivityLevelDialog,
             ),
 
             const SizedBox(height: 32),
@@ -135,7 +134,7 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
               value: _profile.goals.isEmpty 
                   ? 'None selected' 
                   : _profile.goals.map((g) => g.displayName).join(', '),
-              onTap: () => _showGoalsDialog(),
+              onTap: _showGoalsDialog,
             ),
 
             const SizedBox(height: 16),
@@ -144,7 +143,7 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
             _buildSettingCard(
               title: 'Daily Water Goal',
               value: '${_profile.effectiveDailyGoal} ml',
-              onTap: () => _showDailyGoalDialog(),
+              onTap: _showDailyGoalDialog,
             ),
 
             const SizedBox(height: 32),
@@ -436,7 +435,7 @@ class _OnboardingSettingsScreenState extends State<OnboardingSettingsScreen> {
       builder: (context) => AlertDialog(
         title: const Text('Reset All Settings'),
         content: const Text(
-          'This will reset all your profile settings and you\'ll need to go through onboarding again. Are you sure?',
+          "This will reset all your profile settings and you'll need to go through onboarding again. Are you sure?",
         ),
         actions: [
           TextButton(

@@ -20,21 +20,24 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     {
       'title': 'Almost never',
       'subtitle': 'Never / several times a month',
-      'icon': '🚫',
+      'icon': Icons.block,
+      'emoji': '🚫',
       'value': 'almost_never',
       'iconBgColor': const Color(0xFFF2F2F2),
     },
     {
       'title': 'Rarely',
       'subtitle': 'Few times a week',
-      'icon': '🥤',
+      'icon': Icons.local_drink,
+      'emoji': '🥤',
       'value': 'rarely',
       'iconBgColor': const Color(0xFFF2F2F2),
     },
     {
       'title': 'Regularly',
       'subtitle': 'Every day',
-      'icon': '🧃',
+      'icon': Icons.local_cafe,
+      'emoji': '🧃',
       'value': 'regularly',
       'iconBgColor': const Color(0xFFF2F2F2),
     },
@@ -108,22 +111,9 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                 itemBuilder: (context, index) {
                   final frequency = _frequencies[index];
                   return SelectionBox(
-                    title: frequency['title'] as String,
+                    title: '${frequency['emoji']} ${frequency['title']}',
                     subtitle: frequency['subtitle'] as String,
-                    icon: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: frequency['iconBgColor'] as Color,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Text(
-                          frequency['icon'] as String,
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                      ),
-                    ),
+                    icon: frequency['icon'] as IconData,
                     isSelected: _selectedFrequency == frequency['value'],
                     onTap: () {
                       setState(() {

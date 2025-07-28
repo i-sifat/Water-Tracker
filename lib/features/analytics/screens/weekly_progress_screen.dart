@@ -1,5 +1,4 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/constants/premium_features.dart' as premium_constants;
@@ -61,7 +60,7 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
             if (weeklyData == null) {
               return const EmptyStateWidget(
                 title: 'No Data Available',
-                message: 'Start tracking your water intake to see weekly progress.',
+                subtitle: 'Start tracking your water intake to see weekly progress.',
               );
             }
 
@@ -161,12 +160,11 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
                     ),
                   ),
                   titlesData: FlTitlesData(
-                    show: true,
                     rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -205,7 +203,6 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
                   borderData: FlBorderData(show: false),
                   barGroups: _buildBarGroups(data),
                   gridData: FlGridData(
-                    show: true,
                     drawVerticalLine: false,
                     horizontalInterval: 500,
                     getDrawingHorizontalLine: (value) {
@@ -380,9 +377,9 @@ class _WeeklyProgressScreenState extends State<WeeklyProgressScreen> {
               color: AppColors.textSubtitle,
             ),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'Failed to Load Analytics',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textHeadline,

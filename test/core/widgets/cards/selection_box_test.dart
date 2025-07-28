@@ -6,7 +6,7 @@ void main() {
   group('SelectionBox Widget Tests', () {
     testWidgets('renders title correctly', (WidgetTester tester) async {
       const title = 'Test Title';
-      bool wasTapped = false;
+      var wasTapped = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -99,7 +99,7 @@ void main() {
     });
 
     testWidgets('calls onTap when tapped', (WidgetTester tester) async {
-      bool wasTapped = false;
+      var wasTapped = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -142,7 +142,6 @@ void main() {
           home: Scaffold(
             body: SelectionBox(
               title: 'Test Title',
-              isSelected: false,
               onTap: () {},
             ),
           ),

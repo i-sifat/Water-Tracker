@@ -119,7 +119,7 @@ class _AvatarSelectionScreenState extends State<AvatarSelectionScreen> {
                 ? Border.all(color: AppColors.waterFull, width: 2)
                 : null,
             color: isSelected 
-                ? AppColors.waterFull.withOpacity(0.05)
+                ? AppColors.waterFull.withValues(alpha: 0.05)
                 : null,
           ),
           child: Column(
@@ -128,7 +128,6 @@ class _AvatarSelectionScreenState extends State<AvatarSelectionScreen> {
               Expanded(
                 child: SvgPicture.asset(
                   avatar.assetPath,
-                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(height: 12),

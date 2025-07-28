@@ -8,7 +8,7 @@ void main() {
       const childText = 'Test Child';
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
               child: Text(childText),
@@ -25,11 +25,11 @@ void main() {
       const customPadding = EdgeInsets.all(24);
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
               padding: customPadding,
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
@@ -47,11 +47,11 @@ void main() {
       const customMargin = EdgeInsets.all(12);
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
               margin: customMargin,
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
@@ -63,10 +63,10 @@ void main() {
 
     testWidgets('uses default padding when not specified', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
@@ -82,10 +82,10 @@ void main() {
 
     testWidgets('uses default margin when not specified', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
@@ -99,23 +99,23 @@ void main() {
       const customRadius = 24.0;
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
               borderRadius: customRadius,
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
       );
 
       final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final decoration = container.decoration! as BoxDecoration;
       expect(decoration.borderRadius, equals(BorderRadius.circular(customRadius)));
     });
 
     testWidgets('shows InkWell when onTap is provided', (WidgetTester tester) async {
-      bool wasTapped = false;
+      var wasTapped = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -138,10 +138,10 @@ void main() {
 
     testWidgets('does not show InkWell when onTap is null', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
@@ -152,19 +152,19 @@ void main() {
 
     testWidgets('applies selected styling when isSelected is true', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
               isSelected: true,
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
       );
 
       final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
-      final border = decoration.border as Border;
+      final decoration = container.decoration! as BoxDecoration;
+      final border = decoration.border! as Border;
       
       // Selected cards should have a thicker border (width: 2)
       expect(border.top.width, equals(2));
@@ -172,19 +172,18 @@ void main() {
 
     testWidgets('applies unselected styling when isSelected is false', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
-              isSelected: false,
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
       );
 
       final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
-      final border = decoration.border as Border;
+      final decoration = container.decoration! as BoxDecoration;
+      final border = decoration.border! as Border;
       
       // Unselected cards should have a thinner border (width: 1)
       expect(border.top.width, equals(1));
@@ -194,18 +193,18 @@ void main() {
       const customColor = Colors.red;
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
               backgroundColor: customColor,
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
       );
 
       final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final decoration = container.decoration! as BoxDecoration;
       expect(decoration.color, equals(customColor));
     });
 
@@ -213,19 +212,19 @@ void main() {
       const customBorderColor = Colors.blue;
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
               borderColor: customBorderColor,
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
       );
 
       final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
-      final border = decoration.border as Border;
+      final decoration = container.decoration! as BoxDecoration;
+      final border = decoration.border! as Border;
       expect(border.top.color, equals(customBorderColor));
     });
 
@@ -233,18 +232,18 @@ void main() {
       const customElevation = 8.0;
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
               elevation: customElevation,
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
       );
 
       final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final decoration = container.decoration! as BoxDecoration;
       expect(decoration.boxShadow, isNotNull);
       expect(decoration.boxShadow!.length, equals(1));
       expect(decoration.boxShadow!.first.blurRadius, equals(customElevation));
@@ -252,18 +251,17 @@ void main() {
 
     testWidgets('has no box shadow when elevation is 0', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AppCard(
-              elevation: 0,
-              child: const Text('Test'),
+              child: Text('Test'),
             ),
           ),
         ),
       );
 
       final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final decoration = container.decoration! as BoxDecoration;
       expect(decoration.boxShadow, isNull);
     });
   });

@@ -51,9 +51,9 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
           });
 
           if (onboardingProvider.isLoading) {
-            return Scaffold(
+            return const Scaffold(
               backgroundColor: AppColors.background,
-              body: const Center(
+              body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

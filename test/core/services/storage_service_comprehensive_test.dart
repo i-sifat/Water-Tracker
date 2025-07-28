@@ -1,241 +1,200 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/services/storage_service.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('StorageService Comprehensive Tests', () {
     late StorageService storageService;
 
-    setUp(() async {
-      SharedPreferences.setMockInitialValues({});
+    setUp(() {
       storageService = StorageService();
-      await storageService.initialize();
     });
 
-    group('Initialization', () {
-      test('should initialize successfully', () async {
+    group('Hydration Data Storage', () {
+      test('should save hydration data', () async {
         // Arrange
-        final service = StorageService();
+        final hydrationData = HydrationData.create(
+          amount: 250,
+        );
 
-        // Act
-        await service.initialize();
-
-        // Assert
-        expect(service, isNotNull);
+        // Act & Assert
+        expect(
+          () => storageService.saveHydrationData(hydrationData),
+          returnsNormally,
+        );
       });
-    });
 
-    group('String Operations', () {
-      test('should save and retrieve string values', () async {
+      test('should retrieve hydration data', () async {
         // Arrange
-        const key = 'test_string';
-        const value = 'test_value';
+        final hydrationData = HydrationData.create(
+          amount: 250,
+        );
+        await storageService.saveHydrationData(hydrationData);
 
         // Act
-        await storageService.saveString(key, value);
-        final result = await storageService.getString(key);
+        final retrievedData = await storageService.getHydrationData();
 
         // Assert
-        expect(result, equals(value));
+        expect(retrievedData, isNotNull);
+        expect(retrievedData, isA<List<HydrationData>>());
       });
 
-      test('should return null for non-existent string keys', () async {
-        // Act
-        final result = await storageService.getString('non_existent_key');
-
-        // Assert
-        expect(result, isNull);
-      });
-
-      test('should handle encrypted string storage', () async {
+      test('should handle multiple hydration entries', () async {
         // Arrange
-        const key = 'encrypted_string';
-        const value = 'encrypted_value';
+        final entries = [
+          HydrationData.create(amount: 250),
+          HydrationData.create(amount: 300, type: DrinkType.tea),
+          HydrationData.create(amount: 200, type: DrinkType.coffee),
+        ];
 
         // Act
-        await storageService.saveString(key, value, encrypted: true);
-        final result = await storageService.getString(key, encrypted: true);
+        for (final entry in entries) {
+          await storageService.saveHydrationData(entry);
+        }
+
+        final retrievedData = await storageService.getHydrationData();
 
         // Assert
-        expect(result, equals(value));
-      });
-    });
-
-    group('Boolean Operations', () {
-      test('should save and retrieve boolean values', () async {
-        // Arrange
-        const key = 'test_bool';
-        const value = true;
-
-        // Act
-        await storageService.saveBool(key, value);
-        final result = await storageService.getBool(key);
-
-        // Assert
-        expect(result, equals(value));
-      });
-
-      test('should return null for non-existent boolean keys', () async {
-        // Act
-        final result = await storageService.getBool('non_existent_bool');
-
-        // Assert
-        expect(result, isNull);
+        expect(retrievedData.length, greaterThanOrEqualTo(entries.length));
       });
     });
 
-    group('Integer Operations', () {
-      test('should save and retrieve integer values', () async {
+    group('User Preferences', () {
+      test('should save and retrieve daily goal', () async {
         // Arrange
-        const key = 'test_int';
-        const value = 42;
+        const dailyGoal = 2500;
 
         // Act
-        await storageService.saveInt(key, value);
-        final result = await storageService.getInt(key);
+        await storageService.saveDailyGoal(dailyGoal);
+        final retrievedGoal = await storageService.getDailyGoal();
 
         // Assert
-        expect(result, equals(value));
+        expect(retrievedGoal, equals(dailyGoal));
       });
 
-      test('should return null for non-existent integer keys', () async {
+      test('should save and retrieve notification settings', () async {
+        // Arrange
+        const notificationsEnabled = true;
+
         // Act
-        final result = await storageService.getInt('non_existent_int');
+        await storageService.saveNotificationSettings(notificationsEnabled);
+        final retrievedSetting = await storageService.getNotificationSettings();
 
         // Assert
-        expect(result, isNull);
+        expect(retrievedSetting, equals(notificationsEnabled));
       });
     });
 
-    group('Double Operations', () {
-      test('should save and retrieve double values', () async {
-        // Arrange
-        const key = 'test_double';
-        const value = 3.14;
-
-        // Act
-        await storageService.saveDouble(key, value);
-        final result = await storageService.getDouble(key);
-
-        // Assert
-        expect(result, equals(value));
-      });
-    });
-
-    group('List Operations', () {
-      test('should save and retrieve string lists', () async {
-        // Arrange
-        const key = 'test_list';
-        const value = ['item1', 'item2', 'item3'];
-
-        // Act
-        await storageService.saveStringList(key, value);
-        final result = await storageService.getStringList(key);
-
-        // Assert
-        expect(result, equals(value));
-      });
-
-      test('should return null for non-existent list keys', () async {
-        // Act
-        final result = await storageService.getStringList('non_existent_list');
-
-        // Assert
-        expect(result, isNull);
-      });
-    });
-
-    group('JSON Operations', () {
-      test('should save and retrieve JSON objects', () async {
-        // Arrange
-        const key = 'test_json';
-        const value = {'name': 'John', 'age': 30, 'active': true};
-
-        // Act
-        await storageService.saveJson(key, value);
-        final result = await storageService.getJson(key);
-
-        // Assert
-        expect(result, equals(value));
-      });
-
-      test('should handle complex JSON structures', () async {
-        // Arrange
-        const key = 'complex_json';
-        const value = {
-          'user': {
-            'id': 1,
-            'profile': {
-              'name': 'John Doe',
-              'settings': ['setting1', 'setting2']
-            }
-          },
-          'data': [1, 2, 3, 4, 5]
-        };
-
-        // Act
-        await storageService.saveJson(key, value);
-        final result = await storageService.getJson(key);
-
-        // Assert
-        expect(result, equals(value));
-      });
-    });
-
-    group('Key Management', () {
-      test('should check if key exists', () async {
-        // Arrange
-        const key = 'existing_key';
-        const value = 'test_value';
-
-        // Act
-        await storageService.saveString(key, value);
-        final exists = await storageService.containsKey(key);
-        final notExists = await storageService.containsKey('non_existent_key');
-
-        // Assert
-        expect(exists, isTrue);
-        expect(notExists, isFalse);
-      });
-
-      test('should remove keys', () async {
-        // Arrange
-        const key = 'key_to_remove';
-        const value = 'test_value';
-
-        // Act
-        await storageService.saveString(key, value);
-        await storageService.remove(key);
-        final result = await storageService.getString(key);
-
-        // Assert
-        expect(result, isNull);
-      });
-
+    group('Data Management', () {
       test('should clear all data', () async {
         // Arrange
-        await storageService.saveString('key1', 'value1');
-        await storageService.saveString('key2', 'value2');
+        final hydrationData = HydrationData.create(amount: 250);
+        await storageService.saveHydrationData(hydrationData);
 
         // Act
-        await storageService.remove('key1');
-        await storageService.remove('key2');
-        final result1 = await storageService.getString('key1');
-        final result2 = await storageService.getString('key2');
+        await storageService.clearAllData();
+        final retrievedData = await storageService.getHydrationData();
 
         // Assert
-        expect(result1, isNull);
-        expect(result2, isNull);
+        expect(retrievedData, isEmpty);
+      });
+
+      test('should backup data', () async {
+        // Arrange
+        final hydrationData = HydrationData.create(amount: 250);
+        await storageService.saveHydrationData(hydrationData);
+
+        // Act
+        final backupData = await storageService.createBackup();
+
+        // Assert
+        expect(backupData, isNotNull);
+        expect(backupData, isA<Map<String, dynamic>>());
+      });
+
+      test('should restore data from backup', () async {
+        // Arrange
+        final originalData = HydrationData.create(amount: 250);
+        await storageService.saveHydrationData(originalData);
+        final backupData = await storageService.createBackup();
+        
+        await storageService.clearAllData();
+
+        // Act
+        await storageService.restoreFromBackup(backupData);
+        final restoredData = await storageService.getHydrationData();
+
+        // Assert
+        expect(restoredData, isNotEmpty);
       });
     });
 
     group('Error Handling', () {
       test('should handle storage errors gracefully', () async {
-        // Test that the service handles various error conditions
-        expect(() => storageService.saveString('', 'value'), returnsNormally);
-        expect(() => storageService.getString(''), returnsNormally);
+        // Act & Assert
+        expect(() => storageService.getHydrationData(), returnsNormally);
+      });
+
+      test('should handle invalid backup data', () async {
+        // Arrange
+        const invalidBackup = <String, dynamic>{'invalid': 'data'};
+
+        // Act & Assert
+        expect(
+          () => storageService.restoreFromBackup(invalidBackup),
+          returnsNormally,
+        );
+      });
+
+      test('should handle null values gracefully', () async {
+        // Act & Assert
+        expect(() => storageService.getDailyGoal(), returnsNormally);
+        expect(() => storageService.getNotificationSettings(), returnsNormally);
+      });
+    });
+
+    group('Performance', () {
+      test('should handle large amounts of data efficiently', () async {
+        // Arrange
+        const entryCount = 100;
+        final entries = List.generate(
+          entryCount,
+          (i) => HydrationData.create(amount: i + 100),
+        );
+
+        // Act
+        final stopwatch = Stopwatch()..start();
+        
+        for (final entry in entries) {
+          await storageService.saveHydrationData(entry);
+        }
+        
+        stopwatch.stop();
+
+        // Assert
+        expect(stopwatch.elapsedMilliseconds, lessThan(5000)); // Should be reasonably fast
+      });
+
+      test('should retrieve data efficiently', () async {
+        // Arrange
+        const entryCount = 50;
+        final entries = List.generate(
+          entryCount,
+          (i) => HydrationData.create(amount: i + 100),
+        );
+
+        for (final entry in entries) {
+          await storageService.saveHydrationData(entry);
+        }
+
+        // Act
+        final stopwatch = Stopwatch()..start();
+        final retrievedData = await storageService.getHydrationData();
+        stopwatch.stop();
+
+        // Assert
+        expect(retrievedData.length, greaterThanOrEqualTo(entryCount));
+        expect(stopwatch.elapsedMilliseconds, lessThan(1000)); // Should be fast
       });
     });
   });

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/providers/theme_provider.dart';
-import '../../../core/widgets/common/accessible_button.dart';
-import '../../../l10n/app_localizations.dart';
+import 'package:watertracker/core/providers/theme_provider.dart';
+import 'package:watertracker/core/widgets/common/accessible_button.dart';
+import 'package:watertracker/l10n/app_localizations.dart';
 
 class AccessibilitySettingsScreen extends StatelessWidget {
-  static const String routeName = '/accessibility-settings';
 
   const AccessibilitySettingsScreen({super.key});
+  static const String routeName = '/accessibility-settings';
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +99,7 @@ class AccessibilitySettingsScreen extends StatelessWidget {
                             child: Slider(
                               value: themeProvider.textScaleFactor,
                               min: 0.8,
-                              max: 2.0,
+                              max: 2,
                               divisions: 12,
                               label: '${(themeProvider.textScaleFactor * 100).round()}%',
                               onChanged: (value) {
@@ -226,8 +226,8 @@ class AccessibilitySettingsScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Reset Accessibility Settings'),
-          content: Text('This will reset all accessibility settings to their default values. Continue?'),
+          title: const Text('Reset Accessibility Settings'),
+          content: const Text('This will reset all accessibility settings to their default values. Continue?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -235,9 +235,10 @@ class AccessibilitySettingsScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                themeProvider.setHighContrastMode(false);
-                themeProvider.setTextScaleFactor(1.0);
-                themeProvider.setReducedMotion(false);
+                themeProvider
+                  ..setHighContrastMode(false)
+                  ..setTextScaleFactor(1)
+                  ..setReducedMotion(false);
                 Navigator.of(context).pop();
                 
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -246,7 +247,7 @@ class AccessibilitySettingsScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('Reset'),
+              child: const Text('Reset'),
             ),
           ],
         );

@@ -4,10 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/services/notification_service.dart';
-import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
-import 'package:watertracker/core/widgets/buttons/secondary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/core/widgets/common/loading_widget.dart';
 import 'package:watertracker/core/widgets/common/premium_gate.dart';
@@ -62,7 +60,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
       body: PremiumGate(
         feature: PremiumFeature.customReminders,
         child: _buildContent(),
-        lockedWidget: _buildLockedContent(),
+        lockedChild: _buildLockedContent(),
       ),
     );
   }
@@ -98,13 +96,13 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
           const SizedBox(height: 24),
           Text(
             'Custom Reminders',
-            style: AppTypography.headlineMedium,
+            style: AppTypography.headline,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Create personalized reminder schedules that fit your lifestyle. Set specific times, custom messages, and choose which days to receive reminders.',
-            style: AppTypography.bodyLarge,
+            style: AppTypography.subtitle,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -131,13 +129,13 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
           const SizedBox(height: 24),
           Text(
             'No Custom Reminders',
-            style: AppTypography.headlineMedium,
+            style: AppTypography.headline,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Create your first custom reminder to get personalized hydration notifications.',
-            style: AppTypography.bodyLarge,
+            style: AppTypography.subtitle,
             textAlign: TextAlign.center,
           ),
         ],
@@ -157,8 +155,8 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
   }
 
   Widget _buildReminderCard(Map<String, dynamic> reminder) {
-    final hour = reminder['hour'] as int;
-    final minute = reminder['minute'] as int;
+    final hour = (reminder['hour'] is int) ? reminder['hour'] as int : 0;
+    final minute = (reminder['minute'] is int) ? reminder['minute'] as int : 0;
     final title = reminder['title'] as String;
     final enabled = reminder['enabled'] as bool;
     final days = (reminder['days'] as List<dynamic>).cast<int>();
@@ -171,7 +169,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: enabled ? AppColors.waterFull : Colors.grey,
-          child: Icon(
+          child: const Icon(
             Icons.schedule,
             color: Colors.white,
             size: 20,
@@ -179,7 +177,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
         ),
         title: Text(
           title,
-          style: AppTypography.titleMedium,
+          style: AppTypography.subtitle,
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,14 +185,14 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
             const SizedBox(height: 4),
             Text(
               timeString,
-              style: AppTypography.headlineSmall.copyWith(
+              style: AppTypography.subtitle.copyWith(
                 color: AppColors.waterFull,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               dayNames,
-              style: AppTypography.bodySmall,
+              style: AppTypography.subtitle,
             ),
           ],
         ),
@@ -203,7 +201,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
           children: [
             Switch(
               value: enabled,
-              onChanged: (value) => _toggleReminder(reminder['id'], value),
+              onChanged: (value) => _toggleReminder(reminder['id'] as int, value),
               activeColor: AppColors.waterFull,
             ),
             PopupMenuButton<String>(
@@ -292,10 +290,8 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
     switch (action) {
       case 'edit':
         _showEditReminderDialog(reminder);
-        break;
       case 'delete':
         _showDeleteConfirmation(reminder);
-        break;
     }
   }
 
@@ -314,7 +310,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
       builder: (context) => _ReminderDialog(
         reminder: reminder,
         onSave: (hour, minute, title, body, days) => _updateReminder(
-          reminder['id'],
+          reminder['id'] as int,
           hour,
           minute,
           title,
@@ -346,7 +342,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
     );
 
     if (confirmed == true) {
-      await _deleteReminder(reminder['id']);
+      await _deleteReminder(reminder['id'] as int);
     }
   }
 
@@ -443,8 +439,7 @@ class _CustomRemindersScreenState extends State<CustomRemindersScreen> {
 /// Dialog for adding/editing custom reminders
 class _ReminderDialog extends StatefulWidget {
   const _ReminderDialog({
-    this.reminder,
-    required this.onSave,
+    required this.onSave, this.reminder,
   });
 
   final Map<String, dynamic>? reminder;
@@ -469,8 +464,8 @@ class _ReminderDialogState extends State<_ReminderDialog> {
     if (widget.reminder != null) {
       final reminder = widget.reminder!;
       _selectedTime = TimeOfDay(
-        hour: reminder['hour'] as int,
-        minute: reminder['minute'] as int,
+        hour: (reminder['hour'] is int) ? reminder['hour'] as int : 9,
+        minute: (reminder['minute'] is int) ? reminder['minute'] as int : 0,
       );
       _titleController = TextEditingController(text: reminder['title'] as String);
       _bodyController = TextEditingController(text: reminder['body'] as String? ?? '');
@@ -526,7 +521,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Time', style: AppTypography.titleSmall),
+        Text('Time', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         InkWell(
           onTap: _selectTime,
@@ -542,7 +537,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
                 const SizedBox(width: 12),
                 Text(
                   _selectedTime.format(context),
-                  style: AppTypography.bodyLarge,
+                  style: AppTypography.subtitle,
                 ),
               ],
             ),
@@ -556,7 +551,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Title', style: AppTypography.titleSmall),
+        Text('Title', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         TextField(
           controller: _titleController,
@@ -573,7 +568,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Message', style: AppTypography.titleSmall),
+        Text('Message', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         TextField(
           controller: _bodyController,
@@ -591,7 +586,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Days', style: AppTypography.titleSmall),
+        Text('Days', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,

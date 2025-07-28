@@ -27,7 +27,6 @@ void main() {
             body: OnboardingProgressIndicator(
               currentStep: 2,
               totalSteps: 5,
-              showStepNumbers: true,
             ),
           ),
         ),
@@ -172,7 +171,6 @@ void main() {
             body: AnimatedOnboardingProgressIndicator(
               currentStep: 1,
               totalSteps: 4,
-              showStepNumbers: true,
             ),
           ),
         ),
@@ -219,7 +217,7 @@ void main() {
     });
 
     testWidgets('updates animation when currentStep changes', (WidgetTester tester) async {
-      int currentStep = 0;
+      var currentStep = 0;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -407,7 +405,6 @@ void main() {
             body: StepProgressIndicator(
               currentStep: 1,
               totalSteps: 3,
-              showLabels: false,
               labels: labels,
             ),
           ),

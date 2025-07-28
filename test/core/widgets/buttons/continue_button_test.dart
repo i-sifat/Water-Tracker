@@ -5,7 +5,7 @@ import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 void main() {
   group('ContinueButton Widget Tests', () {
     testWidgets('renders with Continue text and arrow icon', (WidgetTester tester) async {
-      bool wasPressed = false;
+      var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -23,7 +23,7 @@ void main() {
     });
 
     testWidgets('calls onPressed when tapped', (WidgetTester tester) async {
-      bool wasPressed = false;
+      var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -42,7 +42,7 @@ void main() {
     });
 
     testWidgets('is disabled when isDisabled is true', (WidgetTester tester) async {
-      bool wasPressed = false;
+      var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -127,14 +127,13 @@ void main() {
     });
 
     testWidgets('maintains enabled state when isDisabled is false', (WidgetTester tester) async {
-      bool wasPressed = false;
+      var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ContinueButton(
               onPressed: () => wasPressed = true,
-              isDisabled: false,
             ),
           ),
         ),

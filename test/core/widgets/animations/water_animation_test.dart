@@ -6,7 +6,7 @@ void main() {
   group('WaterAnimation Widget Tests', () {
     testWidgets('renders with basic properties', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: WaterAnimation(
               progress: 0.5,
@@ -28,7 +28,7 @@ void main() {
       const height = 250.0;
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: WaterAnimation(
               progress: 0.3,
@@ -42,12 +42,12 @@ void main() {
       );
 
       final customPaint = tester.widget<CustomPaint>(find.byType(CustomPaint));
-      expect(customPaint.size?.width, equals(width));
-      expect(customPaint.size?.height, equals(height));
+      expect(customPaint.size.width, equals(width));
+      expect(customPaint.size.height, equals(height));
     });
 
     testWidgets('updates when progress changes', (WidgetTester tester) async {
-      double progress = 0.3;
+      var progress = 0.3;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -92,7 +92,7 @@ void main() {
 
     testWidgets('has animation controllers', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: WaterAnimation(
               progress: 0.5,
@@ -115,7 +115,7 @@ void main() {
 
     testWidgets('disposes controllers properly', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: WaterAnimation(
               progress: 0.5,
@@ -143,10 +143,10 @@ void main() {
 
     testWidgets('handles zero progress', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: WaterAnimation(
-              progress: 0.0,
+              progress: 0,
               waterColor: Colors.blue,
               backgroundColor: Colors.grey,
               width: 200,
@@ -162,10 +162,10 @@ void main() {
 
     testWidgets('handles full progress', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: WaterAnimation(
-              progress: 1.0,
+              progress: 1,
               waterColor: Colors.blue,
               backgroundColor: Colors.grey,
               width: 200,
@@ -181,7 +181,7 @@ void main() {
 
     testWidgets('uses ClipRect for proper clipping', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: WaterAnimation(
               progress: 0.5,
@@ -199,7 +199,7 @@ void main() {
 
     testWidgets('creates bubbles for animation', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: WaterAnimation(
               progress: 0.5,
@@ -270,11 +270,11 @@ void main() {
   group('Bubble Class Tests', () {
     test('creates bubble with correct properties', () {
       final bubble = Bubble(
-        x: 10.0,
-        y: 20.0,
-        currentY: 20.0,
-        radius: 5.0,
-        speed: 50.0,
+        x: 10,
+        y: 20,
+        currentY: 20,
+        radius: 5,
+        speed: 50,
         active: true,
       );
 
@@ -288,11 +288,11 @@ void main() {
 
     test('bubble properties can be modified', () {
       final bubble = Bubble(
-        x: 10.0,
-        y: 20.0,
-        currentY: 20.0,
-        radius: 5.0,
-        speed: 50.0,
+        x: 10,
+        y: 20,
+        currentY: 20,
+        radius: 5,
+        speed: 50,
         active: true,
       );
 

@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
+import 'package:watertracker/core/services/performance_service.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/core/widgets/common/empty_state_widget.dart';
 import 'package:watertracker/core/widgets/common/loading_widget.dart';
+import 'package:watertracker/core/widgets/common/optimized_list_view.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 import 'package:watertracker/core/widgets/inputs/app_text_field.dart';
 import 'package:watertracker/features/home/home_screen.dart';
@@ -441,8 +443,8 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                     ),
                   ),
                   titlesData: FlTitlesData(
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -480,7 +482,6 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                   borderData: FlBorderData(show: false),
                   barGroups: _buildWeeklyBarGroups(filteredData, provider.dailyGoal),
                   gridData: FlGridData(
-                    show: true,
                     drawVerticalLine: false,
                     horizontalInterval: 500,
                     getDrawingHorizontalLine: (value) {
@@ -629,11 +630,10 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
         children: [
           AppCard(
             child: TableCalendar<HydrationData>(
-              firstDay: DateTime.utc(2020, 1, 1),
+              firstDay: DateTime.utc(2020),
               lastDay: DateTime.now().add(const Duration(days: 365)),
               focusedDay: _focusedDate,
               selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
-              calendarFormat: CalendarFormat.month,
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarStyle: CalendarStyle(
                 outsideDaysVisible: false,
@@ -843,20 +843,16 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             (entry.notes?.toLowerCase().contains(_searchQuery) ?? false))
         .toList();
     
-    if (filteredEntries.isEmpty) {
-      return const EmptyStateWidget(
+    return OptimizedListView<HydrationData>(
+      items: filteredEntries,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemBuilder: (context, entry, index) => _buildEntryCard(entry, provider),
+      emptyBuilder: (context) => const EmptyStateWidget(
         title: 'No Entries Found',
         subtitle: 'Try adjusting your filters or search terms.',
-      );
-    }
-    
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemCount: filteredEntries.length,
-      itemBuilder: (context, index) {
-        final entry = filteredEntries[index];
-        return _buildEntryCard(entry, provider);
-      },
+      ),
+      cacheExtent: 500.0, // Increased cache for better scrolling
+      enablePerformanceMonitoring: true,
     );
   }
 

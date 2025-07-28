@@ -94,7 +94,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                               const SizedBox(height: 8),
                               _buildStatRow('Encrypted Keys', '${_storageStats['encrypted_keys_count'] ?? 0}'),
                               const SizedBox(height: 8),
-                              _buildStatRow('Storage Version', _storageStats['storage_version'] ?? 'Unknown'),
+                              _buildStatRow('Storage Version', (_storageStats['storage_version'] as String?) ?? 'Unknown'),
                               const SizedBox(height: 16),
                               SecondaryButton(
                                 text: 'Refresh Stats',
@@ -120,6 +120,64 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                 
                 PremiumGate(
                   feature: PremiumFeature.dataExport,
+                  lockedChild: AppCard(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Text(
+                                'Export Your Data',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textSubtitle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.waterFull.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Text(
+                                  'PRO',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.waterFull,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Premium feature - Export all your data in JSON format',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textSubtitle,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          SecondaryButton(
+                            text: 'Unlock Premium',
+                            onPressed: () {
+                              // Navigate to premium screen
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Navigate to premium unlock'),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   child: AppCard(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -160,64 +218,6 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                                 ),
                               ),
                             ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  lockedWidget: AppCard(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Text(
-                                'Export Your Data',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textSubtitle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppColors.waterFull.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Text(
-                                  'PRO',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.waterFull,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Premium feature - Export all your data in JSON format',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textSubtitle,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          SecondaryButton(
-                            text: 'Unlock Premium',
-                            onPressed: () {
-                              // Navigate to premium screen
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Navigate to premium unlock'),
-                                ),
-                              );
-                            },
                           ),
                         ],
                       ),
@@ -309,8 +309,6 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                         SecondaryButton(
                           text: 'Clear All Data',
                           onPressed: () => _showClearDataDialog(settingsProvider),
-                          backgroundColor: Colors.red.withOpacity(0.1),
-                          textColor: Colors.red,
                         ),
                       ],
                     ),
@@ -467,7 +465,6 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
               Navigator.of(context).pop();
               await _clearAllData(settingsProvider);
             },
-            backgroundColor: Colors.red,
           ),
         ],
       ),

@@ -85,14 +85,15 @@ class PremiumProvider extends ChangeNotifier {
   /// Load or generate device code
   Future<void> _loadOrGenerateDeviceCode() async {
     try {
-      String? deviceCode = await _storageService.getString('device_code', encrypted: false);
+      final deviceCodeData = await _storageService.getString('device_code', encrypted: false);
+      String? deviceCode = (deviceCodeData is String) ? deviceCodeData : null;
       
       if (deviceCode == null) {
         deviceCode = await _deviceService.generateUniqueCode();
         await _storageService.saveString('device_code', deviceCode, encrypted: false);
       }
       
-      _premiumStatus = _premiumStatus.copyWith(deviceCode: deviceCode);
+      _premiumStatus = _premiumStatus.copyWith(deviceCode: deviceCode!);
     } catch (e) {
       throw DeviceError.codeGenerationFailed();
     }
@@ -102,7 +103,7 @@ class PremiumProvider extends ChangeNotifier {
   Future<void> _loadPremiumStatus() async {
     try {
       final statusJson = await _storageService.getJson('premium_status');
-      if (statusJson != null) {
+      if (statusJson != null && statusJson is Map<String, dynamic>) {
         _premiumStatus = PremiumStatus.fromJson(statusJson);
       } else {
         // Create free status with device code
@@ -208,7 +209,7 @@ class PremiumProvider extends ChangeNotifier {
         additionalMessage: notes,
       );
 
-      if (!success) {
+      if (success != true) {
         // Remove from submitted proofs if submission failed
         _submittedProofs.removeWhere((p) => p.id == proof.id);
         _pendingProofId = null;
@@ -245,7 +246,7 @@ class PremiumProvider extends ChangeNotifier {
       // Validate unlock code with premium service
       final isValid = await _premiumService.validateUnlockCode(unlockCode.trim().toUpperCase());
 
-      if (!isValid) {
+      if (isValid != true) {
         throw PremiumError.invalidUnlockCode();
       }
 

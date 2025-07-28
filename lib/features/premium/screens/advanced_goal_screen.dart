@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/models/user_profile.dart';
-import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/utils/water_intake_calculator.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
@@ -89,7 +88,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     // For now, create a sample profile
     setState(() {
       _userProfile = UserProfile.create().copyWith(
-        weight: 70.0,
+        weight: 70,
         age: 30,
         gender: Gender.male,
         activityLevel: ActivityLevel.moderatelyActive,
@@ -110,7 +109,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
       body: PremiumGate(
         feature: PremiumFeature.customGoals,
         child: _buildContent(),
-        lockedWidget: _buildLockedContent(),
+        lockedChild: _buildLockedContent(),
       ),
     );
   }
@@ -158,13 +157,13 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
           const SizedBox(height: 24),
           Text(
             'Advanced Goal Calculator',
-            style: AppTypography.headlineMedium,
+            style: AppTypography.headline,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Get personalized hydration goals based on advanced factors like body composition, sleep quality, stress levels, environmental conditions, and more.',
-            style: AppTypography.bodyLarge,
+            style: AppTypography.subtitle,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -185,13 +184,13 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
           children: [
             Text(
               'Your Advanced Goal',
-              style: AppTypography.titleLarge,
+              style: AppTypography.subtitle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             Text(
               '${_calculatedGoal}ml',
-              style: AppTypography.displaySmall.copyWith(
+              style: AppTypography.headline.copyWith(
                 color: AppColors.waterFull,
                 fontWeight: FontWeight.bold,
               ),
@@ -200,13 +199,13 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
             const SizedBox(height: 8),
             Text(
               'per day',
-              style: AppTypography.bodyLarge,
+              style: AppTypography.subtitle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             Text(
               'This goal is calculated using advanced factors for maximum accuracy.',
-              style: AppTypography.bodyMedium,
+              style: AppTypography.subtitle,
               textAlign: TextAlign.center,
             ),
           ],
@@ -375,7 +374,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
               children: [
                 Icon(icon, color: AppColors.waterFull),
                 const SizedBox(width: 12),
-                Text(title, style: AppTypography.titleMedium),
+                Text(title, style: AppTypography.subtitle),
               ],
             ),
             const SizedBox(height: 16),
@@ -396,7 +395,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTypography.titleSmall),
+        Text(label, style: AppTypography.subtitle),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
@@ -417,7 +416,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Stress Level', style: AppTypography.titleSmall),
+        Text('Stress Level', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -441,7 +440,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
         ),
         Text(
           'Current: $_stressLevel/10',
-          style: AppTypography.bodySmall,
+          style: AppTypography.subtitle,
         ),
       ],
     );
@@ -451,7 +450,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Climate Zone', style: AppTypography.titleSmall),
+        Text('Climate Zone', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _climateZone,
@@ -478,7 +477,7 @@ class _AdvancedGoalScreenState extends State<AdvancedGoalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Workout Timing', style: AppTypography.titleSmall),
+        Text('Workout Timing', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         CheckboxListTile(
           title: const Text('Pre-workout hydration needed'),

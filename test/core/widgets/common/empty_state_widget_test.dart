@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:watertracker/core/widgets/common/empty_state_widget.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
+import 'package:watertracker/core/widgets/common/empty_state_widget.dart';
 
 void main() {
   group('EmptyStateWidget Widget Tests', () {
@@ -107,7 +107,6 @@ void main() {
             body: EmptyStateWidget(
               title: testTitle,
               actionText: testActionText,
-              onActionPressed: null,
             ),
           ),
         ),
@@ -122,7 +121,6 @@ void main() {
           home: Scaffold(
             body: EmptyStateWidget(
               title: testTitle,
-              actionText: null,
               onActionPressed: () {},
             ),
           ),
@@ -224,7 +222,7 @@ void main() {
       final containers = tester.widgetList<Container>(find.byType(Container));
       final iconContainer = containers.firstWhere(
         (container) => container.decoration is BoxDecoration,
-        orElse: () => Container(),
+        orElse: Container.new,
       );
 
       final decoration = iconContainer.decoration as BoxDecoration?;

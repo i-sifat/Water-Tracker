@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 
 void main() {
@@ -25,7 +25,7 @@ void main() {
     });
 
     testWidgets('calls onItemTapped when item is tapped', (WidgetTester tester) async {
-      var selectedIndex = 0;
+      const selectedIndex = 0;
       var tappedIndex = -1;
 
       await tester.pumpWidget(
@@ -237,7 +237,7 @@ void main() {
     });
 
     testWidgets('handles multiple taps correctly', (WidgetTester tester) async {
-      var selectedIndex = 0;
+      const selectedIndex = 0;
       final tappedIndices = <int>[];
 
       await tester.pumpWidget(
@@ -245,7 +245,7 @@ void main() {
           home: Scaffold(
             body: CustomBottomNavigationBar(
               selectedIndex: selectedIndex,
-              onItemTapped: (index) => tappedIndices.add(index),
+              onItemTapped: tappedIndices.add,
             ),
           ),
         ),

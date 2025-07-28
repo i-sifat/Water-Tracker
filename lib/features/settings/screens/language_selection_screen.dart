@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/widgets/common/accessible_button.dart';
-import '../../../l10n/app_localizations.dart';
+import 'package:watertracker/core/widgets/common/accessible_button.dart';
+import 'package:watertracker/l10n/app_localizations.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
-  static const String routeName = '/language-selection';
 
   const LanguageSelectionScreen({super.key});
+  static const String routeName = '/language-selection';
 
   @override
   State<LanguageSelectionScreen> createState() => _LanguageSelectionScreenState();

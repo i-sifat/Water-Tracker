@@ -17,10 +17,10 @@ class VegetablesFruitsScreen extends StatefulWidget {
 class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
   String _selectedFrequency = '';
 
-  final List<Map<String, String>> _frequencies = [
-    {'title': 'Rarely', 'subtitle': 'Few times a week', 'icon': '🥗'},
-    {'title': 'Often', 'subtitle': 'Several per day', 'icon': '🥬'},
-    {'title': 'Regularly', 'subtitle': 'Every day', 'icon': '🥦'},
+  final List<Map<String, dynamic>> _frequencies = [
+    {'title': 'Rarely', 'subtitle': 'Few times a week', 'icon': Icons.eco, 'emoji': '🥗'},
+    {'title': 'Often', 'subtitle': 'Several per day', 'icon': Icons.local_florist, 'emoji': '🥬'},
+    {'title': 'Regularly', 'subtitle': 'Every day', 'icon': Icons.grass, 'emoji': '🥦'},
   ];
 
   Future<void> _saveFrequency() async {
@@ -83,16 +83,13 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                 itemBuilder: (context, index) {
                   final frequency = _frequencies[index];
                   return SelectionBox(
-                    title: frequency['title']!,
-                    subtitle: frequency['subtitle'],
-                    icon: Text(
-                      frequency['icon']!,
-                      style: const TextStyle(fontSize: 24),
-                    ),
+                    title: '${frequency['emoji']} ${frequency['title']}',
+                    subtitle: frequency['subtitle'] as String?,
+                    icon: frequency['icon'] as IconData,
                     isSelected: _selectedFrequency == frequency['title'],
                     onTap: () {
                       setState(() {
-                        _selectedFrequency = frequency['title']!;
+                        _selectedFrequency = frequency['title'] as String;
                       });
                     },
                   );

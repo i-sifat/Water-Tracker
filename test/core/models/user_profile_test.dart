@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:watertracker/core/models/user_profile.dart';
 import 'package:watertracker/core/models/model_factories.dart';
+import 'package:watertracker/core/models/user_profile.dart';
 
 void main() {
   group('UserProfile', () {

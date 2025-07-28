@@ -1,25 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../services/accessibility_service.dart';
-import '../../utils/rtl_utils.dart';
+import 'package:watertracker/core/services/accessibility_service.dart';
+import 'package:watertracker/core/utils/rtl_utils.dart';
 
 /// An accessible button widget that ensures proper touch targets,
 /// focus management, and semantic labels
 class AccessibleButton extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onPressed;
-  final String? semanticLabel;
-  final String? tooltip;
-  final EdgeInsetsGeometry? padding;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
-  final BorderRadius? borderRadius;
-  final bool autofocus;
-  final FocusNode? focusNode;
 
   const AccessibleButton({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.onPressed,
     this.semanticLabel,
     this.tooltip,
@@ -30,6 +19,16 @@ class AccessibleButton extends StatefulWidget {
     this.autofocus = false,
     this.focusNode,
   });
+  final Widget child;
+  final VoidCallback? onPressed;
+  final String? semanticLabel;
+  final String? tooltip;
+  final EdgeInsetsGeometry? padding;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final BorderRadius? borderRadius;
+  final bool autofocus;
+  final FocusNode? focusNode;
 
   @override
   State<AccessibleButton> createState() => _AccessibleButtonState();
@@ -126,7 +125,7 @@ class _AccessibleButtonState extends State<AccessibleButton> {
     // Add tooltip if provided
     if (widget.tooltip != null) {
       button = Tooltip(
-        message: widget.tooltip!,
+        message: widget.tooltip,
         child: button,
       );
     }
@@ -137,18 +136,9 @@ class _AccessibleButtonState extends State<AccessibleButton> {
 
 /// An accessible icon button with proper touch targets
 class AccessibleIconButton extends StatefulWidget {
-  final IconData icon;
-  final VoidCallback? onPressed;
-  final String? semanticLabel;
-  final String? tooltip;
-  final Color? color;
-  final double? size;
-  final bool autofocus;
-  final FocusNode? focusNode;
 
   const AccessibleIconButton({
-    super.key,
-    required this.icon,
+    required this.icon, super.key,
     this.onPressed,
     this.semanticLabel,
     this.tooltip,
@@ -157,6 +147,14 @@ class AccessibleIconButton extends StatefulWidget {
     this.autofocus = false,
     this.focusNode,
   });
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final String? semanticLabel;
+  final String? tooltip;
+  final Color? color;
+  final double? size;
+  final bool autofocus;
+  final FocusNode? focusNode;
 
   @override
   State<AccessibleIconButton> createState() => _AccessibleIconButtonState();
@@ -241,7 +239,7 @@ class _AccessibleIconButtonState extends State<AccessibleIconButton> {
     // Add tooltip if provided
     if (widget.tooltip != null) {
       button = Tooltip(
-        message: widget.tooltip!,
+        message: widget.tooltip,
         child: button,
       );
     }
@@ -252,17 +250,6 @@ class _AccessibleIconButtonState extends State<AccessibleIconButton> {
 
 /// An accessible text field with proper focus management
 class AccessibleTextField extends StatefulWidget {
-  final TextEditingController? controller;
-  final String? labelText;
-  final String? hintText;
-  final String? semanticLabel;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-  final ValueChanged<String>? onChanged;
-  final VoidCallback? onTap;
-  final bool autofocus;
-  final FocusNode? focusNode;
-  final String? Function(String?)? validator;
 
   const AccessibleTextField({
     super.key,
@@ -278,6 +265,17 @@ class AccessibleTextField extends StatefulWidget {
     this.focusNode,
     this.validator,
   });
+  final TextEditingController? controller;
+  final String? labelText;
+  final String? hintText;
+  final String? semanticLabel;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final ValueChanged<String>? onChanged;
+  final VoidCallback? onTap;
+  final bool autofocus;
+  final FocusNode? focusNode;
+  final String? Function(String?)? validator;
 
   @override
   State<AccessibleTextField> createState() => _AccessibleTextFieldState();

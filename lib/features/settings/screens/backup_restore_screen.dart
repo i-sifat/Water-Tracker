@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/core/widgets/buttons/secondary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
-import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/widgets/common/premium_gate.dart';
 import 'package:watertracker/features/settings/models/settings_models.dart';
 import 'package:watertracker/features/settings/providers/settings_provider.dart';
@@ -118,7 +118,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                           style: TextStyle(color: AppColors.textSubtitle),
                         ),
                         value: dataManagement.autoBackupEnabled,
-                        onChanged: (value) => settingsProvider.toggleAutoBackup(value),
+                        onChanged: (value) => settingsProvider.toggleAutoBackup(enabled: value),
                         activeColor: AppColors.waterFull,
                       ),
                       if (dataManagement.autoBackupEnabled) ...[
@@ -205,8 +205,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                 
                 PremiumGate(
                   feature: PremiumFeature.backupRestore,
-                  child: _buildCloudSyncCard(settingsProvider),
-                  lockedWidget: AppCard(
+                  lockedChild: AppCard(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -226,7 +225,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: AppColors.waterFull.withOpacity(0.1),
+                                  color: AppColors.waterFull.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Text(
@@ -264,6 +263,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                       ),
                     ),
                   ),
+                  child: _buildCloudSyncCard(settingsProvider),
                 ),
                 
                 const SizedBox(height: 24),
@@ -411,7 +411,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Are you sure you want to restore from this backup?'),
+            const Text('Are you sure you want to restore from this backup?'),
             const SizedBox(height: 8),
             Text(
               fileName,
@@ -500,14 +500,14 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                   const SizedBox(height: 8),
                   Text(
                     _syncStatus['lastSyncDate'] != null
-                        ? 'Last sync: ${_formatSyncDate(_syncStatus['lastSyncDate'])}'
+                        ? 'Last sync: ${_formatSyncDate(_syncStatus['lastSyncDate'] as String?)}'
                         : 'Never synced',
                     style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSubtitle,
                     ),
                   ),
-                  if (_syncStatus['pendingChanges'] > 0) ...[
+                  if ((_syncStatus['pendingChanges'] as int? ?? 0) > 0) ...[
                     const SizedBox(height: 4),
                     Text(
                       '${_syncStatus['pendingChanges']} pending changes',
@@ -530,10 +530,10 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                       Expanded(
                         child: PrimaryButton(
                           text: 'Sync Now',
-                          onPressed: _syncStatus['isSyncing'] == true 
+                          onPressed: (_syncStatus['isSyncing'] as bool? ?? false) == true 
                               ? null 
                               : () => _performManualSync(settingsProvider),
-                          isLoading: _syncStatus['isSyncing'] == true,
+                          isLoading: (_syncStatus['isSyncing'] as bool? ?? false) == true,
                         ),
                       ),
                     ],

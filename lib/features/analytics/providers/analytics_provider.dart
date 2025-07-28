@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -433,7 +432,7 @@ class AnalyticsProvider extends ChangeNotifier {
     
     // Header
     buffer
-      ..writeln('Date,Time,Amount (ml),Drink Type,Water Content (ml),Notes');
+      .writeln('Date,Time,Amount (ml),Drink Type,Water Content (ml),Notes');
     
     // Data rows
     for (final entry in entries) {
@@ -499,15 +498,15 @@ class AnalyticsProvider extends ChangeNotifier {
     final thisWeekTotal = thisWeekData.values.fold(0, (sum, value) => sum + value);
     final lastWeekTotal = lastWeekData.values.fold(0, (sum, value) => sum + value);
     
-    if (lastWeekTotal == 0) return 0.0;
+    if (lastWeekTotal == 0) return 0;
     
     return ((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100;
   }
 
   double _calculateMonthlyTrend() {
     final now = DateTime.now();
-    final thisMonth = DateTime(now.year, now.month, 1);
-    final lastMonth = DateTime(now.year, now.month - 1, 1);
+    final thisMonth = DateTime(now.year, now.month);
+    final lastMonth = DateTime(now.year, now.month - 1);
     
     final thisMonthData = _hydrationProvider.getMonthlyData(thisMonth);
     final lastMonthData = _hydrationProvider.getMonthlyData(lastMonth);
@@ -515,7 +514,7 @@ class AnalyticsProvider extends ChangeNotifier {
     final thisMonthTotal = thisMonthData.values.fold(0, (sum, value) => sum + value);
     final lastMonthTotal = lastMonthData.values.fold(0, (sum, value) => sum + value);
     
-    if (lastMonthTotal == 0) return 0.0;
+    if (lastMonthTotal == 0) return 0;
     
     return ((thisMonthTotal - lastMonthTotal) / lastMonthTotal) * 100;
   }

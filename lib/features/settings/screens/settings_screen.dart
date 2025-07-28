@@ -157,7 +157,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: CircleAvatar(
               radius: 24,
-              backgroundColor: AppColors.waterFull.withOpacity(0.1),
+              backgroundColor: AppColors.waterFull.withValues(alpha: 0.1),
               child: SvgPicture.asset(
                 avatar.assetPath,
                 width: 32,
@@ -224,7 +224,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: const TextStyle(color: AppColors.textSubtitle),
             ),
             value: notificationSettings.enabled,
-            onChanged: (value) => settingsProvider.toggleNotifications(value),
+            onChanged: (value) => settingsProvider.toggleNotifications(enabled: value),
             activeColor: AppColors.waterFull,
           ),
           if (notificationSettings.enabled) ...[
@@ -248,6 +248,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const Divider(height: 1),
             PremiumGate(
               feature: PremiumFeature.customReminders,
+              lockedChild: ListTile(
+                leading: Icon(Icons.alarm_add, color: AppColors.textSubtitle.withValues(alpha: 0.5)),
+                title: Text(
+                  'Custom Reminders',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSubtitle.withValues(alpha: 0.5),
+                  ),
+                ),
+                subtitle: const Text(
+                  'Premium feature - Unlock to customize',
+                  style: TextStyle(color: AppColors.textSubtitle),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.waterFull.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'PRO',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.waterFull,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.lock, size: 16, color: AppColors.textSubtitle),
+                  ],
+                ),
+                onTap: () => _showPremiumDialog(context),
+              ),
               child: ListTile(
                 leading: const Icon(Icons.alarm_add, color: AppColors.waterFull),
                 title: const Text(
@@ -267,7 +304,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.waterFull.withOpacity(0.1),
+                        color: AppColors.waterFull.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Text(
@@ -284,43 +321,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
                 onTap: () => _navigateToCustomReminders(context),
-              ),
-              lockedWidget: ListTile(
-                leading: Icon(Icons.alarm_add, color: AppColors.textSubtitle.withOpacity(0.5)),
-                title: Text(
-                  'Custom Reminders',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textSubtitle.withOpacity(0.5),
-                  ),
-                ),
-                subtitle: const Text(
-                  'Premium feature - Unlock to customize',
-                  style: TextStyle(color: AppColors.textSubtitle),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.waterFull.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'PRO',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.waterFull,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.lock, size: 16, color: AppColors.textSubtitle),
-                  ],
-                ),
-                onTap: () => _showPremiumDialog(context),
               ),
             ),
           ],
@@ -383,7 +383,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: TextStyle(color: AppColors.textSubtitle),
             ),
             value: preferences.soundEnabled,
-            onChanged: (value) => settingsProvider.toggleSound(value),
+            onChanged: (value) => settingsProvider.toggleSound(enabled: value),
             activeColor: AppColors.waterFull,
           ),
           const Divider(height: 1),
@@ -401,7 +401,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: TextStyle(color: AppColors.textSubtitle),
             ),
             value: preferences.hapticFeedbackEnabled,
-            onChanged: (value) => settingsProvider.toggleHapticFeedback(value),
+            onChanged: (value) => settingsProvider.toggleHapticFeedback(enabled: value),
             activeColor: AppColors.waterFull,
           ),
         ],

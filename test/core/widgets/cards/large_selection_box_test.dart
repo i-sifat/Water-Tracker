@@ -135,7 +135,7 @@ void main() {
       final containers = tester.widgetList<Container>(find.byType(Container));
       final iconContainer = containers.firstWhere(
         (container) => container.decoration is BoxDecoration,
-        orElse: () => Container(),
+        orElse: Container.new,
       );
       expect(iconContainer.decoration, isA<BoxDecoration>());
 

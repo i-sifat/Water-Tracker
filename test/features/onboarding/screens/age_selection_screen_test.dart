@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
-import 'package:watertracker/features/onboarding/screens/age_selection_screen.dart';
 import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/core/widgets/custom_ruler_picker.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/screens/age_selection_screen.dart';
 
 void main() {
   group('AgeSelectionScreen Widget Tests', () {

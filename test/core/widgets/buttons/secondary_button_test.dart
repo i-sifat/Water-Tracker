@@ -6,7 +6,7 @@ void main() {
   group('SecondaryButton Widget Tests', () {
     testWidgets('renders with text correctly', (WidgetTester tester) async {
       const buttonText = 'Secondary Button';
-      bool wasPressed = false;
+      var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -24,7 +24,7 @@ void main() {
     });
 
     testWidgets('calls onPressed when tapped', (WidgetTester tester) async {
-      bool wasPressed = false;
+      var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -61,7 +61,7 @@ void main() {
     });
 
     testWidgets('is disabled when isDisabled is true', (WidgetTester tester) async {
-      bool wasPressed = false;
+      var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -141,7 +141,7 @@ void main() {
     });
 
     testWidgets('cannot be pressed when loading', (WidgetTester tester) async {
-      bool wasPressed = false;
+      var wasPressed = false;
 
       await tester.pumpWidget(
         MaterialApp(

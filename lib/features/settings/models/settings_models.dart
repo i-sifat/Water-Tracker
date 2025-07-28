@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:watertracker/core/utils/avatar_extensions.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 
 /// Model for notification settings

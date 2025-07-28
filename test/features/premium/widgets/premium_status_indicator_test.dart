@@ -8,7 +8,7 @@ import 'package:watertracker/features/premium/widgets/premium_status_indicator.d
 class MockPremiumProvider extends ChangeNotifier implements PremiumProvider {
   bool _isPremium = false;
   bool _isInitialized = true;
-  String? _deviceCode = 'test-device-code';
+  final String _deviceCode = 'test-device-code';
   DateTime? _unlockedAt;
   DateTime? _expiresAt;
 
@@ -83,10 +83,6 @@ class MockPremiumProvider extends ChangeNotifier implements PremiumProvider {
   @override
   String getFeatureDescription(dynamic feature) => 'Test Description';
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }
 
 void main() {
@@ -163,7 +159,7 @@ void main() {
     });
 
     testWidgets('calls custom onTap when provided', (WidgetTester tester) async {
-      bool wasTapped = false;
+      var wasTapped = false;
       mockPremiumProvider.setPremium(false);
 
       await tester.pumpWidget(createTestWidget(
@@ -281,7 +277,7 @@ void main() {
     });
 
     testWidgets('calls onTap when tapped', (WidgetTester tester) async {
-      bool wasTapped = false;
+      var wasTapped = false;
       mockPremiumProvider.setPremium(true);
 
       await tester.pumpWidget(createTestWidget(
@@ -328,7 +324,7 @@ void main() {
     });
 
     testWidgets('calls custom onUnlockTap when provided', (WidgetTester tester) async {
-      bool wasTapped = false;
+      var wasTapped = false;
 
       await tester.pumpWidget(createTestWidget(
         onUnlockTap: () => wasTapped = true,

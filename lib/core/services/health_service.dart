@@ -193,7 +193,6 @@ class HealthService {
           
           final hydrationData = HydrationData.create(
             amount: amountInMl,
-            type: DrinkType.water,
           ).copyWith(
             timestamp: dataPoint.dateFrom,
             isSynced: true, // Mark as synced since it came from health app
@@ -312,7 +311,7 @@ class HealthService {
     
     if (!syncOnAdd) return false;
 
-    return await syncToHealth([data]);
+    return syncToHealth([data]);
   }
 
   // MARK: - Private Helper Methods
@@ -323,7 +322,7 @@ class HealthService {
       // Convert milliliters to liters for health app
       final amountInLiters = data.waterContent / 1000.0;
       
-      final healthDataType = HealthDataType.WATER;
+      const healthDataType = HealthDataType.WATER;
 
       final success = await _health!.writeHealthData(
         value: amountInLiters,

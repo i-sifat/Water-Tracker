@@ -46,7 +46,7 @@ class SyncService {
 
   /// Check if cloud sync is available (premium feature)
   Future<bool> isCloudSyncAvailable() async {
-    return await _premiumService.isPremiumUnlocked();
+    return _premiumService.isPremiumUnlocked();
   }
 
   /// Get sync settings
@@ -84,7 +84,7 @@ class SyncService {
     try {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final deviceId = await _deviceService.getDeviceId();
-      final backupName = customName ?? 'backup_${timestamp}';
+      final backupName = customName ?? 'backup_$timestamp';
       
       // Collect all data
       final backupData = await _collectAllData();
@@ -333,7 +333,7 @@ class SyncService {
     final now = DateTime.now().millisecondsSinceEpoch;
     
     // Check if sync is due based on frequency
-    bool shouldSync = false;
+    var shouldSync = false;
     final frequency = settings['syncFrequency'] ?? 'daily';
     
     if (lastSyncTimestamp == null) {
@@ -344,13 +344,10 @@ class SyncService {
       switch (frequency) {
         case 'daily':
           shouldSync = timeSinceLastSync > (24 * 60 * 60 * 1000); // 24 hours
-          break;
         case 'weekly':
           shouldSync = timeSinceLastSync > (7 * 24 * 60 * 60 * 1000); // 7 days
-          break;
         case 'manual':
           shouldSync = false;
-          break;
       }
     }
     
@@ -415,7 +412,7 @@ class SyncService {
   }
 
   Future<int?> _getLastSyncTimestamp() async {
-    return await _storageService.getInt(_lastSyncKey);
+    return _storageService.getInt(_lastSyncKey);
   }
 
   Future<void> _updateLastSyncTimestamp(int timestamp) async {
@@ -497,10 +494,8 @@ class SyncService {
         case 'create':
         case 'update':
           await _storageService.saveJson('${dataType}_$itemId', data as Map<String, dynamic>);
-          break;
         case 'delete':
           await _storageService.remove('${dataType}_$itemId');
-          break;
       }
     }
   }
@@ -535,7 +530,7 @@ class SyncService {
     final lines = csvContent.split('\n');
     final hydrationData = <String, dynamic>{};
     
-    for (int i = 1; i < lines.length; i++) {
+    for (var i = 1; i < lines.length; i++) {
       final line = lines[i].trim();
       if (line.isEmpty) continue;
       
@@ -619,7 +614,7 @@ class CloudSyncResponse {
   const CloudSyncResponse({
     required this.success,
     this.serverTimestamp,
-    this.remoteChanges = const [],
+    this.remoteChanges = const <Map<String, dynamic>>[],
     this.error,
   });
 

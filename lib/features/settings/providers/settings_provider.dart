@@ -178,7 +178,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /// Toggle notifications
-  Future<bool> toggleNotifications(bool enabled) async {
+  Future<bool> toggleNotifications({required bool enabled}) async {
     final updatedSettings = _notificationSettings.copyWith(enabled: enabled);
     return updateNotificationSettings(updatedSettings);
   }
@@ -318,19 +318,19 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /// Toggle sound
-  Future<bool> toggleSound(bool enabled) async {
+  Future<bool> toggleSound({required bool enabled}) async {
     final updatedPreferences = _appPreferences.copyWith(soundEnabled: enabled);
     return updateAppPreferences(updatedPreferences);
   }
 
   /// Toggle haptic feedback
-  Future<bool> toggleHapticFeedback(bool enabled) async {
+  Future<bool> toggleHapticFeedback({required bool enabled}) async {
     final updatedPreferences = _appPreferences.copyWith(hapticFeedbackEnabled: enabled);
     return updateAppPreferences(updatedPreferences);
   }
 
   /// Toggle progress in notifications
-  Future<bool> toggleProgressInNotifications(bool enabled) async {
+  Future<bool> toggleProgressInNotifications({required bool enabled}) async {
     final updatedPreferences = _appPreferences.copyWith(showProgressInNotifications: enabled);
     return updateAppPreferences(updatedPreferences);
   }
@@ -351,7 +351,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /// Toggle auto backup
-  Future<bool> toggleAutoBackup(bool enabled) async {
+  Future<bool> toggleAutoBackup({required bool enabled}) async {
     final updatedOptions = _dataManagement.copyWith(autoBackupEnabled: enabled);
     return updateDataManagement(updatedOptions);
   }
@@ -363,7 +363,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /// Toggle cloud sync (Premium feature)
-  Future<bool> toggleCloudSync(bool enabled) async {
+  Future<bool> toggleCloudSync({required bool enabled}) async {
     final isPremium = await _premiumService.isPremiumUnlocked();
     if (!isPremium && enabled) {
       debugPrint('Cloud sync requires premium unlock');
@@ -521,12 +521,12 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Check if premium features are available
   Future<bool> isPremiumUnlocked() async {
-    return await _premiumService.isPremiumUnlocked();
+    return _premiumService.isPremiumUnlocked();
   }
 
   /// Get premium info
   Future<Map<String, dynamic>> getPremiumInfo() async {
-    return await _premiumService.getPremiumInfo();
+    return _premiumService.getPremiumInfo();
   }
 
   // MARK: - Sync and Backup Methods

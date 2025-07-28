@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/models/custom_drink_type.dart';
-import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
@@ -75,9 +74,9 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
         elevation: 0,
       ),
       body: PremiumGate(
-        feature: PremiumFeature.customGoals, // Using customGoals as proxy for custom drink types
+        feature: PremiumFeature.customGoals,
         child: _buildContent(),
-        lockedWidget: _buildLockedContent(),
+        lockedChild: _buildLockedContent(), // Using customGoals as proxy for custom drink types
       ),
     );
   }
@@ -113,13 +112,13 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
           const SizedBox(height: 24),
           Text(
             'Custom Drink Types',
-            style: AppTypography.headlineMedium,
+            style: AppTypography.headline,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Create your own drink types with custom water percentages. Track specialty beverages, herbal teas, or any liquid that contributes to your hydration.',
-            style: AppTypography.bodyLarge,
+            style: AppTypography.subtitle,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -146,13 +145,13 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
           const SizedBox(height: 24),
           Text(
             'No Custom Drink Types',
-            style: AppTypography.headlineMedium,
+            style: AppTypography.headline,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Create your first custom drink type to track specialty beverages with accurate water content.',
-            style: AppTypography.bodyLarge,
+            style: AppTypography.subtitle,
             textAlign: TextAlign.center,
           ),
         ],
@@ -184,7 +183,7 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
         ),
         title: Text(
           drinkType.name,
-          style: AppTypography.titleMedium,
+          style: AppTypography.subtitle,
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,7 +191,7 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
             const SizedBox(height: 4),
             Text(
               '${(drinkType.waterPercentage * 100).toInt()}% water content',
-              style: AppTypography.bodyMedium.copyWith(
+              style: AppTypography.subtitle.copyWith(
                 color: AppColors.waterFull,
                 fontWeight: FontWeight.w600,
               ),
@@ -201,7 +200,7 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
               const SizedBox(height: 4),
               Text(
                 drinkType.description!,
-                style: AppTypography.bodySmall,
+                style: AppTypography.subtitle,
               ),
             ],
           ],
@@ -260,14 +259,11 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
     switch (action) {
       case 'edit':
         _showEditDrinkTypeDialog(drinkType);
-        break;
       case 'activate':
       case 'deactivate':
         _toggleDrinkType(drinkType);
-        break;
       case 'delete':
         _showDeleteConfirmation(drinkType);
-        break;
     }
   }
 
@@ -444,8 +440,7 @@ class _CustomDrinkTypesScreenState extends State<CustomDrinkTypesScreen> {
 /// Dialog for adding/editing custom drink types
 class _DrinkTypeDialog extends StatefulWidget {
   const _DrinkTypeDialog({
-    this.drinkType,
-    required this.onSave,
+    required this.onSave, this.drinkType,
   });
 
   final CustomDrinkType? drinkType;
@@ -526,7 +521,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Name *', style: AppTypography.titleSmall),
+        Text('Name *', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         TextField(
           controller: _nameController,
@@ -543,7 +538,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Icon (Emoji)', style: AppTypography.titleSmall),
+        Text('Icon (Emoji)', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         TextField(
           controller: _iconController,
@@ -561,7 +556,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Water Content % *', style: AppTypography.titleSmall),
+        Text('Water Content % *', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         TextField(
           controller: _percentageController,
@@ -579,7 +574,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
         const SizedBox(height: 4),
         Text(
           'Enter the percentage of water content (1-100%)',
-          style: AppTypography.bodySmall.copyWith(color: Colors.grey),
+          style: AppTypography.subtitle.copyWith(color: Colors.grey),
         ),
       ],
     );
@@ -589,7 +584,7 @@ class _DrinkTypeDialogState extends State<_DrinkTypeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Description', style: AppTypography.titleSmall),
+        Text('Description', style: AppTypography.subtitle),
         const SizedBox(height: 8),
         TextField(
           controller: _descriptionController,

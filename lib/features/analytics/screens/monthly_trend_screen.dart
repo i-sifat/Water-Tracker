@@ -60,7 +60,7 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
             if (monthlyData == null) {
               return const EmptyStateWidget(
                 title: 'No Data Available',
-                message: 'Start tracking your water intake to see monthly trends.',
+                subtitle: 'Start tracking your water intake to see monthly trends.',
               );
             }
 
@@ -141,7 +141,6 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
               child: LineChart(
                 LineChartData(
                   gridData: FlGridData(
-                    show: true,
                     drawVerticalLine: false,
                     horizontalInterval: 500,
                     getDrawingHorizontalLine: (value) {
@@ -152,12 +151,11 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
                     },
                   ),
                   titlesData: FlTitlesData(
-                    show: true,
                     rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -206,7 +204,6 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
                       barWidth: 3,
                       isStrokeCapRound: true,
                       dotData: FlDotData(
-                        show: true,
                         getDotPainter: (spot, percent, barData, index) {
                           return FlDotCirclePainter(
                             radius: 3,
@@ -346,12 +343,11 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
                     ),
                   ),
                   titlesData: FlTitlesData(
-                    show: true,
                     rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -389,7 +385,6 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
                   borderData: FlBorderData(show: false),
                   barGroups: _buildWeeklyBarGroups(data),
                   gridData: FlGridData(
-                    show: true,
                     drawVerticalLine: false,
                     horizontalInterval: 500,
                     getDrawingHorizontalLine: (value) {
@@ -462,7 +457,6 @@ class _MonthlyTrendScreenState extends State<MonthlyTrendScreen> {
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
                     color: AppColors.unselectedBorder,
-                    width: 1,
                   ),
                 ),
                 child: Center(

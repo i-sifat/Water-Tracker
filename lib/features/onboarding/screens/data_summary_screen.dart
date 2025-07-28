@@ -167,7 +167,6 @@ class _CompileDataScreenState extends State<CompileDataScreen>
           MaterialPageRoute<void>(
             builder: (context) => OnboardingCompletionScreen(
               dailyGoal: dailyGoal,
-              userName: null, // Could be extracted from profile if we had name field
             ),
           ),
         );

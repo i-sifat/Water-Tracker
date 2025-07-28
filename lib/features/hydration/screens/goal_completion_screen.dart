@@ -92,7 +92,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
                   MaterialPageRoute<void>(
                     builder:
                         (BuildContext context) =>
-                            const HistoryScreenContent(selectedWeekIndex: 0),
+                            const HistoryScreenContent(),
                   ),
                 );
               },

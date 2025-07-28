@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:watertracker/core/services/accessibility_service.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import '../services/accessibility_service.dart';
 
 class AppTheme {
   // Private constructor to prevent instantiation
@@ -25,7 +25,7 @@ class AppTheme {
     );
 
     // Apply high contrast if enabled
-    if (accessibilityService?.isHighContrastEnabled == true) {
+    if (accessibilityService?.isHighContrastEnabled ?? false) {
       colorScheme = accessibilityService!.getHighContrastColorScheme(colorScheme);
     }
 
@@ -182,7 +182,7 @@ class AppTheme {
     );
 
     // Apply high contrast if enabled
-    if (accessibilityService?.isHighContrastEnabled == true) {
+    if (accessibilityService?.isHighContrastEnabled ?? false) {
       colorScheme = accessibilityService!.getHighContrastColorScheme(colorScheme);
     }
 

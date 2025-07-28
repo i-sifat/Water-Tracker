@@ -5,13 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Service to handle accessibility features like focus management,
 /// high contrast mode, and scalable text
 class AccessibilityService {
+  
+  AccessibilityService(this._prefs);
   static const String _highContrastKey = 'high_contrast_mode';
   static const String _textScaleKey = 'text_scale_factor';
   static const String _reducedMotionKey = 'reduced_motion';
   
   final SharedPreferences _prefs;
-  
-  AccessibilityService(this._prefs);
   
   /// Initialize accessibility service
   static Future<AccessibilityService> initialize() async {
@@ -22,10 +22,10 @@ class AccessibilityService {
   // High Contrast Mode
   bool get isHighContrastEnabled => _prefs.getBool(_highContrastKey) ?? false;
   
-  Future<void> setHighContrastMode(bool enabled) async {
+  Future<void> setHighContrastMode({required bool enabled}) async {
     await _prefs.setBool(_highContrastKey, enabled);
     if (enabled) {
-      HapticFeedback.lightImpact();
+      await HapticFeedback.lightImpact();
     }
   }
   
@@ -36,13 +36,13 @@ class AccessibilityService {
     // Clamp between 0.8 and 2.0 for reasonable bounds
     final clampedScale = scale.clamp(0.8, 2.0);
     await _prefs.setDouble(_textScaleKey, clampedScale);
-    HapticFeedback.selectionClick();
+    await HapticFeedback.selectionClick();
   }
   
   // Reduced Motion
   bool get isReducedMotionEnabled => _prefs.getBool(_reducedMotionKey) ?? false;
   
-  Future<void> setReducedMotion(bool enabled) async {
+  Future<void> setReducedMotion({required bool enabled}) async {
     await _prefs.setBool(_reducedMotionKey, enabled);
   }
   
@@ -114,17 +114,11 @@ class AccessibilityService {
       onSurface: baseScheme.brightness == Brightness.light 
           ? Colors.black 
           : Colors.white,
-      background: baseScheme.brightness == Brightness.light 
-          ? Colors.white 
-          : Colors.black,
-      onBackground: baseScheme.brightness == Brightness.light 
-          ? Colors.black 
-          : Colors.white,
     );
   }
   
   /// Get minimum touch target size (44x44 dp as per accessibility guidelines)
-  static const double minimumTouchTargetSize = 44.0;
+  static const double minimumTouchTargetSize = 44;
   
   /// Ensure widget meets minimum touch target size
   Widget ensureMinimumTouchTarget({

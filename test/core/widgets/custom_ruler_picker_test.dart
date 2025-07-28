@@ -145,8 +145,8 @@ void main() {
     });
 
     testWidgets('responds to horizontal drag', (WidgetTester tester) async {
-      var dragStarted = false;
-      var dragUpdated = false;
+      const dragStarted = false;
+      const dragUpdated = false;
 
       await tester.pumpWidget(
         MaterialApp(

@@ -60,10 +60,6 @@ class MockPremiumProvider extends ChangeNotifier implements PremiumProvider {
   @override
   Future<bool> unlockWithCode(String code) async => true;
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }
 
 void main() {
@@ -88,11 +84,11 @@ void main() {
           child: Scaffold(
             body: PremiumGate(
               feature: feature,
-              child: child,
               lockedChild: lockedChild,
               onUnlockPressed: onUnlockPressed,
               title: title,
               description: description,
+              child: child,
             ),
           ),
         ),
@@ -259,7 +255,7 @@ void main() {
     });
 
     testWidgets('calls custom onUnlockPressed when provided', (WidgetTester tester) async {
-      bool wasPressed = false;
+      var wasPressed = false;
 
       await tester.pumpWidget(
         createTestWidget(
@@ -321,7 +317,7 @@ void main() {
       expect(container.constraints?.maxWidth, equals(80));
       expect(container.constraints?.maxHeight, equals(80));
 
-      final decoration = container.decoration as BoxDecoration;
+      final decoration = container.decoration! as BoxDecoration;
       expect(decoration.shape, equals(BoxShape.circle));
     });
   });

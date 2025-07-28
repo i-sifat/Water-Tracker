@@ -4,9 +4,7 @@ import 'package:watertracker/core/utils/app_colors.dart';
 /// Custom progress indicator for onboarding flow
 class OnboardingProgressIndicator extends StatelessWidget {
   const OnboardingProgressIndicator({
-    super.key,
-    required this.currentStep,
-    required this.totalSteps,
+    required this.currentStep, required this.totalSteps, super.key,
     this.height = 4.0,
     this.backgroundColor,
     this.progressColor,
@@ -28,7 +26,7 @@ class OnboardingProgressIndicator extends StatelessWidget {
       children: [
         if (showStepNumbers)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
+            padding: const EdgeInsets.only(bottom: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -74,9 +72,7 @@ class OnboardingProgressIndicator extends StatelessWidget {
 /// Animated progress indicator with smooth transitions
 class AnimatedOnboardingProgressIndicator extends StatefulWidget {
   const AnimatedOnboardingProgressIndicator({
-    super.key,
-    required this.currentStep,
-    required this.totalSteps,
+    required this.currentStep, required this.totalSteps, super.key,
     this.height = 4.0,
     this.backgroundColor,
     this.progressColor,
@@ -154,7 +150,7 @@ class _AnimatedOnboardingProgressIndicatorState
           children: [
             if (widget.showStepNumbers)
               Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -202,9 +198,7 @@ class _AnimatedOnboardingProgressIndicatorState
 /// Step-by-step progress indicator with individual step markers
 class StepProgressIndicator extends StatelessWidget {
   const StepProgressIndicator({
-    super.key,
-    required this.currentStep,
-    required this.totalSteps,
+    required this.currentStep, required this.totalSteps, super.key,
     this.completedSteps = const {},
     this.stepSize = 24.0,
     this.lineHeight = 2.0,
@@ -294,7 +288,7 @@ class StepProgressIndicator extends StatelessWidget {
         ),
         if (showLabels && labels.length >= totalSteps)
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.only(top: 8),
             child: Row(
               children: List.generate(totalSteps, (index) {
                 return Expanded(

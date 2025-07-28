@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
-import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/features/premium/providers/premium_provider.dart';
 
 class PremiumGate extends StatelessWidget {
