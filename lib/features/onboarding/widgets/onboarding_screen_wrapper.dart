@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_progress_indicator.dart';
@@ -247,26 +248,11 @@ class OnboardingScreenWrapper extends StatelessWidget {
           // Continue button
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed:
-                  (canContinue && !isLoading)
-                      ? (onContinue ?? () => provider.navigateNext())
-                      : null,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                backgroundColor: AppColors.waterFull,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(
-                continueButtonText,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            child: ContinueButton(
+              onPressed: (canContinue && !isLoading)
+                  ? (onContinue ?? () => provider.navigateNext())
+                  : () {},
+              isDisabled: !(canContinue && !isLoading),
             ),
           ),
 
