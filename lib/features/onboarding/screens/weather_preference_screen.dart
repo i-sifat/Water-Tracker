@@ -30,8 +30,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
           subtitle: 'Please select your current mood.',
           backgroundColor: Colors.white,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
-          onContinue: null, // We'll handle this manually
-          canContinue: false, // We'll handle this manually
+          onContinue: () => _handleContinue(onboardingProvider),
           isLoading: onboardingProvider.isSaving,
           child: Column(
             children: [
@@ -62,13 +61,10 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
                             switch (_selectedWeather) {
                               case WeatherPreference.cold:
                                 _selectedWeather = WeatherPreference.moderate;
-                                break;
                               case WeatherPreference.moderate:
                                 _selectedWeather = WeatherPreference.hot;
-                                break;
                               case WeatherPreference.hot:
                                 _selectedWeather = WeatherPreference.cold;
-                                break;
                             }
                           });
                         },
@@ -163,7 +159,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
               Container(
                 width: 20,
                 height: 20,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.weatherFaceEyes,
                   shape: BoxShape.circle,
                 ),
@@ -172,7 +168,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
               Container(
                 width: 20,
                 height: 20,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.weatherFaceEyes,
                   shape: BoxShape.circle,
                 ),
@@ -186,9 +182,9 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
           Container(
             width: 60,
             height: 8,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.weatherFaceMouth,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
           ),
         ],
@@ -200,9 +196,9 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
     return Container(
       width: 150,
       height: 150,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.weatherUnselectedFace,
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.all(Radius.circular(40)),
       ),
       child: Center(
         child: Column(
@@ -215,7 +211,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
                 Container(
                   width: 15,
                   height: 15,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),
@@ -224,7 +220,7 @@ class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
                 Container(
                   width: 15,
                   height: 15,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),
