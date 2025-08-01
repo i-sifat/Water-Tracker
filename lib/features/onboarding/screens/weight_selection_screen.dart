@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/core/constants/typography.dart';
+import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/buttons/continue_button.dart';
-import 'package:watertracker/features/onboarding/screens/exercise_frequency_screen.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
 class WeightSelectionScreen extends StatefulWidget {
   const WeightSelectionScreen({super.key});
@@ -16,25 +14,13 @@ class WeightSelectionScreen extends StatefulWidget {
 
 class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
   bool _isKg = true;
-  double _weight = 65;
-  final double _minWeight = 0;
-  final double _maxWeight = 150;
+  double _weight = 65.0;
+  final double _minWeight = 0.0;
+  final double _maxWeight = 150.0;
 
   @override
   void initState() {
     super.initState();
-    _loadSavedWeight();
-  }
-
-  Future<void> _loadSavedWeight() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedUnit = prefs.getBool('weight_unit_is_kg') ?? true;
-    final savedWeight = prefs.getDouble('user_weight') ?? 65.0;
-
-    setState(() {
-      _isKg = savedUnit;
-      _weight = _clampWeight(savedWeight);
-    });
   }
 
   double _convertKgToLbs(double kg) => kg * 2.20462;
@@ -44,147 +30,107 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     return value.clamp(_minWeight, _maxWeight);
   }
 
-  Future<void> _saveWeight() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Always save the actual weight value in kg for consistency
-    final weightToSave = _isKg ? _weight : _convertLbsToKg(_weight);
-    await prefs.setDouble('user_weight', weightToSave);
-    await prefs.setBool('weight_unit_is_kg', _isKg);
-  }
-
   void _handleUnitChange(bool isKg) {
     if (_isKg == isKg) return;
 
     setState(() {
       // Convert the current weight to the new unit
-      _weight = _isKg ? _convertKgToLbs(_weight) : _convertLbsToKg(_weight);
+      if (_isKg) {
+        // Converting from kg to lbs
+        _weight = _convertKgToLbs(_weight);
+      } else {
+        // Converting from lbs to kg
+        _weight = _convertLbsToKg(_weight);
+      }
       _weight = _clampWeight(_weight);
       _isKg = isKg;
     });
     HapticFeedback.selectionClick();
   }
 
+  Future<void> _handleContinue(OnboardingProvider provider) async {
+    final weightToSave = _isKg ? _weight : _convertLbsToKg(_weight);
+    provider.updateWeight(weightToSave);
+    await provider.navigateNext();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.onBoardingpagebackground,
-        elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        title: const Text('Assessment', style: AppTypography.subtitle),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              '5 of 10',
-              style: TextStyle(
-                color: AppColors.pageCounter,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+    return Consumer<OnboardingProvider>(
+      builder: (context, onboardingProvider, child) {
+        return OnboardingScreenWrapper(
+          title: "What's your current\nweight right now?",
+          subtitle: null, // Remove subtitle to match image
+          backgroundColor: AppColors.onboardingBackground,
+          padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+          onContinue: () => _handleContinue(onboardingProvider),
+          isLoading: onboardingProvider.isSaving,
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+
+              // Unit selection buttons
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.weightUnitUnselected,
+                  borderRadius: BorderRadius.circular(28),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildUnitButton('kg', true),
+                    const SizedBox(width: 8),
+                    _buildUnitButton('lbs', false),
+                  ],
+                ),
               ),
-            ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
+              const SizedBox(height: 60),
+
+              // Weight display
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
                 children: [
-                  const SizedBox(height: 40),
-                  const Text(
-                    "What's your current\nweight right now?",
-                    style: AppTypography.headline,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 50),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildUnitButton('kg', true),
-                        const SizedBox(width: 8),
-                        _buildUnitButton('lbs', false),
-                      ],
+                  Text(
+                    _weight.toInt().toString(), // Show integer value
+                    style: const TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 89,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textHeadline,
                     ),
                   ),
-                  const SizedBox(height: 60),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        _weight.toStringAsFixed(1),
-                        style: AppTypography.headline.copyWith(fontSize: 89),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _isKg ? 'kg' : 'lbs',
-                        style: AppTypography.subtitle.copyWith(fontSize: 24),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 40),
-
-                  // Custom Ruler Picker
-                  SizedBox(
-                    height: 80,
-                    child: CustomRulerPicker(
-                      value: _weight,
-                      minValue: _minWeight,
-                      maxValue: _maxWeight,
-                      onValueChanged: (value) {
-                        setState(() => _weight = value);
-                      },
+                  const SizedBox(width: 4),
+                  Text(
+                    _isKg ? 'kg' : 'lbs',
+                    style: const TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textSubtitle,
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
+              const SizedBox(height: 40),
 
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
-            child: ContinueButton(
-              onPressed: () async {
-                await _saveWeight();
-                if (mounted) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const FitnessLevelScreen(),
-                    ),
-                  );
-                }
-              },
-            ),
+              // Custom Ruler Picker
+              SizedBox(
+                height: 80,
+                child: CustomRulerPicker(
+                  value: _weight,
+                  minValue: _minWeight,
+                  maxValue: _maxWeight,
+                  onValueChanged: (value) {
+                    setState(() => _weight = value);
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -197,13 +143,13 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
         width: 80,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.selectedBorder : Colors.transparent,
+          color: isSelected ? AppColors.weightUnitSelected : Colors.transparent,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Text(
           unit,
           style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.assessmentText,
+            color: isSelected ? AppColors.weightUnitTextSelected : AppColors.weightUnitTextUnselected,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -235,6 +181,7 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
   late ScrollController _scrollController;
   final double _tickSpacing = 8; // Space between small ticks
   final double _ticksPerUnit = 10; // 10 small ticks per unit (0.1 precision)
+  bool _isDragging = false;
 
   @override
   void initState() {
@@ -247,7 +194,7 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
   @override
   void didUpdateWidget(CustomRulerPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.value != widget.value) {
+    if (oldWidget.value != widget.value && !_isDragging) {
       _scrollController.animateTo(
         _valueToOffset(widget.value),
         duration: const Duration(milliseconds: 200),
@@ -268,7 +215,8 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
 
   double _offsetToValue(double offset) {
     final value = widget.minValue + (offset / (_ticksPerUnit * _tickSpacing));
-    return double.parse(value.toStringAsFixed(1));
+    // Round to nearest 0.1 to ensure consistency
+    return (value * 10).round() / 10.0;
   }
 
   @override
@@ -282,37 +230,59 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
       children: [
         NotificationListener<ScrollNotification>(
           onNotification: (notification) {
-            if (notification is ScrollUpdateNotification) {
+            if (notification is ScrollStartNotification) {
+              _isDragging = true;
+            } else if (notification is ScrollEndNotification) {
+              _isDragging = false;
+            } else if (notification is ScrollUpdateNotification && _isDragging) {
               final offset = _scrollController.offset + centerOffset;
               final newValue = _offsetToValue(
                 offset,
               ).clamp(widget.minValue, widget.maxValue);
-              if (newValue != widget.value) {
+              if ((newValue - widget.value).abs() >= 0.1) {
                 widget.onValueChanged(newValue);
               }
             }
             return true;
           },
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            scrollDirection: Axis.horizontal,
-            physics: const ClampingScrollPhysics(),
-            child: SizedBox(
-              width: totalTicks * _tickSpacing + screenWidth,
-              child: CustomPaint(
-                painter: RulerPainter(
-                  minValue: widget.minValue,
-                  maxValue: widget.maxValue,
-                  tickSpacing: _tickSpacing,
-                  ticksPerUnit: _ticksPerUnit,
-                  centerOffset: centerOffset,
-                  scrollOffset:
-                      _scrollController.hasClients
-                          ? _scrollController.offset
-                          : 0,
-                  currentValue: widget.value,
+          child: GestureDetector(
+            onHorizontalDragUpdate: (details) {
+              if (_scrollController.hasClients) {
+                final newOffset = _scrollController.offset + details.delta.dx.toDouble();
+                final clampedOffset = newOffset.clamp(
+                  0.0,
+                  _scrollController.position.maxScrollExtent,
+                );
+                _scrollController.jumpTo(clampedOffset);
+                
+                final offset = clampedOffset + centerOffset;
+                final newValue = _offsetToValue(offset).clamp(widget.minValue, widget.maxValue);
+                if ((newValue - widget.value).abs() >= 0.1) {
+                  widget.onValueChanged(newValue);
+                }
+              }
+            },
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              physics: const ClampingScrollPhysics(),
+              child: SizedBox(
+                width: totalTicks * _tickSpacing + screenWidth,
+                child: CustomPaint(
+                  painter: RulerPainter(
+                    minValue: widget.minValue,
+                    maxValue: widget.maxValue,
+                    tickSpacing: _tickSpacing,
+                    ticksPerUnit: _ticksPerUnit,
+                    centerOffset: centerOffset,
+                    scrollOffset:
+                        _scrollController.hasClients
+                            ? _scrollController.offset
+                            : 0,
+                    currentValue: widget.value,
+                  ),
+                  size: Size(totalTicks * _tickSpacing + screenWidth, 80),
                 ),
-                size: Size(totalTicks * _tickSpacing + screenWidth, 80),
               ),
             ),
           ),
@@ -325,7 +295,7 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
             width: 2,
             height: 80,
             decoration: BoxDecoration(
-              color: AppColors.selectedBorder,
+              color: AppColors.lightPurple,
               borderRadius: BorderRadius.circular(1),
             ),
           ),
@@ -370,7 +340,7 @@ class RulerPainter extends CustomPainter {
 
       // Determine tick color based on position relative to current selection
       final isPassed = x < currentPosition;
-      paint.color = isPassed ? AppColors.selectedBorder : Colors.grey.shade400;
+      paint.color = isPassed ? AppColors.lightPurple : Colors.grey.shade400;
 
       if (isBigTick) {
         // Big tick (every unit)
@@ -388,7 +358,7 @@ class RulerPainter extends CustomPainter {
               text: tickValue.toInt().toString(),
               style: TextStyle(
                 color:
-                    isPassed ? AppColors.selectedBorder : Colors.grey.shade600,
+                    isPassed ? AppColors.lightPurple : Colors.grey.shade600,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),

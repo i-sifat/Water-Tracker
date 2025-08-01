@@ -11,7 +11,7 @@ import 'package:watertracker/core/utils/image_optimization.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
-import 'package:watertracker/features/onboarding/screens/welcome_screen.dart';
+import 'package:watertracker/features/onboarding/screens/onboarding_flow_screen.dart';
 import 'package:watertracker/features/premium/providers/premium_provider.dart';
 import 'package:watertracker/features/premium/screens/donation_info_screen.dart';
 import 'package:watertracker/features/premium/screens/donation_proof_screen.dart';
@@ -20,6 +20,8 @@ import 'package:watertracker/features/premium/screens/unlock_code_screen.dart';
 import 'package:watertracker/features/settings/providers/settings_provider.dart';
 import 'package:watertracker/features/settings/screens/settings_screen.dart';
 import 'package:watertracker/l10n/app_localizations.dart';
+import 'package:watertracker/features/analytics/screens/weekly_progress_screen.dart';
+import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
 
 void main() async {
   // Ensure Flutter binding is initialized
@@ -103,6 +105,52 @@ class MyApp extends StatelessWidget {
             onGenerateRoute: (settings) {
               // Use optimized transitions for better performance
               switch (settings.name) {
+                case '/analytics/weekly':
+                  return PageRouteBuilder<void>(
+                    settings: settings,
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const WeeklyProgressScreen(),
+                    transitionDuration: const Duration(milliseconds: 200),
+                    transitionsBuilder: (
+                      context,
+                      animation,
+                      secondaryAnimation,
+                      child,
+                    ) {
+                      return SlideTransition(
+                        position: animation.drive(
+                          Tween(
+                            begin: const Offset(1, 0),
+                            end: Offset.zero,
+                          ).chain(CurveTween(curve: Curves.easeOutCubic)),
+                        ),
+                        child: child,
+                      );
+                    },
+                  );
+                case '/hydration/add':
+                  return PageRouteBuilder<void>(
+                    settings: settings,
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const AddHydrationScreen(),
+                    transitionDuration: const Duration(milliseconds: 200),
+                    transitionsBuilder: (
+                      context,
+                      animation,
+                      secondaryAnimation,
+                      child,
+                    ) {
+                      return SlideTransition(
+                        position: animation.drive(
+                          Tween(
+                            begin: const Offset(0, 1),
+                            end: Offset.zero,
+                          ).chain(CurveTween(curve: Curves.easeOutCubic)),
+                        ),
+                        child: child,
+                      );
+                    },
+                  );
                 case DonationInfoScreen.routeName:
                   return PageRouteBuilder<void>(
                     settings: settings,
@@ -236,7 +284,7 @@ class _InitialScreenState extends State<InitialScreen>
           PageRouteBuilder<void>(
             pageBuilder:
                 (context, animation, secondaryAnimation) =>
-                    const WelcomeScreen(),
+                    const OnboardingFlowScreen(),
             transitionDuration: Duration.zero,
             reverseTransitionDuration: Duration.zero,
           ),
@@ -247,7 +295,9 @@ class _InitialScreenState extends State<InitialScreen>
       // Fallback to welcome screen
       if (mounted) {
         await Navigator.of(context).pushReplacement(
-          MaterialPageRoute<void>(builder: (context) => const WelcomeScreen()),
+          MaterialPageRoute<void>(
+            builder: (context) => const OnboardingFlowScreen(),
+          ),
         );
       }
     }

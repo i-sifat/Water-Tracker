@@ -21,7 +21,7 @@ class StorageService {
   late EncryptedSharedPreferences? _encryptedPrefs;
   late SharedPreferences? _regularPrefs;
   bool _isInitialized = false;
-  
+
   // Performance optimizations
   final Map<String, dynamic> _memoryCache = {};
   final Map<String, DateTime> _cacheTimestamps = {};
@@ -36,10 +36,10 @@ class StorageService {
     try {
       _encryptedPrefs = EncryptedSharedPreferences();
       _regularPrefs = await SharedPreferences.getInstance();
-      
+
       // Check if migration is needed
       await _checkAndPerformMigration();
-      
+
       _isInitialized = true;
       debugPrint('StorageService initialized successfully');
     } catch (e) {
@@ -60,26 +60,34 @@ class StorageService {
   // MARK: - Basic Storage Operations
 
   /// Save a string value securely
-  Future<bool> saveString(String key, String value, {bool encrypted = true}) async {
+  Future<bool> saveString(
+    String key,
+    String value, {
+    bool encrypted = true,
+  }) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted && _encryptedPrefs != null) {
         await _encryptedPrefs!.setString(key, value);
         return true;
       } else {
-        return await _regularPrefs!.setString(key, value);
+        final result = await _regularPrefs!.setString(key, value);
+        if (!result) {
+          throw Exception('Failed to save string value for key: $key');
+        }
+        return result;
       }
     } catch (e) {
       debugPrint('Error saving string for key $key: $e');
-      return false;
+      throw Exception('Failed to save string value for key $key: $e');
     }
   }
 
   /// Get a string value
   Future<String?> getString(String key, {bool encrypted = true}) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted && _encryptedPrefs != null) {
         return await _encryptedPrefs!.getString(key);
@@ -95,24 +103,28 @@ class StorageService {
   /// Save an integer value
   Future<bool> saveInt(String key, int value, {bool encrypted = false}) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted && _encryptedPrefs != null) {
         await _encryptedPrefs!.setString(key, value.toString());
         return true;
       } else {
-        return await _regularPrefs!.setInt(key, value);
+        final result = await _regularPrefs!.setInt(key, value);
+        if (!result) {
+          throw Exception('Failed to save int value for key: $key');
+        }
+        return result;
       }
     } catch (e) {
       debugPrint('Error saving int for key $key: $e');
-      return false;
+      throw Exception('Failed to save int value for key $key: $e');
     }
   }
 
   /// Get an integer value
   Future<int?> getInt(String key, {bool encrypted = false}) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted) {
         final stringValue = await _encryptedPrefs!.getString(key);
@@ -127,26 +139,34 @@ class StorageService {
   }
 
   /// Save a boolean value
-  Future<bool> saveBool(String key, {required bool value, bool encrypted = false}) async {
+  Future<bool> saveBool(
+    String key, {
+    required bool value,
+    bool encrypted = false,
+  }) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted && _encryptedPrefs != null) {
         await _encryptedPrefs!.setString(key, value.toString());
         return true;
       } else {
-        return await _regularPrefs!.setBool(key, value);
+        final result = await _regularPrefs!.setBool(key, value);
+        if (!result) {
+          throw Exception('Failed to save bool value for key: $key');
+        }
+        return result;
       }
     } catch (e) {
       debugPrint('Error saving bool for key $key: $e');
-      return false;
+      throw Exception('Failed to save bool value for key $key: $e');
     }
   }
 
   /// Get a boolean value
   Future<bool?> getBool(String key, {bool encrypted = false}) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted) {
         final stringValue = await _encryptedPrefs!.getString(key);
@@ -161,9 +181,13 @@ class StorageService {
   }
 
   /// Save a double value
-  Future<bool> saveDouble(String key, double value, {bool encrypted = false}) async {
+  Future<bool> saveDouble(
+    String key,
+    double value, {
+    bool encrypted = false,
+  }) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted && _encryptedPrefs != null) {
         await _encryptedPrefs!.setString(key, value.toString());
@@ -180,7 +204,7 @@ class StorageService {
   /// Get a double value
   Future<double?> getDouble(String key, {bool encrypted = false}) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted) {
         final stringValue = await _encryptedPrefs!.getString(key);
@@ -195,9 +219,13 @@ class StorageService {
   }
 
   /// Save a list of strings
-  Future<bool> saveStringList(String key, List<String> value, {bool encrypted = false}) async {
+  Future<bool> saveStringList(
+    String key,
+    List<String> value, {
+    bool encrypted = false,
+  }) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted && _encryptedPrefs != null) {
         final jsonString = jsonEncode(value);
@@ -213,9 +241,12 @@ class StorageService {
   }
 
   /// Get a list of strings
-  Future<List<String>?> getStringList(String key, {bool encrypted = false}) async {
+  Future<List<String>?> getStringList(
+    String key, {
+    bool encrypted = false,
+  }) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted) {
         final jsonString = await _encryptedPrefs!.getString(key);
@@ -236,7 +267,7 @@ class StorageService {
   /// Remove a key
   Future<bool> remove(String key, {bool encrypted = false}) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted && _encryptedPrefs != null) {
         await _encryptedPrefs!.remove(key);
@@ -253,7 +284,7 @@ class StorageService {
   /// Check if a key exists
   Future<bool> containsKey(String key, {bool encrypted = false}) async {
     await _ensureInitialized();
-    
+
     try {
       if (encrypted) {
         final value = await _encryptedPrefs!.getString(key);
@@ -270,7 +301,11 @@ class StorageService {
   // MARK: - JSON Serialization
 
   /// Save a JSON serializable object
-  Future<bool> saveJson(String key, Map<String, dynamic> data, {bool encrypted = true}) async {
+  Future<bool> saveJson(
+    String key,
+    Map<String, dynamic> data, {
+    bool encrypted = true,
+  }) async {
     try {
       final jsonString = jsonEncode(data);
       return await saveString(key, jsonString, encrypted: encrypted);
@@ -281,7 +316,10 @@ class StorageService {
   }
 
   /// Get a JSON object
-  Future<Map<String, dynamic>?> getJson(String key, {bool encrypted = true}) async {
+  Future<Map<String, dynamic>?> getJson(
+    String key, {
+    bool encrypted = true,
+  }) async {
     try {
       final jsonString = await getString(key, encrypted: encrypted);
       if (jsonString != null) {
@@ -299,17 +337,17 @@ class StorageService {
   /// Create a backup of all data
   Future<bool> createBackup({String? customPath}) async {
     await _ensureInitialized();
-    
+
     try {
       final backupData = <String, dynamic>{};
-      
+
       // Backup regular preferences
       final regularKeys = _regularPrefs!.getKeys();
       for (final key in regularKeys) {
         final value = _regularPrefs!.get(key);
         backupData['regular_$key'] = value;
       }
-      
+
       // Backup encrypted preferences (if available)
       if (_encryptedPrefs != null) {
         // Note: We can't directly iterate over encrypted preferences
@@ -319,16 +357,16 @@ class StorageService {
         for (final key in encryptedKeys) {
           final value = await _encryptedPrefs!.getString(key);
           backupData['encrypted_$key'] = value;
-                }
+        }
       }
-      
+
       // Add metadata
       backupData['backup_timestamp'] = DateTime.now().millisecondsSinceEpoch;
       backupData['backup_version'] = _currentVersion;
-      
+
       // Save backup
       final backupJson = jsonEncode(backupData);
-      
+
       if (customPath != null) {
         final file = File(customPath);
         await file.writeAsString(backupJson);
@@ -336,10 +374,12 @@ class StorageService {
         // Save to app documents directory
         final directory = await getApplicationDocumentsDirectory();
         final timestamp = DateTime.now().millisecondsSinceEpoch;
-        final backupFile = File('${directory.path}/water_tracker_backup_$timestamp.json');
+        final backupFile = File(
+          '${directory.path}/water_tracker_backup_$timestamp.json',
+        );
         await backupFile.writeAsString(backupJson);
       }
-      
+
       debugPrint('Backup created successfully');
       return true;
     } catch (e) {
@@ -351,30 +391,32 @@ class StorageService {
   /// Restore data from backup
   Future<bool> restoreFromBackup(String backupPath) async {
     await _ensureInitialized();
-    
+
     try {
       final file = File(backupPath);
       if (!file.existsSync()) {
         debugPrint('Backup file does not exist: $backupPath');
         return false;
       }
-      
+
       final backupJson = await file.readAsString();
       final backupData = jsonDecode(backupJson) as Map<String, dynamic>;
-      
+
       // Validate backup
-      if (!backupData.containsKey('backup_timestamp') || 
+      if (!backupData.containsKey('backup_timestamp') ||
           !backupData.containsKey('backup_version')) {
         debugPrint('Invalid backup file format');
         return false;
       }
-      
+
       // Restore regular preferences
       for (final entry in backupData.entries) {
         if (entry.key.startsWith('regular_')) {
-          final originalKey = entry.key.substring(8); // Remove 'regular_' prefix
+          final originalKey = entry.key.substring(
+            8,
+          ); // Remove 'regular_' prefix
           final value = entry.value;
-          
+
           if (value is String) {
             await _regularPrefs!.setString(originalKey, value);
           } else if (value is int) {
@@ -386,13 +428,16 @@ class StorageService {
           } else if (value is List<String>) {
             await _regularPrefs!.setStringList(originalKey, value);
           }
-        } else if (entry.key.startsWith('encrypted_') && _encryptedPrefs != null) {
-          final originalKey = entry.key.substring(10); // Remove 'encrypted_' prefix
+        } else if (entry.key.startsWith('encrypted_') &&
+            _encryptedPrefs != null) {
+          final originalKey = entry.key.substring(
+            10,
+          ); // Remove 'encrypted_' prefix
           final value = entry.value as String;
           await _encryptedPrefs!.setString(originalKey, value);
         }
       }
-      
+
       debugPrint('Data restored from backup successfully');
       return true;
     } catch (e) {
@@ -406,16 +451,16 @@ class StorageService {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final backupFiles = <String>[];
-      
+
       await for (final entity in directory.list()) {
         if (entity is File && entity.path.contains('water_tracker_backup_')) {
           backupFiles.add(entity.path);
         }
       }
-      
+
       // Sort by creation time (newest first)
       backupFiles.sort((a, b) => b.compareTo(a));
-      
+
       return backupFiles;
     } catch (e) {
       debugPrint('Error getting available backups: $e');
@@ -429,14 +474,14 @@ class StorageService {
   Future<void> _checkAndPerformMigration() async {
     try {
       final currentVersion = _regularPrefs!.getString(_versionKey);
-      
+
       if (currentVersion == null) {
         // First time setup
         await _regularPrefs!.setString(_versionKey, _currentVersion);
         await _logMigration('Initial setup', _currentVersion);
         return;
       }
-      
+
       if (currentVersion != _currentVersion) {
         debugPrint('Migration needed from $currentVersion to $_currentVersion');
         await _performMigration(currentVersion, _currentVersion);
@@ -452,13 +497,16 @@ class StorageService {
     try {
       // Create backup before migration
       await createBackup();
-      
+
       // Perform version-specific migrations
       if (fromVersion == '0.1.0' && toVersion == '1.0.0') {
         await _migrateFrom010To100();
       }
-      
-      await _logMigration('Migration from $fromVersion to $toVersion', toVersion);
+
+      await _logMigration(
+        'Migration from $fromVersion to $toVersion',
+        toVersion,
+      );
       debugPrint('Migration completed successfully');
     } catch (e) {
       debugPrint('Error during migration: $e');
@@ -470,14 +518,14 @@ class StorageService {
   Future<void> _migrateFrom010To100() async {
     // Example migration: Convert old data format to new format
     // This would contain actual migration logic based on data structure changes
-    
+
     // Migrate hydration data format if needed
     final oldIntake = _regularPrefs!.getInt('currentIntake');
     if (oldIntake != null) {
       // Data is already in correct format, no migration needed
       debugPrint('Hydration data migration: No changes needed');
     }
-    
+
     // Add any other migration logic here
   }
 
@@ -485,14 +533,15 @@ class StorageService {
   Future<void> _logMigration(String description, String version) async {
     try {
       final migrationLog = await getStringList(_migrationLogKey) ?? [];
-      final logEntry = '${DateTime.now().toIso8601String()}: $description (v$version)';
+      final logEntry =
+          '${DateTime.now().toIso8601String()}: $description (v$version)';
       migrationLog.add(logEntry);
-      
+
       // Keep only last 10 migration entries
       if (migrationLog.length > 10) {
         migrationLog.removeRange(0, migrationLog.length - 10);
       }
-      
+
       await saveStringList(_migrationLogKey, migrationLog);
     } catch (e) {
       debugPrint('Error logging migration: $e');
@@ -549,7 +598,7 @@ class StorageService {
   /// Clear all data (for testing or reset)
   Future<bool> clearAll() async {
     await _ensureInitialized();
-    
+
     try {
       await _regularPrefs!.clear();
       if (_encryptedPrefs != null) {
@@ -559,7 +608,7 @@ class StorageService {
           await _encryptedPrefs!.remove(key);
         }
       }
-      
+
       debugPrint('All storage data cleared');
       return true;
     } catch (e) {
@@ -571,15 +620,15 @@ class StorageService {
   /// Get storage statistics
   Future<Map<String, dynamic>> getStorageStats() async {
     await _ensureInitialized();
-    
+
     try {
       final stats = <String, dynamic>{};
-      
+
       // Regular preferences stats
       final regularKeys = _regularPrefs!.getKeys();
       stats['regular_keys_count'] = regularKeys.length;
       stats['regular_keys'] = regularKeys.toList();
-      
+
       // Encrypted preferences stats
       if (_encryptedPrefs != null) {
         final encryptedKeys = await _getKnownEncryptedKeys();
@@ -589,14 +638,14 @@ class StorageService {
         stats['encrypted_keys_count'] = 0;
         stats['encrypted_keys'] = <String>[];
       }
-      
+
       // Version info
       stats['storage_version'] = await getString(_versionKey, encrypted: false);
       stats['migration_log'] = await getStringList(_migrationLogKey);
-      
+
       // Sync queue info
       stats['sync_queue'] = await getSyncQueue();
-      
+
       return stats;
     } catch (e) {
       debugPrint('Error getting storage stats: $e');
@@ -620,16 +669,17 @@ class StorageService {
   /// Get value from memory cache if available and not expired
   T? _getFromCache<T>(String key) {
     final timestamp = _cacheTimestamps[key];
-    if (timestamp != null && DateTime.now().difference(timestamp) < _cacheExpiry) {
+    if (timestamp != null &&
+        DateTime.now().difference(timestamp) < _cacheExpiry) {
       return _memoryCache[key] as T?;
     }
-    
+
     // Remove expired cache entry
     if (timestamp != null) {
       _memoryCache.remove(key);
       _cacheTimestamps.remove(key);
     }
-    
+
     return null;
   }
 
@@ -637,35 +687,32 @@ class StorageService {
   void _cacheValue(String key, dynamic value) {
     _memoryCache[key] = value;
     _cacheTimestamps[key] = DateTime.now();
-    
+
     // Limit cache size
     if (_memoryCache.length > 100) {
-      final oldestKey = _cacheTimestamps.entries
-          .reduce((a, b) => a.value.isBefore(b.value) ? a : b)
-          .key;
+      final oldestKey =
+          _cacheTimestamps.entries
+              .reduce((a, b) => a.value.isBefore(b.value) ? a : b)
+              .key;
       _memoryCache.remove(oldestKey);
       _cacheTimestamps.remove(oldestKey);
     }
   }
-
-
-
-
 
   /// Optimized getString with caching
   Future<String?> getStringCached(String key, {bool encrypted = true}) async {
     // Check cache first
     final cached = _getFromCache<String>(key);
     if (cached != null) return cached;
-    
+
     // Get from storage
     final value = await getString(key, encrypted: encrypted);
-    
+
     // Cache the result
     if (value != null) {
       _cacheValue(key, value);
     }
-    
+
     return value;
   }
 
@@ -680,8 +727,11 @@ class StorageService {
     return {
       'cache_size': _memoryCache.length,
       'pending_operations': _pendingOperations.length,
-      'cache_hit_ratio': _memoryCache.isNotEmpty ? 
-          _memoryCache.length / (_memoryCache.length + _pendingOperations.length) : 0.0,
+      'cache_hit_ratio':
+          _memoryCache.isNotEmpty
+              ? _memoryCache.length /
+                  (_memoryCache.length + _pendingOperations.length)
+              : 0.0,
     };
   }
 
@@ -689,31 +739,35 @@ class StorageService {
   Future<bool> isHealthy() async {
     try {
       await _ensureInitialized();
-      
+
       // Test basic operations
       const testKey = 'health_check_test';
       const testValue = 'test_value';
-      
+
       // Test regular storage
-      final regularSaveResult = await saveString(testKey, testValue, encrypted: false);
+      final regularSaveResult = await saveString(
+        testKey,
+        testValue,
+        encrypted: false,
+      );
       final regularGetResult = await getString(testKey, encrypted: false);
       await remove(testKey);
-      
+
       if (!regularSaveResult || regularGetResult != testValue) {
         return false;
       }
-      
+
       // Test encrypted storage if available
       if (_encryptedPrefs != null) {
         final encryptedSaveResult = await saveString(testKey, testValue);
         final encryptedGetResult = await getString(testKey);
         await remove(testKey, encrypted: true);
-        
+
         if (!encryptedSaveResult || encryptedGetResult != testValue) {
           return false;
         }
       }
-      
+
       return true;
     } catch (e) {
       debugPrint('Storage health check failed: $e');
@@ -731,7 +785,6 @@ class StorageService {
 
 /// Batch operation for performance optimization
 class _BatchOperation {
-
   _BatchOperation({
     required this.key,
     required this.value,
@@ -743,7 +796,10 @@ class _BatchOperation {
   final bool encrypted;
   final _OperationType type;
 
-  Future<void> execute(SharedPreferences? regularPrefs, EncryptedSharedPreferences? encryptedPrefs) async {
+  Future<void> execute(
+    SharedPreferences? regularPrefs,
+    EncryptedSharedPreferences? encryptedPrefs,
+  ) async {
     switch (type) {
       case _OperationType.setString:
         if (encrypted && encryptedPrefs != null) {
@@ -773,9 +829,4 @@ class _BatchOperation {
   }
 }
 
-enum _OperationType {
-  setString,
-  setInt,
-  setBool,
-  remove,
-}
+enum _OperationType { setString, setInt, setBool, remove }

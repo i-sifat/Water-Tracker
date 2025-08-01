@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
+import 'package:lottie/lottie.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -15,80 +15,74 @@ class WelcomeScreen extends StatelessWidget {
         return OnboardingScreenWrapper(
           showBackButton: false,
           continueButtonText: 'Get Started',
+          padding: EdgeInsets.zero,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 30),
-
-              // App Logo
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: AppColors.lightBlue.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.water_drop,
-                    color: AppColors.waterFull,
-                    size: 36,
+              const SizedBox(height: 56),
+              // Top Lottie Animation (App Icon)
+              Center(
+                child: Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF313A34), // dark icon bg
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Center(
+                    child: Lottie.asset(
+                      'assets/animations/lottie/check_animation.json',
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.contain,
+                      repeat: true,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-
-              // Welcome Text
-              Text(
-                'Welcome to the\nHydration Tracker App',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: 'Nunito',
-                  fontSize: 32,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textHeadline,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // Subtitle
-              Text(
-                'Your intelligent hydration solutions.',
-                style: const TextStyle(
-                  fontFamily: 'Nunito',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textSubtitle,
-                  height: 1.5,
-                ),
-                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-
-              // Illustration
-              Expanded(
-                child: Center(
-                  child: SvgPicture.asset(
-                    'assets/images/icons/onboarding_elements/onboarding_bee_icon.svg',
-                    width: 280,
-                    height: 280,
-                    placeholderBuilder:
-                        (BuildContext context) => Container(
-                          width: 280,
-                          height: 280,
-                          decoration: BoxDecoration(
-                            color: AppColors.lightBlue.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.waterFull,
-                            ),
-                          ),
-                        ),
+              // Welcome Text
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32),
+                child: Text(
+                  'Welcome to the\nHydration Tracker App',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 32,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF313A34),
+                    height: 1.2,
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              // Subtitle
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32),
+                child: Text(
+                  'Your intelligent hydration solutions. 🩺',
+                  style: TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF647067),
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 32),
+              // Illustration
+              Center(
+                child: SvgPicture.asset(
+                  'assets/images/icons/onboarding_elements/onboarding_bee_icon.svg',
+                  width: 280,
+                  height: 280,
+                ),
+              ),
+              const Spacer(),
             ],
           ),
         );

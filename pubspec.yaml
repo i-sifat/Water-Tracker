@@ -47,6 +47,7 @@ dev_dependencies:
   mockito: ^5.4.4
   very_good_analysis: ^5.1.0
 
+  test: any
 flutter:
   uses-material-design: true
 

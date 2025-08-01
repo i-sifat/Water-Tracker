@@ -14,7 +14,7 @@ class OnboardingProvider extends ChangeNotifier {
   int _currentStep = 0;
 
   // Total number of onboarding steps
-  static const int totalSteps = 10;
+  static const int totalSteps = 12;
 
   // User profile being built during onboarding
   UserProfile _userProfile = UserProfile.create();
@@ -25,7 +25,8 @@ class OnboardingProvider extends ChangeNotifier {
     6,
     7,
     8,
-  }; // pregnancy, vegetable, sugary drinks, weather
+    9,
+  }; // gender, pregnancy, sugary drinks, vegetable, weather
 
   // Track completed steps
   final Set<int> _completedSteps = {};
@@ -54,25 +55,27 @@ class OnboardingProvider extends ChangeNotifier {
     switch (step) {
       case 0: // Welcome - always valid
         return true;
-      case 1: // Goals - at least one goal selected
-        return _userProfile.goals.isNotEmpty;
+      case 1: // Age - must have age
+        return _userProfile.age != null;
       case 2: // Gender - always valid (can be skipped)
         return true;
-      case 3: // Sugary drinks - always valid
-        return true;
-      case 4: // Age - must have age
-        return _userProfile.age != null;
-      case 5: // Weight - must have weight
+      case 3: // Weight - must have weight
         return _userProfile.weight != null;
+      case 4: // Goals - at least one goal selected
+        return _userProfile.goals.isNotEmpty;
+      case 5: // Exercise frequency - always valid
+        return true;
       case 6: // Pregnancy - always valid (can be skipped)
         return true;
-      case 7: // Exercise frequency - always valid
+      case 7: // Sugary drinks - always valid
         return true;
       case 8: // Vegetable intake - always valid (can be skipped)
         return true;
       case 9: // Weather preference - always valid (can be skipped)
         return true;
       case 10: // Notifications - always valid
+        return true;
+      case 11: // Data summary - always valid
         return true;
       default:
         return false;
@@ -186,10 +189,8 @@ class OnboardingProvider extends ChangeNotifier {
         _userProfile = _userProfile.copyWith(
           pregnancyStatus: PregnancyStatus.preferNotToSay,
         );
-      case 7: // Exercise
-        _userProfile = _userProfile.copyWith(
-          activityLevel: ActivityLevel.moderatelyActive,
-        );
+      case 7: // Sugary drinks
+        _userProfile = _userProfile.copyWith(sugarDrinkIntake: 1); // Average
       case 8: // Vegetables
         _userProfile = _userProfile.copyWith(vegetableIntake: 3); // Average
       case 9: // Weather
@@ -369,25 +370,27 @@ class OnboardingProvider extends ChangeNotifier {
       case 0:
         return 'Welcome';
       case 1:
-        return 'Select Your Goals';
+        return "What's Your Age?";
       case 2:
         return 'Select Your Gender';
       case 3:
-        return 'Sugary Beverages';
-      case 4:
-        return "What's Your Age?";
-      case 5:
         return "What's Your Weight?";
+      case 4:
+        return 'Select Your Goals';
+      case 5:
+        return 'Exercise Frequency';
       case 6:
         return 'Pregnancy Status';
       case 7:
-        return 'Exercise Frequency';
+        return 'Sugary Beverages';
       case 8:
         return 'Vegetable Intake';
       case 9:
         return 'Weather Preference';
       case 10:
         return 'Notification Setup';
+      case 11:
+        return 'Data Summary';
       default:
         return 'Step ${step + 1}';
     }
@@ -399,25 +402,27 @@ class OnboardingProvider extends ChangeNotifier {
       case 0:
         return 'Welcome to your hydration journey';
       case 1:
-        return 'Choose what you want to achieve';
+        return 'We need this to calculate your water needs';
       case 2:
         return 'Help us personalize your experience';
       case 3:
-        return 'Tell us about your drink preferences';
-      case 4:
-        return 'We need this to calculate your water needs';
-      case 5:
         return 'This helps us determine your hydration goal';
+      case 4:
+        return 'Choose what you want to achieve';
+      case 5:
+        return 'Your activity level affects water requirements';
       case 6:
         return 'This affects your hydration needs';
       case 7:
-        return 'Your activity level affects water requirements';
+        return 'Tell us about your drink preferences';
       case 8:
         return 'Vegetables provide natural hydration';
       case 9:
         return 'Climate affects your hydration needs';
       case 10:
         return 'Stay on track with reminders';
+      case 11:
+        return 'Review your information';
       default:
         return '';
     }
@@ -426,12 +431,7 @@ class OnboardingProvider extends ChangeNotifier {
   /// Get validation error message for current step
   String? getValidationError(int step) {
     switch (step) {
-      case 1: // Goals
-        if (_userProfile.goals.isEmpty) {
-          return 'Please select at least one goal to continue';
-        }
-        return null;
-      case 4: // Age
+      case 1: // Age
         if (_userProfile.age == null) {
           return 'Please select your age to continue';
         }
@@ -439,12 +439,17 @@ class OnboardingProvider extends ChangeNotifier {
           return 'Please enter a valid age between 1 and 120';
         }
         return null;
-      case 5: // Weight
+      case 3: // Weight
         if (_userProfile.weight == null) {
           return 'Please enter your weight to continue';
         }
         if (_userProfile.weight! < 20 || _userProfile.weight! > 300) {
           return 'Please enter a valid weight between 20 and 300 kg';
+        }
+        return null;
+      case 4: // Goals
+        if (_userProfile.goals.isEmpty) {
+          return 'Please select at least one goal to continue';
         }
         return null;
       default:
@@ -532,4 +537,5 @@ class OnboardingProvider extends ChangeNotifier {
       (step) => _completedSteps.contains(step) || step == _currentStep,
     );
   }
+
 }

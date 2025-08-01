@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/core/constants/typography.dart';
+import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/cards/goal_selection_card.dart';
 import 'package:watertracker/core/widgets/buttons/continue_button.dart';
-import 'package:watertracker/core/widgets/cards/selection_box.dart';
-import 'package:watertracker/features/onboarding/screens/gender_selection_screen.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
 class VegetablesFruitsScreen extends StatefulWidget {
   const VegetablesFruitsScreen({super.key});
@@ -14,123 +14,129 @@ class VegetablesFruitsScreen extends StatefulWidget {
 }
 
 class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
-  String _selectedFrequency = '';
+  int _selectedIntake = 2; // Default to "Often" to match image
 
-  final List<Map<String, dynamic>> _frequencies = [
+  final List<Map<String, dynamic>> _intakeOptions = [
     {
       'title': 'Rarely',
       'subtitle': 'Few times a week',
-      'icon': Icons.eco,
-      'emoji': '🥗',
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.vegetableIconColor,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.mail,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+      ),
+      'value': 1,
+      'iconBackgroundColor': AppColors.vegetableIconBackground,
     },
     {
       'title': 'Often',
       'subtitle': 'Several per day',
-      'icon': Icons.local_florist,
-      'emoji': '🥬',
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.vegetableIconColor,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.battery_charging_full,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+      ),
+      'value': 2,
+      'iconBackgroundColor': AppColors.vegetableIconBackgroundSelected,
     },
     {
       'title': 'Regularly',
       'subtitle': 'Every day',
-      'icon': Icons.grass,
-      'emoji': '🥦',
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.vegetableIconColor,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.lock,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+      ),
+      'value': 3,
+      'iconBackgroundColor': AppColors.vegetableIconBackground,
     },
   ];
 
-  Future<void> _saveFrequency() async {
-    if (_selectedFrequency.isNotEmpty) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('vegetable_frequency', _selectedFrequency);
-    }
+  Future<void> _handleContinue(OnboardingProvider provider) async {
+    provider.updateVegetableIntake(_selectedIntake);
+    await provider.navigateNext();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.onBoardingpagebackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.onBoardingpagebackground,
-        elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        title: const Text('Assessment', style: AppTypography.subtitle),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              '7 of 10',
-              style: TextStyle(
-                color: AppColors.pageCounter,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+    return Consumer<OnboardingProvider>(
+      builder: (context, onboardingProvider, child) {
+        return OnboardingScreenWrapper(
+          title: 'Vegetables',
+          subtitle: null, // Remove subtitle to match image
+          backgroundColor: AppColors.onboardingBackground,
+          padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+          onContinue: null, // We'll handle this manually
+          canContinue: false, // We'll handle this manually
+          isLoading: onboardingProvider.isSaving,
+          child: Column(
+            children: [
+              // Vegetable intake options
+              Expanded(
+                child: ListView.separated(
+                  itemCount: _intakeOptions.length,
+                  separatorBuilder:
+                      (context, index) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final option = _intakeOptions[index];
+                    final isSelected = _selectedIntake == option['value'];
+                    return GoalSelectionCard(
+                      title: option['title'] as String,
+                      isSelected: isSelected,
+                      onTap: () {
+                        setState(() {
+                          _selectedIntake = option['value'] as int;
+                        });
+                      },
+                      icon: option['icon'] as Widget,
+                      iconBackgroundColor: isSelected 
+                          ? AppColors.vegetableIconBackgroundSelected 
+                          : option['iconBackgroundColor'] as Color,
+                    );
+                  },
+                ),
               ),
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Vegetables', style: AppTypography.headline),
-            const SizedBox(height: 40),
-            Expanded(
-              child: ListView.separated(
-                itemCount: _frequencies.length,
-                separatorBuilder:
-                    (context, index) => const SizedBox(height: 16),
-                itemBuilder: (context, index) {
-                  final frequency = _frequencies[index];
-                  return SelectionBox(
-                    title: '${frequency['emoji']} ${frequency['title']}',
-                    subtitle: frequency['subtitle'] as String?,
-                    icon: frequency['icon'] as IconData,
-                    isSelected: _selectedFrequency == frequency['title'],
-                    onTap: () {
-                      setState(() {
-                        _selectedFrequency = frequency['title'] as String;
-                      });
-                    },
-                  );
-                },
+
+              const SizedBox(height: 16),
+
+              // Continue button
+              ContinueButton(
+                onPressed: () => _handleContinue(onboardingProvider),
               ),
-            ),
-            const SizedBox(height: 24),
-            ContinueButton(
-              onPressed:
-                  _selectedFrequency.isNotEmpty
-                      ? () async {
-                        await _saveFrequency();
-                        if (mounted) {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => const GenderSelectionScreen(),
-                            ),
-                          );
-                        }
-                      }
-                      : () {},
-              isDisabled: _selectedFrequency.isEmpty,
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

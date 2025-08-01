@@ -1,158 +1,154 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:vibration/vibration.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 
-class CustomRulerPicker extends StatefulWidget {
+class CustomRulerPicker extends StatelessWidget {
   const CustomRulerPicker({
     required this.value,
-    required this.minValue,
-    required this.maxValue,
-    required this.onValueChanged,
-    required this.isKg,
+    required this.onChanged,
+    required this.min,
+    required this.max,
+    required this.leftLabel,
+    required this.rightLabel,
     super.key,
   });
-  final double value;
-  final double minValue;
-  final double maxValue;
-  final ValueChanged<double> onValueChanged;
 
-  final bool isKg;
-
-  @override
-  State<CustomRulerPicker> createState() => _CustomRulerPickerState();
-}
-
-class _CustomRulerPickerState extends State<CustomRulerPicker> {
-  late ScrollController _scrollController;
-  final double _itemExtent = 17;
-  bool _isScrolling = false;
+  final int value;
+  final ValueChanged<int> onChanged;
+  final int min;
+  final int max;
+  final String leftLabel;
+  final String rightLabel;
 
   @override
   Widget build(BuildContext context) {
-    // Ensure integer values for lbs, decimal for kg
-    final adjustedMin =
-        widget.isKg ? widget.minValue : widget.minValue.roundToDouble();
-    final adjustedMax =
-        widget.isKg ? widget.maxValue : widget.maxValue.roundToDouble();
-    final totalItems = (adjustedMax - adjustedMin).round() + 1;
-
-    return Stack(
-      alignment: Alignment.center,
+    return Column(
       children: [
-        // Center indicator line
+        // Ruler track
         Container(
-          width: 4,
-          height: 160,
+          width: double.infinity,
+          height: 64,
           decoration: BoxDecoration(
-            color: AppColors.lightBlue,
-            borderRadius: BorderRadius.circular(2),
+            color: AppColors.fitnessSliderBackground,
+            borderRadius: BorderRadius.circular(32),
+          ),
+          child: Stack(
+            children: [
+              // Vertical markers
+              Positioned(
+                top: 20,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(4, (index) {
+                    return Container(
+                      width: 2,
+                      height: 24,
+                      color: AppColors.fitnessSliderMarkers,
+                    );
+                  }),
+                ),
+              ),
+              // Selection indicator
+              Positioned(
+                top: 2,
+                left: _getSelectionPosition(context),
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: AppColors.lightPurple,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.lightPurple.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-
-        SizedBox(
-          height: 160,
-          child: ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return LinearGradient(
-                colors: [
-                  Colors.white.withAlpha(26),
-                  Colors.white,
-                  Colors.white,
-                  Colors.white.withAlpha(26),
-                ],
-                stops: const [0.0, 0.2, 0.8, 1.0],
-              ).createShader(bounds);
-            },
-            blendMode: BlendMode.dstIn,
-            child: ListView.builder(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              itemExtent: _itemExtent,
-              itemCount: totalItems,
-              itemBuilder: (context, index) {
-                final value = adjustedMin + index;
-                final isSelected =
-                    (value - widget.value).abs() < (widget.isKg ? 0.05 : 0.5);
-                final showNumber =
-                    widget.isKg ? value % 5 == 0 : value % 10 == 0;
-
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 2,
-                      height: showNumber ? 80 : (value % 1 == 0 ? 60 : 40),
-                      decoration: BoxDecoration(
-                        color:
-                            isSelected
-                                ? AppColors.lightBlue
-                                : Colors.grey.withAlpha(150),
-                        borderRadius: BorderRadius.circular(1),
+        const SizedBox(height: 16),
+        // Labels
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    leftLabel,
+                    style: TextStyle(
+                      color: AppColors.textHeadline,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Nunito',
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.fitnessQuestionMark,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '?',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    if (showNumber) ...[const SizedBox(height: 8)],
-                  ],
-                );
-              },
-            ),
+                  ),
+                ],
+              ),
+              Text(
+                rightLabel,
+                style: TextStyle(
+                  color: AppColors.textHeadline,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Nunito',
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Calculate initial scroll position based on precise value
-    final initialOffset = (widget.value - widget.minValue) * _itemExtent;
-    _scrollController = ScrollController(initialScrollOffset: initialOffset);
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    if (!_isScrolling) _isScrolling = true;
-
-    // Snap to nearest integer value for lbs, 1 decimal for kg
-    final rawIndex = _scrollController.offset / _itemExtent;
-    final snappedIndex = widget.isKg ? rawIndex : rawIndex.roundToDouble();
-    final newValue = (widget.minValue + snappedIndex).clamp(
-      widget.minValue,
-      widget.maxValue,
-    );
-
-    if (newValue != widget.value) {
-      widget.onValueChanged(newValue);
-      _provideHapticFeedback();
-    }
-
-    // Magnetic snap when scrolling ends
-    if (!_scrollController.position.isScrollingNotifier.value) {
-      _isScrolling = false;
-      final targetOffset = (newValue - widget.minValue) * _itemExtent;
-      if (_scrollController.offset != targetOffset) {
-        _scrollController.animateTo(
-          targetOffset,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutCubic,
-        );
-      }
-    }
-  }
-
-  Future<void> _provideHapticFeedback() async {
-    if (await Vibration.hasVibrator()) {
-      await Vibration.vibrate(duration: 20, amplitude: 40);
-    } else {
-      await HapticFeedback.selectionClick();
-    }
+  double _getSelectionPosition(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width - 48;
+    final availableWidth = screenWidth - 60; // Account for thumb width
+    final step = availableWidth / (max - min);
+    return (value - min) * step;
   }
 }

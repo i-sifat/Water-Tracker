@@ -39,7 +39,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
   Timer? _undoTimer;
 
   // Smart suggestions based on patterns
-  List<int> _smartSuggestions = [250, 500, 100, 400];
+  List<int> _smartSuggestions = [500, 250, 400, 100];
 
   @override
   void initState() {
@@ -114,7 +114,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
                     child: ElevatedButton.icon(
                       onPressed: _undoLastEntry,
                       icon: const Icon(Icons.undo),
-                      label: Text('Undo ${_undoStack.last.amount}ml'),
+                      label: Text('Undo ${_undoStack.isNotEmpty ? _undoStack.last.amount : 0}ml'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,
                         foregroundColor: Colors.white,
@@ -243,7 +243,9 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
                     Expanded(
                       child: _buildAmountButton(
                         context,
-                        _smartSuggestions[1],
+                        _smartSuggestions.length > 1
+                            ? _smartSuggestions[1]
+                            : 250,
                         hydrationProvider,
                         const Color(0xFFD4FFFB),
                         darkBlueColor,
@@ -257,7 +259,9 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
                     Expanded(
                       child: _buildAmountButton(
                         context,
-                        _smartSuggestions[2],
+                        _smartSuggestions.length > 2
+                            ? _smartSuggestions[2]
+                            : 400,
                         hydrationProvider,
                         const Color(0xFFDAFFC7),
                         darkBlueColor,
@@ -267,7 +271,9 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
                     Expanded(
                       child: _buildAmountButton(
                         context,
-                        _smartSuggestions[3],
+                        _smartSuggestions.length > 3
+                            ? _smartSuggestions[3]
+                            : 100,
                         hydrationProvider,
                         const Color(0xFFFFF8BB),
                         darkBlueColor,
@@ -614,15 +620,14 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
     Color textColor,
   ) {
     return Container(
-      height: 75,
+      height: 80,
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(120),
-            spreadRadius: 1,
-            blurRadius: 4,
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -630,8 +635,8 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
       child: TextButton(
         onPressed: () => _addHydration(provider, amount),
         style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          minimumSize: const Size.fromHeight(70),
+          padding: const EdgeInsets.all(16),
+          minimumSize: const Size.fromHeight(80),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

@@ -1,41 +1,54 @@
-# Manual Fixes Still Needed
+Total Screens: 31 screens
+Here's the breakdown by feature:
 
-## Critical Compilation Errors (Remaining)
+Main Screens (2):
 
-### 1. Test API Mismatches
-The following test files call methods that don't exist in the actual implementations:
+Home Screen
+History Screen
+Onboarding Screens (15):
 
-**NotificationService Tests:**
-- `scheduleNotification()` method doesn't exist
-- Should be: `scheduleReminder()` or similar
+Welcome Screen
+Age Selection Screen
+Gender Selection Screen
+Weight Selection Screen
+Goal Selection Screen
+Exercise Frequency Screen
+Pregnancy Status Screen
+Sugary Drinks Screen
+Vegetable Intake Screen
+Weather Preference Screen
+Notification Setup Screen
+Data Summary Screen
+Onboarding Settings Screen
+Onboarding Flow Screen
+Onboarding Completion Screen
+Analytics Screens (3):
 
-**StorageService Tests:**
-- `saveData()`, `getData()` methods don't exist  
-- Need to check actual StorageService API
+Detailed Statistics Screen
+Monthly Trend Screen
+Weekly Progress Screen
+Hydration Screens (2):
 
-**HydrationProvider Tests:**
-- `todayIntake`, `addWater()` methods don't exist
-- Need to check actual HydrationProvider API
+Add Hydration Screen
+Goal Completion Screen
+Premium Screens (7):
 
-### 2. Constructor Parameter Issues
-Several widgets have missing required parameters:
-- CustomRulerPicker needs `isKg` and `value` parameters
-- Various Switch widgets need proper parameter names
+Advanced Goal Screen
+Custom Drink Types Screen
+Custom Reminders Screen
+Donation Info Screen
+Donation Proof Screen
+Premium Success Screen
+Unlock Code Screen
+Settings Screens (9):
 
-### 3. Type Mismatches
-- Animation types need to be consistent (double vs int vs num)
-- Mock class overrides need to match parent signatures
-
-## Recommended Approach:
-
-1. **Check Actual APIs:** Look at the real implementation files to see what methods actually exist
-2. **Update Test Expectations:** Align test method calls with actual APIs
-3. **Fix Constructor Calls:** Add missing required parameters
-4. **Update Mock Classes:** Make sure mock implementations match real interfaces
-
-## Files Needing Manual Review:
-- lib/core/services/notification_service.dart (check actual API)
-- lib/core/services/storage_service.dart (check actual API)  
-- lib/features/hydration/providers/hydration_provider.dart (check actual API)
-- All corresponding test files
-
+Settings Screen
+User Profile Screen
+Avatar Selection Screen
+Language Selection Screen
+Notification Settings Screen
+Accessibility Settings Screen
+Data Management Screen
+Backup Restore Screen
+Custom Reminders Screen
+That's quite a comprehensive app with a solid onboarding flow and feature-rich functionality!

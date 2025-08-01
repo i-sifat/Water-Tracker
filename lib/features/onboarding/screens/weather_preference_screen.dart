@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/core/constants/typography.dart';
+import 'package:provider/provider.dart';
+import 'package:watertracker/core/models/user_profile.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/buttons/continue_button.dart';
-import 'package:watertracker/features/onboarding/screens/notification_setup_screen.dart';
+import 'package:watertracker/core/utils/app_animations.dart';
+import 'package:watertracker/core/widgets/cards/selectable_card.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
 class WeatherSelectionScreen extends StatefulWidget {
   const WeatherSelectionScreen({super.key});
@@ -14,184 +15,74 @@ class WeatherSelectionScreen extends StatefulWidget {
 }
 
 class _WeatherSelectionScreenState extends State<WeatherSelectionScreen> {
-  String? _selectedWeather = 'normal'; // Initialize with middle option
-  final PageController _pageController = PageController(
-    viewportFraction:
-        0.7, // Increased to show more of main card while keeping hints of adjacent cards
-    initialPage: 1, // Start with middle card (Normal weather)
-  );
+  WeatherPreference _selectedWeather = WeatherPreference.moderate;
 
   final List<Map<String, dynamic>> _weatherOptions = [
     {
       'title': 'Cold',
       'icon': Icons.ac_unit,
-      'value': 'cold',
+      'value': WeatherPreference.cold,
       'description': 'Below 20°C',
     },
     {
       'title': 'Normal',
       'icon': Icons.thermostat,
-      'value': 'normal',
+      'value': WeatherPreference.moderate,
       'description': '20-25°C',
     },
     {
       'title': 'Hot',
       'icon': Icons.wb_sunny,
-      'value': 'hot',
+      'value': WeatherPreference.hot,
       'description': 'Above 25°C',
     },
   ];
 
+  Future<void> _handleContinue(OnboardingProvider provider) async {
+    provider.updateWeatherPreference(_selectedWeather);
+    await provider.navigateNext();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.onBoardingpagebackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.onBoardingpagebackground,
-        elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
+    return Consumer<OnboardingProvider>(
+      builder: (context, onboardingProvider, child) {
+        return OnboardingScreenWrapper(
+          title: "What's the Weather?",
+          subtitle: 'Select your current weather condition.',
+          backgroundColor: AppColors.onboardingBackground,
+          padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+          onContinue: () => _handleContinue(onboardingProvider),
+          isLoading: onboardingProvider.isSaving,
+          child: AppAnimations.fadeIn(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: _weatherOptions.length,
+                    separatorBuilder:
+                        (context, index) => const SizedBox(height: 16),
+                    itemBuilder: (context, index) {
+                      final weather = _weatherOptions[index];
+                      return SelectableCardWithIcon(
+                        title: weather['title'] as String,
+                        subtitle: weather['description'] as String,
+                        icon: weather['icon'] as IconData,
+                        isSelected: _selectedWeather == weather['value'],
+                        onTap: () {
+                          setState(() {
+                            _selectedWeather = weather['value'] as WeatherPreference;
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        title: const Text('Assessment', style: AppTypography.subtitle),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              '10 of 10',
-              style: TextStyle(
-                color: AppColors.pageCounter,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("What's the Weather?", style: AppTypography.headline),
-            const SizedBox(height: 16),
-            const Text(
-              'Select your current weather condition.',
-              style: AppTypography.subtitle,
-            ),
-            const Spacer(),
-            SizedBox(
-              height: 300,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: _weatherOptions.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    _selectedWeather =
-                        _weatherOptions[index]['value'] as String;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  final weather = _weatherOptions[index];
-                  final isSelected = _selectedWeather == weather['value'];
-
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                    ), // Reduced margin for better spacing
-                    decoration: BoxDecoration(
-                      color:
-                          isSelected
-                              ? AppColors.selectedBorder
-                              : AppColors.weatherUnselectedCard,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          weather['icon'] as IconData,
-                          size: 80,
-                          color:
-                              isSelected
-                                  ? Colors.white
-                                  : AppColors.assessmentText,
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          weather['title'] as String,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color:
-                                isSelected
-                                    ? Colors.white
-                                    : AppColors.assessmentText,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          weather['description'] as String,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color:
-                                isSelected
-                                    ? Colors.white70
-                                    : AppColors.textSubtitle,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            const Spacer(),
-            ContinueButton(
-              onPressed: _selectedWeather != null ? _handleContinue : () {},
-              isDisabled: _selectedWeather == null,
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
+        );
+      },
     );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleContinue() async {
-    await _saveWeather();
-    if (mounted) {
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const NotificationSetupScreen(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _saveWeather() async {
-    if (_selectedWeather != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('weather_preference', _selectedWeather!);
-    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/models/user_profile.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/cards/goal_selection_card.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
@@ -18,45 +19,96 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
   final List<Map<String, dynamic>> _goalOptions = [
     {
       'goal': Goal.generalHealth,
-      'icon': '💧',
+      'icon': Icon(
+        Icons.add,
+        color: Colors.white,
+        size: 24,
+      ),
       'text': 'Drink More Water',
-      'description': 'Stay hydrated throughout the day',
-      'backgroundColor': const Color(0xFFF2F2F2),
-    },
-    {
-      'goal': Goal.generalHealth,
-      'icon': '🌿',
-      'text': 'Improve Digestion',
-      'description': 'Support digestive health',
-      'backgroundColor': const Color(0xFFF2F2F2),
-    },
-    {
-      'goal': Goal.generalHealth,
-      'icon': '💪',
-      'text': 'Lead a Healthy Lifestyle',
-      'description': 'Maintain overall wellness',
-      'backgroundColor': const Color(0xFFF2F2F2),
-    },
-    {
-      'goal': Goal.weightLoss,
-      'icon': '⚖️',
-      'text': 'Lose Weight',
-      'description': 'Support metabolism and weight goals',
-      'backgroundColor': const Color(0xFFF2F2F2),
+      'iconBackgroundColor': AppColors.goalGreen, // Green
     },
     {
       'goal': Goal.athleticPerformance,
-      'icon': '🏃',
-      'text': 'Athletic Performance',
-      'description': 'Optimize hydration for workouts',
-      'backgroundColor': const Color(0xFFF2F2F2),
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Center(
+          child: Text(
+            'U',
+            style: TextStyle(
+              color: AppColors.goalBlue,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+      'text': 'Improve digestions',
+      'iconBackgroundColor': AppColors.goalBlue, // Blue
     },
     {
       'goal': Goal.skinHealth,
-      'icon': '✨',
-      'text': 'Skin Health',
-      'description': 'Improve skin hydration',
-      'backgroundColor': const Color(0xFFF2F2F2),
+      'icon': Stack(
+        alignment: Alignment.center,
+        children: [
+          Icon(
+            Icons.person,
+            color: Colors.white,
+            size: 24,
+          ),
+          Icon(
+            Icons.favorite,
+            color: Colors.white,
+            size: 12,
+          ),
+        ],
+      ),
+      'text': 'Lead a Healty Lifestyle',
+      'iconBackgroundColor': AppColors.goalPurple, // Purple
+    },
+    {
+      'goal': Goal.weightLoss,
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Icon(
+            Icons.close,
+            color: AppColors.textSubtitle,
+            size: 16,
+          ),
+        ),
+      ),
+      'text': 'Lose weight',
+      'iconBackgroundColor': AppColors.goalGrey, // Light grey
+    },
+    {
+      'goal': Goal.generalHealth,
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Center(
+          child: Container(
+            width: 2,
+            height: 16,
+            color: AppColors.goalYellow,
+          ),
+        ),
+      ),
+      'text': 'Just trying out the app, mate!',
+      'iconBackgroundColor': AppColors.goalYellow, // Yellow
     },
   ];
 
@@ -72,8 +124,10 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
     return Consumer<OnboardingProvider>(
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
-          title: 'Select Your Goals',
-          subtitle: 'Choose one or more goals to personalize your experience',
+          title: 'Select Your Goal',
+          subtitle: null, // Remove subtitle to match image
+          backgroundColor: AppColors.onboardingBackground,
+          padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           onContinue:
               _selectedGoals.isNotEmpty
                   ? () => _handleContinue(onboardingProvider)
@@ -88,7 +142,9 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
               final goal = goalOption['goal'] as Goal;
               final isSelected = _selectedGoals.contains(goal);
 
-              return GestureDetector(
+              return GoalSelectionCard(
+                title: goalOption['text'] as String,
+                isSelected: isSelected,
                 onTap: () {
                   setState(() {
                     if (isSelected) {
@@ -98,104 +154,8 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
                     }
                   });
                 },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color:
-                          isSelected
-                              ? AppColors.selectedBorder
-                              : AppColors.unselectedBorder,
-                      width: isSelected ? 2 : 1,
-                    ),
-                    boxShadow:
-                        isSelected
-                            ? [
-                              BoxShadow(
-                                color: AppColors.selectedBorder.withValues(
-                                  alpha: 0.1,
-                                ),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                            : null,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: goalOption['backgroundColor'] as Color,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            goalOption['icon'] as String,
-                            style: const TextStyle(fontSize: 24),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              goalOption['text'] as String,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color:
-                                    isSelected
-                                        ? AppColors.selectedBorder
-                                        : AppColors.assessmentText,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              goalOption['description'] as String,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: AppColors.textSubtitle,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color:
-                                isSelected
-                                    ? AppColors.selectedBorder
-                                    : AppColors.unselectedBorder,
-                            width: 2,
-                          ),
-                          color:
-                              isSelected
-                                  ? AppColors.selectedBorder
-                                  : Colors.transparent,
-                        ),
-                        child:
-                            isSelected
-                                ? const Icon(
-                                  Icons.check,
-                                  size: 16,
-                                  color: Colors.white,
-                                )
-                                : null,
-                      ),
-                    ],
-                  ),
-                ),
+                icon: goalOption['icon'] as Widget,
+                iconBackgroundColor: goalOption['iconBackgroundColor'] as Color,
               );
             },
           ),

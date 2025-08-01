@@ -67,30 +67,28 @@ class AgeSelectionWheel extends StatelessWidget {
                         : 0)
                     .abs();
 
-            // More dramatic font size difference
+            // Font sizes matching the image
             final fontSize =
                 distanceFromCenter == 0
-                    ? maxFontSize
+                    ? 120.0 // Selected item - very large
                     : distanceFromCenter == 1
-                    ? maxFontSize * 0.7
+                    ? 80.0 // Adjacent items - large
                     : distanceFromCenter == 2
-                    ? maxFontSize * 0.55
-                    : minFontSize;
+                    ? 50.0 // Far items - medium
+                    : 30.0; // Very far items - small
 
-            // More dramatic color transition
+            // Colors matching the image
             final color =
                 distanceFromCenter == 0
-                    ? selectedTextColor
+                    ? selectedTextColor // White for selected
                     : distanceFromCenter == 1
-                    ? unselectedTextColor.withValues(alpha: 0.9)
-                    : distanceFromCenter == 2
-                    ? unselectedTextColor.withValues(alpha: 0.5)
-                    : farTextColor;
+                    ? unselectedTextColor // Dark gray for adjacent
+                    : farTextColor; // Light gray for far items
 
-            // Make items beyond visible range nearly invisible
+            // Opacity for items beyond visible range
             final opacity =
                 distanceFromCenter > 3
-                    ? 0.0 // Hide items beyond 3 positions
+                    ? 0.0
                     : distanceFromCenter == 3
                     ? 0.3
                     : 1.0;
@@ -105,14 +103,27 @@ class AgeSelectionWheel extends StatelessWidget {
             return Opacity(
               opacity: opacity,
               child: Center(
-                child: AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 150),
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    fontWeight: fontWeight,
-                    color: color,
+                child: Container(
+                  width: 200.0,
+                  height: distanceFromCenter == 0 ? 100.0 : 70.0,
+                  decoration: distanceFromCenter == 0
+                      ? BoxDecoration(
+                          color: highlightColor,
+                          borderRadius: BorderRadius.circular(25),
+                        )
+                      : null,
+                  child: Center(
+                    child: AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 150),
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: fontWeight,
+                        color: color,
+                        fontFamily: 'Nunito',
+                      ),
+                      child: Text(age.toString(), textAlign: TextAlign.center),
+                    ),
                   ),
-                  child: Text(age.toString(), textAlign: TextAlign.center),
                 ),
               ),
             );
@@ -126,12 +137,12 @@ class AgeSelectionWheel extends StatelessWidget {
 class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   late final FixedExtentScrollController _scrollController;
   late final List<int> _ages;
-  int _selectedAge = 45;
+  int _selectedAge = 19; // Changed to 19 to match image
 
-  // Increase font sizes for better visibility
-  final double _maxFontSize = 140; // Increased from 74
-  final double _minFontSize = 28; // Slightly decreased to create more contrast
-  final double _itemExtent = 160; // Increased from 100 for more spacing
+  // Adjusted font sizes for better visibility
+  final double _maxFontSize = 120.0; // Adjusted to match image
+  final double _minFontSize = 30.0; // Adjusted for better contrast
+  final double _itemExtent = 140.0; // Adjusted for better spacing
 
   @override
   void initState() {
@@ -172,48 +183,27 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
           title: "What's your Age?",
-          subtitle: 'This helps us calculate your personalized hydration goal',
-          backgroundColor: AppColors.onBoardingpagebackground,
+          subtitle: null, // Remove subtitle to match image
           onContinue: () => _handleContinue(onboardingProvider),
           isLoading: onboardingProvider.isSaving,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Outer container with stroke effect
-              Container(
-                height: _itemExtent,
-                width: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: AppColors.waterFull.withValues(alpha: 0.3),
-                    width: 9,
-                  ),
-                ),
-              ),
-              // Inner container (the blue background)
-              Container(
-                height: _itemExtent - 9,
-                width: 194,
-                decoration: BoxDecoration(
-                  color: AppColors.waterFull,
-                  borderRadius: BorderRadius.circular(27),
-                ),
-              ),
-              AgeSelectionWheel(
+          child: Center(
+            child: Container(
+              height: 300.0,
+              width: 200.0,
+              child: AgeSelectionWheel(
                 scrollController: _scrollController,
                 ages: _ages,
                 selectedAge: _selectedAge,
                 itemExtent: _itemExtent,
-                highlightColor: AppColors.selectedBorder,
+                highlightColor: AppColors.ageSelectionHighlight,
                 selectedTextColor: Colors.white,
-                unselectedTextColor: AppColors.assessmentText,
-                farTextColor: Colors.grey.shade300,
+                unselectedTextColor: AppColors.ageSelectionText,
+                farTextColor: AppColors.ageSelectionTextLight,
                 maxFontSize: _maxFontSize,
                 minFontSize: _minFontSize,
                 onSelectedItemChanged: _handleSelectionChange,
               ),
-            ],
+            ),
           ),
         );
       },

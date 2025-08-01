@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/core/constants/typography.dart';
+import 'package:provider/provider.dart';
+import 'package:watertracker/core/models/user_profile.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/cards/goal_selection_card.dart';
 import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/core/widgets/buttons/prefer_not_to_answer_button.dart';
-import 'package:watertracker/core/widgets/cards/large_selection_box.dart';
-import 'package:watertracker/features/onboarding/screens/weather_preference_screen.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
 class PregnancyScreen extends StatefulWidget {
   const PregnancyScreen({super.key});
@@ -15,123 +16,122 @@ class PregnancyScreen extends StatefulWidget {
 }
 
 class _PregnancyScreenState extends State<PregnancyScreen> {
-  String? _selectedOption;
+  PregnancyStatus? _selectedStatus;
 
-  final List<Map<String, String>> _options = [
+  final List<Map<String, dynamic>> _options = [
     {
       'title': 'Pregnancy',
       'subtitle': 'Few times a week',
-      'value': 'pregnancy',
-      'icon': '🤰',
+      'value': PregnancyStatus.pregnant,
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.pregnancyIconColor,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.pregnant_woman,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+      ),
+      'iconBackgroundColor': AppColors.pregnancyIconBackground,
     },
     {
       'title': 'Breastfeeding',
       'subtitle': 'Several per day',
-      'value': 'breastfeeding',
-      'icon': '🍼',
+      'value': PregnancyStatus.breastfeeding,
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.breastfeedingIconColor,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.child_care,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+      ),
+      'iconBackgroundColor': AppColors.breastfeedingIconBackground,
     },
   ];
 
+  Future<void> _handleContinue(OnboardingProvider provider) async {
+    if (_selectedStatus != null) {
+      provider.updatePregnancyStatus(_selectedStatus!);
+    }
+    await provider.navigateNext();
+  }
+
+  Future<void> _handleSkip(OnboardingProvider provider) async {
+    provider.updatePregnancyStatus(PregnancyStatus.preferNotToSay);
+    await provider.navigateNext();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.onBoardingpagebackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.onBoardingpagebackground,
-        elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        title: const Text('Assessment', style: AppTypography.subtitle),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              '9 of 10',
-              style: TextStyle(
-                color: AppColors.pageCounter,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+    return Consumer<OnboardingProvider>(
+      builder: (context, onboardingProvider, child) {
+        return OnboardingScreenWrapper(
+          title: 'Pregnancy/Breastfeed',
+          subtitle: 'Select which whats your habit.',
+          backgroundColor: AppColors.onboardingBackground,
+          padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+          onContinue: null, // We'll handle this manually
+          canContinue: false, // We'll handle this manually
+          isLoading: onboardingProvider.isSaving,
+          child: Column(
+            children: [
+              // Pregnancy options
+              Expanded(
+                child: ListView.separated(
+                  itemCount: _options.length,
+                  separatorBuilder:
+                      (context, index) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final option = _options[index];
+                    return GoalSelectionCard(
+                      title: option['title'] as String,
+                      isSelected: _selectedStatus == option['value'],
+                      onTap: () {
+                        setState(() {
+                          _selectedStatus = option['value'] as PregnancyStatus;
+                        });
+                      },
+                      icon: option['icon'] as Widget,
+                      iconBackgroundColor: option['iconBackgroundColor'] as Color,
+                    );
+                  },
+                ),
               ),
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Pregnancy/Breast\nfeed', style: AppTypography.headline),
-            const SizedBox(height: 40),
-            Expanded(
-              child: ListView.separated(
-                itemCount: _options.length,
-                separatorBuilder:
-                    (context, index) => const SizedBox(height: 16),
-                itemBuilder: (context, index) {
-                  final option = _options[index];
-                  return LargeSelectionBox(
-                    title: option['title']!,
-                    subtitle: option['subtitle']!,
-                    icon: Text(
-                      option['icon']!,
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    isSelected: _selectedOption == option['value'],
-                    onTap: () {
-                      setState(() {
-                        _selectedOption = option['value'];
-                      });
-                    },
-                  );
-                },
+
+              const SizedBox(height: 16),
+
+              // Prefer not to answer button
+              PreferNotToAnswerButton(
+                onPressed: () => _handleSkip(onboardingProvider),
               ),
-            ),
-            const SizedBox(height: 16),
-            PreferNotToAnswerButton(onPressed: _handlePreferNotToAnswer),
-            const SizedBox(height: 16),
-            ContinueButton(
-              onPressed: _selectedOption != null ? _handleContinue : () {},
-              isDisabled: _selectedOption == null,
-            ),
-          ],
-        ),
-      ),
+
+              const SizedBox(height: 16),
+
+              // Continue button
+              ContinueButton(
+                onPressed: _selectedStatus != null 
+                    ? () => _handleContinue(onboardingProvider)
+                    : () {}, // Empty callback when disabled
+                isDisabled: _selectedStatus == null,
+              ),
+            ],
+          ),
+        );
+      },
     );
-  }
-
-  Future<void> _handleContinue() async {
-    await _saveSelection();
-    if (mounted) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const WeatherSelectionScreen()),
-      );
-    }
-  }
-
-  void _handlePreferNotToAnswer() {
-    setState(() => _selectedOption = 'none');
-    _handleContinue();
-  }
-
-  Future<void> _saveSelection() async {
-    if (_selectedOption != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('pregnancy_status', _selectedOption!);
-    }
   }
 }

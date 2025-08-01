@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
@@ -116,7 +115,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
                     children: [
                       if (title != null)
                         Text(
-                          title!, 
+                          title!,
                           style: const TextStyle(
                             fontFamily: 'Nunito',
                             fontSize: 32,
@@ -183,7 +182,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
               )
               : null,
       title: const Text(
-        'Assessment', 
+        'Assessment',
         style: TextStyle(
           fontFamily: 'Nunito',
           fontSize: 18,
@@ -297,8 +296,6 @@ class OnboardingScreenWrapper extends StatelessWidget {
       ),
     );
   }
-
-
 
   void _showSkipOnboardingDialog(BuildContext context) {
     showDialog<void>(

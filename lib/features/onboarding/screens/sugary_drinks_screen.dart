@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watertracker/core/constants/typography.dart';
+import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/cards/goal_selection_card.dart';
 import 'package:watertracker/core/widgets/buttons/continue_button.dart';
-import 'package:watertracker/core/widgets/cards/selection_box.dart';
-import 'package:watertracker/features/onboarding/screens/pregnancy_status_screen.dart';
+import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
+import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
 class SugaryBeveragesScreen extends StatefulWidget {
   const SugaryBeveragesScreen({super.key});
@@ -20,130 +20,167 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     {
       'title': 'Almost never',
       'subtitle': 'Never / several times a month',
-      'icon': Icons.block,
-      'emoji': '🚫',
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.sugaryIconColor,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.mail,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+      ),
       'value': 'almost_never',
-      'iconBgColor': const Color(0xFFF2F2F2),
+      'iconBackgroundColor': AppColors.sugaryIconBackground,
     },
     {
       'title': 'Rarely',
       'subtitle': 'Few times a week',
-      'icon': Icons.local_drink,
-      'emoji': '🥤',
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.sugaryIconColor,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.battery_charging_full,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+      ),
       'value': 'rarely',
-      'iconBgColor': const Color(0xFFF2F2F2),
+      'iconBackgroundColor': AppColors.sugaryIconBackgroundSelected,
     },
     {
       'title': 'Regularly',
       'subtitle': 'Every day',
-      'icon': Icons.local_cafe,
-      'emoji': '🧃',
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.sugaryIconColor,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.lock,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+      ),
       'value': 'regularly',
-      'iconBgColor': const Color(0xFFF2F2F2),
+      'iconBackgroundColor': AppColors.sugaryIconBackground,
+    },
+    {
+      'title': 'Often',
+      'subtitle': 'Several per day',
+      'icon': Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.sugaryIconColor,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.lock,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+      ),
+      'value': 'often',
+      'iconBackgroundColor': AppColors.sugaryIconBackground,
     },
   ];
 
-  Future<void> _saveFrequency() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('sugary_beverages_frequency', _selectedFrequency);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.onBoardingpagebackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.onBoardingpagebackground,
-        elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        title: const Text('Assessment', style: AppTypography.subtitle),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              '8 of 10',
-              style: TextStyle(
-                color: AppColors.pageCounter,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+    return Consumer<OnboardingProvider>(
+      builder: (context, onboardingProvider, child) {
+        return OnboardingScreenWrapper(
+          title: "Sugary Beverages",
+          subtitle: "Select which whats your habit.",
+          backgroundColor: AppColors.onboardingBackground,
+          padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+          onContinue: null, // We'll handle this manually
+          canContinue: false, // We'll handle this manually
+          isLoading: onboardingProvider.isSaving,
+          child: Column(
+            children: [
+              const SizedBox(height: 32),
+              // Frequency options
+              Expanded(
+                child: ListView.separated(
+                  itemCount: _frequencies.length,
+                  separatorBuilder:
+                      (context, index) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final frequency = _frequencies[index];
+                    final isSelected = _selectedFrequency == frequency['value'];
+                    return GoalSelectionCard(
+                      title: frequency['title'] as String,
+                      isSelected: isSelected,
+                      onTap: () {
+                        setState(() {
+                          _selectedFrequency = frequency['value'] as String;
+                        });
+                      },
+                      icon: frequency['icon'] as Widget,
+                      iconBackgroundColor: isSelected 
+                          ? AppColors.sugaryIconBackgroundSelected 
+                          : frequency['iconBackgroundColor'] as Color,
+                    );
+                  },
+                ),
               ),
-            ),
+
+              const SizedBox(height: 16),
+
+              // Continue button
+              ContinueButton(
+                onPressed: _selectedFrequency.isNotEmpty 
+                    ? () => _handleContinue(onboardingProvider)
+                    : () {}, // Empty callback when disabled
+                isDisabled: _selectedFrequency.isEmpty,
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Sugary Beverages', style: AppTypography.headline),
-            const SizedBox(height: 8),
-            const Text(
-              'Select your habit.',
-              style: TextStyle(
-                fontSize: 18,
-                color: AppColors.pageCounter,
-                fontWeight: FontWeight.w400,
-                fontFamily: 'Nunito',
-              ),
-            ),
-            const SizedBox(height: 32),
-            Expanded(
-              child: ListView.separated(
-                itemCount: _frequencies.length,
-                separatorBuilder:
-                    (context, index) => const SizedBox(height: 16),
-                itemBuilder: (context, index) {
-                  final frequency = _frequencies[index];
-                  return SelectionBox(
-                    title: '${frequency['emoji']} ${frequency['title']}',
-                    subtitle: frequency['subtitle'] as String,
-                    icon: frequency['icon'] as IconData,
-                    isSelected: _selectedFrequency == frequency['value'],
-                    onTap: () {
-                      setState(() {
-                        _selectedFrequency = frequency['value'] as String;
-                      });
-                    },
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 24),
-            ContinueButton(
-              onPressed:
-                  _selectedFrequency.isNotEmpty
-                      ? () async {
-                        await _saveFrequency();
-                        if (mounted) {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const PregnancyScreen(),
-                            ),
-                          );
-                        }
-                      }
-                      : () {},
-              isDisabled: _selectedFrequency.isEmpty,
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
+  }
+
+  Future<void> _handleContinue(OnboardingProvider provider) async {
+    // Convert string value to integer for storage
+    int sugarIntake;
+    switch (_selectedFrequency) {
+      case 'almost_never':
+        sugarIntake = 0;
+        break;
+      case 'rarely':
+        sugarIntake = 1;
+        break;
+      case 'regularly':
+        sugarIntake = 2;
+        break;
+      case 'often':
+        sugarIntake = 3;
+        break;
+      default:
+        sugarIntake = 1;
+    }
+    
+    provider.updateSugarDrinkIntake(sugarIntake);
+    await provider.navigateNext();
   }
 }
