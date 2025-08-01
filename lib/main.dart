@@ -8,8 +8,10 @@ import 'package:watertracker/core/providers/theme_provider.dart';
 import 'package:watertracker/core/services/performance_service.dart';
 import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/core/utils/image_optimization.dart';
+import 'package:watertracker/features/analytics/screens/weekly_progress_screen.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/onboarding_flow_screen.dart';
 import 'package:watertracker/features/premium/providers/premium_provider.dart';
@@ -20,8 +22,6 @@ import 'package:watertracker/features/premium/screens/unlock_code_screen.dart';
 import 'package:watertracker/features/settings/providers/settings_provider.dart';
 import 'package:watertracker/features/settings/screens/settings_screen.dart';
 import 'package:watertracker/l10n/app_localizations.dart';
-import 'package:watertracker/features/analytics/screens/weekly_progress_screen.dart';
-import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
 
 void main() async {
   // Ensure Flutter binding is initialized

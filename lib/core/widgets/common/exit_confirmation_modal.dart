@@ -37,12 +37,12 @@ class ExitConfirmationModal extends StatelessWidget {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
+                color: AppColors.lightPurple.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.exit_to_app,
-                color: Colors.red,
+                color: AppColors.lightPurple,
                 size: 30,
               ),
             ),
@@ -86,7 +86,7 @@ class ExitConfirmationModal extends StatelessWidget {
                       onCancel?.call();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey.shade100,
+                      backgroundColor: AppColors.unselectedBorder,
                       foregroundColor: AppColors.textSubtitle,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -113,7 +113,7 @@ class ExitConfirmationModal extends StatelessWidget {
                       onConfirm?.call();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      backgroundColor: AppColors.lightPurple,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(

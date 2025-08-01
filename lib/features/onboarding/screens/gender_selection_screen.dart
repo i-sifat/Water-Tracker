@@ -47,7 +47,6 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
           title: 'Select your Gender',
-          subtitle: null, // Remove subtitle to match image
           onContinue:
               _selectedGender != null
                   ? () => _handleContinue(onboardingProvider)
@@ -104,10 +103,10 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'Prefer not to answer',
                         style: TextStyle(
                           fontSize: 16,
@@ -115,8 +114,8 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                           fontFamily: 'Nunito',
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.close, size: 20),
+                      SizedBox(width: 8),
+                      Icon(Icons.close, size: 20),
                     ],
                   ),
                 ),

@@ -55,16 +55,16 @@ class OnboardingScreenWrapper extends StatelessWidget {
           appBar: _buildAppBar(context, onboardingProvider, bgColor),
           body: Column(
             children: [
-              // Progress indicator
-              if (showProgress)
+              // Progress indicator - start from second page (step 1)
+              if (showProgress && onboardingProvider.currentStep > 0)
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 8,
                   ),
                   child: AnimatedOnboardingProgressIndicator(
-                    currentStep: onboardingProvider.currentStep,
-                    totalSteps: onboardingProvider.totalStepsCount,
+                    currentStep: onboardingProvider.currentStep - 1, // Adjust to start from 0 for progress
+                    totalSteps: 11, // Total onboarding steps excluding welcome (1-11)
                     showStepNumbers: false,
                   ),
                 ),
@@ -117,7 +117,6 @@ class OnboardingScreenWrapper extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       if (title != null)
                         Text(
@@ -220,9 +219,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
         return ExitConfirmationModal(
-          onConfirm: () {
-            SystemNavigator.pop();
-          },
+          onConfirm: SystemNavigator.pop,
           onCancel: () {
             // Stay on current page
           },

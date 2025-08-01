@@ -98,6 +98,8 @@ class OnboardingProvider extends ChangeNotifier {
     }
   }
 
+
+
   /// Move to previous step
   void previousStep() {
     if (_currentStep > 0) {
@@ -467,8 +469,22 @@ class OnboardingProvider extends ChangeNotifier {
     }
 
     _error = null;
-    await nextStep();
-    return true;
+    
+    // Optimize navigation by batching updates
+    if (!canGoNext) return false;
+    
+    _completedSteps.add(_currentStep);
+    final nextStep = _currentStep + 1;
+    
+    if (nextStep < totalSteps) {
+      _currentStep = nextStep;
+      await _saveProgress();
+      notifyListeners();
+      return true;
+    } else {
+      await completeOnboarding();
+      return true;
+    }
   }
 
   /// Navigate to previous step

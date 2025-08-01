@@ -3,9 +3,7 @@ import 'package:watertracker/core/utils/app_colors.dart';
 
 class AssessmentCounter extends StatelessWidget {
   const AssessmentCounter({
-    super.key,
-    required this.currentStep,
-    required this.totalSteps,
+    required this.currentStep, required this.totalSteps, super.key,
   });
 
   final int currentStep;

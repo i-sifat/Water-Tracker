@@ -14,10 +14,10 @@ class WeightSelectionScreen extends StatefulWidget {
 
 class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
   bool _isKg = true;
-  double _weight = 65.0;
-  final double _minWeight = 0.0;
-  final double _maxWeightKg = 150.0;
-  final double _maxWeightLbs = 330.0; // 150 kg * 2.20462
+  double _weight = 65;
+  final double _minWeight = 0;
+  final double _maxWeightKg = 150;
+  final double _maxWeightLbs = 330; // 150 kg * 2.20462
 
   @override
   void initState() {
@@ -59,7 +59,6 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
           title: "What's your current\nweight right now?",
-          subtitle: null,
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           onContinue: () => _handleContinue(onboardingProvider),
@@ -68,18 +67,18 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
             children: [
               const SizedBox(height: 50),
 
-              // Unit selection buttons - made wider
+              // Unit selection buttons
               Container(
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: AppColors.weightUnitUnselected,
                   borderRadius: BorderRadius.circular(28),
                 ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildUnitButton('kg', true),
+                    Expanded(child: _buildUnitButton('kg', true)),
                     const SizedBox(width: 8),
-                    _buildUnitButton('lbs', false),
+                    Expanded(child: _buildUnitButton('lbs', false)),
                   ],
                 ),
               ),
@@ -139,7 +138,6 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     return GestureDetector(
       onTap: () => _handleUnitChange(isKg),
       child: Container(
-        width: 120, // Made wider
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.weightUnitSelected : Colors.transparent,
@@ -246,7 +244,7 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
           child: GestureDetector(
             onHorizontalDragUpdate: (details) {
               if (_scrollController.hasClients) {
-                final newOffset = _scrollController.offset + details.delta.dx.toDouble();
+                final newOffset = _scrollController.offset + details.delta.dx;
                 final clampedOffset = newOffset.clamp(
                   0.0,
                   _scrollController.position.maxScrollExtent,

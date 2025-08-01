@@ -24,7 +24,7 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.pregnancyIconColor,
           shape: BoxShape.circle,
         ),
@@ -45,7 +45,7 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.breastfeedingIconColor,
           shape: BoxShape.circle,
         ),

@@ -23,7 +23,7 @@ class AppAnimations {
   }) {
     return TweenAnimationBuilder<double>(
       duration: duration,
-      tween: Tween(begin: 1.0, end: 1.0),
+      tween: Tween(begin: 1, end: 1),
       builder: (context, value, child) {
         return Transform.scale(
           scale: value,
@@ -125,7 +125,7 @@ class AppAnimations {
     return TweenAnimationBuilder<Offset>(
       duration: duration,
       tween: Tween(
-        begin: Offset(isForward ? 1.0 : -1.0, 0.0),
+        begin: Offset(isForward ? 1.0 : -1.0, 0),
         end: Offset.zero,
       ),
       curve: smooth,
@@ -147,7 +147,7 @@ class AppAnimations {
   }) {
     return TweenAnimationBuilder<double>(
       duration: duration,
-      tween: Tween(begin: 0.0, end: 1.0),
+      tween: Tween(begin: 0, end: 1),
       curve: curve,
       builder: (context, opacity, child) {
         return Opacity(
@@ -166,7 +166,7 @@ class AppAnimations {
   }) {
     return TweenAnimationBuilder<double>(
       duration: duration,
-      tween: Tween(begin: 0.8, end: 1.0),
+      tween: Tween(begin: 0.8, end: 1),
       builder: (context, scale, child) {
         return Transform.scale(
           scale: scale,
@@ -184,7 +184,7 @@ class AppAnimations {
   }) {
     return TweenAnimationBuilder<double>(
       duration: duration,
-      tween: Tween(begin: 0.0, end: 1.0),
+      tween: Tween(begin: 0, end: 1),
       curve: bounce,
       builder: (context, scale, child) {
         return Transform.scale(
@@ -203,7 +203,7 @@ class AppAnimations {
   }) {
     return TweenAnimationBuilder<double>(
       duration: duration,
-      tween: Tween(begin: 0.0, end: 1.0),
+      tween: Tween(begin: 0, end: 1),
       builder: (context, value, child) {
         final shake = math.sin(value * 10) * 5;
         return Transform.translate(
@@ -225,7 +225,7 @@ class AppAnimations {
   }) {
     return TweenAnimationBuilder<double>(
       duration: duration,
-      tween: Tween(begin: 0.0, end: progress),
+      tween: Tween(begin: 0, end: progress),
       curve: smooth,
       builder: (context, value, child) {
         return Container(
@@ -259,7 +259,7 @@ class AppAnimations {
       curve: smooth,
       width: isVisible ? 24 : 0,
       height: 24,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.waterFull,
         shape: BoxShape.circle,
       ),
@@ -299,11 +299,11 @@ class PageTransitions {
     return PageRouteBuilder<dynamic>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(1.0, 0.0);
+        const begin = Offset(1, 0);
         const end = Offset.zero;
         const curve = Curves.easeInOut;
 
-        var tween = Tween(begin: begin, end: end).chain(
+        final tween = Tween(begin: begin, end: end).chain(
           CurveTween(curve: curve),
         );
 
@@ -320,11 +320,11 @@ class PageTransitions {
     return PageRouteBuilder<dynamic>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(-1.0, 0.0);
+        const begin = Offset(-1, 0);
         const end = Offset.zero;
         const curve = Curves.easeInOut;
 
-        var tween = Tween(begin: begin, end: end).chain(
+        final tween = Tween(begin: begin, end: end).chain(
           CurveTween(curve: curve),
         );
 

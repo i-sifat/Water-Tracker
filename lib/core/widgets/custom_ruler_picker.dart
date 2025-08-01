@@ -60,7 +60,7 @@ class CustomRulerPicker extends StatelessWidget {
                       height: 60,
                       decoration: BoxDecoration(
                         color: AppColors.lightPurple,
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.lightPurple.withValues(alpha: 0.3),
@@ -106,7 +106,7 @@ class CustomRulerPicker extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.textHeadline,
                           fontSize: 16,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: value == min ? FontWeight.w700 : FontWeight.w400,
                           fontFamily: 'Nunito',
                         ),
                       ),
@@ -114,7 +114,7 @@ class CustomRulerPicker extends StatelessWidget {
                       Container(
                         width: 16,
                         height: 16,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: AppColors.fitnessQuestionMark,
                         ),
@@ -136,7 +136,7 @@ class CustomRulerPicker extends StatelessWidget {
                     style: TextStyle(
                       color: AppColors.textHeadline,
                       fontSize: 16,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: value == max ? FontWeight.w700 : FontWeight.w400,
                       fontFamily: 'Nunito',
                     ),
                   ),
@@ -150,7 +150,7 @@ class CustomRulerPicker extends StatelessWidget {
   }
 
   double _getSelectionPosition(double rulerWidth) {
-    final circleWidth = 60.0;
+    const circleWidth = 60.0;
     final availableWidth = rulerWidth - circleWidth;
     final step = availableWidth / (max - min);
     final position = (value - min) * step;

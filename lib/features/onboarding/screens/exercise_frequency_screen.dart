@@ -22,8 +22,8 @@ class _FitnessLevelScreenState extends State<FitnessLevelScreen> {
     return Consumer<OnboardingProvider>(
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
-          title: "Fitness Level",
-          subtitle: "How frequent do you take exercise?",
+          title: 'Fitness Level',
+          subtitle: 'How frequent do you take exercise?',
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           onContinue: () => _handleContinue(onboardingProvider),

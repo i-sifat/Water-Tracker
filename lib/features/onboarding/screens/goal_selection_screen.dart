@@ -19,7 +19,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
   final List<Map<String, dynamic>> _goalOptions = [
     {
       'goal': Goal.generalHealth,
-      'icon': Icon(
+      'icon': const Icon(
         Icons.add,
         color: Colors.white,
         size: 24,
@@ -36,7 +36,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
         ),
-        child: Center(
+        child: const Center(
           child: Text(
             'U',
             style: TextStyle(
@@ -52,7 +52,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
     },
     {
       'goal': Goal.skinHealth,
-      'icon': Stack(
+      'icon': const Stack(
         alignment: Alignment.center,
         children: [
           Icon(
@@ -75,11 +75,11 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
         ),
-        child: Center(
+        child: const Center(
           child: Icon(
             Icons.close,
             color: AppColors.textSubtitle,
@@ -125,7 +125,6 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
           title: 'Select Your Goal',
-          subtitle: null,
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           onContinue:

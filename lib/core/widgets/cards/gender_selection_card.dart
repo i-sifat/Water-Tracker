@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 
 class GenderSelectionCard extends StatelessWidget {
@@ -76,183 +77,19 @@ class GenderSelectionCard extends StatelessWidget {
   }
 
   Widget _buildAvatar() {
-    if (gender == 'male') {
-      return Container(
+    final String assetPath = gender == 'male' 
+        ? 'assets/images/avatars/male.svg'
+        : 'assets/images/avatars/female.svg';
+    
+    return SizedBox(
+      width: 80,
+      height: 80,
+      child: SvgPicture.asset(
+        assetPath,
         width: 80,
         height: 80,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Yellow hair
-            Positioned(
-              top: 0,
-              child: Container(
-                width: 60,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: AppColors.maleHair,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-            ),
-            // Pink face
-            Positioned(
-              top: 20,
-              child: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: AppColors.maleFace,
-                  shape: BoxShape.circle,
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Eyes
-                    Positioned(
-                      top: 15,
-                      left: 10,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: AppColors.maleFace,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 15,
-                      right: 10,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: AppColors.maleFace,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                    // Smile
-                    Positioned(
-                      bottom: 15,
-                      child: Container(
-                        width: 20,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Dark gray shoulders
-            Positioned(
-              bottom: 0,
-              child: Container(
-                width: 70,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: AppColors.avatarShoulders,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      // Female avatar
-      return Container(
-        width: 80,
-        height: 80,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Gray hair
-            Positioned(
-              top: 0,
-              child: Container(
-                width: 60,
-                height: 35,
-                decoration: BoxDecoration(
-                  color: AppColors.femaleHair,
-                  borderRadius: BorderRadius.circular(35),
-                ),
-              ),
-            ),
-            // Gray face
-            Positioned(
-              top: 25,
-              child: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: AppColors.femaleFace,
-                  shape: BoxShape.circle,
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Eyes
-                    Positioned(
-                      top: 15,
-                      left: 10,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: AppColors.femaleFace,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 15,
-                      right: 10,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: AppColors.femaleFace,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                    // Smile
-                    Positioned(
-                      bottom: 15,
-                      child: Container(
-                        width: 20,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: AppColors.femaleFace,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Dark gray shoulders
-            Positioned(
-              bottom: 0,
-              child: Container(
-                width: 70,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: AppColors.avatarShoulders,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+        fit: BoxFit.contain,
+      ),
+    );
   }
 } 

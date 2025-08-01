@@ -25,7 +25,7 @@ class ContinueButton extends StatelessWidget {
         children: [
           Text(
             'Continue',
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,

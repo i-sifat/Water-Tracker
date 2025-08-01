@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
-import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';

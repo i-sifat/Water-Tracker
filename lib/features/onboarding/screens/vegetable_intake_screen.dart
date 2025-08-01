@@ -22,7 +22,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.vegetableIconColor,
           shape: BoxShape.circle,
         ),
@@ -43,7 +43,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.vegetableIconColor,
           shape: BoxShape.circle,
         ),
@@ -64,7 +64,7 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.vegetableIconColor,
           shape: BoxShape.circle,
         ),
@@ -92,11 +92,9 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
           title: 'Vegetables',
-          subtitle: null,
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           onContinue: () => _handleContinue(onboardingProvider),
-          canContinue: true,
           isLoading: onboardingProvider.isSaving,
           child: Column(
             children: [

@@ -60,7 +60,7 @@ class GoalSelectionCard extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textHeadline,

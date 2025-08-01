@@ -17,30 +17,9 @@ class WelcomeScreen extends StatelessWidget {
           continueButtonText: 'Get Started',
           padding: EdgeInsets.zero,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 56),
-              // Top Lottie Animation (App Icon)
-              Center(
-                child: Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF313A34), // dark icon bg
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Lottie.asset(
-                      'assets/animations/lottie/check_animation.json',
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.contain,
-                      repeat: true,
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(height: 40),
               // Welcome Text
               const Padding(

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/animations/water_animation.dart';
+import 'package:watertracker/core/widgets/common/exit_confirmation_modal.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 import 'package:watertracker/features/history/history_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
@@ -147,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
-          await SystemNavigator.pop();
+          _showExitConfirmation(context);
         }
       },
       child: Scaffold(
@@ -201,5 +202,26 @@ class _HomeScreenState extends State<HomeScreen> {
         Provider.of<HydrationProvider>(context, listen: false).loadData();
       }
     });
+  }
+
+  void _showExitConfirmation(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return ExitConfirmationModal(
+          title: 'Exit App?',
+          content: 'Are you sure you want to exit the app?',
+          confirmText: 'Exit',
+          cancelText: 'Cancel',
+          onConfirm: () {
+            SystemNavigator.pop();
+          },
+          onCancel: () {
+            // Stay in the app
+          },
+        );
+      },
+    );
   }
 }

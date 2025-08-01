@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 
 /// Celebration screen shown when onboarding is completed
@@ -82,25 +83,25 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
               const Spacer(),
 
               // Celebration animation
-              ScaleTransition(
+                              ScaleTransition(
                 scale: _scaleAnimation,
                 child: Container(
-                  width: 80, // Reduced from 200
-                  height: 80, // Reduced from 200
+                  width: 120, // Increased from 80
+                  height: 120, // Increased from 80
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: Lottie.asset(
-                      'assets/animations/lottie/check_animation.json',
-                      width: 90, // Reduced from 120
-                      height: 90, // Reduced from 120
-                      repeat: false,
-                      onLoaded: (composition) {
-                        // Animation loaded successfully
-                      },
-                    ),
+                                      child: Lottie.asset(
+                    'assets/animations/lottie/check_animation.json',
+                    width: 140, // Increased from 90
+                    height: 140, // Increased from 90
+                    repeat: false,
+                    onLoaded: (composition) {
+                      // Animation loaded successfully
+                    },
+                  ),
                   ),
                 ),
               ),
@@ -237,7 +238,7 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
 
               const Spacer(),
 
-              // Continue button
+              // Start Your Journey button (white for completion screen)
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: SizedBox(
@@ -247,34 +248,24 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: AppColors.lightBlue,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      minimumSize: const Size(double.infinity, 56),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text(
-                      'Start Your Journey',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Skip to home option
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: TextButton(
-                  onPressed: _navigateToHome,
-                  child: Text(
-                    'Continue to App',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      decoration: TextDecoration.underline,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Start Your Journey',
+                          style: TextStyle(
+                            color: AppColors.lightBlue,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Nunito',
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(Icons.arrow_forward, color: AppColors.lightBlue, size: 20),
+                      ],
                     ),
                   ),
                 ),

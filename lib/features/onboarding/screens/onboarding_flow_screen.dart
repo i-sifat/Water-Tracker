@@ -52,8 +52,8 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
             if (_pageController.hasClients && mounted) {
               _pageController.animateToPage(
                 onboardingProvider.currentStep,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
+                duration: const Duration(milliseconds: 200), // Faster animation
+                curve: Curves.easeOut, // Smoother curve
               ).then((_) {
                 if (mounted) {
                   setState(() {
@@ -168,11 +168,11 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
             physics: const NeverScrollableScrollPhysics(), // Disable swipe navigation
             itemCount: OnboardingProvider.totalSteps,
             itemBuilder: (context, index) {
-              // Only build the current screen and adjacent screens for performance
-              if ((index - onboardingProvider.currentStep).abs() <= 1) {
+              // Only build the current screen for better performance
+              if (index == onboardingProvider.currentStep) {
                 return _getScreenForStep(index);
               } else {
-                // Return empty container for non-adjacent screens
+                // Return empty container for non-visible screens
                 return const SizedBox.shrink();
               }
             },

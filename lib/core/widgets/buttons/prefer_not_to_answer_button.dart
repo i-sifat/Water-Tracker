@@ -16,7 +16,7 @@ class PreferNotToAnswerButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         minimumSize: const Size(double.infinity, 56),
       ),
-      child: Row(
+      child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
@@ -28,7 +28,7 @@ class PreferNotToAnswerButton extends StatelessWidget {
               fontFamily: 'Nunito',
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Icon(
             Icons.close,
             color: AppColors.lightPurple,

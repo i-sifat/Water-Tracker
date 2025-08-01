@@ -22,7 +22,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.sugaryIconColor,
           shape: BoxShape.circle,
         ),
@@ -43,7 +43,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.sugaryIconColor,
           shape: BoxShape.circle,
         ),
@@ -64,7 +64,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.sugaryIconColor,
           shape: BoxShape.circle,
         ),
@@ -85,7 +85,7 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
       'icon': Container(
         width: 24,
         height: 24,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.sugaryIconColor,
           shape: BoxShape.circle,
         ),
@@ -108,16 +108,12 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     switch (_selectedFrequency) {
       case 'almost_never':
         sugarIntake = 0;
-        break;
       case 'rarely':
         sugarIntake = 1;
-        break;
       case 'regularly':
         sugarIntake = 2;
-        break;
       case 'often':
         sugarIntake = 3;
-        break;
       default:
         sugarIntake = 1;
     }
@@ -131,8 +127,8 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     return Consumer<OnboardingProvider>(
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
-          title: "Sugary Beverages",
-          subtitle: "Select which whats your habit.",
+          title: 'Sugary Beverages',
+          subtitle: 'Select which whats your habit.',
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           onContinue: _selectedFrequency.isNotEmpty 
