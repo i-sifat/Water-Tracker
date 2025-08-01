@@ -2,7 +2,7 @@ name: watertracker
 description: "A minimalist hydration tracker built with Flutter."
 publish_to: 'none'
 
-version: 0.1.4
+version: 0.1.5
 
 environment:
   sdk: ^3.7.0
