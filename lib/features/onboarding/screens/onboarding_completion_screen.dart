@@ -85,8 +85,8 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
               ScaleTransition(
                 scale: _scaleAnimation,
                 child: Container(
-                  width: 200,
-                  height: 200,
+                  width: 80, // Reduced from 200
+                  height: 80, // Reduced from 200
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
@@ -94,8 +94,8 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                   child: Center(
                     child: Lottie.asset(
                       'assets/animations/lottie/check_animation.json',
-                      width: 120,
-                      height: 120,
+                      width: 90, // Reduced from 120
+                      height: 90, // Reduced from 120
                       repeat: false,
                       onLoaded: (composition) {
                         // Animation loaded successfully
@@ -105,7 +105,7 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 30), // Reduced from 40
 
               // Success message
               FadeTransition(
@@ -137,11 +137,11 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                       textAlign: TextAlign.center,
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24), // Reduced from 32
 
                     // Daily goal display
                     Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(20), // Reduced from 24
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20),
@@ -153,10 +153,10 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                         children: [
                           const Icon(
                             Icons.water_drop,
-                            size: 48,
+                            size: 40, // Reduced from 48
                             color: Colors.white,
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 10), // Reduced from 12
                           Text(
                             'Your Daily Goal',
                             style: Theme.of(
@@ -166,7 +166,7 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6), // Reduced from 8
                           Text(
                             '${widget.dailyGoal} ml',
                             style: Theme.of(
@@ -174,10 +174,10 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                             ).textTheme.headlineMedium?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 36,
+                              fontSize: 32, // Reduced from 36
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6), // Reduced from 8
                           Text(
                             'Personalized just for you',
                             style: Theme.of(
@@ -190,11 +190,11 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24), // Reduced from 32
 
                     // Features preview
                     Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(16), // Reduced from 20
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16),
@@ -210,19 +210,19 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12), // Reduced from 16
                           _buildFeatureItem(
                             icon: Icons.notifications_active,
                             title: 'Smart Reminders',
                             description: 'Get personalized hydration reminders',
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 10), // Reduced from 12
                           _buildFeatureItem(
                             icon: Icons.analytics,
                             title: 'Track Progress',
                             description: 'Monitor your daily and weekly intake',
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 10), // Reduced from 12
                           _buildFeatureItem(
                             icon: Icons.emoji_events,
                             title: 'Achieve Goals',

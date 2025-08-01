@@ -16,7 +16,8 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
   bool _isKg = true;
   double _weight = 65.0;
   final double _minWeight = 0.0;
-  final double _maxWeight = 150.0;
+  final double _maxWeightKg = 150.0;
+  final double _maxWeightLbs = 330.0; // 150 kg * 2.20462
 
   @override
   void initState() {
@@ -26,23 +27,21 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
   double _convertKgToLbs(double kg) => kg * 2.20462;
   double _convertLbsToKg(double lbs) => lbs / 2.20462;
 
-  double _clampWeight(double value) {
-    return value.clamp(_minWeight, _maxWeight);
-  }
-
   void _handleUnitChange(bool isKg) {
     if (_isKg == isKg) return;
 
     setState(() {
-      // Convert the current weight to the new unit
       if (_isKg) {
         // Converting from kg to lbs
         _weight = _convertKgToLbs(_weight);
+        // Clamp to lbs range
+        _weight = _weight.clamp(_minWeight, _maxWeightLbs);
       } else {
         // Converting from lbs to kg
         _weight = _convertLbsToKg(_weight);
+        // Clamp to kg range
+        _weight = _weight.clamp(_minWeight, _maxWeightKg);
       }
-      _weight = _clampWeight(_weight);
       _isKg = isKg;
     });
     HapticFeedback.selectionClick();
@@ -60,7 +59,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
           title: "What's your current\nweight right now?",
-          subtitle: null, // Remove subtitle to match image
+          subtitle: null,
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           onContinue: () => _handleContinue(onboardingProvider),
@@ -69,7 +68,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
             children: [
               const SizedBox(height: 50),
 
-              // Unit selection buttons
+              // Unit selection buttons - made wider
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.weightUnitUnselected,
@@ -93,7 +92,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   Text(
-                    _weight.toInt().toString(), // Show integer value
+                    _weight.toInt().toString(),
                     style: const TextStyle(
                       fontFamily: 'Nunito',
                       fontSize: 89,
@@ -115,13 +114,13 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
               ),
               const SizedBox(height: 40),
 
-              // Custom Ruler Picker
+              // Custom Ruler Picker - removed number reading
               SizedBox(
                 height: 80,
                 child: CustomRulerPicker(
                   value: _weight,
                   minValue: _minWeight,
-                  maxValue: _maxWeight,
+                  maxValue: _isKg ? _maxWeightKg : _maxWeightLbs,
                   onValueChanged: (value) {
                     setState(() => _weight = value);
                   },
@@ -140,7 +139,7 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     return GestureDetector(
       onTap: () => _handleUnitChange(isKg),
       child: Container(
-        width: 80,
+        width: 120, // Made wider
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.weightUnitSelected : Colors.transparent,
@@ -179,8 +178,8 @@ class CustomRulerPicker extends StatefulWidget {
 
 class _CustomRulerPickerState extends State<CustomRulerPicker> {
   late ScrollController _scrollController;
-  final double _tickSpacing = 8; // Space between small ticks
-  final double _ticksPerUnit = 10; // 10 small ticks per unit (0.1 precision)
+  final double _tickSpacing = 8;
+  final double _ticksPerUnit = 10;
   bool _isDragging = false;
 
   @override
@@ -215,7 +214,6 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
 
   double _offsetToValue(double offset) {
     final value = widget.minValue + (offset / (_ticksPerUnit * _tickSpacing));
-    // Round to nearest 0.1 to ensure consistency
     return (value * 10).round() / 10.0;
   }
 
@@ -343,35 +341,12 @@ class RulerPainter extends CustomPainter {
       paint.color = isPassed ? AppColors.lightPurple : Colors.grey.shade400;
 
       if (isBigTick) {
-        // Big tick (every unit)
+        // Big tick (every unit) - removed number labels
         canvas.drawLine(
           Offset(x, size.height - 40),
           Offset(x, size.height),
           paint,
         );
-
-        // Draw number labels for big ticks
-        if (tickValue % 5 == 0) {
-          // Show labels every 5 units to avoid crowding
-          final textPainter = TextPainter(
-            text: TextSpan(
-              text: tickValue.toInt().toString(),
-              style: TextStyle(
-                color:
-                    isPassed ? AppColors.lightPurple : Colors.grey.shade600,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            textDirection: TextDirection.ltr,
-          );
-          textPainter
-            ..layout()
-            ..paint(
-              canvas,
-              Offset(x - textPainter.width / 2, size.height - 35),
-            );
-        }
       } else {
         // Small tick (0.1 precision)
         canvas.drawLine(

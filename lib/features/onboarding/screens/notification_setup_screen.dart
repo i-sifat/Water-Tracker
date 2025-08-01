@@ -3,8 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/services/notification_service.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/onboarding/screens/data_summary_screen.dart';
+import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
 class NotificationSetupScreen extends StatefulWidget {
   const NotificationSetupScreen({super.key});
@@ -75,115 +75,68 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
     }
   }
 
+  Future<void> _handleContinue() async {
+    await _requestNotificationPermission();
+    await _saveNotificationPreferences();
+    if (mounted) {
+      await Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const CompileDataScreen(),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.assessmentText),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        title: const Text(
-          'Notification Setup',
-          style: TextStyle(
-            color: AppColors.assessmentText,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Notification Setup',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w800,
-                color: AppColors.assessmentText,
-                height: 1.2,
-                fontFamily: 'Nunito',
+    return OnboardingScreenWrapper(
+      title: 'Notification Setup',
+      subtitle: "Choose which notification you'd like to setup.",
+      onContinue: _handleContinue,
+      child: Column(
+        children: [
+          if (!_isNotificationPermissionGranted)
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.orange.shade200),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Choose which notification you'd like to setup.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            const SizedBox(height: 32),
-            if (!_isNotificationPermissionGranted)
-              Container(
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.orange.shade200),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.orange[700],
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.orange[700],
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Please enable notifications to receive water reminders',
+                      style: TextStyle(color: Colors.orange[900]),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Please enable notifications to receive water reminders',
-                        style: TextStyle(color: Colors.orange[900]),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ..._notifications.entries.map(
-              (entry) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _buildNotificationOption(
-                  entry.value.title,
-                  entry.value.subtitle,
-                  entry.value.iconPath,
-                  entry.value.isEnabled,
-                  (value) {
-                    setState(() {
-                      entry.value.isEnabled = value;
-                    });
-                  },
-                ),
+                  ),
+                ],
               ),
             ),
-            const Spacer(),
-            ContinueButton(
-              onPressed: () async {
-                await _requestNotificationPermission();
-                await _saveNotificationPreferences();
-                if (mounted) {
-                  await Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const CompileDataScreen(),
-                    ),
-                  );
-                }
-              },
+          ..._notifications.entries.map(
+            (entry) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildNotificationOption(
+                entry.value.title,
+                entry.value.subtitle,
+                entry.value.iconPath,
+                entry.value.isEnabled,
+                (value) {
+                  setState(() {
+                    entry.value.isEnabled = value;
+                  });
+                },
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

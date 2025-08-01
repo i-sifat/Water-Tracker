@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/cards/goal_selection_card.dart';
-import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
@@ -93,11 +92,11 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
           title: 'Vegetables',
-          subtitle: null, // Remove subtitle to match image
+          subtitle: null,
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
-          onContinue: null, // We'll handle this manually
-          canContinue: false, // We'll handle this manually
+          onContinue: () => _handleContinue(onboardingProvider),
+          canContinue: true,
           isLoading: onboardingProvider.isSaving,
           child: Column(
             children: [
@@ -125,13 +124,6 @@ class _VegetablesFruitsScreenState extends State<VegetablesFruitsScreen> {
                     );
                   },
                 ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Continue button
-              ContinueButton(
-                onPressed: () => _handleContinue(onboardingProvider),
               ),
             ],
           ),

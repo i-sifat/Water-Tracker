@@ -91,7 +91,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
       'iconBackgroundColor': AppColors.goalGrey, // Light grey
     },
     {
-      'goal': Goal.generalHealth,
+      'goal': Goal.muscleGain, // Changed from generalHealth to muscleGain
       'icon': Container(
         width: 24,
         height: 24,
@@ -125,7 +125,7 @@ class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
           title: 'Select Your Goal',
-          subtitle: null, // Remove subtitle to match image
+          subtitle: null,
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           onContinue:

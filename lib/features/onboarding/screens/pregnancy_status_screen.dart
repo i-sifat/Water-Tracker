@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/models/user_profile.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/cards/goal_selection_card.dart';
-import 'package:watertracker/core/widgets/buttons/continue_button.dart';
-import 'package:watertracker/core/widgets/buttons/prefer_not_to_answer_button.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
@@ -70,11 +68,6 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
     await provider.navigateNext();
   }
 
-  Future<void> _handleSkip(OnboardingProvider provider) async {
-    provider.updatePregnancyStatus(PregnancyStatus.preferNotToSay);
-    await provider.navigateNext();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<OnboardingProvider>(
@@ -84,8 +77,12 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
           subtitle: 'Select which whats your habit.',
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
-          onContinue: null, // We'll handle this manually
-          canContinue: false, // We'll handle this manually
+          onContinue: _selectedStatus != null 
+              ? () => _handleContinue(onboardingProvider)
+              : null,
+          canContinue: _selectedStatus != null,
+          showSkipButton: true,
+          skipButtonText: 'Prefer not to answer',
           isLoading: onboardingProvider.isSaving,
           child: Column(
             children: [
@@ -110,23 +107,6 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
                     );
                   },
                 ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Prefer not to answer button
-              PreferNotToAnswerButton(
-                onPressed: () => _handleSkip(onboardingProvider),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Continue button
-              ContinueButton(
-                onPressed: _selectedStatus != null 
-                    ? () => _handleContinue(onboardingProvider)
-                    : () {}, // Empty callback when disabled
-                isDisabled: _selectedStatus == null,
               ),
             ],
           ),

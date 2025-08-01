@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
@@ -67,28 +68,30 @@ class AgeSelectionWheel extends StatelessWidget {
                         : 0)
                     .abs();
 
-            // Font sizes matching the image
+            // More dramatic font size difference
             final fontSize =
                 distanceFromCenter == 0
-                    ? 120.0 // Selected item - very large
+                    ? maxFontSize
                     : distanceFromCenter == 1
-                    ? 80.0 // Adjacent items - large
+                    ? maxFontSize * 0.7
                     : distanceFromCenter == 2
-                    ? 50.0 // Far items - medium
-                    : 30.0; // Very far items - small
+                    ? maxFontSize * 0.55
+                    : minFontSize;
 
-            // Colors matching the image
+            // More dramatic color transition
             final color =
                 distanceFromCenter == 0
-                    ? selectedTextColor // White for selected
+                    ? selectedTextColor
                     : distanceFromCenter == 1
-                    ? unselectedTextColor // Dark gray for adjacent
-                    : farTextColor; // Light gray for far items
+                    ? unselectedTextColor.withValues(alpha: 0.9)
+                    : distanceFromCenter == 2
+                    ? unselectedTextColor.withValues(alpha: 0.5)
+                    : farTextColor;
 
-            // Opacity for items beyond visible range
+            // Make items beyond visible range nearly invisible
             final opacity =
                 distanceFromCenter > 3
-                    ? 0.0
+                    ? 0.0 // Hide items beyond 3 positions
                     : distanceFromCenter == 3
                     ? 0.3
                     : 1.0;
@@ -103,27 +106,14 @@ class AgeSelectionWheel extends StatelessWidget {
             return Opacity(
               opacity: opacity,
               child: Center(
-                child: Container(
-                  width: 200.0,
-                  height: distanceFromCenter == 0 ? 100.0 : 70.0,
-                  decoration: distanceFromCenter == 0
-                      ? BoxDecoration(
-                          color: highlightColor,
-                          borderRadius: BorderRadius.circular(25),
-                        )
-                      : null,
-                  child: Center(
-                    child: AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 150),
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        fontWeight: fontWeight,
-                        color: color,
-                        fontFamily: 'Nunito',
-                      ),
-                      child: Text(age.toString(), textAlign: TextAlign.center),
-                    ),
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 150),
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
+                    color: color,
                   ),
+                  child: Text(age.toString(), textAlign: TextAlign.center),
                 ),
               ),
             );
@@ -137,12 +127,12 @@ class AgeSelectionWheel extends StatelessWidget {
 class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   late final FixedExtentScrollController _scrollController;
   late final List<int> _ages;
-  int _selectedAge = 19; // Changed to 19 to match image
+  int _selectedAge = 45;
 
-  // Adjusted font sizes for better visibility
-  final double _maxFontSize = 120.0; // Adjusted to match image
-  final double _minFontSize = 30.0; // Adjusted for better contrast
-  final double _itemExtent = 140.0; // Adjusted for better spacing
+  // Increase font sizes for better visibility
+  final double _maxFontSize = 140; // Increased from 74
+  final double _minFontSize = 28; // Slightly decreased to create more contrast
+  final double _itemExtent = 160; // Increased from 100 for more spacing
 
   @override
   void initState() {
@@ -163,7 +153,7 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
     if (_ages[index] != _selectedAge) {
       setState(() => _selectedAge = _ages[index]);
       Vibration.hasVibrator().then((hasVibrator) {
-        if (hasVibrator == true) {
+        if (hasVibrator) {
           Vibration.vibrate(duration: 25, amplitude: 50);
         } else {
           HapticFeedback.lightImpact();
@@ -172,7 +162,8 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
     }
   }
 
-  Future<void> _handleContinue(OnboardingProvider provider) async {
+  Future<void> _handleContinue() async {
+    final provider = Provider.of<OnboardingProvider>(context, listen: false);
     provider.updateAge(_selectedAge);
     await provider.navigateNext();
   }
@@ -180,29 +171,51 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<OnboardingProvider>(
-      builder: (context, onboardingProvider, child) {
+      builder: (context, provider, child) {
         return OnboardingScreenWrapper(
           title: "What's your Age?",
-          subtitle: null, // Remove subtitle to match image
-          onContinue: () => _handleContinue(onboardingProvider),
-          isLoading: onboardingProvider.isSaving,
-          child: Center(
-            child: Container(
-              height: 300.0,
-              width: 200.0,
-              child: AgeSelectionWheel(
-                scrollController: _scrollController,
-                ages: _ages,
-                selectedAge: _selectedAge,
-                itemExtent: _itemExtent,
-                highlightColor: AppColors.ageSelectionHighlight,
-                selectedTextColor: Colors.white,
-                unselectedTextColor: AppColors.ageSelectionText,
-                farTextColor: AppColors.ageSelectionTextLight,
-                maxFontSize: _maxFontSize,
-                minFontSize: _minFontSize,
-                onSelectedItemChanged: _handleSelectionChange,
-              ),
+          backgroundColor: AppColors.onBoardingpagebackground,
+          onContinue: _handleContinue,
+          isLoading: provider.isSaving,
+          child: Expanded(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Outer container with stroke effect
+                Container(
+                  height: _itemExtent,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: AppColors.waterFull.withValues(alpha: 0.3),
+                      width: 9,
+                    ),
+                  ),
+                ),
+                // Inner container (the blue background)
+                Container(
+                  height: _itemExtent - 9,
+                  width: 194,
+                  decoration: BoxDecoration(
+                    color: AppColors.waterFull,
+                    borderRadius: BorderRadius.circular(27),
+                  ),
+                ),
+                AgeSelectionWheel(
+                  scrollController: _scrollController,
+                  ages: _ages,
+                  selectedAge: _selectedAge,
+                  itemExtent: _itemExtent,
+                  highlightColor: AppColors.selectedBorder,
+                  selectedTextColor: Colors.white,
+                  unselectedTextColor: AppColors.assessmentText,
+                  farTextColor: Colors.grey.shade300,
+                  maxFontSize: _maxFontSize,
+                  minFontSize: _minFontSize,
+                  onSelectedItemChanged: _handleSelectionChange,
+                ),
+              ],
             ),
           ),
         );

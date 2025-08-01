@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/continue_button.dart';
+import 'package:watertracker/core/widgets/common/assessment_counter.dart';
+import 'package:watertracker/core/widgets/common/exit_confirmation_modal.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_progress_indicator.dart';
@@ -45,9 +48,11 @@ class OnboardingScreenWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<OnboardingProvider>(
       builder: (context, onboardingProvider, _) {
+        final bgColor = backgroundColor ?? AppColors.onboardingBackground;
+        
         return Scaffold(
-          backgroundColor: backgroundColor ?? Colors.white,
-          appBar: _buildAppBar(context, onboardingProvider),
+          backgroundColor: bgColor,
+          appBar: _buildAppBar(context, onboardingProvider, bgColor),
           body: Column(
             children: [
               // Progress indicator
@@ -112,11 +117,12 @@ class OnboardingScreenWrapper extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       if (title != null)
                         Text(
                           title!,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontFamily: 'Nunito',
                             fontSize: 32,
@@ -129,6 +135,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           subtitle!,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontFamily: 'Nunito',
                             fontSize: 16,
@@ -157,11 +164,12 @@ class OnboardingScreenWrapper extends StatelessWidget {
   PreferredSizeWidget? _buildAppBar(
     BuildContext context,
     OnboardingProvider provider,
+    Color bgColor,
   ) {
     if (!showBackButton && provider.currentStep == 0) return null;
 
     return AppBar(
-      backgroundColor: backgroundColor ?? Colors.white,
+      backgroundColor: bgColor,
       elevation: 0,
       leading:
           showBackButton && provider.currentStep > 0
@@ -177,7 +185,13 @@ class OnboardingScreenWrapper extends StatelessWidget {
                     color: AppColors.assessmentText,
                   ),
                   onPressed: () {
-                    provider.navigatePrevious();
+                    // Only show exit modal on step 1 (age selection)
+                    if (provider.currentStep == 1) {
+                      _showExitConfirmation(context);
+                    } else {
+                      // Normal back navigation for other pages
+                      provider.navigatePrevious();
+                    }
                   },
                 ),
               )
@@ -192,23 +206,28 @@ class OnboardingScreenWrapper extends StatelessWidget {
         ),
       ),
       actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 16),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            '${provider.currentStep + 1} of ${provider.totalStepsCount}',
-            style: const TextStyle(
-              color: AppColors.pageCounter,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+        AssessmentCounter(
+          currentStep: provider.currentStep,
+          totalSteps: provider.totalStepsCount,
         ),
       ],
+    );
+  }
+
+  void _showExitConfirmation(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return ExitConfirmationModal(
+          onConfirm: () {
+            SystemNavigator.pop();
+          },
+          onCancel: () {
+            // Stay on current page
+          },
+        );
+      },
     );
   }
 

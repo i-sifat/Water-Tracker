@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/cards/goal_selection_card.dart';
-import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
@@ -103,6 +102,30 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
     },
   ];
 
+  Future<void> _handleContinue(OnboardingProvider provider) async {
+    // Convert string value to integer for storage
+    int sugarIntake;
+    switch (_selectedFrequency) {
+      case 'almost_never':
+        sugarIntake = 0;
+        break;
+      case 'rarely':
+        sugarIntake = 1;
+        break;
+      case 'regularly':
+        sugarIntake = 2;
+        break;
+      case 'often':
+        sugarIntake = 3;
+        break;
+      default:
+        sugarIntake = 1;
+    }
+    
+    provider.updateSugarDrinkIntake(sugarIntake);
+    await provider.navigateNext();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<OnboardingProvider>(
@@ -112,8 +135,10 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
           subtitle: "Select which whats your habit.",
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
-          onContinue: null, // We'll handle this manually
-          canContinue: false, // We'll handle this manually
+          onContinue: _selectedFrequency.isNotEmpty 
+              ? () => _handleContinue(onboardingProvider)
+              : null,
+          canContinue: _selectedFrequency.isNotEmpty,
           isLoading: onboardingProvider.isSaving,
           child: Column(
             children: [
@@ -143,44 +168,10 @@ class _SugaryBeveragesScreenState extends State<SugaryBeveragesScreen> {
                   },
                 ),
               ),
-
-              const SizedBox(height: 16),
-
-              // Continue button
-              ContinueButton(
-                onPressed: _selectedFrequency.isNotEmpty 
-                    ? () => _handleContinue(onboardingProvider)
-                    : () {}, // Empty callback when disabled
-                isDisabled: _selectedFrequency.isEmpty,
-              ),
             ],
           ),
         );
       },
     );
-  }
-
-  Future<void> _handleContinue(OnboardingProvider provider) async {
-    // Convert string value to integer for storage
-    int sugarIntake;
-    switch (_selectedFrequency) {
-      case 'almost_never':
-        sugarIntake = 0;
-        break;
-      case 'rarely':
-        sugarIntake = 1;
-        break;
-      case 'regularly':
-        sugarIntake = 2;
-        break;
-      case 'often':
-        sugarIntake = 3;
-        break;
-      default:
-        sugarIntake = 1;
-    }
-    
-    provider.updateSugarDrinkIntake(sugarIntake);
-    await provider.navigateNext();
   }
 }
