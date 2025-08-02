@@ -1,15 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
-import 'package:watertracker/core/widgets/common/empty_state_widget.dart';
 import 'package:watertracker/core/widgets/common/loading_widget.dart';
-import 'package:watertracker/core/widgets/common/optimized_list_view.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
-import 'package:watertracker/core/widgets/inputs/app_text_field.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
@@ -36,11 +32,7 @@ class HistoryScreenContent extends StatefulWidget {
 class _HistoryScreenContentState extends State<HistoryScreenContent>
     with SingleTickerProviderStateMixin {
   HistoryViewMode _viewMode = HistoryViewMode.weekly;
-  FilterType _filterType = FilterType.all;
-  DateTime _selectedDate = DateTime.now();
-  DateTime _focusedDate = DateTime.now();
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -73,7 +65,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     // Listen to search changes
     _searchController.addListener(() {
       setState(() {
-        _searchQuery = _searchController.text.toLowerCase();
+        // Search functionality can be implemented here if needed
       });
     });
   }

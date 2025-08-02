@@ -460,10 +460,10 @@ class OnboardingProvider extends ChangeNotifier {
         return 'Set your wake-up and sleep times';
       case 13:
         return 'Unlock premium features';
-      default:
-        return 'Review your information';
       case 14:
         return '';
+      default:
+        return 'Review your information';
     }
   }
 

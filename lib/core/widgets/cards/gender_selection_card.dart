@@ -92,4 +92,4 @@ class GenderSelectionCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

@@ -636,99 +636,9 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
   }
 
   Widget _buildTodaysEntriesList(HydrationProvider hydrationProvider) {
-    final todaysEntries = hydrationProvider.todaysEntries;
-
-    if (todaysEntries.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.water_drop_outlined,
-              size: 64,
-              color: AppColors.textSubtitle,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'No entries today yet',
-              style: TextStyle(
-                fontFamily: 'Nunito',
-                fontSize: 18,
-                color: AppColors.textSubtitle,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemCount: todaysEntries.length,
-      itemBuilder: (context, index) {
-        final entry = todaysEntries[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          child: Row(
-            children: [
-              // Drink type icon
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.waterFull.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  _getDrinkTypeIcon(entry.type),
-                  color: AppColors.waterFull,
-                  size: 20,
-                ),
-              ),
-              
-              const SizedBox(width: 16),
-              
-              // Entry details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${(entry.amount / 1000).toStringAsFixed(1)} L',
-                      style: const TextStyle(
-                        fontFamily: 'Nunito',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textHeadline,
-                      ),
-                    ),
-                    if (entry.notes?.isNotEmpty == true)
-                      Text(
-                        entry.notes!,
-                        style: const TextStyle(
-                          fontFamily: 'Nunito',
-                          fontSize: 14,
-                          color: AppColors.textSubtitle,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              
-              // Time
-              Text(
-                '${entry.timestamp.hour.toString().padLeft(2, '0')}:${entry.timestamp.minute.toString().padLeft(2, '0')} ${entry.timestamp.hour >= 12 ? 'PM' : 'AM'}',
-                style: const TextStyle(
-                  fontFamily: 'Nunito',
-                  fontSize: 14,
-                  color: AppColors.textSubtitle,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    // This method is no longer needed as we removed today's entries from the main screen
+    // Keeping it for potential future use in other screens
+    return const SizedBox.shrink();
   }
 
   Widget _buildGoalBreakdownContent(HydrationProvider hydrationProvider) {
@@ -1753,3 +1663,9 @@ class CircularProgressPainter extends CustomPainter {
         oldDelegate.innerRingColor != innerRingColor;
   }
 }
+
+
+
+
+
+// Duplicate code removed - keeping the original implementation above
