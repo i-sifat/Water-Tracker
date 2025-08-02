@@ -14,7 +14,7 @@ class OnboardingProvider extends ChangeNotifier {
   int _currentStep = 0;
 
   // Total number of onboarding steps
-  static const int totalSteps = 14;
+  static const int totalSteps = 15;
 
   // User profile being built during onboarding
   UserProfile _userProfile = UserProfile.create();
@@ -27,6 +27,7 @@ class OnboardingProvider extends ChangeNotifier {
     9,
     10,
     12, // daily routine is optional
+    13, // premium unlock is optional
   }; // gender, pregnancy, sugary drinks, vegetable, weather
 
   // Track completed steps
@@ -81,6 +82,8 @@ class OnboardingProvider extends ChangeNotifier {
       case 12: // Data summary - always valid
         return true;
       case 13: // Data summary - always valid
+        return true;
+      case 14: // Premium unlock - always valid
         return true;
       default:
         return false;
@@ -420,6 +423,8 @@ class OnboardingProvider extends ChangeNotifier {
       case 11:
         return 'Daily Routine';
       case 13:
+        return 'Premium Features';
+      case 14:
         return 'Data Summary';
       default:
         return 'Step ${step + 1}';
@@ -454,8 +459,10 @@ class OnboardingProvider extends ChangeNotifier {
       case 11:
         return 'Set your wake-up and sleep times';
       case 13:
-        return 'Review your information';
+        return 'Unlock premium features';
       default:
+        return 'Review your information';
+      case 14:
         return '';
     }
   }

@@ -11,6 +11,7 @@ import 'package:watertracker/features/onboarding/screens/gender_selection_screen
 import 'package:watertracker/features/onboarding/screens/goal_selection_screen.dart';
 import 'package:watertracker/features/onboarding/screens/notification_setup_screen.dart';
 import 'package:watertracker/features/onboarding/screens/pregnancy_status_screen.dart';
+import 'package:watertracker/features/onboarding/screens/premium_unlock_screen.dart';
 import 'package:watertracker/features/onboarding/screens/sugary_drinks_screen.dart';
 import 'package:watertracker/features/onboarding/screens/vegetable_intake_screen.dart';
 import 'package:watertracker/features/onboarding/screens/weather_preference_screen.dart';
@@ -213,6 +214,8 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
       case 12:
         return const DailyRoutineScreen();
       case 13:
+        return const PremiumUnlockScreen();
+      case 14:
         return const CompileDataScreen();
       default:
         return const WelcomeScreen();

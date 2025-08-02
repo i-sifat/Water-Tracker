@@ -64,7 +64,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
                   ),
                   child: AnimatedOnboardingProgressIndicator(
                     currentStep: onboardingProvider.currentStep - 1, // Adjust to start from 0 for progress
-                    totalSteps: 13, // Total onboarding steps excluding welcome (1-13)
+                    totalSteps: 14, // Total onboarding steps excluding welcome (1-14)
                     showStepNumbers: false,
                   ),
                 ),
