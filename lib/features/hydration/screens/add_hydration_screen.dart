@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 
@@ -41,6 +43,10 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
   // Smart suggestions based on patterns
   List<int> _smartSuggestions = [500, 250, 400, 100];
 
+  // Circular progress card controller
+  late PageController _circularCardController;
+  int _currentCardIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +60,8 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
         curve: Curves.easeInOut,
       ),
     );
+    
+    _circularCardController = PageController(viewportFraction: 1.0);
     _loadSmartSuggestions();
   }
 
@@ -62,6 +70,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
     _customAmountController.dispose();
     _notesController.dispose();
     _undoAnimationController.dispose();
+    _circularCardController.dispose();
     _undoTimer?.cancel();
     super.dispose();
   }
@@ -102,6 +111,16 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
         children: [
           const SizedBox(height: 60),
 
+          // Time display header
+          _buildTimeHeader(),
+
+          const SizedBox(height: 40),
+
+          // Circular progress with swipeable cards
+          _buildCircularProgressSection(hydrationProvider),
+
+          const SizedBox(height: 60),
+
           // Undo button (appears when there are entries in undo stack)
           if (_undoStack.isNotEmpty)
             AnimatedBuilder(
@@ -129,11 +148,6 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
             ),
 
           const SizedBox(height: 20),
-
-          // Progress circle
-          _buildProgressCircle(hydrationProvider, darkBlueColor),
-
-          const SizedBox(height: 30),
 
           // Drink type selector toggle
           Padding(
@@ -291,6 +305,243 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
           _buildTodaysEntries(hydrationProvider),
 
           const SizedBox(height: 100), // Bottom padding for navigation
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeHeader() {
+    final now = DateTime.now();
+    final startTime = DateTime(now.year, now.month, now.day, 7, 0); // 07:00 AM
+    final endTime = DateTime(now.year, now.month, now.day, 23, 0); // 11:00 PM
+    final nextReminder = _getNextReminderTime();
+    final timeUntilReminder = nextReminder.difference(now);
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')} AM',
+            style: const TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textSubtitle,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.unselectedBorder,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '${timeUntilReminder.inMinutes}min',
+              style: const TextStyle(
+                fontFamily: 'Nunito',
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textHeadline,
+              ),
+            ),
+          ),
+          Text(
+            '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')} PM',
+            style: const TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textSubtitle,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  DateTime _getNextReminderTime() {
+    final now = DateTime.now();
+    // Calculate next reminder time (simplified - every 2 hours)
+    final nextHour = ((now.hour ~/ 2) + 1) * 2;
+    if (nextHour < 24) {
+      return DateTime(now.year, now.month, now.day, nextHour, 0);
+    } else {
+      return DateTime(now.year, now.month, now.day + 1, 8, 0); // Next day 8 AM
+    }
+  }
+
+  Widget _buildCircularProgressSection(HydrationProvider hydrationProvider) {
+    return SizedBox(
+      height: 400,
+      child: PageView.builder(
+        controller: _circularCardController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentCardIndex = index;
+          });
+        },
+        itemCount: 3, // Three swipeable cards
+        itemBuilder: (context, index) {
+          return _buildCircularProgressCard(hydrationProvider, index);
+        },
+      ),
+    );
+  }
+
+  Widget _buildCircularProgressCard(HydrationProvider hydrationProvider, int cardIndex) {
+    final currentIntake = hydrationProvider.currentIntake;
+    final dailyGoal = hydrationProvider.dailyGoal;
+    final progress = hydrationProvider.intakePercentage;
+    final remainingIntake = hydrationProvider.remainingIntake;
+    
+    // Calculate next reminder time and remaining ml
+    final nextReminder = _getNextReminderTime();
+    final timeString = '${nextReminder.hour.toString().padLeft(2, '0')}:${nextReminder.minute.toString().padLeft(2, '0')} ${nextReminder.hour >= 12 ? 'PM' : 'AM'}';
+    
+    // Different content for each card
+    String mainText;
+    String subtitleText;
+    String bottomText;
+    
+    switch (cardIndex) {
+      case 0:
+        mainText = '${(currentIntake / 1000).toStringAsFixed(2)} L';
+        subtitleText = 'drank so far';
+        bottomText = 'from a total of ${(dailyGoal / 1000).toStringAsFixed(0)} L';
+        break;
+      case 1:
+        mainText = '${(remainingIntake / 1000).toStringAsFixed(2)} L';
+        subtitleText = 'remaining';
+        bottomText = 'to reach your daily goal';
+        break;
+      case 2:
+        mainText = '${(progress * 100).toInt()}%';
+        subtitleText = 'completed';
+        bottomText = 'of today\'s hydration goal';
+        break;
+      default:
+        mainText = '${(currentIntake / 1000).toStringAsFixed(2)} L';
+        subtitleText = 'drank so far';
+        bottomText = 'from a total of ${(dailyGoal / 1000).toStringAsFixed(0)} L';
+    }
+
+    return Center(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Main circular progress
+          SizedBox(
+            width: 280,
+            height: 280,
+            child: CustomPaint(
+              painter: CircularProgressPainter(
+                progress: progress,
+                strokeWidth: 20,
+                backgroundColor: AppColors.unselectedBorder,
+                progressColor: AppColors.waterFull,
+                innerRingColor: Colors.green,
+              ),
+            ),
+          ),
+          
+          // Profile icon on the left side
+          Positioned(
+            left: 20,
+            child: Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.unselectedBorder, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                hydrationProvider.selectedAvatar == AvatarOption.male 
+                    ? Icons.person 
+                    : Icons.person_outline,
+                size: 20,
+                color: AppColors.textSubtitle,
+              ),
+            ),
+          ),
+          
+          // Central content
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                mainText,
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 48,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textHeadline,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                subtitleText,
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textHeadline,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                bottomText,
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textSubtitle,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${remainingIntake} ml left before $timeString',
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textSubtitle,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          
+          // Page indicator dots
+          Positioned(
+            bottom: 20,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(3, (index) {
+                return Container(
+                  width: 8,
+                  height: 8,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentCardIndex == index 
+                        ? AppColors.textHeadline 
+                        : AppColors.textSubtitle.withValues(alpha: 0.3),
+                  ),
+                );
+              }),
+            ),
+          ),
         ],
       ),
     );
@@ -650,7 +901,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: textColor,
-                fontFamily: 'Inter',
+                fontFamily: 'Nunito',
               ),
             ),
             if (_selectedDrinkType != DrinkType.water)
@@ -659,72 +910,9 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
                 style: TextStyle(
                   fontSize: 11,
                   color: textColor.withValues(alpha: 0.7),
-                  fontFamily: 'Inter',
+                  fontFamily: 'Nunito',
                 ),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProgressCircle(
-    HydrationProvider hydrationProvider,
-    Color darkBlueColor,
-  ) {
-    return Center(
-      child: Container(
-        width: 200,
-        height: 200,
-        margin: const EdgeInsets.only(bottom: 20),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              width: 200,
-              height: 200,
-              child: CircularProgressIndicator(
-                value: hydrationProvider.intakePercentage,
-                strokeWidth: 12,
-                backgroundColor: Colors.grey.shade200,
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color(0xFF918DFE),
-                ),
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '${(hydrationProvider.intakePercentage * 100).toStringAsFixed(0)}%',
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    color: darkBlueColor,
-                    fontFamily: 'Inter',
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${hydrationProvider.currentIntake} ml',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: darkBlueColor,
-                    fontFamily: 'Inter',
-                  ),
-                ),
-                Text(
-                  '-${hydrationProvider.remainingIntake} ml',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF7F8192),
-                    fontFamily: 'Inter',
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -1152,5 +1340,72 @@ class _AddHydrationScreenState extends State<AddHydrationScreen> {
         },
       ),
     );
+  }
+}
+
+/// Custom painter for the circular progress indicator
+class CircularProgressPainter extends CustomPainter {
+  CircularProgressPainter({
+    required this.progress,
+    required this.strokeWidth,
+    required this.backgroundColor,
+    required this.progressColor,
+    required this.innerRingColor,
+  });
+
+  final double progress;
+  final double strokeWidth;
+  final Color backgroundColor;
+  final Color progressColor;
+  final Color innerRingColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width - strokeWidth) / 2;
+    
+    // Background circle
+    final backgroundPaint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    
+    canvas.drawCircle(center, radius, backgroundPaint);
+    
+    // Inner green ring
+    final innerRingPaint = Paint()
+      ..color = innerRingColor
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+    
+    canvas.drawCircle(center, radius - strokeWidth / 2 - 5, innerRingPaint);
+    
+    // Progress arc
+    final progressPaint = Paint()
+      ..color = progressColor
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    
+    const startAngle = -math.pi / 2; // Start from top
+    final sweepAngle = 2 * math.pi * progress;
+    
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      startAngle,
+      sweepAngle,
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(CircularProgressPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.backgroundColor != backgroundColor ||
+        oldDelegate.progressColor != progressColor ||
+        oldDelegate.innerRingColor != innerRingColor;
   }
 }
