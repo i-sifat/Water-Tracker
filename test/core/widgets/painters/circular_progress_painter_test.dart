@@ -156,7 +156,6 @@ void main() {
         );
         const painter2 = CircularProgressPainter(
           progress: 0.5,
-          strokeWidth: 12,
         );
 
         expect(painter1.shouldRepaint(painter2), isFalse);
@@ -265,7 +264,6 @@ void main() {
         );
         const painter2 = CircularProgressPainter(
           progress: 0.5,
-          innerRingWidth: 3,
         );
 
         expect(painter1, equals(painter2));

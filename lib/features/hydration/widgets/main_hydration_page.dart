@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/models/hydration_progress.dart';
+import 'package:watertracker/core/utils/accessibility_utils.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/widgets/circular_progress_section.dart';
 import 'package:watertracker/features/hydration/widgets/drink_type_selector.dart';
@@ -44,44 +46,77 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
   Widget build(BuildContext context) {
     return Consumer<HydrationProvider>(
       builder: (context, hydrationProvider, child) {
-        return Container(
-          decoration: _buildGradientBackground(),
-          child: SafeArea(
-            child: Column(
-              children: [
-                // Header with navigation and time indicators
-                _buildHeader(),
+        return Semantics(
+          label: 'Main hydration tracking page',
+          hint:
+              '${AccessibilityUtils.swipeUpHint}. ${AccessibilityUtils.swipeDownHint}',
+          child: Container(
+            decoration: _buildGradientBackground(),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  // Header with navigation and time indicators
+                  _buildHeader(),
 
-                // Main content area
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 20),
-
-                        // Circular progress section
-                        _buildCircularProgressSection(hydrationProvider),
-
-                        const SizedBox(height: 32),
-
-                        // Drink type selector
-                        _buildDrinkTypeSelector(),
-
-                        const SizedBox(height: 24),
-
-                        // Quick add button grid
-                        _buildQuickAddButtonGrid(),
-
-                        const SizedBox(height: 32),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                  // Main content area
+                  Expanded(child: _buildMainContent(hydrationProvider)),
+                ],
+              ),
             ),
           ),
         );
       },
+    );
+  }
+
+  /// Build main content with loading states
+  /// Performance optimization: Separate loading states for better UX
+  Widget _buildMainContent(HydrationProvider hydrationProvider) {
+    if (hydrationProvider.isLoading && !hydrationProvider.isInitialized) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Loading your hydration data...',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontFamily: 'Nunito',
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+
+          // Performance optimization: RepaintBoundary around circular progress
+          RepaintBoundary(
+            child: _buildCircularProgressSection(hydrationProvider),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Performance optimization: RepaintBoundary around drink selector
+          RepaintBoundary(child: _buildDrinkTypeSelector()),
+
+          const SizedBox(height: 24),
+
+          // Performance optimization: RepaintBoundary around button grid
+          RepaintBoundary(child: _buildQuickAddButtonGrid()),
+
+          const SizedBox(height: 32),
+        ],
+      ),
     );
   }
 
@@ -92,8 +127,9 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          Color(0xFF6B73FF), // Top gradient color - matches design mockup
-          Color(0xFF9546C4), // Bottom gradient color - matches design mockup
+          AppColors.gradientTop, // Top gradient color - matches design mockup
+          AppColors
+              .gradientBottom, // Bottom gradient color - matches design mockup
         ],
         stops: [0.0, 1.0],
       ),
@@ -110,41 +146,56 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
           Row(
             children: [
               // Hamburger menu icon
-              GestureDetector(
+              AccessibilityUtils.ensureMinTouchTarget(
                 onTap: _onMenuTapped,
+                semanticLabel: AccessibilityUtils.navigationMenuLabel,
+                semanticHint: 'Double tap to open navigation menu',
                 child: Container(
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: const Icon(Icons.menu, color: Colors.white, size: 20),
                 ),
               ),
 
-              // Today title
+              // Performance optimization: const widget for Today title
               Expanded(
-                child: Text(
-                  'Today',
+                child: AccessibilityUtils.createAccessibleText(
+                  text: 'Today',
+                  style: AppTypography.hydrationTitle,
                   textAlign: TextAlign.center,
-                  style: AppTypography.headline.copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
+                  semanticLabel: "Today's hydration tracking page",
                 ),
               ),
 
               // Profile/settings icon
-              GestureDetector(
+              AccessibilityUtils.ensureMinTouchTarget(
                 onTap: _onProfileTapped,
+                semanticLabel: AccessibilityUtils.profileButtonLabel,
+                semanticHint: 'Double tap to open profile and settings',
                 child: Container(
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: const Icon(
                     Icons.person_outline,
@@ -181,18 +232,24 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
 
   /// Build individual time indicator
   Widget _buildTimeIndicator(String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Text(
-        text,
-        style: AppTypography.subtitle.copyWith(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          color: Colors.white,
+    return Semantics(
+      label: 'Time indicator: $text',
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: AccessibilityUtils.createAccessibleText(
+          text: text,
+          style: AppTypography.timeIndicatorText,
         ),
       ),
     );
@@ -255,11 +312,11 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
   /// Update time range indicators with current time data
   void _updateTimeRangeIndicators() {
     final now = DateTime.now();
-    
+
     // Format current time (start of day)
     final startTime = DateTime(now.year, now.month, now.day, 7);
     _currentTime = _formatTime(startTime);
-    
+
     // Calculate next reminder time
     final nextReminder = _getNextReminderTime();
     final timeDiff = nextReminder.difference(now);
@@ -268,7 +325,7 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
     } else {
       _nextReminderTime = _formatTime(nextReminder);
     }
-    
+
     // End time (11:00 PM)
     final endTime = DateTime(now.year, now.month, now.day, 23);
     _endTime = _formatTime(endTime);
@@ -321,7 +378,7 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              
+
               // Menu items
               ListTile(
                 leading: const Icon(Icons.home, color: Color(0xFF6B73FF)),
@@ -346,7 +403,9 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
                   Navigator.pop(context);
                   // Navigate to history - would need to be implemented
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('History feature coming soon')),
+                    const SnackBar(
+                      content: Text('History feature coming soon'),
+                    ),
                   );
                 },
               ),

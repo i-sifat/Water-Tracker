@@ -6,9 +6,9 @@ import 'package:watertracker/features/history/history_screen.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
+import 'package:watertracker/features/hydration/widgets/goal_breakdown_page.dart';
 import 'package:watertracker/features/hydration/widgets/main_hydration_page.dart';
 import 'package:watertracker/features/hydration/widgets/statistics_page.dart';
-import 'package:watertracker/features/hydration/widgets/goal_breakdown_page.dart';
 
 void main() {
   group('AddHydrationScreen Bottom Navigation Integration', () {

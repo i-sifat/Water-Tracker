@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/models/app_error.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
+import 'package:watertracker/core/utils/accessibility_utils.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 
 /// A 2x2 grid of quick add buttons for common hydration amounts
@@ -17,12 +21,12 @@ class QuickAddButtonGrid extends StatelessWidget {
   /// Currently selected drink type for water content calculation
   final DrinkType selectedDrinkType;
 
-  /// Button configurations with amounts and colors
+  /// Button configurations with amounts and colors - Updated to match design mockup
   static const Map<int, Color> _buttonConfigs = {
-    500: Color(0xFFB39DDB), // Purple
-    250: Color(0xFF81D4FA), // Light Blue
-    400: Color(0xFFA5D6A7), // Light Green
-    100: Color(0xFFFFF59D), // Light Yellow
+    500: AppColors.box1, // Purple
+    250: AppColors.box2, // Light Blue
+    400: AppColors.box3, // Light Green
+    100: AppColors.box4, // Light Yellow
   };
 
   @override
@@ -38,29 +42,72 @@ class QuickAddButtonGrid extends StatelessWidget {
         childAspectRatio: 1.2,
         children:
             _buttonConfigs.entries.map((entry) {
-              return QuickAddButton(
-                amount: entry.key,
-                color: entry.value,
-                selectedDrinkType: selectedDrinkType,
-                onPressed: () => _handleButtonPress(context, entry.key),
+              // Performance optimization: RepaintBoundary around each button
+              return RepaintBoundary(
+                child: QuickAddButton(
+                  amount: entry.key,
+                  color: entry.value,
+                  selectedDrinkType: selectedDrinkType,
+                  onPressed: () => _handleButtonPress(context, entry.key),
+                ),
               );
             }).toList(),
       ),
     );
   }
 
-  /// Handle button press and add hydration
+  /// Handle button press and add hydration with comprehensive error handling
   Future<void> _handleButtonPress(BuildContext context, int amount) async {
+    if (!context.mounted) return;
+
     try {
       final provider = Provider.of<HydrationProvider>(context, listen: false);
+
+      // Show loading state briefly
       await provider.addHydration(
         amount,
         type: selectedDrinkType,
-        context: context,
+        context: context.mounted ? context : null,
       );
+
+      if (!context.mounted) return;
+
+      // Announce hydration addition to screen readers
+      AccessibilityUtils.announceHydrationAdded(
+        context,
+        amount,
+        selectedDrinkType.displayName,
+      );
+
+      // Provide haptic feedback for accessibility
+      await AccessibilityUtils.provideAccessibilityFeedback();
+
       onAmountAdded?.call();
     } catch (e) {
-      // Error handling is managed by the provider
+      if (!context.mounted) return;
+
+      // Show user-friendly error message
+      var errorMessage = 'Failed to add hydration';
+
+      if (e is ValidationError) {
+        errorMessage = e.userMessage;
+      } else if (e is StorageError) {
+        errorMessage = 'Failed to save hydration data. Please try again.';
+      } else if (e is NetworkError) {
+        errorMessage = 'No internet connection. Data will be saved locally.';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          duration: const Duration(seconds: 3),
+          action: SnackBarAction(
+            label: 'Retry',
+            onPressed: () => _handleButtonPress(context, amount),
+          ),
+        ),
+      );
+
       debugPrint('Failed to add hydration: $e');
     }
   }
@@ -98,6 +145,9 @@ class _QuickAddButtonState extends State<QuickAddButton>
   late Animation<double> _scaleAnimation;
   late Animation<Color?> _colorAnimation;
 
+  // Performance optimization: Cache darkened color
+  Color? _cachedDarkenedColor;
+
   @override
   void initState() {
     super.initState();
@@ -110,9 +160,11 @@ class _QuickAddButtonState extends State<QuickAddButton>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
+    // Performance optimization: Cache darkened color calculation
+    _cachedDarkenedColor = _darkenColor(widget.color, 0.1);
     _colorAnimation = ColorTween(
       begin: widget.color,
-      end: _darkenColor(widget.color, 0.1),
+      end: _cachedDarkenedColor,
     ).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
@@ -120,7 +172,9 @@ class _QuickAddButtonState extends State<QuickAddButton>
 
   @override
   void dispose() {
+    // Performance optimization: Proper animation controller disposal
     _animationController.dispose();
+    _cachedDarkenedColor = null;
     super.dispose();
   }
 
@@ -146,49 +200,62 @@ class _QuickAddButtonState extends State<QuickAddButton>
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: GestureDetector(
-            onTapDown: (_) => _animationController.forward(),
-            onTapUp: (_) => _handlePress(),
-            onTapCancel: () => _animationController.reverse(),
-            child: Container(
-              decoration: BoxDecoration(
-                color: _colorAnimation.value,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '${widget.amount} ml',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      fontFamily: 'Nunito',
+        return AccessibilityUtils.createAccessibleButton(
+          semanticLabel: AccessibilityUtils.createQuickAddButtonLabel(
+            widget.amount,
+            widget.selectedDrinkType.displayName,
+          ),
+          semanticHint: 'Double tap to add this amount to your hydration log',
+          onPressed: _handlePress,
+          child: Transform.scale(
+            scale: _scaleAnimation.value,
+            child: GestureDetector(
+              onTapDown: (_) => _animationController.forward(),
+              onTapUp: (_) => _handlePress(),
+              onTapCancel: () => _animationController.reverse(),
+              child: Container(
+                constraints: const BoxConstraints(
+                  minWidth: AccessibilityUtils.minTouchTargetSize,
+                  minHeight: AccessibilityUtils.minTouchTargetSize,
+                ),
+                decoration: BoxDecoration(
+                  color: _colorAnimation.value,
+                  borderRadius: BorderRadius.circular(
+                    20,
+                  ), // Increased for better design
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(
+                        alpha: 0.15,
+                      ), // Slightly more prominent shadow
+                      blurRadius: 8, // Increased blur for softer shadow
+                      offset: const Offset(0, 4), // Increased offset for depth
                     ),
-                  ),
-                  if (widget.selectedDrinkType != DrinkType.water) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      _getWaterContentText(),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white70,
-                        fontFamily: 'Nunito',
-                      ),
+                    BoxShadow(
+                      color: Colors.black.withValues(
+                        alpha: 0.05,
+                      ), // Additional subtle shadow
+                      blurRadius: 2,
+                      offset: const Offset(0, 1),
                     ),
                   ],
-                ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AccessibilityUtils.createAccessibleText(
+                      text: '${widget.amount} ml',
+                      style: AppTypography.buttonLargeText,
+                    ),
+                    if (widget.selectedDrinkType != DrinkType.water) ...[
+                      const SizedBox(height: 4),
+                      AccessibilityUtils.createAccessibleText(
+                        text: _getWaterContentText(),
+                        style: AppTypography.buttonSmallText,
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
           ),

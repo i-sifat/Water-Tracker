@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:watertracker/core/models/goal_factors.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/models/hydration_entry.dart';
 import 'package:watertracker/core/models/hydration_progress.dart';
-import 'package:watertracker/core/models/goal_factors.dart';
 
 void main() {
   group('Swipeable Hydration Models Integration', () {

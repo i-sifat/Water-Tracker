@@ -1,0 +1,35 @@
+# Test configuration for the watertracker app
+# This file configures test execution for the comprehensive test suite
+
+# Test tags for organizing different types of tests
+tags:
+  unit:
+    description: "Unit tests for individual components"
+  widget:
+    description: "Widget tests for UI components"
+  integration:
+    description: "Integration tests for complete user flows"
+  performance:
+    description: "Performance tests for animations and gestures"
+  visual:
+    description: "Visual regression tests for design accuracy"
+  accessibility:
+    description: "Accessibility tests for inclusive design"
+
+# Test timeout configuration
+timeout: 30s
+
+# Test platforms
+platforms:
+  - vm
+
+# Test patterns
+test_on: "vm"
+
+# Coverage configuration
+coverage:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/main.dart"
+    - "test/**"

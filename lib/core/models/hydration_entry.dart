@@ -4,6 +4,14 @@ import 'package:watertracker/core/models/hydration_data.dart';
 /// Enhanced model representing a single hydration entry with additional functionality
 /// This extends the existing HydrationData model with swipeable interface specific features
 class HydrationEntry extends Equatable {
+  const HydrationEntry({
+    required this.id,
+    required this.timestamp,
+    required this.amount,
+    required this.type,
+    this.notes,
+    this.isSynced = false,
+  });
 
   /// Create a new hydration entry with current timestamp
   factory HydrationEntry.create({
@@ -48,14 +56,6 @@ class HydrationEntry extends Equatable {
       isSynced: json['isSynced'] as bool? ?? false,
     );
   }
-  const HydrationEntry({
-    required this.id,
-    required this.timestamp,
-    required this.amount,
-    required this.type,
-    this.notes,
-    this.isSynced = false,
-  });
 
   /// Unique identifier for this hydration entry
   final String id;

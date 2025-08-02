@@ -2,6 +2,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 /// Custom painter for drawing circular progress indicator with gradient and inner ring
+/// Performance optimized with cached paint objects and gradient calculations
+@immutable
 class CircularProgressPainter extends CustomPainter {
   /// Creates a circular progress painter
   const CircularProgressPainter({
@@ -13,6 +15,11 @@ class CircularProgressPainter extends CustomPainter {
     this.innerRingWidth = 3.0,
     this.startAngle = -math.pi / 2, // Start from top
   });
+
+  // Performance optimization: Static cache for paint objects
+  static final Map<String, Paint> _paintCache = <String, Paint>{};
+  static final Map<String, SweepGradient> _gradientCache =
+      <String, SweepGradient>{};
 
   /// Progress value from 0.0 to 1.0
   final double progress;
@@ -52,18 +59,24 @@ class CircularProgressPainter extends CustomPainter {
   }
 
   /// Draws the background circle
+  /// Performance optimization: Cache paint objects
   void _drawBackgroundCircle(Canvas canvas, Offset center, double radius) {
-    final backgroundPaint =
-        Paint()
-          ..color = backgroundColor
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = strokeWidth
-          ..strokeCap = StrokeCap.round;
+    final cacheKey = 'bg_${backgroundColor.value}_$strokeWidth';
+    final backgroundPaint = _paintCache.putIfAbsent(
+      cacheKey,
+      () =>
+          Paint()
+            ..color = backgroundColor
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = strokeWidth
+            ..strokeCap = StrokeCap.round,
+    );
 
     canvas.drawCircle(center, radius, backgroundPaint);
   }
 
   /// Draws the progress arc with gradient
+  /// Performance optimization: Cache gradient and paint objects
   void _drawProgressArc(
     Canvas canvas,
     Offset center,
@@ -75,30 +88,47 @@ class CircularProgressPainter extends CustomPainter {
     final rect = Rect.fromCircle(center: center, radius: radius);
     final sweepAngle = 2 * math.pi * progress.clamp(0.0, 1.0);
 
-    // Create gradient shader
-    final gradient = SweepGradient(
-      colors: progressColors,
-      startAngle: startAngle,
-      endAngle: startAngle + sweepAngle,
+    // Performance optimization: Cache gradient object
+    final gradientKey =
+        '${progressColors.map((c) => c.value).join('_')}_${startAngle}_$sweepAngle';
+    final gradient = _gradientCache.putIfAbsent(
+      gradientKey,
+      () => SweepGradient(
+        colors: progressColors,
+        startAngle: startAngle,
+        endAngle: startAngle + sweepAngle,
+      ),
     );
 
-    final progressPaint =
-        Paint()
-          ..shader = gradient.createShader(rect)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = strokeWidth
-          ..strokeCap = StrokeCap.round;
+    // Performance optimization: Cache paint object (but recreate shader for current rect)
+    final paintKey = 'progress_$strokeWidth';
+    final progressPaint = _paintCache.putIfAbsent(
+      paintKey,
+      () =>
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = strokeWidth
+            ..strokeCap = StrokeCap.round,
+    );
+
+    // Update shader for current rect (this needs to be done each time)
+    progressPaint.shader = gradient.createShader(rect);
 
     canvas.drawArc(rect, startAngle, sweepAngle, false, progressPaint);
   }
 
   /// Draws the inner ring
+  /// Performance optimization: Cache paint object
   void _drawInnerRing(Canvas canvas, Offset center, double radius) {
-    final innerRingPaint =
-        Paint()
-          ..color = innerRingColor
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = innerRingWidth;
+    final cacheKey = 'inner_${innerRingColor.value}_$innerRingWidth';
+    final innerRingPaint = _paintCache.putIfAbsent(
+      cacheKey,
+      () =>
+          Paint()
+            ..color = innerRingColor
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = innerRingWidth,
+    );
 
     canvas.drawCircle(center, radius, innerRingPaint);
   }

@@ -26,7 +26,6 @@ class LargeSelectionBox extends StatelessWidget {
     return AppCard(
       onTap: onTap,
       isSelected: isSelected,
-      borderRadius: 20,
       padding: const EdgeInsets.all(20),
       margin: EdgeInsets.zero,
       child: Row(

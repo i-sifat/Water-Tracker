@@ -73,7 +73,6 @@ class _AddHydrationScreenState extends State<AddHydrationScreen> {
             },
           ),
         );
-        break;
       case 1:
         // Already on hydration screen, do nothing
         break;
@@ -96,7 +95,6 @@ class _AddHydrationScreenState extends State<AddHydrationScreen> {
             },
           ),
         );
-        break;
     }
   }
 

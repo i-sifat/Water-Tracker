@@ -3,16 +3,18 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
-import 'dart:ui' as _i8;
+import 'dart:async' as _i7;
+import 'dart:ui' as _i10;
 
-import 'package:flutter/material.dart' as _i6;
+import 'package:flutter/material.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i7;
-import 'package:watertracker/core/models/custom_drink_type.dart' as _i4;
-import 'package:watertracker/core/models/hydration_data.dart' as _i3;
+import 'package:mockito/src/dummies.dart' as _i9;
+import 'package:watertracker/core/models/custom_drink_type.dart' as _i6;
+import 'package:watertracker/core/models/goal_factors.dart' as _i2;
+import 'package:watertracker/core/models/hydration_data.dart' as _i5;
+import 'package:watertracker/core/models/hydration_entry.dart' as _i4;
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart'
-    as _i2;
+    as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -28,10 +30,15 @@ import 'package:watertracker/features/hydration/providers/hydration_provider.dar
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeGoalFactors_0 extends _i1.SmartFake implements _i2.GoalFactors {
+  _FakeGoalFactors_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [HydrationProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
+class MockHydrationProvider extends _i1.Mock implements _i3.HydrationProvider {
   MockHydrationProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -60,12 +67,12 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
           as double);
 
   @override
-  _i2.AvatarOption get selectedAvatar =>
+  _i3.AvatarOption get selectedAvatar =>
       (super.noSuchMethod(
             Invocation.getter(#selectedAvatar),
-            returnValue: _i2.AvatarOption.male,
+            returnValue: _i3.AvatarOption.male,
           )
-          as _i2.AvatarOption);
+          as _i3.AvatarOption);
 
   @override
   bool get goalReachedToday =>
@@ -99,20 +106,55 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
           as bool);
 
   @override
-  List<_i3.HydrationData> get hydrationHistory =>
+  List<_i4.HydrationEntry> get hydrationEntries =>
       (super.noSuchMethod(
-            Invocation.getter(#hydrationHistory),
-            returnValue: <_i3.HydrationData>[],
+            Invocation.getter(#hydrationEntries),
+            returnValue: <_i4.HydrationEntry>[],
           )
-          as List<_i3.HydrationData>);
+          as List<_i4.HydrationEntry>);
 
   @override
-  List<_i3.HydrationData> get todaysEntries =>
+  _i2.GoalFactors get goalFactors =>
+      (super.noSuchMethod(
+            Invocation.getter(#goalFactors),
+            returnValue: _FakeGoalFactors_0(
+              this,
+              Invocation.getter(#goalFactors),
+            ),
+          )
+          as _i2.GoalFactors);
+
+  @override
+  _i5.DrinkType get selectedDrinkType =>
+      (super.noSuchMethod(
+            Invocation.getter(#selectedDrinkType),
+            returnValue: _i5.DrinkType.water,
+          )
+          as _i5.DrinkType);
+
+  @override
+  List<_i4.HydrationEntry> get todaysHydrationEntries =>
+      (super.noSuchMethod(
+            Invocation.getter(#todaysHydrationEntries),
+            returnValue: <_i4.HydrationEntry>[],
+          )
+          as List<_i4.HydrationEntry>);
+
+  @override
+  List<_i5.HydrationData> get hydrationHistory =>
+      (super.noSuchMethod(
+            Invocation.getter(#hydrationHistory),
+            returnValue: <_i5.HydrationData>[],
+          )
+          as List<_i5.HydrationData>);
+
+  @override
+  List<_i5.HydrationData> get todaysEntries =>
       (super.noSuchMethod(
             Invocation.getter(#todaysEntries),
-            returnValue: <_i3.HydrationData>[],
+            returnValue: <_i5.HydrationData>[],
           )
-          as List<_i3.HydrationData>);
+          as List<_i5.HydrationData>);
 
   @override
   int get currentStreak =>
@@ -125,12 +167,12 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
           as int);
 
   @override
-  List<_i4.CustomDrinkType> get customDrinkTypes =>
+  List<_i6.CustomDrinkType> get customDrinkTypes =>
       (super.noSuchMethod(
             Invocation.getter(#customDrinkTypes),
-            returnValue: <_i4.CustomDrinkType>[],
+            returnValue: <_i6.CustomDrinkType>[],
           )
-          as List<_i4.CustomDrinkType>);
+          as List<_i6.CustomDrinkType>);
 
   @override
   bool get healthSyncEnabled =>
@@ -146,11 +188,11 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
           as bool);
 
   @override
-  _i5.Future<void> addHydration(
+  _i7.Future<void> addHydration(
     int? amount, {
-    _i3.DrinkType? type = _i3.DrinkType.water,
+    _i5.DrinkType? type = _i5.DrinkType.water,
     String? notes,
-    _i6.BuildContext? context,
+    _i8.BuildContext? context,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
@@ -158,16 +200,16 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
               [amount],
               {#type: type, #notes: notes, #context: context},
             ),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> editHydrationEntry(
+  _i7.Future<void> editHydrationEntry(
     String? entryId, {
     int? amount,
-    _i3.DrinkType? type,
+    _i5.DrinkType? type,
     String? notes,
   }) =>
       (super.noSuchMethod(
@@ -176,38 +218,38 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
               [entryId],
               {#amount: amount, #type: type, #notes: notes},
             ),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> deleteHydrationEntry(String? entryId) =>
+  _i7.Future<void> deleteHydrationEntry(String? entryId) =>
       (super.noSuchMethod(
             Invocation.method(#deleteHydrationEntry, [entryId]),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  List<_i3.HydrationData> getEntriesForDate(DateTime? date) =>
+  List<_i5.HydrationData> getEntriesForDate(DateTime? date) =>
       (super.noSuchMethod(
             Invocation.method(#getEntriesForDate, [date]),
-            returnValue: <_i3.HydrationData>[],
+            returnValue: <_i5.HydrationData>[],
           )
-          as List<_i3.HydrationData>);
+          as List<_i5.HydrationData>);
 
   @override
-  List<_i3.HydrationData> getEntriesForDateRange(
+  List<_i5.HydrationData> getEntriesForDateRange(
     DateTime? start,
     DateTime? end,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getEntriesForDateRange, [start, end]),
-            returnValue: <_i3.HydrationData>[],
+            returnValue: <_i5.HydrationData>[],
           )
-          as List<_i3.HydrationData>);
+          as List<_i5.HydrationData>);
 
   @override
   Map<DateTime, int> getWeeklyData(DateTime? weekStart) =>
@@ -234,7 +276,7 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
           as double);
 
   @override
-  _i5.Future<String> exportData({
+  _i7.Future<String> exportData({
     DateTime? startDate,
     DateTime? endDate,
     String? format = 'csv',
@@ -245,8 +287,8 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
               #endDate: endDate,
               #format: format,
             }),
-            returnValue: _i5.Future<String>.value(
-              _i7.dummyValue<String>(
+            returnValue: _i7.Future<String>.value(
+              _i9.dummyValue<String>(
                 this,
                 Invocation.method(#exportData, [], {
                   #startDate: startDate,
@@ -256,43 +298,43 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
               ),
             ),
           )
-          as _i5.Future<String>);
+          as _i7.Future<String>);
 
   @override
-  _i5.Future<void> syncData() =>
+  _i7.Future<void> syncData() =>
       (super.noSuchMethod(
             Invocation.method(#syncData, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> setDailyGoal(int? goal) =>
+  _i7.Future<void> setDailyGoal(int? goal) =>
       (super.noSuchMethod(
             Invocation.method(#setDailyGoal, [goal]),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> setAvatar(_i2.AvatarOption? avatar) =>
+  _i7.Future<void> setAvatar(_i3.AvatarOption? avatar) =>
       (super.noSuchMethod(
             Invocation.method(#setAvatar, [avatar]),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> resetIntake() =>
+  _i7.Future<void> resetIntake() =>
       (super.noSuchMethod(
             Invocation.method(#resetIntake, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
   void clearError() => super.noSuchMethod(
@@ -307,58 +349,58 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
   );
 
   @override
-  _i5.Future<void> loadData() =>
+  _i7.Future<void> loadData() =>
       (super.noSuchMethod(
             Invocation.method(#loadData, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> loadCustomDrinkTypes() =>
+  _i7.Future<void> loadCustomDrinkTypes() =>
       (super.noSuchMethod(
             Invocation.method(#loadCustomDrinkTypes, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> saveCustomDrinkTypes() =>
+  _i7.Future<void> saveCustomDrinkTypes() =>
       (super.noSuchMethod(
             Invocation.method(#saveCustomDrinkTypes, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> addCustomDrinkType(_i4.CustomDrinkType? drinkType) =>
+  _i7.Future<void> addCustomDrinkType(_i6.CustomDrinkType? drinkType) =>
       (super.noSuchMethod(
             Invocation.method(#addCustomDrinkType, [drinkType]),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> updateCustomDrinkType(_i4.CustomDrinkType? drinkType) =>
+  _i7.Future<void> updateCustomDrinkType(_i6.CustomDrinkType? drinkType) =>
       (super.noSuchMethod(
             Invocation.method(#updateCustomDrinkType, [drinkType]),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> deleteCustomDrinkType(String? drinkTypeId) =>
+  _i7.Future<void> deleteCustomDrinkType(String? drinkTypeId) =>
       (super.noSuchMethod(
             Invocation.method(#deleteCustomDrinkType, [drinkTypeId]),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
   List<dynamic> getAllDrinkTypes() =>
@@ -369,12 +411,12 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
           as List<dynamic>);
 
   @override
-  _i5.Future<void> addHydrationWithCustomType(
+  _i7.Future<void> addHydrationWithCustomType(
     int? amount, {
-    _i4.CustomDrinkType? customType,
-    _i3.DrinkType? builtInType,
+    _i6.CustomDrinkType? customType,
+    _i5.DrinkType? builtInType,
     String? notes,
-    _i6.BuildContext? context,
+    _i8.BuildContext? context,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
@@ -387,31 +429,31 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
                 #context: context,
               },
             ),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> setHealthSyncEnabled({required bool? enabled}) =>
+  _i7.Future<void> setHealthSyncEnabled({required bool? enabled}) =>
       (super.noSuchMethod(
             Invocation.method(#setHealthSyncEnabled, [], {#enabled: enabled}),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> syncToHealthApp() =>
+  _i7.Future<void> syncToHealthApp() =>
       (super.noSuchMethod(
             Invocation.method(#syncToHealthApp, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<void> importFromHealthApp({
+  _i7.Future<void> importFromHealthApp({
     DateTime? startDate,
     DateTime? endDate,
   }) =>
@@ -420,29 +462,130 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
               #startDate: startDate,
               #endDate: endDate,
             }),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i5.Future<Map<String, dynamic>> getHealthSyncStats() =>
+  _i7.Future<Map<String, dynamic>> getHealthSyncStats() =>
       (super.noSuchMethod(
             Invocation.method(#getHealthSyncStats, []),
-            returnValue: _i5.Future<Map<String, dynamic>>.value(
+            returnValue: _i7.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i5.Future<Map<String, dynamic>>);
+          as _i7.Future<Map<String, dynamic>>);
 
   @override
-  _i5.Future<void> loadHealthSyncSettings() =>
+  _i7.Future<void> loadHealthSyncSettings() =>
       (super.noSuchMethod(
             Invocation.method(#loadHealthSyncSettings, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i7.Future<void>);
+
+  @override
+  List<_i4.HydrationEntry> getTodaysEntries() =>
+      (super.noSuchMethod(
+            Invocation.method(#getTodaysEntries, []),
+            returnValue: <_i4.HydrationEntry>[],
+          )
+          as List<_i4.HydrationEntry>);
+
+  @override
+  List<_i4.HydrationEntry> getEntriesForDateNew(DateTime? date) =>
+      (super.noSuchMethod(
+            Invocation.method(#getEntriesForDateNew, [date]),
+            returnValue: <_i4.HydrationEntry>[],
+          )
+          as List<_i4.HydrationEntry>);
+
+  @override
+  _i7.Future<void> addHydrationEntry(
+    int? amount, {
+    _i5.DrinkType? type,
+    String? notes,
+    _i8.BuildContext? context,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #addHydrationEntry,
+              [amount],
+              {#type: type, #notes: notes, #context: context},
+            ),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> deleteHydrationEntryNew(String? entryId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteHydrationEntryNew, [entryId]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> setSelectedDrinkType(_i5.DrinkType? type) =>
+      (super.noSuchMethod(
+            Invocation.method(#setSelectedDrinkType, [type]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> updateGoalFactors(_i2.GoalFactors? factors) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateGoalFactors, [factors]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  List<Map<String, dynamic>> getMostUsedDrinkTypes({int? limit = 3}) =>
+      (super.noSuchMethod(
+            Invocation.method(#getMostUsedDrinkTypes, [], {#limit: limit}),
+            returnValue: <Map<String, dynamic>>[],
+          )
+          as List<Map<String, dynamic>>);
+
+  @override
+  Map<DateTime, int> getWeeklyHydrationData(DateTime? weekStart) =>
+      (super.noSuchMethod(
+            Invocation.method(#getWeeklyHydrationData, [weekStart]),
+            returnValue: <DateTime, int>{},
+          )
+          as Map<DateTime, int>);
+
+  @override
+  Map<DateTime, int> getMonthlyHydrationData(DateTime? month) =>
+      (super.noSuchMethod(
+            Invocation.method(#getMonthlyHydrationData, [month]),
+            returnValue: <DateTime, int>{},
+          )
+          as Map<DateTime, int>);
+
+  @override
+  double getDailyAverageIntake(DateTime? start, DateTime? end) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDailyAverageIntake, [start, end]),
+            returnValue: 0.0,
+          )
+          as double);
+
+  @override
+  double getGoalAchievementRateNew(DateTime? start, DateTime? end) =>
+      (super.noSuchMethod(
+            Invocation.method(#getGoalAchievementRateNew, [start, end]),
+            returnValue: 0.0,
+          )
+          as double);
 
   @override
   void dispose() => super.noSuchMethod(
@@ -451,13 +594,13 @@ class MockHydrationProvider extends _i1.Mock implements _i2.HydrationProvider {
   );
 
   @override
-  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i10.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i10.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );

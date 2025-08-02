@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:watertracker/core/models/hydration_data.dart';
-import 'package:watertracker/core/models/hydration_entry.dart';
 import 'package:watertracker/core/models/goal_factors.dart';
+import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/services/storage_service.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 

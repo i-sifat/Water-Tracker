@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/hydration/widgets/swipeable_page_view.dart';
 
 /// Example implementation of SwipeablePageView showing three hydration pages

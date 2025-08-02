@@ -63,7 +63,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
                   ),
                   child: AnimatedOnboardingProgressIndicator(
                     currentStep: onboardingProvider.currentStep - 1, // Adjust to start from 0 for progress
-                    totalSteps: 14, // Total onboarding steps excluding welcome (1-14)
+                    totalSteps: 15, // Total onboarding steps (0-14)
                     showStepNumbers: false,
                   ),
                 ),
@@ -185,8 +185,8 @@ class OnboardingScreenWrapper extends StatelessWidget {
                     color: AppColors.assessmentText,
                   ),
                   onPressed: () {
-                    // Only show exit modal on step 1 (age selection)
-                    if (provider.currentStep == 1) {
+                    // Only show exit modal on step 2 (age selection)
+                    if (provider.currentStep == 2) {
                       _showExitConfirmation(context);
                     } else {
                       // Normal back navigation for other pages

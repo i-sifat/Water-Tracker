@@ -1,7 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
+import 'package:watertracker/core/utils/accessibility_utils.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
@@ -22,36 +24,54 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Widget build(BuildContext context) {
     return Consumer<HydrationProvider>(
       builder: (context, provider, child) {
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          body: SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(),
-                _buildPeriodSelector(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        _buildStreakSection(provider),
-                        const SizedBox(height: 16),
-                        _buildIntakeChart(provider),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(child: _buildBalanceCard(provider)),
-                            const SizedBox(width: 16),
-                            Expanded(child: _buildDailyAverageCard(provider)),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        _buildMostUsedSection(provider),
-                      ],
+        return Semantics(
+          label: 'Statistics page',
+          hint: 'View your hydration statistics and progress over time',
+          child: Scaffold(
+            backgroundColor: AppColors.background,
+            body: SafeArea(
+              child: Column(
+                children: [
+                  _buildHeader(),
+                  _buildPeriodSelector(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // Performance optimization: RepaintBoundary around streak section
+                          RepaintBoundary(child: _buildStreakSection(provider)),
+                          const SizedBox(height: 16),
+                          // Performance optimization: RepaintBoundary around chart
+                          RepaintBoundary(child: _buildIntakeChart(provider)),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              // Performance optimization: RepaintBoundary around cards
+                              Expanded(
+                                child: RepaintBoundary(
+                                  child: _buildBalanceCard(provider),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: RepaintBoundary(
+                                  child: _buildDailyAverageCard(provider),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Performance optimization: RepaintBoundary around most used section
+                          RepaintBoundary(
+                            child: _buildMostUsedSection(provider),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -62,14 +82,12 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(16),
-      child: const Text(
-        'Statistics',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
+      child: AccessibilityUtils.createAccessibleText(
+        text: 'Statistics',
+        style: AppTypography.hydrationTitle.copyWith(
           color: AppColors.textHeadline,
-          fontFamily: 'Nunito',
         ),
+        semanticLabel: 'Statistics page header',
       ),
     );
   }
@@ -82,12 +100,16 @@ class _StatisticsPageState extends State<StatisticsPage> {
             StatisticsPeriod.values.map((period) {
               final isSelected = _selectedPeriod == period;
               return Expanded(
-                child: GestureDetector(
+                child: AccessibilityUtils.ensureMinTouchTarget(
                   onTap: () {
                     setState(() {
                       _selectedPeriod = period;
                     });
                   },
+                  semanticLabel:
+                      '${period.name.toUpperCase()} time period${isSelected ? ', currently selected' : ''}',
+                  semanticHint:
+                      'Double tap to select this time period for statistics',
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -102,9 +124,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                 : AppColors.textSubtitle,
                       ),
                     ),
-                    child: Text(
-                      period.name.toUpperCase(),
-                      textAlign: TextAlign.center,
+                    child: AccessibilityUtils.createAccessibleText(
+                      text: period.name.toUpperCase(),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -112,6 +133,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                             isSelected ? Colors.white : AppColors.textSubtitle,
                         fontFamily: 'Nunito',
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -122,42 +144,53 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
   Widget _buildStreakSection(HydrationProvider provider) {
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.emoji_events,
-                color: AppColors.goalYellow,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Days in a row',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textHeadline,
-                  fontFamily: 'Nunito',
+    return Semantics(
+      label: AccessibilityUtils.createStatisticsCardLabel(
+        'Days in a row streak',
+        '${provider.currentStreak}',
+        'days',
+      ),
+      hint: 'Your current consecutive days of meeting hydration goals',
+      child: AppCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Semantics(
+                  excludeSemantics: true, // Icon is decorative
+                  child: const Icon(
+                    Icons.emoji_events,
+                    color: AppColors.goalYellow,
+                    size: 24,
+                  ),
                 ),
-              ),
-              const Spacer(),
-              Text(
-                '${provider.currentStreak}',
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.waterFull,
-                  fontFamily: 'Nunito',
+                const SizedBox(width: 8),
+                AccessibilityUtils.createAccessibleText(
+                  text: 'Days in a row',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textHeadline,
+                    fontFamily: 'Nunito',
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildWeeklyDots(provider),
-        ],
+                const Spacer(),
+                AccessibilityUtils.createAccessibleText(
+                  text: '${provider.currentStreak}',
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.waterFull,
+                    fontFamily: 'Nunito',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildWeeklyDots(provider),
+          ],
+        ),
       ),
     );
   }
@@ -178,40 +211,47 @@ class _StatisticsPageState extends State<StatisticsPage> {
             date.month == now.month &&
             date.year == now.year;
 
-        return Column(
-          children: [
-            Text(
-              weekDays[index],
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textSubtitle,
-                fontFamily: 'Nunito',
+        return Semantics(
+          label: AccessibilityUtils.createStreakIndicatorLabel(
+            index,
+            isCompleted,
+            isToday,
+          ),
+          child: Column(
+            children: [
+              AccessibilityUtils.createAccessibleText(
+                text: weekDays[index],
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textSubtitle,
+                  fontFamily: 'Nunito',
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color:
+              const SizedBox(height: 4),
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color:
+                      isCompleted
+                          ? AppColors.waterFull
+                          : (isToday
+                              ? AppColors.waterFull.withValues(alpha: 0.3)
+                              : AppColors.goalGrey),
+                  border:
+                      isToday && !isCompleted
+                          ? Border.all(color: AppColors.waterFull, width: 2)
+                          : null,
+                ),
+                child:
                     isCompleted
-                        ? AppColors.waterFull
-                        : (isToday
-                            ? AppColors.waterFull.withValues(alpha: 0.3)
-                            : AppColors.goalGrey),
-                border:
-                    isToday && !isCompleted
-                        ? Border.all(color: AppColors.waterFull, width: 2)
+                        ? const Icon(Icons.check, color: Colors.white, size: 16)
                         : null,
               ),
-              child:
-                  isCompleted
-                      ? const Icon(Icons.check, color: Colors.white, size: 16)
-                      : null,
-            ),
-          ],
+            ],
+          ),
         );
       }),
     );
@@ -372,38 +412,46 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Widget _buildBalanceCard(HydrationProvider provider) {
     final percentage = (provider.intakePercentage * 100).round();
 
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Balance',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textHeadline,
-              fontFamily: 'Nunito',
+    return Semantics(
+      label: AccessibilityUtils.createStatisticsCardLabel(
+        'Balance',
+        '$percentage%',
+        'completed',
+      ),
+      hint: 'Percentage of daily hydration goal completed',
+      child: AppCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AccessibilityUtils.createAccessibleText(
+              text: 'Balance',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textHeadline,
+                fontFamily: 'Nunito',
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '$percentage%',
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: AppColors.waterFull,
-              fontFamily: 'Nunito',
+            const SizedBox(height: 8),
+            AccessibilityUtils.createAccessibleText(
+              text: '$percentage%',
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: AppColors.waterFull,
+                fontFamily: 'Nunito',
+              ),
             ),
-          ),
-          const Text(
-            'completed',
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.textSubtitle,
-              fontFamily: 'Nunito',
+            AccessibilityUtils.createAccessibleText(
+              text: 'completed',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.textSubtitle,
+                fontFamily: 'Nunito',
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -411,38 +459,46 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Widget _buildDailyAverageCard(HydrationProvider provider) {
     final average = _calculateDailyAverage(provider);
 
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Daily average',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textHeadline,
-              fontFamily: 'Nunito',
+    return Semantics(
+      label: AccessibilityUtils.createStatisticsCardLabel(
+        'Daily average',
+        '${(average / 1000).toStringAsFixed(1)} liters',
+        'per day',
+      ),
+      hint: 'Your average daily hydration intake',
+      child: AppCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AccessibilityUtils.createAccessibleText(
+              text: 'Daily average',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textHeadline,
+                fontFamily: 'Nunito',
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${(average / 1000).toStringAsFixed(1)} L',
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: AppColors.waterFull,
-              fontFamily: 'Nunito',
+            const SizedBox(height: 8),
+            AccessibilityUtils.createAccessibleText(
+              text: '${(average / 1000).toStringAsFixed(1)} L',
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: AppColors.waterFull,
+                fontFamily: 'Nunito',
+              ),
             ),
-          ),
-          const Text(
-            'per day',
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.textSubtitle,
-              fontFamily: 'Nunito',
+            AccessibilityUtils.createAccessibleText(
+              text: 'per day',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.textSubtitle,
+                fontFamily: 'Nunito',
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

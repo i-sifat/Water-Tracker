@@ -8,8 +8,8 @@ class AppCard extends StatelessWidget {
     this.margin,
     this.backgroundColor,
     this.borderColor,
-    this.borderRadius = 16,
-    this.elevation = 0,
+    this.borderRadius = 20, // Increased for better design consistency
+    this.elevation = 2, // Added subtle elevation by default
     this.onTap,
     this.isSelected = false,
   });
@@ -49,7 +49,12 @@ class AppCard extends StatelessWidget {
             elevation > 0
                 ? [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: elevation * 2, // Softer shadow
+                    offset: Offset(0, elevation),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: elevation,
                     offset: Offset(0, elevation / 2),
                   ),

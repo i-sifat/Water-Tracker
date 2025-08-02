@@ -215,15 +215,39 @@ void main() {
       final container = tester.widget<Container>(find.byType(Container));
       final decoration = container.decoration! as BoxDecoration;
       expect(decoration.boxShadow, isNotNull);
-      expect(decoration.boxShadow!.length, equals(1));
-      expect(decoration.boxShadow!.first.blurRadius, equals(customElevation));
+      expect(
+        decoration.boxShadow!.length,
+        equals(2),
+      ); // Now has 2 shadows for better design
+      expect(
+        decoration.boxShadow!.first.blurRadius,
+        equals(customElevation * 2),
+      );
     });
 
-    testWidgets('has no box shadow when elevation is 0', (
+    testWidgets('has box shadow with default elevation', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
         const MaterialApp(home: Scaffold(body: AppCard(child: Text('Test')))),
+      );
+
+      final container = tester.widget<Container>(find.byType(Container));
+      final decoration = container.decoration! as BoxDecoration;
+      expect(decoration.boxShadow, isNotNull); // Default elevation is now 2
+      expect(
+        decoration.boxShadow!.length,
+        equals(2),
+      ); // Two shadows for better design
+    });
+
+    testWidgets('has no box shadow when elevation is explicitly 0', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: AppCard(elevation: 0, child: Text('Test'))),
+        ),
       );
 
       final container = tester.widget<Container>(find.byType(Container));

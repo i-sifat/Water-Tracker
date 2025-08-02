@@ -3,6 +3,12 @@ import 'package:watertracker/core/models/hydration_data.dart';
 
 /// Model representing daily hydration progress tracking
 class HydrationProgress extends Equatable {
+  const HydrationProgress({
+    required this.currentIntake,
+    required this.dailyGoal,
+    required this.todaysEntries,
+    this.nextReminderTime,
+  });
 
   /// Create from current hydration data
   factory HydrationProgress.fromEntries({
@@ -19,12 +25,6 @@ class HydrationProgress extends Equatable {
       nextReminderTime: nextReminderTime,
     );
   }
-  const HydrationProgress({
-    required this.currentIntake,
-    required this.dailyGoal,
-    required this.todaysEntries,
-    this.nextReminderTime,
-  });
 
   /// Current water intake for the day in milliliters
   final int currentIntake;

@@ -361,8 +361,9 @@ class HydrationProvider extends ChangeNotifier {
     } catch (e) {
       throw StorageError.writeFailed('Failed to save historical data: $e');
     }
-  } 
- /// Add hydration entry with enhanced tracking
+  }
+
+  /// Add hydration entry with enhanced tracking and error handling
   Future<void> addHydration(
     int amount, {
     DrinkType type = DrinkType.water,
@@ -370,10 +371,25 @@ class HydrationProvider extends ChangeNotifier {
     BuildContext? context,
   }) async {
     try {
-      if (amount <= 0) {
+      // Comprehensive input validation
+      final amountError = _validateHydrationAmount(amount);
+      if (amountError != null) {
+        throw amountError;
+      }
+
+      final notesError = _validateNotes(notes);
+      if (notesError != null) {
+        throw notesError;
+      }
+
+      // Check if adding this amount would exceed reasonable daily limits
+      final projectedIntake =
+          _currentIntake + (amount * type.waterContent).round();
+      if (projectedIntake > 15000) {
+        // 15L daily limit for safety
         throw ValidationError.invalidInput(
           'amount',
-          'Amount must be greater than 0',
+          'Adding this amount would exceed safe daily intake limits',
         );
       }
 
@@ -422,9 +438,20 @@ class HydrationProvider extends ChangeNotifier {
         unawaited(_healthService.syncSingleEntry(entry));
       }
 
-      // Save data
-      await _saveBasicData();
-      await _saveHistoricalData();
+      // Save data with error handling
+      try {
+        await _saveBasicData();
+        await _saveHistoricalData();
+      } catch (saveError) {
+        // If save fails, revert the changes
+        _hydrationHistory.removeAt(0);
+        final date = entry.date;
+        _dailyDataCache[date]?.removeLast();
+        _currentIntake -= waterContent;
+        _goalReachedToday = wasGoalReached;
+
+        throw StorageError.writeFailed('Failed to save hydration data');
+      }
 
       _lastError = null;
       notifyListeners();
@@ -437,7 +464,7 @@ class HydrationProvider extends ChangeNotifier {
     }
   }
 
-  /// Edit existing hydration entry
+  /// Edit existing hydration entry with validation
   Future<void> editHydrationEntry(
     String entryId, {
     int? amount,
@@ -445,6 +472,24 @@ class HydrationProvider extends ChangeNotifier {
     String? notes,
   }) async {
     try {
+      // Validate inputs
+      final entryIdError = _validateEntryId(entryId);
+      if (entryIdError != null) {
+        throw entryIdError;
+      }
+
+      if (amount != null) {
+        final amountError = _validateHydrationAmount(amount);
+        if (amountError != null) {
+          throw amountError;
+        }
+      }
+
+      final notesError = _validateNotes(notes);
+      if (notesError != null) {
+        throw notesError;
+      }
+
       final entryIndex = _hydrationHistory.indexWhere((e) => e.id == entryId);
       if (entryIndex == -1) {
         throw ValidationError.invalidInput('entryId', 'Entry not found');
@@ -489,9 +534,15 @@ class HydrationProvider extends ChangeNotifier {
     }
   }
 
-  /// Delete hydration entry
+  /// Delete hydration entry with validation
   Future<void> deleteHydrationEntry(String entryId) async {
     try {
+      // Validate entry ID
+      final entryIdError = _validateEntryId(entryId);
+      if (entryIdError != null) {
+        throw entryIdError;
+      }
+
       final entryIndex = _hydrationHistory.indexWhere((e) => e.id == entryId);
       if (entryIndex == -1) {
         throw ValidationError.invalidInput('entryId', 'Entry not found');
@@ -662,14 +713,12 @@ class HydrationProvider extends ChangeNotifier {
     }
   }
 
-  /// Set daily goal
+  /// Set daily goal with validation
   Future<void> setDailyGoal(int goal) async {
     try {
-      if (goal <= 0) {
-        throw ValidationError.invalidInput(
-          'goal',
-          'Goal must be greater than 0',
-        );
+      final goalError = _validateDailyGoal(goal);
+      if (goalError != null) {
+        throw goalError;
       }
 
       _dailyGoal = goal;
@@ -740,6 +789,74 @@ class HydrationProvider extends ChangeNotifier {
   void clearError() {
     _lastError = null;
     notifyListeners();
+  }
+
+  // MARK: - Validation Methods
+
+  /// Validate hydration amount
+  ValidationError? _validateHydrationAmount(int amount) {
+    if (amount <= 0) {
+      return ValidationError.invalidInput(
+        'amount',
+        'Amount must be greater than 0',
+      );
+    }
+
+    if (amount > 5000) {
+      return ValidationError.invalidInput(
+        'amount',
+        'Amount cannot exceed 5000ml per entry',
+      );
+    }
+
+    return null;
+  }
+
+  /// Validate daily goal
+  ValidationError? _validateDailyGoal(int goal) {
+    if (goal <= 0) {
+      return ValidationError.invalidInput(
+        'goal',
+        'Goal must be greater than 0',
+      );
+    }
+
+    if (goal < 500) {
+      return ValidationError.invalidInput(
+        'goal',
+        'Goal should be at least 500ml for health reasons',
+      );
+    }
+
+    if (goal > 10000) {
+      return ValidationError.invalidInput(
+        'goal',
+        'Goal cannot exceed 10000ml for safety reasons',
+      );
+    }
+
+    return null;
+  }
+
+  /// Validate notes input
+  ValidationError? _validateNotes(String? notes) {
+    if (notes != null && notes.length > 500) {
+      return ValidationError.invalidInput(
+        'notes',
+        'Notes cannot exceed 500 characters',
+      );
+    }
+
+    return null;
+  }
+
+  /// Validate entry ID
+  ValidationError? _validateEntryId(String entryId) {
+    if (entryId.isEmpty) {
+      return ValidationError.requiredField('entryId');
+    }
+
+    return null;
   }
 
   /// Legacy methods for backward compatibility
@@ -1068,8 +1185,8 @@ class HydrationProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Failed to load health sync settings: $e');
     }
-  } 
- // MARK: - New Swipeable Interface Methods
+  }
+  // MARK: - New Swipeable Interface Methods
 
   /// Get today's hydration entries using the new model
   List<HydrationEntry> getTodaysEntries() {
@@ -1081,7 +1198,9 @@ class HydrationProvider extends ChangeNotifier {
   /// Get hydration entries for a specific date
   List<HydrationEntry> getEntriesForDateNew(DateTime date) {
     final targetDate = DateTime(date.year, date.month, date.day);
-    return _hydrationEntries.where((entry) => entry.date == targetDate).toList();
+    return _hydrationEntries
+        .where((entry) => entry.date == targetDate)
+        .toList();
   }
 
   /// Add hydration entry using new model
@@ -1100,7 +1219,7 @@ class HydrationProvider extends ChangeNotifier {
       }
 
       final drinkType = type ?? _selectedDrinkType;
-      
+
       // Create new hydration entry
       final entry = HydrationEntry.create(
         amount: amount,
@@ -1222,8 +1341,9 @@ class HydrationProvider extends ChangeNotifier {
   /// Update current progress using new model
   void _updateCurrentProgress() {
     final todaysEntries = getTodaysEntries();
-    final todaysLegacyEntries = todaysEntries.map((e) => e.toHydrationData()).toList();
-    
+    final todaysLegacyEntries =
+        todaysEntries.map((e) => e.toHydrationData()).toList();
+
     _currentProgress = HydrationProgress.fromEntries(
       todaysEntries: todaysLegacyEntries,
       dailyGoal: _dailyGoal,
@@ -1290,9 +1410,14 @@ class HydrationProvider extends ChangeNotifier {
 
     // Calculate optimal reminder interval (aim for 6-8 reminders per day)
     final optimalInterval = remainingHours / 6;
-    final reminderInterval = optimalInterval.clamp(0.5, 3.0); // Between 30 minutes and 3 hours
+    final reminderInterval = optimalInterval.clamp(
+      0.5,
+      3.0,
+    ); // Between 30 minutes and 3 hours
 
-    _nextReminderTime = now.add(Duration(minutes: (reminderInterval * 60).round()));
+    _nextReminderTime = now.add(
+      Duration(minutes: (reminderInterval * 60).round()),
+    );
   }
 
   /// Get most used drink types with statistics
@@ -1308,19 +1433,21 @@ class HydrationProvider extends ChangeNotifier {
           'totalWaterContent': 0,
         };
       }
-      
+
       final stats = drinkTypeStats[entry.type]!;
       final currentCount = stats['count'] as int;
       final currentAmount = stats['totalAmount'] as int;
       final currentWaterContent = stats['totalWaterContent'] as int;
-      
+
       stats['count'] = currentCount + 1;
       stats['totalAmount'] = currentAmount + entry.amount;
       stats['totalWaterContent'] = currentWaterContent + entry.waterContentMl;
     }
 
     final sortedStats = drinkTypeStats.values.toList();
-    sortedStats.sort((a, b) => (b['count'] as int).compareTo(a['count'] as int));
+    sortedStats.sort(
+      (a, b) => (b['count'] as int).compareTo(a['count'] as int),
+    );
     return sortedStats.take(limit).toList();
   }
 
@@ -1362,7 +1489,9 @@ class HydrationProvider extends ChangeNotifier {
       totalIntake += dayEntries.totalWaterIntake;
     }
 
-    return totalDays > 0 ? totalIntake / totalDays / 1000 : 0.0; // Return in liters
+    return totalDays > 0
+        ? totalIntake / totalDays / 1000
+        : 0.0; // Return in liters
   }
 
   /// Get goal achievement rate for statistics
@@ -1447,7 +1576,8 @@ class HydrationProvider extends ChangeNotifier {
         encrypted: false,
       );
       if (goalFactorsJson != null) {
-        final goalFactorsMap = jsonDecode(goalFactorsJson) as Map<String, dynamic>;
+        final goalFactorsMap =
+            jsonDecode(goalFactorsJson) as Map<String, dynamic>;
         _goalFactors = GoalFactors.fromJson(goalFactorsMap);
         // Update daily goal from factors
         _dailyGoal = _goalFactors.totalGoal;
@@ -1466,10 +1596,13 @@ class HydrationProvider extends ChangeNotifier {
       }
 
       // Load next reminder time
-      final reminderTimeMillis = await _storageService.getInt('nextReminderTime');
-      _nextReminderTime = reminderTimeMillis != null
-          ? DateTime.fromMillisecondsSinceEpoch(reminderTimeMillis)
-          : null;
+      final reminderTimeMillis = await _storageService.getInt(
+        'nextReminderTime',
+      );
+      _nextReminderTime =
+          reminderTimeMillis != null
+              ? DateTime.fromMillisecondsSinceEpoch(reminderTimeMillis)
+              : null;
 
       // Update current progress
       _updateCurrentProgress();
@@ -1482,7 +1615,9 @@ class HydrationProvider extends ChangeNotifier {
   void _syncWithLegacyData() {
     // Convert legacy data to new entries if needed
     for (final legacyEntry in _hydrationHistory) {
-      final existingEntry = _hydrationEntries.any((e) => e.id == legacyEntry.id);
+      final existingEntry = _hydrationEntries.any(
+        (e) => e.id == legacyEntry.id,
+      );
       if (!existingEntry) {
         _hydrationEntries.add(HydrationEntry.fromHydrationData(legacyEntry));
       }

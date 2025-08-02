@@ -79,11 +79,11 @@ class OnboardingProvider extends ChangeNotifier {
         return true;
       case 11: // Notifications - always valid
         return true;
-      case 12: // Data summary - always valid
+      case 12: // Daily routine - always valid (can be skipped)
         return true;
-      case 13: // Data summary - always valid
+      case 13: // Premium unlock - always valid (can be skipped)
         return true;
-      case 14: // Premium unlock - always valid
+      case 14: // Data summary - always valid
         return true;
       default:
         return false;
@@ -129,6 +129,7 @@ class OnboardingProvider extends ChangeNotifier {
   void goToStep(int step) {
     if (step >= 0 && step < totalSteps) {
       _currentStep = step;
+      _error = null; // Clear any existing errors when navigating
       notifyListeners();
     }
   }
@@ -399,26 +400,28 @@ class OnboardingProvider extends ChangeNotifier {
       case 0:
         return 'Welcome';
       case 1:
-        return "What's Your Age?";
+        return 'Drink Goal Selection';
       case 2:
-        return 'Select Your Gender';
+        return "What's Your Age?";
       case 3:
-        return "What's Your Weight?";
+        return 'Select Your Gender';
       case 4:
-        return 'Select Your Goals';
+        return "What's Your Weight?";
       case 5:
-        return 'Exercise Frequency';
+        return 'Select Your Goals';
       case 6:
-        return 'Pregnancy Status';
+        return 'Exercise Frequency';
       case 7:
-        return 'Sugary Beverages';
+        return 'Pregnancy Status';
       case 8:
-        return 'Vegetable Intake';
+        return 'Sugary Beverages';
       case 9:
-        return 'Weather Preference';
+        return 'Vegetable Intake';
       case 10:
-        return 'Notification Setup';
+        return 'Weather Preference';
       case 11:
+        return 'Notification Setup';
+      case 12:
         return 'Daily Routine';
       case 13:
         return 'Premium Features';
@@ -435,31 +438,33 @@ class OnboardingProvider extends ChangeNotifier {
       case 0:
         return 'Welcome to your hydration journey';
       case 1:
-        return 'We need this to calculate your water needs';
+        return 'Choose your water intake goal';
       case 2:
-        return 'Help us personalize your experience';
+        return 'We need this to calculate your water needs';
       case 3:
-        return 'This helps us determine your hydration goal';
+        return 'Help us personalize your experience';
       case 4:
-        return 'Choose what you want to achieve';
+        return 'This helps us determine your hydration goal';
       case 5:
-        return 'Your activity level affects water requirements';
+        return 'Choose what you want to achieve';
       case 6:
-        return 'This affects your hydration needs';
+        return 'Your activity level affects water requirements';
       case 7:
-        return 'Tell us about your drink preferences';
+        return 'This affects your hydration needs';
       case 8:
-        return 'Vegetables provide natural hydration';
+        return 'Tell us about your drink preferences';
       case 9:
-        return 'Climate affects your hydration needs';
+        return 'Vegetables provide natural hydration';
       case 10:
-        return 'Stay on track with reminders';
+        return 'Climate affects your hydration needs';
       case 11:
+        return 'Stay on track with reminders';
+      case 12:
         return 'Set your wake-up and sleep times';
       case 13:
         return 'Unlock premium features';
       case 14:
-        return '';
+        return 'Review your information';
       default:
         return 'Review your information';
     }
@@ -468,7 +473,7 @@ class OnboardingProvider extends ChangeNotifier {
   /// Get validation error message for current step
   String? getValidationError(int step) {
     switch (step) {
-      case 1: // Age
+      case 2: // Age
         if (_userProfile.age == null) {
           return 'Please select your age to continue';
         }
@@ -476,7 +481,7 @@ class OnboardingProvider extends ChangeNotifier {
           return 'Please enter a valid age between 1 and 120';
         }
         return null;
-      case 3: // Weight
+      case 4: // Weight
         if (_userProfile.weight == null) {
           return 'Please enter your weight to continue';
         }
@@ -484,7 +489,7 @@ class OnboardingProvider extends ChangeNotifier {
           return 'Please enter a valid weight between 20 and 300 kg';
         }
         return null;
-      case 4: // Goals
+      case 5: // Goals
         if (_userProfile.goals.isEmpty) {
           return 'Please select at least one goal to continue';
         }

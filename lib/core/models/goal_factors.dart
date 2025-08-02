@@ -84,17 +84,22 @@ enum ClimateCondition {
 
 /// Model representing factors used to calculate daily hydration goal
 class GoalFactors extends Equatable {
+  const GoalFactors({
+    required this.baseRequirement,
+    this.activityLevel = ActivityLevel.moderatelyActive,
+    this.climateCondition = ClimateCondition.temperate,
+    this.healthAdjustment = 0,
+    this.customAdjustment = 0,
+  });
 
   /// Create default goal factors for a user
-  factory GoalFactors.defaultForUser({int? weight, int? age, String? gender}) {
+  factory GoalFactors.defaultForUser({int? weight}) {
     // Basic calculation: 35ml per kg of body weight as base
     final baseWeight = weight ?? 70; // Default 70kg
-    final baseRequirement = (baseWeight * 35).round();
+    final baseRequirement = baseWeight * 35;
 
     return GoalFactors(
       baseRequirement: baseRequirement,
-      activityLevel: ActivityLevel.moderatelyActive,
-      climateCondition: ClimateCondition.temperate,
     );
   }
 
@@ -114,13 +119,6 @@ class GoalFactors extends Equatable {
       customAdjustment: json['customAdjustment'] as int? ?? 0,
     );
   }
-  const GoalFactors({
-    required this.baseRequirement,
-    this.activityLevel = ActivityLevel.moderatelyActive,
-    this.climateCondition = ClimateCondition.temperate,
-    this.healthAdjustment = 0,
-    this.customAdjustment = 0,
-  });
 
   /// Base hydration requirement in milliliters (typically based on age, weight, gender)
   final int baseRequirement;

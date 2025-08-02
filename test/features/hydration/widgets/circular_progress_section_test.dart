@@ -235,7 +235,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(body: CircularProgressSection(progress: zeroProgress)),
         ),
       );

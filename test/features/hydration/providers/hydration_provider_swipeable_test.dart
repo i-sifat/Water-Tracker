@@ -22,7 +22,7 @@ class MockStorageService implements StorageService {
   }
 
   @override
-  Future<bool> saveBool(String key, {bool encrypted = true, required bool value}) async {
+  Future<bool> saveBool(String key, {required bool value, bool encrypted = true}) async {
     _storage[key] = value;
     return true;
   }
