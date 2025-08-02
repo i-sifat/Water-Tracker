@@ -4,6 +4,7 @@ import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/age_selection_screen.dart';
 import 'package:watertracker/features/onboarding/screens/data_summary_screen.dart';
+import 'package:watertracker/features/onboarding/screens/drink_goal_selection_screen.dart';
 import 'package:watertracker/features/onboarding/screens/exercise_frequency_screen.dart';
 import 'package:watertracker/features/onboarding/screens/gender_selection_screen.dart';
 import 'package:watertracker/features/onboarding/screens/goal_selection_screen.dart';
@@ -187,26 +188,28 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
       case 0:
         return const WelcomeScreen();
       case 1:
-        return const AgeSelectionScreen();
+        return const DrinkGoalSelectionScreen();
       case 2:
-        return const GenderSelectionScreen();
+        return const AgeSelectionScreen();
       case 3:
-        return const WeightSelectionScreen();
+        return const GenderSelectionScreen();
       case 4:
-        return const GoalSelectionScreen();
+        return const WeightSelectionScreen();
       case 5:
-        return const FitnessLevelScreen();
+        return const GoalSelectionScreen();
       case 6:
-        return const PregnancyScreen();
+        return const FitnessLevelScreen();
       case 7:
-        return const SugaryBeveragesScreen();
+        return const PregnancyScreen();
       case 8:
-        return const VegetablesFruitsScreen();
+        return const SugaryBeveragesScreen();
       case 9:
-        return const WeatherSelectionScreen();
+        return const VegetablesFruitsScreen();
       case 10:
-        return const NotificationSetupScreen();
+        return const WeatherSelectionScreen();
       case 11:
+        return const NotificationSetupScreen();
+      case 12:
         return const CompileDataScreen();
       default:
         return const WelcomeScreen();

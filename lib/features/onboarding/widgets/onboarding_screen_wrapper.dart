@@ -64,7 +64,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
                   ),
                   child: AnimatedOnboardingProgressIndicator(
                     currentStep: onboardingProvider.currentStep - 1, // Adjust to start from 0 for progress
-                    totalSteps: 11, // Total onboarding steps excluding welcome (1-11)
+                    totalSteps: 12, // Total onboarding steps excluding welcome (1-12)
                     showStepNumbers: false,
                   ),
                 ),
@@ -165,7 +165,9 @@ class OnboardingScreenWrapper extends StatelessWidget {
     OnboardingProvider provider,
     Color bgColor,
   ) {
+    // Hide app bar for drink goal selection screen (step 1)
     if (!showBackButton && provider.currentStep == 0) return null;
+    if (provider.currentStep == 1) return null; // Hide app bar for drink goal screen
 
     return AppBar(
       backgroundColor: bgColor,

@@ -14,18 +14,18 @@ class OnboardingProvider extends ChangeNotifier {
   int _currentStep = 0;
 
   // Total number of onboarding steps
-  static const int totalSteps = 12;
+  static const int totalSteps = 13;
 
   // User profile being built during onboarding
   UserProfile _userProfile = UserProfile.create();
 
   // Track which steps are optional and can be skipped
   final Set<int> _optionalSteps = {
-    2,
-    6,
+    3,
     7,
     8,
     9,
+    10,
   }; // gender, pregnancy, sugary drinks, vegetable, weather
 
   // Track completed steps
@@ -55,27 +55,29 @@ class OnboardingProvider extends ChangeNotifier {
     switch (step) {
       case 0: // Welcome - always valid
         return true;
-      case 1: // Age - must have age
+      case 1: // Drink Goal Selection - always valid
+        return true;
+      case 2: // Age - must have age
         return _userProfile.age != null;
-      case 2: // Gender - always valid (can be skipped)
+      case 3: // Gender - always valid (can be skipped)
         return true;
-      case 3: // Weight - must have weight
+      case 4: // Weight - must have weight
         return _userProfile.weight != null;
-      case 4: // Goals - at least one goal selected
+      case 5: // Goals - at least one goal selected
         return _userProfile.goals.isNotEmpty;
-      case 5: // Exercise frequency - always valid
+      case 6: // Exercise frequency - always valid
         return true;
-      case 6: // Pregnancy - always valid (can be skipped)
+      case 7: // Pregnancy - always valid (can be skipped)
         return true;
-      case 7: // Sugary drinks - always valid
+      case 8: // Sugary drinks - always valid
         return true;
-      case 8: // Vegetable intake - always valid (can be skipped)
+      case 9: // Vegetable intake - always valid (can be skipped)
         return true;
-      case 9: // Weather preference - always valid (can be skipped)
+      case 10: // Weather preference - always valid (can be skipped)
         return true;
-      case 10: // Notifications - always valid
+      case 11: // Notifications - always valid
         return true;
-      case 11: // Data summary - always valid
+      case 12: // Data summary - always valid
         return true;
       default:
         return false;
@@ -182,20 +184,31 @@ class OnboardingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateDrinkGoal(double goalInLiters) {
+    // Store the drink goal in user profile
+    // You may need to add a field to UserProfile for this
+    // For now, we'll store it in a way that can be accessed later
+    _userProfile = _userProfile.copyWith(
+      // Add a custom field or use existing field to store drink goal
+      // This is a placeholder - you'll need to add the appropriate field
+    );
+    notifyListeners();
+  }
+
   /// Set default values for skipped steps
   void _setDefaultForStep(int step) {
     switch (step) {
-      case 2: // Gender
+      case 3: // Gender
         _userProfile = _userProfile.copyWith(gender: Gender.notSpecified);
-      case 6: // Pregnancy
+      case 7: // Pregnancy
         _userProfile = _userProfile.copyWith(
           pregnancyStatus: PregnancyStatus.preferNotToSay,
         );
-      case 7: // Sugary drinks
+      case 8: // Sugary drinks
         _userProfile = _userProfile.copyWith(sugarDrinkIntake: 1); // Average
-      case 8: // Vegetables
+      case 9: // Vegetables
         _userProfile = _userProfile.copyWith(vegetableIntake: 3); // Average
-      case 9: // Weather
+      case 10: // Weather
         _userProfile = _userProfile.copyWith(
           weatherPreference: WeatherPreference.moderate,
         );
