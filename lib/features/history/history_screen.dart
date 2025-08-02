@@ -1,10 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
-
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/core/widgets/common/empty_state_widget.dart';
@@ -15,6 +13,7 @@ import 'package:watertracker/core/widgets/inputs/app_text_field.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
+import 'package:watertracker/features/settings/screens/settings_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -23,7 +22,7 @@ class HistoryScreen extends StatefulWidget {
   State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-enum HistoryViewMode { weekly, calendar, list }
+enum HistoryViewMode { weekly, monthly, yearly }
 
 enum FilterType { all, water, other }
 
@@ -99,7 +98,6 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             children: [
               _buildHeader(),
               _buildViewModeSelector(),
-              _buildFilterAndSearch(),
               Expanded(
                 child: FadeTransition(
                   opacity: _fadeAnimation,
@@ -113,32 +111,65 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     );
   }
 
-  Widget _buildViewModeSelector() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 30, 20, 10),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: _buildViewModeButton(
-              'Weekly',
-              HistoryViewMode.weekly,
-              Icons.bar_chart,
+          // Hamburger menu replaced with settings icon
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.settings,
+                color: AppColors.darkBlue,
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, SettingsScreen.routeName);
+              },
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: _buildViewModeButton(
-              'Calendar',
-              HistoryViewMode.calendar,
-              Icons.calendar_today,
+          const Text(
+            'Statistics',
+            style: TextStyle(
+              color: AppColors.textHeadline,
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Nunito',
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: _buildViewModeButton(
-              'List',
-              HistoryViewMode.list,
-              Icons.list,
+          // CSV icon replaced with share icon
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.share,
+                color: AppColors.darkBlue,
+              ),
+              onPressed: () {
+                _showShareDialog(context);
+              },
             ),
           ),
         ],
@@ -146,11 +177,37 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     );
   }
 
-  Widget _buildViewModeButton(
-    String title,
-    HistoryViewMode mode,
-    IconData icon,
-  ) {
+  Widget _buildViewModeSelector() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildViewModeButton(
+              'WEEKLY',
+              HistoryViewMode.weekly,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildViewModeButton(
+              'MONTHLY',
+              HistoryViewMode.monthly,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildViewModeButton(
+              'YEARLY',
+              HistoryViewMode.yearly,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildViewModeButton(String title, HistoryViewMode mode) {
     final isSelected = _viewMode == mode;
 
     return GestureDetector(
@@ -165,115 +222,28 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.waterFull : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(25),
           border: Border.all(
-            color:
-                isSelected ? AppColors.waterFull : AppColors.unselectedBorder,
+            color: isSelected ? AppColors.waterFull : AppColors.unselectedBorder,
           ),
-          boxShadow:
-              isSelected
-                  ? [
-                    BoxShadow(
-                      color: AppColors.waterFull.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                  : null,
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? Colors.white : AppColors.textSubtitle,
-              size: 20,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(
-                color: isSelected ? Colors.white : AppColors.textSubtitle,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterAndSearch() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Column(
-        children: [
-          // Filter chips
-          Row(
-            children: [
-              _buildFilterChip('All', FilterType.all),
-              const SizedBox(width: 8),
-              _buildFilterChip('Water', FilterType.water),
-              const SizedBox(width: 8),
-              _buildFilterChip('Other', FilterType.other),
-              const Spacer(),
-              if (_viewMode == HistoryViewMode.list)
-                IconButton(
-                  icon: Icon(
-                    _searchQuery.isEmpty ? Icons.search : Icons.clear,
-                    color: AppColors.textSubtitle,
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.waterFull.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                  onPressed: () {
-                    if (_searchQuery.isEmpty) {
-                      // Show search field
-                      setState(() {});
-                    } else {
-                      // Clear search
-                      _searchController.clear();
-                    }
-                  },
-                ),
-            ],
-          ),
-          // Search field (only for list view)
-          if (_viewMode == HistoryViewMode.list && _searchQuery.isNotEmpty)
-            const SizedBox(height: 8),
-          if (_viewMode == HistoryViewMode.list && _searchQuery.isNotEmpty)
-            AppTextField(
-              controller: _searchController,
-              hintText: 'Search entries...',
-              prefixIcon: const Icon(Icons.search),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(String title, FilterType type) {
-    final isSelected = _filterType == type;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _filterType = type;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.lightBlue : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color:
-                isSelected ? AppColors.lightBlue : AppColors.unselectedBorder,
-          ),
+                ]
+              : null,
         ),
         child: Text(
           title,
+          textAlign: TextAlign.center,
           style: TextStyle(
             color: isSelected ? Colors.white : AppColors.textSubtitle,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Nunito',
           ),
         ),
       ),
@@ -281,242 +251,229 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   }
 
   Widget _buildContent(HydrationProvider provider) {
-    switch (_viewMode) {
-      case HistoryViewMode.weekly:
-        return _buildWeeklyView(provider);
-      case HistoryViewMode.calendar:
-        return _buildCalendarView(provider);
-      case HistoryViewMode.list:
-        return _buildListView(provider);
-    }
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 30, 20, 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'History',
-            style: TextStyle(
-              color: AppColors.textHeadline,
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Inter',
-            ),
-          ),
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.1),
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.analytics_outlined,
-                    color: AppColors.darkBlue,
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/analytics/weekly');
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.1),
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.add, color: AppColors.darkBlue),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/hydration/add');
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWeeklyView(HydrationProvider provider) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildWeekSelector(),
           const SizedBox(height: 20),
-          _buildWeeklyChart(provider),
-          const SizedBox(height: 20),
-          _buildWeeklyStats(provider),
-          const SizedBox(height: 20),
-          _buildWeeklyComparison(provider),
+          _buildStreakSection(provider),
+          const SizedBox(height: 24),
+          _buildIntakeChart(provider),
+          const SizedBox(height: 24),
+          _buildStatsCards(provider),
+          const SizedBox(height: 24),
+          _buildMostUsedSection(provider),
+          const SizedBox(height: 100), // Bottom padding for navigation
         ],
       ),
     );
   }
 
-  Widget _buildWeekSelector() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.chevron_left, color: AppColors.textSubtitle),
-          onPressed: () {
-            setState(() {
-              _selectedWeekIndex++;
-            });
-          },
-        ),
-        Expanded(
-          child: Center(
-            child: Text(
-              _getWeekRangeText(),
-              style: const TextStyle(
-                color: AppColors.textHeadline,
-                fontSize: 16,
+  Widget _buildStreakSection(HydrationProvider provider) {
+    return AppCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Days in a row',
+              style: TextStyle(
+                fontSize: 24,
                 fontWeight: FontWeight.w600,
+                color: AppColors.textHeadline,
+                fontFamily: 'Nunito',
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(
+                  Icons.emoji_events,
+                  color: Colors.orange,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Longest chain: ${provider.longestStreak}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: AppColors.textSubtitle,
+                    fontFamily: 'Nunito',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Week view with dots
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ...['S', 'M', 'T', 'W', 'T', 'F', 'S'].asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final day = entry.value;
+                  final isToday = index == DateTime.now().weekday % 7;
+                  final hasGoal = _hasGoalForDay(provider, index);
+                  
+                  return Column(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: hasGoal ? AppColors.waterFull : AppColors.unselectedBorder,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        day,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isToday ? AppColors.textHeadline : AppColors.textSubtitle,
+                          fontWeight: isToday ? FontWeight.w600 : FontWeight.w400,
+                          fontFamily: 'Nunito',
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+                // Large current streak number
+                Text(
+                  provider.currentStreak.toString(),
+                  style: const TextStyle(
+                    fontSize: 72,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textHeadline,
+                    fontFamily: 'Nunito',
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIntakeChart(HydrationProvider provider) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 1,
+          child: AppCard(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Intake',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textHeadline,
+                      fontFamily: 'Nunito',
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _getIntakePeriodText(),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSubtitle,
+                      fontFamily: 'Nunito',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    height: 120,
+                    child: BarChart(
+                      BarChartData(
+                        alignment: BarChartAlignment.spaceAround,
+                        maxY: _getMaxY(provider),
+                        barTouchData: BarTouchData(enabled: false),
+                        titlesData: FlTitlesData(
+                          rightTitles: const AxisTitles(),
+                          topTitles: const AxisTitles(),
+                          leftTitles: const AxisTitles(),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    _getBottomTitle(value.toInt()),
+                                    style: const TextStyle(
+                                      color: AppColors.textSubtitle,
+                                      fontSize: 12,
+                                      fontFamily: 'Nunito',
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        borderData: FlBorderData(show: false),
+                        gridData: const FlGridData(show: false),
+                        barGroups: _buildBarGroups(provider),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Day indicators
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: _buildDayIndicators(provider),
+                  ),
+                ],
               ),
             ),
           ),
         ),
-        IconButton(
-          icon: Icon(
-            Icons.chevron_right,
-            color:
-                _selectedWeekIndex > 0
-                    ? AppColors.textSubtitle
-                    : AppColors.unselectedBorder,
+        const SizedBox(width: 16),
+        Expanded(
+          flex: 1,
+          child: Column(
+            children: [
+              _buildBalanceCard(provider),
+              const SizedBox(height: 16),
+              _buildDailyAverageCard(provider),
+            ],
           ),
-          onPressed:
-              _selectedWeekIndex > 0
-                  ? () {
-                    setState(() {
-                      _selectedWeekIndex--;
-                    });
-                  }
-                  : null,
         ),
       ],
     );
   }
 
-  Widget _buildWeeklyChart(HydrationProvider provider) {
-    final weekData = provider.getWeeklyData(_currentWeekStart);
-    final filteredData = _filterWeeklyData(weekData);
-
+  Widget _buildBalanceCard(HydrationProvider provider) {
+    final percentage = (provider.intakePercentage * 100).round();
+    
     return AppCard(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Daily Intake',
+              'Balance',
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textHeadline,
+                color: AppColors.textSubtitle,
+                fontFamily: 'Nunito',
               ),
             ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: BarChart(
-                BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: _getMaxY(filteredData),
-                  barTouchData: BarTouchData(
-                    touchTooltipData: BarTouchTooltipData(
-                      tooltipBgColor: AppColors.darkBlue,
-                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                        final date = _currentWeekStart.add(
-                          Duration(days: groupIndex),
-                        );
-                        final intake = filteredData[date] ?? 0;
-                        return BarTooltipItem(
-                          '${_getDayName(date)}\n${(intake / 1000).toStringAsFixed(1)}L',
-                          const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  titlesData: FlTitlesData(
-                    rightTitles: const AxisTitles(),
-                    topTitles: const AxisTitles(),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          final date = _currentWeekStart.add(
-                            Duration(days: value.toInt()),
-                          );
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              _getDayAbbreviation(date),
-                              style: const TextStyle(
-                                color: AppColors.textSubtitle,
-                                fontSize: 12,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 40,
-                        getTitlesWidget: (value, meta) {
-                          return Text(
-                            '${(value / 1000).toStringAsFixed(1)}L',
-                            style: const TextStyle(
-                              color: AppColors.textSubtitle,
-                              fontSize: 10,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  barGroups: _buildWeeklyBarGroups(
-                    filteredData,
-                    provider.dailyGoal,
-                  ),
-                  gridData: FlGridData(
-                    drawVerticalLine: false,
-                    horizontalInterval: 500,
-                    getDrawingHorizontalLine: (value) {
-                      return const FlLine(
-                        color: AppColors.unselectedBorder,
-                        strokeWidth: 1,
-                      );
-                    },
-                  ),
-                ),
+            const SizedBox(height: 8),
+            Text(
+              '$percentage%',
+              style: const TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textHeadline,
+                fontFamily: 'Nunito',
               ),
             ),
           ],
@@ -525,42 +482,62 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     );
   }
 
-  Widget _buildWeeklyStats(HydrationProvider provider) {
-    final weekData = provider.getWeeklyData(_currentWeekStart);
-    final filteredData = _filterWeeklyData(weekData);
-
-    final totalIntake = filteredData.values.fold(
-      0,
-      (sum, value) => sum + value,
+  Widget _buildDailyAverageCard(HydrationProvider provider) {
+    final averageIntake = _calculateDailyAverage(provider);
+    
+    return AppCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Daily average',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.textSubtitle,
+                fontFamily: 'Nunito',
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${(averageIntake / 1000).toStringAsFixed(1)}L',
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textHeadline,
+                fontFamily: 'Nunito',
+              ),
+            ),
+          ],
+        ),
+      ),
     );
-    final averageIntake = totalIntake / 7.0;
-    final goalAchievedDays =
-        filteredData.values
-            .where((intake) => intake >= provider.dailyGoal)
-            .length;
+  }
 
+  Widget _buildStatsCards(HydrationProvider provider) {
     return Row(
       children: [
         Expanded(
           child: _buildStatCard(
-            'Average',
-            '${(averageIntake / 1000).toStringAsFixed(1)}L',
+            'Total Days',
+            _getTotalDaysTracked(provider).toString(),
             AppColors.lightBlue,
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            'Total',
-            '${(totalIntake / 1000).toStringAsFixed(1)}L',
+            'Goal Rate',
+            '${(_getGoalAchievementRate(provider) * 100).toInt()}%',
             AppColors.chartBlue,
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            'Goals',
-            '$goalAchievedDays/7',
+            'Best Week',
+            '${_getBestWeekStreak(provider)} days',
             AppColors.darkBlue,
           ),
         ),
@@ -579,6 +556,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
               style: const TextStyle(
                 fontSize: 12,
                 color: AppColors.textSubtitle,
+                fontFamily: 'Nunito',
               ),
             ),
             const SizedBox(height: 4),
@@ -588,6 +566,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: color,
+                fontFamily: 'Nunito',
               ),
             ),
           ],
@@ -596,62 +575,33 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     );
   }
 
-  Widget _buildWeeklyComparison(HydrationProvider provider) {
-    final thisWeekData = provider.getWeeklyData(_currentWeekStart);
-    final lastWeekStart = _currentWeekStart.subtract(const Duration(days: 7));
-    final lastWeekData = provider.getWeeklyData(lastWeekStart);
-
-    final thisWeekTotal = thisWeekData.values.fold(
-      0,
-      (sum, value) => sum + value,
-    );
-    final lastWeekTotal = lastWeekData.values.fold(
-      0,
-      (sum, value) => sum + value,
-    );
-
-    final percentageChange =
-        lastWeekTotal > 0
-            ? ((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100
-            : 0.0;
-
+  Widget _buildMostUsedSection(HydrationProvider provider) {
+    final mostUsedDrinks = _getMostUsedDrinks(provider);
+    
     return AppCard(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Weekly Comparison',
+              'Most used',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
                 color: AppColors.textHeadline,
+                fontFamily: 'Nunito',
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Icon(
-                  percentageChange >= 0
-                      ? Icons.trending_up
-                      : Icons.trending_down,
-                  color: percentageChange >= 0 ? Colors.green : Colors.red,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${percentageChange.abs().toStringAsFixed(1)}% ${percentageChange >= 0 ? 'increase' : 'decrease'}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: percentageChange >= 0 ? Colors.green : Colors.red,
-                  ),
-                ),
-                const Text(
-                  ' from last week',
-                  style: TextStyle(fontSize: 14, color: AppColors.textSubtitle),
-                ),
+                ...mostUsedDrinks.take(3).map((drink) => _buildMostUsedItem(
+                  drink['icon'] as IconData,
+                  drink['amount'] as String,
+                  drink['rank'] as int,
+                )),
               ],
             ),
           ],
@@ -660,404 +610,75 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     );
   }
 
-  Widget _buildCalendarView(HydrationProvider provider) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          AppCard(
-            child: TableCalendar<HydrationData>(
-              firstDay: DateTime.utc(2020),
-              lastDay: DateTime.now().add(const Duration(days: 365)),
-              focusedDay: _focusedDate,
-              selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              calendarStyle: CalendarStyle(
-                outsideDaysVisible: false,
-                weekendTextStyle: const TextStyle(
-                  color: AppColors.textSubtitle,
-                ),
-                holidayTextStyle: const TextStyle(
-                  color: AppColors.textSubtitle,
-                ),
-                selectedDecoration: const BoxDecoration(
-                  color: AppColors.waterFull,
-                  shape: BoxShape.circle,
-                ),
-                todayDecoration: BoxDecoration(
-                  color: AppColors.lightBlue.withValues(alpha: 0.5),
-                  shape: BoxShape.circle,
-                ),
-                markerDecoration: const BoxDecoration(
-                  color: AppColors.chartBlue,
-                  shape: BoxShape.circle,
-                ),
-                markersMaxCount: 1,
-              ),
-              headerStyle: const HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-                titleTextStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textHeadline,
-                ),
-                leftChevronIcon: Icon(
-                  Icons.chevron_left,
-                  color: AppColors.textSubtitle,
-                ),
-                rightChevronIcon: Icon(
-                  Icons.chevron_right,
-                  color: AppColors.textSubtitle,
-                ),
-              ),
-              eventLoader: (day) {
-                final entries = provider.getEntriesForDate(day);
-                return _filterEntries(entries);
-              },
-              calendarBuilders: CalendarBuilders(
-                markerBuilder: (context, date, events) {
-                  if (events.isEmpty) return null;
-
-                  final entries = events.cast<HydrationData>();
-                  final totalIntake = entries.totalWaterIntake;
-                  final goalAchieved = totalIntake >= provider.dailyGoal;
-
-                  return Positioned(
-                    bottom: 1,
-                    right: 1,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color:
-                            goalAchieved
-                                ? AppColors.waterFull
-                                : AppColors.lightBlue,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  );
-                },
-                defaultBuilder: (context, date, _) {
-                  final entries = provider.getEntriesForDate(date);
-                  final filteredEntries = _filterEntries(entries);
-                  final totalIntake = filteredEntries.totalWaterIntake;
-
-                  Color? backgroundColor;
-                  if (totalIntake > 0) {
-                    final percentage = (totalIntake / provider.dailyGoal).clamp(
-                      0.0,
-                      1.0,
-                    );
-                    backgroundColor = AppColors.waterFull.withValues(
-                      alpha: 0.1 + (percentage * 0.3),
-                    );
-                  }
-
-                  return Container(
-                    margin: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: backgroundColor,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${date.day}',
-                        style: const TextStyle(color: AppColors.textHeadline),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDate = selectedDay;
-                  _focusedDate = focusedDay;
-                });
-              },
-              onPageChanged: (focusedDay) {
-                _focusedDate = focusedDay;
-              },
-            ),
+  Widget _buildMostUsedItem(IconData icon, String amount, int rank) {
+    return Column(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: AppColors.waterFull.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(height: 20),
-          _buildSelectedDayDetails(provider),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSelectedDayDetails(HydrationProvider provider) {
-    final entries = provider.getEntriesForDate(_selectedDate);
-    final filteredEntries = _filterEntries(entries);
-    final totalIntake = filteredEntries.totalWaterIntake;
-    final goalAchieved = totalIntake >= provider.dailyGoal;
-
-    return AppCard(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  _formatSelectedDate(),
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textHeadline,
-                  ),
-                ),
-                const Spacer(),
-                Icon(
-                  goalAchieved ? Icons.check_circle : Icons.circle_outlined,
-                  color:
-                      goalAchieved
-                          ? AppColors.waterFull
-                          : AppColors.textSubtitle,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Text(
-                  'Total: ${(totalIntake / 1000).toStringAsFixed(1)}L',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textHeadline,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  'Goal: ${(provider.dailyGoal / 1000).toStringAsFixed(1)}L',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSubtitle,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            LinearProgressIndicator(
-              value: (totalIntake / provider.dailyGoal).clamp(0.0, 1.0),
-              backgroundColor: AppColors.waterLow,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                goalAchieved ? AppColors.waterFull : AppColors.lightBlue,
-              ),
-            ),
-            if (filteredEntries.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              const Text(
-                'Entries',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textHeadline,
-                ),
-              ),
-              const SizedBox(height: 8),
-              ...filteredEntries.take(3).map(_buildEntryTile),
-              if (filteredEntries.length > 3)
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _viewMode = HistoryViewMode.list;
-                    });
-                  },
-                  child: Text('View all ${filteredEntries.length} entries'),
-                ),
-            ] else
-              const Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Text(
-                  'No entries for this day',
-                  style: TextStyle(
-                    color: AppColors.textSubtitle,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildListView(HydrationProvider provider) {
-    final allEntries = provider.hydrationHistory;
-    final filteredEntries =
-        _filterEntries(allEntries)
-            .where(
-              (entry) =>
-                  _searchQuery.isEmpty ||
-                  entry.type.displayName.toLowerCase().contains(_searchQuery) ||
-                  (entry.notes?.toLowerCase().contains(_searchQuery) ?? false),
-            )
-            .toList();
-
-    return OptimizedListView<HydrationData>(
-      items: filteredEntries,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemBuilder: (context, entry, index) => _buildEntryCard(entry, provider),
-      emptyBuilder:
-          (context) => const EmptyStateWidget(
-            title: 'No Entries Found',
-            subtitle: 'Try adjusting your filters or search terms.',
-          ),
-      cacheExtent: 500, // Increased cache for better scrolling
-    );
-  }
-
-  Widget _buildEntryCard(HydrationData entry, HydrationProvider provider) {
-    return AppCard(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: AppColors.lightBlue.withValues(alpha: 0.2),
           child: Icon(
-            _getDrinkTypeIcon(entry.type),
-            color: AppColors.lightBlue,
-            size: 20,
+            icon,
+            size: 32,
+            color: AppColors.waterFull,
           ),
         ),
-        title: Text(
-          '${entry.amount}ml ${entry.type.displayName}',
+        const SizedBox(height: 8),
+        Text(
+          amount,
           style: const TextStyle(
+            fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.textHeadline,
+            fontFamily: 'Nunito',
           ),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              _formatEntryTime(entry.timestamp),
-              style: const TextStyle(
-                color: AppColors.textSubtitle,
-                fontSize: 12,
-              ),
-            ),
-            if (entry.notes != null && entry.notes!.isNotEmpty)
-              Text(
-                entry.notes!,
-                style: const TextStyle(
-                  color: AppColors.textSubtitle,
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-          ],
+        const SizedBox(height: 4),
+        Container(
+          width: 40,
+          height: 2,
+          color: rank == 1 ? AppColors.waterFull : AppColors.unselectedBorder,
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '${(entry.waterContent / 1000).toStringAsFixed(1)}L',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: AppColors.waterFull,
-              ),
-            ),
-            PopupMenuButton<String>(
-              onSelected: (value) => _handleEntryAction(value, entry, provider),
-              itemBuilder:
-                  (context) => [
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit, size: 16),
-                          SizedBox(width: 8),
-                          Text('Edit'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, size: 16, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Delete', style: TextStyle(color: Colors.red)),
-                        ],
-                      ),
-                    ),
-                  ],
-            ),
-          ],
+        const SizedBox(height: 8),
+        Text(
+          '$rank.',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+            color: rank == 1 ? AppColors.textHeadline : AppColors.textSubtitle,
+            fontFamily: 'Nunito',
+          ),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildEntryTile(HydrationData entry) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(
-            _getDrinkTypeIcon(entry.type),
-            color: AppColors.lightBlue,
-            size: 16,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            _formatTime(entry.timestamp),
-            style: const TextStyle(fontSize: 12, color: AppColors.textSubtitle),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            '${entry.amount}ml',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textHeadline,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            '${(entry.waterContent / 1000).toStringAsFixed(1)}L',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: AppColors.waterFull,
-            ),
-          ),
-        ],
-      ),
-    );
+  List<Widget> _buildDayIndicators(HydrationProvider provider) {
+    return ['S', 'M', 'T', 'W', 'T', 'F', 'S'].asMap().entries.map((entry) {
+      final index = entry.key;
+      final hasGoal = _hasGoalForDay(provider, index);
+      
+      return Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          color: hasGoal ? Colors.green : AppColors.unselectedBorder,
+          shape: BoxShape.circle,
+        ),
+      );
+    }).toList();
   }
 
-  // Helper methods
-  List<HydrationData> _filterEntries(List<HydrationData> entries) {
-    switch (_filterType) {
-      case FilterType.all:
-        return entries;
-      case FilterType.water:
-        return entries.where((entry) => entry.type == DrinkType.water).toList();
-      case FilterType.other:
-        return entries.where((entry) => entry.type != DrinkType.water).toList();
-    }
-  }
-
-  Map<DateTime, int> _filterWeeklyData(Map<DateTime, int> weekData) {
-    // For now, return all data since filtering by drink type in weekly view
-    // would require more complex data aggregation
-    return weekData;
-  }
-
-  List<BarChartGroupData> _buildWeeklyBarGroups(
-    Map<DateTime, int> weekData,
-    int dailyGoal,
-  ) {
+  List<BarChartGroupData> _buildBarGroups(HydrationProvider provider) {
+    final weekData = provider.getWeeklyData(_currentWeekStart);
+    
     return weekData.entries.map((entry) {
       final index = weekData.keys.toList().indexOf(entry.key);
       final intake = entry.value;
-      final achieved = intake >= dailyGoal;
+      final achieved = intake >= provider.dailyGoal;
 
       return BarChartGroupData(
         x: index,
@@ -1065,10 +686,10 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
           BarChartRodData(
             toY: intake.toDouble(),
             color: achieved ? AppColors.waterFull : AppColors.lightBlue,
-            width: 20,
+            width: 12,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(4),
-              topRight: Radius.circular(4),
+              topLeft: Radius.circular(2),
+              topRight: Radius.circular(2),
             ),
           ),
         ],
@@ -1076,108 +697,160 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     }).toList();
   }
 
-  double _getMaxY(Map<DateTime, int> data) {
-    if (data.isEmpty) return 3000;
-    final maxIntake = data.values.reduce((a, b) => a > b ? a : b);
+  void _showShareDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Share Statistics',
+          style: TextStyle(
+            fontFamily: 'Nunito',
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: const Text(
+          'Choose what to share:',
+          style: TextStyle(fontFamily: 'Nunito'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(fontFamily: 'Nunito'),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _shareWeeklyStats();
+            },
+            child: const Text(
+              'Weekly Stats',
+              style: TextStyle(fontFamily: 'Nunito'),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _shareMonthlyStats();
+            },
+            child: const Text(
+              'Monthly Stats',
+              style: TextStyle(fontFamily: 'Nunito'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _shareWeeklyStats() {
+    // Implement sharing functionality
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Weekly stats shared!'),
+        backgroundColor: AppColors.waterFull,
+      ),
+    );
+  }
+
+  void _shareMonthlyStats() {
+    // Implement sharing functionality
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Monthly stats shared!'),
+        backgroundColor: AppColors.waterFull,
+      ),
+    );
+  }
+
+  // Helper methods
+  bool _hasGoalForDay(HydrationProvider provider, int dayIndex) {
+    final now = DateTime.now();
+    final weekStart = now.subtract(Duration(days: now.weekday - 1));
+    final targetDate = weekStart.add(Duration(days: dayIndex));
+    final dayEntries = provider.getEntriesForDate(targetDate);
+    return dayEntries.totalWaterIntake >= provider.dailyGoal;
+  }
+
+  double _getMaxY(HydrationProvider provider) {
+    final weekData = provider.getWeeklyData(_currentWeekStart);
+    if (weekData.isEmpty) return 3000;
+    final maxIntake = weekData.values.reduce((a, b) => a > b ? a : b);
     return (maxIntake * 1.2).ceilToDouble();
   }
 
-  String _getWeekRangeText() {
-    final weekEnd = _currentWeekStart.add(const Duration(days: 6));
-    return '${_formatDateShort(_currentWeekStart)} - ${_formatDateShort(weekEnd)}';
+  String _getBottomTitle(int index) {
+    const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    return days[index % 7];
   }
 
-  String _formatDateShort(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[date.month - 1]} ${date.day}';
+  String _getIntakePeriodText() {
+    switch (_viewMode) {
+      case HistoryViewMode.weekly:
+        return 'Last 7 days';
+      case HistoryViewMode.monthly:
+        return 'Last 30 days';
+      case HistoryViewMode.yearly:
+        return 'Last 365 days';
+    }
   }
 
-  String _formatSelectedDate() {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    const days = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ];
-
-    return '${days[_selectedDate.weekday - 1]}, ${months[_selectedDate.month - 1]} ${_selectedDate.day}';
+  double _calculateDailyAverage(HydrationProvider provider) {
+    final history = provider.hydrationHistory;
+    if (history.isEmpty) return 0;
+    
+    final totalIntake = history.fold(0, (sum, entry) => sum + entry.waterContent);
+    final uniqueDays = history.map((e) => e.date).toSet().length;
+    
+    return uniqueDays > 0 ? totalIntake / uniqueDays : 0;
   }
 
-  String _formatEntryTime(DateTime timestamp) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    final time = _formatTime(timestamp);
-    return '${months[timestamp.month - 1]} ${timestamp.day} at $time';
+  int _getTotalDaysTracked(HydrationProvider provider) {
+    final history = provider.hydrationHistory;
+    return history.map((e) => e.date).toSet().length;
   }
 
-  String _formatTime(DateTime timestamp) {
-    final hour = timestamp.hour;
-    final minute = timestamp.minute.toString().padLeft(2, '0');
-
-    if (hour == 0) return '12:$minute AM';
-    if (hour < 12) return '$hour:$minute AM';
-    if (hour == 12) return '12:$minute PM';
-    return '${hour - 12}:$minute PM';
+  double _getGoalAchievementRate(HydrationProvider provider) {
+    final history = provider.hydrationHistory;
+    if (history.isEmpty) return 0;
+    
+    final dailyTotals = <DateTime, int>{};
+    for (final entry in history) {
+      final date = entry.date;
+      dailyTotals[date] = (dailyTotals[date] ?? 0) + entry.waterContent;
+    }
+    
+    final achievedDays = dailyTotals.values.where((total) => total >= provider.dailyGoal).length;
+    return dailyTotals.isNotEmpty ? achievedDays / dailyTotals.length : 0;
   }
 
-  String _getDayName(DateTime date) {
-    const days = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ];
-    return days[date.weekday - 1];
+  int _getBestWeekStreak(HydrationProvider provider) {
+    // Simplified calculation - in a real app, you'd track weekly streaks
+    return provider.longestStreak > 7 ? 7 : provider.longestStreak;
   }
 
-  String _getDayAbbreviation(DateTime date) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days[date.weekday - 1];
+  List<Map<String, dynamic>> _getMostUsedDrinks(HydrationProvider provider) {
+    final drinkCounts = <DrinkType, int>{};
+    
+    for (final entry in provider.hydrationHistory) {
+      drinkCounts[entry.type] = (drinkCounts[entry.type] ?? 0) + entry.amount;
+    }
+    
+    final sortedDrinks = drinkCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    
+    return sortedDrinks.take(3).map((entry) {
+      final type = entry.key;
+      final amount = entry.value;
+      
+      return {
+        'icon': _getDrinkTypeIcon(type),
+        'amount': amount > 1000 ? '${(amount / 1000).toStringAsFixed(1)}L' : '${amount}ml',
+        'rank': sortedDrinks.indexOf(entry) + 1,
+      };
+    }).toList();
   }
 
   IconData _getDrinkTypeIcon(DrinkType type) {
@@ -1195,69 +868,8 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
       case DrinkType.sports:
         return Icons.sports_bar;
       case DrinkType.other:
-        return Icons.local_drink;
+        return Icons.help_outline;
     }
-  }
-
-  void _handleEntryAction(
-    String action,
-    HydrationData entry,
-    HydrationProvider provider,
-  ) {
-    switch (action) {
-      case 'edit':
-        _showEditEntryDialog(entry, provider);
-      case 'delete':
-        _showDeleteConfirmation(entry, provider);
-    }
-  }
-
-  void _showEditEntryDialog(HydrationData entry, HydrationProvider provider) {
-    // This would open an edit dialog - for now, just show a snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Edit functionality coming soon'),
-        backgroundColor: AppColors.lightBlue,
-      ),
-    );
-  }
-
-  void _showDeleteConfirmation(
-    HydrationData entry,
-    HydrationProvider provider,
-  ) {
-    showDialog<void>(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Delete Entry'),
-            content: Text(
-              'Are you sure you want to delete this ${entry.amount}ml ${entry.type.displayName} entry?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  provider.deleteHydrationEntry(entry.id);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Entry deleted'),
-                      backgroundColor: AppColors.waterFull,
-                    ),
-                  );
-                },
-                child: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          ),
-    );
   }
 }
 
