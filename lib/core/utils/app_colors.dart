@@ -38,11 +38,11 @@ class AppColors {
   static const Color onBoardingpagebackground = Color(0xFFF5F5F5);
   static const Color onboardingBackground = Color(0xFFF5F5F5);
 
-  // Button box colors - Updated to minimal, consistent design
-  static const Color box1 = Color(0xFFF0F0F0); // Light Gray - 500ml button
-  static const Color box2 = Color(0xFFF5F5F5); // Lighter Gray - 250ml button
-  static const Color box3 = Color(0xFFFAFAFA); // Very Light Gray - 400ml button
-  static const Color box4 = Color(0xFFF8F8F8); // Off White - 100ml button
+  // Button box colors - Updated with consistent, vibrant colors
+  static const Color box1 = Color(0xFFE9D9FF); // Light Purple - 500ml button
+  static const Color box2 = Color(0xFFD4FFFB); // Light Cyan - 250ml button
+  static const Color box3 = Color(0xFFDAFFC7); // Light Green - 400ml button
+  static const Color box4 = Color(0xFFFFF8BB); // Light Yellow - 100ml button
 
   // Selection background
   static const Color selectedWeekBackground = Color(0xFF323062);
@@ -111,17 +111,17 @@ class AppColors {
   static const Color fitnessSliderMarkers = Color(0xFF918DFE);
   static const Color fitnessQuestionMark = Color(0xFFCCCCCC);
 
-  // Circular progress colors - Updated to consistent, minimal design
+  // Circular progress colors - Updated with consistent app color
   static const Color progressBackground = Color(
     0xFFE5E5E5,
   ); // Background circle
   static const Color progressGradientStart = Color(
-    0xFF6B73FF,
-  ); // Primary app color gradient start
+    0xFF7671FF,
+  ); // New app color for progress
   static const Color progressGradientEnd = Color(
-    0xFF9546C4,
-  ); // Primary app color gradient end
-  static const Color progressInnerRing = Color(0xFF918DFE); // Light purple inner ring
+    0xFF7671FF,
+  ); // Same color for solid appearance
+  static const Color progressInnerRing = Color(0xFF7671FF); // Same color for inner ring
 
   // Page indicator colors
   static const Color pageIndicatorActive = Color(
