@@ -14,7 +14,7 @@ class OnboardingProvider extends ChangeNotifier {
   int _currentStep = 0;
 
   // Total number of onboarding steps
-  static const int totalSteps = 13;
+  static const int totalSteps = 14;
 
   // User profile being built during onboarding
   UserProfile _userProfile = UserProfile.create();
@@ -26,6 +26,7 @@ class OnboardingProvider extends ChangeNotifier {
     8,
     9,
     10,
+    12, // daily routine is optional
   }; // gender, pregnancy, sugary drinks, vegetable, weather
 
   // Track completed steps
@@ -78,6 +79,8 @@ class OnboardingProvider extends ChangeNotifier {
       case 11: // Notifications - always valid
         return true;
       case 12: // Data summary - always valid
+        return true;
+      case 13: // Data summary - always valid
         return true;
       default:
         return false;
@@ -184,6 +187,16 @@ class OnboardingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateDailyRoutine({
+    TimeOfDay? wakeUpTime,
+    TimeOfDay? sleepTime,
+  }) {
+    _userProfile = _userProfile.copyWith(
+      wakeUpTime: wakeUpTime,
+      sleepTime: sleepTime,
+    );
+    notifyListeners();
+  }
   void updateDrinkGoal(double goalInLiters) {
     // Store the drink goal in user profile
     // You may need to add a field to UserProfile for this
@@ -405,6 +418,8 @@ class OnboardingProvider extends ChangeNotifier {
       case 10:
         return 'Notification Setup';
       case 11:
+        return 'Daily Routine';
+      case 13:
         return 'Data Summary';
       default:
         return 'Step ${step + 1}';
@@ -437,6 +452,8 @@ class OnboardingProvider extends ChangeNotifier {
       case 10:
         return 'Stay on track with reminders';
       case 11:
+        return 'Set your wake-up and sleep times';
+      case 13:
         return 'Review your information';
       default:
         return '';

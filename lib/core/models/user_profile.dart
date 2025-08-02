@@ -210,6 +210,8 @@ class UserProfile extends Equatable {
     this.customDailyGoal,
     this.notificationsEnabled = true,
     this.reminderTimes = const [],
+    this.wakeUpTime,
+    this.sleepTime,
     this.createdAt,
     this.updatedAt,
   });
@@ -256,6 +258,18 @@ class UserProfile extends Equatable {
               ?.map((t) => DateTime.fromMillisecondsSinceEpoch(t as int))
               .toList() ??
           [],
+      wakeUpTime: json['wakeUpTime'] != null 
+          ? TimeOfDay(
+              hour: json['wakeUpTime']['hour'] as int,
+              minute: json['wakeUpTime']['minute'] as int,
+            )
+          : null,
+      sleepTime: json['sleepTime'] != null 
+          ? TimeOfDay(
+              hour: json['sleepTime']['hour'] as int,
+              minute: json['sleepTime']['minute'] as int,
+            )
+          : null,
       createdAt:
           json['createdAt'] != null
               ? DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int)
@@ -319,6 +333,11 @@ class UserProfile extends Equatable {
   /// List of reminder times throughout the day
   final List<DateTime> reminderTimes;
 
+  /// Wake-up time for daily routine
+  final TimeOfDay? wakeUpTime;
+
+  /// Sleep time for daily routine
+  final TimeOfDay? sleepTime;
   /// When the profile was created
   final DateTime? createdAt;
 
@@ -390,6 +409,8 @@ class UserProfile extends Equatable {
     int? customDailyGoal,
     bool? notificationsEnabled,
     List<DateTime>? reminderTimes,
+    TimeOfDay? wakeUpTime,
+    TimeOfDay? sleepTime,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -408,6 +429,8 @@ class UserProfile extends Equatable {
       customDailyGoal: customDailyGoal ?? this.customDailyGoal,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       reminderTimes: reminderTimes ?? this.reminderTimes,
+      wakeUpTime: wakeUpTime ?? this.wakeUpTime,
+      sleepTime: sleepTime ?? this.sleepTime,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
     );
@@ -431,6 +454,12 @@ class UserProfile extends Equatable {
       'notificationsEnabled': notificationsEnabled,
       'reminderTimes':
           reminderTimes.map((t) => t.millisecondsSinceEpoch).toList(),
+      'wakeUpTime': wakeUpTime != null 
+          ? {'hour': wakeUpTime!.hour, 'minute': wakeUpTime!.minute}
+          : null,
+      'sleepTime': sleepTime != null 
+          ? {'hour': sleepTime!.hour, 'minute': sleepTime!.minute}
+          : null,
       'createdAt': createdAt?.millisecondsSinceEpoch,
       'updatedAt': updatedAt?.millisecondsSinceEpoch,
     };
@@ -452,6 +481,8 @@ class UserProfile extends Equatable {
     customDailyGoal,
     notificationsEnabled,
     reminderTimes,
+    wakeUpTime,
+    sleepTime,
     createdAt,
     updatedAt,
   ];

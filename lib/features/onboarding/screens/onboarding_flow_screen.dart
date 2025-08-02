@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/age_selection_screen.dart';
+import 'package:watertracker/features/onboarding/screens/daily_routine_screen.dart';
 import 'package:watertracker/features/onboarding/screens/data_summary_screen.dart';
 import 'package:watertracker/features/onboarding/screens/drink_goal_selection_screen.dart';
 import 'package:watertracker/features/onboarding/screens/exercise_frequency_screen.dart';
@@ -210,6 +211,8 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
       case 11:
         return const NotificationSetupScreen();
       case 12:
+        return const DailyRoutineScreen();
+      case 13:
         return const CompileDataScreen();
       default:
         return const WelcomeScreen();
