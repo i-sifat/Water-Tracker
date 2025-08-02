@@ -108,8 +108,9 @@ class MyApp extends StatelessWidget {
                 case '/analytics/weekly':
                   return PageRouteBuilder<void>(
                     settings: settings,
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const WeeklyProgressScreen(),
+                    pageBuilder:
+                        (context, animation, secondaryAnimation) =>
+                            const WeeklyProgressScreen(),
                     transitionDuration: const Duration(milliseconds: 200),
                     transitionsBuilder: (
                       context,
@@ -131,8 +132,9 @@ class MyApp extends StatelessWidget {
                 case '/hydration/add':
                   return PageRouteBuilder<void>(
                     settings: settings,
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const AddHydrationScreen(),
+                    pageBuilder:
+                        (context, animation, secondaryAnimation) =>
+                            const AddHydrationScreen(),
                     transitionDuration: const Duration(milliseconds: 200),
                     transitionsBuilder: (
                       context,

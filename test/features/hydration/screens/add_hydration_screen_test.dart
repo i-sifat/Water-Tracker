@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
+import 'package:watertracker/features/hydration/widgets/swipeable_page_view.dart';
 
 void main() {
   group('AddHydrationScreen Widget Tests', () {
@@ -44,12 +45,10 @@ void main() {
       expect(find.text('Add Water'), findsOneWidget);
     });
 
-    testWidgets('contains AddHydrationScreenContent', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('contains SwipeablePageView', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      expect(find.byType(AddHydrationScreenContent), findsOneWidget);
+      expect(find.byType(SwipeablePageView), findsOneWidget);
     });
 
     testWidgets('bottom navigation responds to taps', (
@@ -69,7 +68,7 @@ void main() {
     });
   });
 
-  group('AddHydrationScreenContent Widget Tests', () {
+  group('SwipeablePageView Integration Tests', () {
     late HydrationProvider mockHydrationProvider;
 
     setUp(() {
@@ -80,7 +79,7 @@ void main() {
       return MaterialApp(
         home: ChangeNotifierProvider<HydrationProvider>.value(
           value: mockHydrationProvider,
-          child: const Scaffold(body: AddHydrationScreenContent()),
+          child: const AddHydrationScreen(),
         ),
       );
     }
@@ -88,7 +87,7 @@ void main() {
     testWidgets('renders without errors', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      expect(find.byType(AddHydrationScreenContent), findsOneWidget);
+      expect(find.byType(SwipeablePageView), findsOneWidget);
     });
 
     testWidgets('has scrollable content', (WidgetTester tester) async {

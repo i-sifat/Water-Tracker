@@ -22,7 +22,7 @@ class _CompileDataScreenState extends State<CompileDataScreen>
   late Animation<double> _textAnimation;
 
   int _currentStep = 0;
-  double _progress = 0.0;
+  double _progress = 0;
 
   final List<String> _calculationSteps = [
     'Calculating basic intake for your profile...',
@@ -59,13 +59,13 @@ class _CompileDataScreenState extends State<CompileDataScreen>
 
   void _startCalculations() {
     _progressController.forward();
-    
+
     // Update progress and text every 600ms
     Timer.periodic(const Duration(milliseconds: 600), (timer) {
       if (mounted) {
         setState(() {
           _progress = _progressAnimation.value * 100;
-          
+
           // Update current step based on progress
           if (_progress < 20) {
             _currentStep = 0;
@@ -79,11 +79,11 @@ class _CompileDataScreenState extends State<CompileDataScreen>
             _currentStep = 4;
           }
         });
-        
+
         // Animate text change
         _textController.reset();
         _textController.forward();
-        
+
         // Complete when progress reaches 100%
         if (_progress >= 100) {
           timer.cancel();
@@ -95,7 +95,7 @@ class _CompileDataScreenState extends State<CompileDataScreen>
     });
   }
 
-  void _navigateToCompletion() async {
+  Future<void> _navigateToCompletion() async {
     final onboardingProvider = Provider.of<OnboardingProvider>(
       context,
       listen: false,
@@ -118,9 +118,8 @@ class _CompileDataScreenState extends State<CompileDataScreen>
       // Navigate to completion screen
       Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
-          builder: (context) => OnboardingCompletionScreen(
-            dailyGoal: dailyGoal,
-          ),
+          builder:
+              (context) => OnboardingCompletionScreen(dailyGoal: dailyGoal),
         ),
       );
     } catch (e) {
@@ -161,9 +160,9 @@ class _CompileDataScreenState extends State<CompileDataScreen>
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 60),
-              
+
               // Circular Progress Indicator
               Center(
                 child: SizedBox(
@@ -176,12 +175,12 @@ class _CompileDataScreenState extends State<CompileDataScreen>
                       Container(
                         width: 200,
                         height: 200,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: AppColors.checkBoxCircle,
                         ),
                       ),
-                      
+
                       // Progress circle
                       AnimatedBuilder(
                         animation: _progressAnimation,
@@ -192,13 +191,16 @@ class _CompileDataScreenState extends State<CompileDataScreen>
                             child: CircularProgressIndicator(
                               value: _progressAnimation.value,
                               strokeWidth: 8,
-                              backgroundColor: AppColors.textSubtitle.withValues(alpha: 0.2),
-                              valueColor: AlwaysStoppedAnimation<Color>(AppColors.lightBlue),
+                              backgroundColor: AppColors.textSubtitle
+                                  .withValues(alpha: 0.2),
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                AppColors.lightBlue,
+                              ),
                             ),
                           );
                         },
                       ),
-                      
+
                       // Percentage text
                       AnimatedBuilder(
                         animation: _progressAnimation,
@@ -217,9 +219,9 @@ class _CompileDataScreenState extends State<CompileDataScreen>
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 60),
-              
+
               // Animated calculation steps
               AnimatedBuilder(
                 animation: _textAnimation,
@@ -237,7 +239,7 @@ class _CompileDataScreenState extends State<CompileDataScreen>
                                 Container(
                                   width: 20,
                                   height: 20,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: AppColors.goalGreen,
                                     shape: BoxShape.circle,
                                   ),
@@ -261,17 +263,19 @@ class _CompileDataScreenState extends State<CompileDataScreen>
                             ),
                           );
                         }),
-                        
+
                         // Current step
                         if (_currentStep < _calculationSteps.length)
                           Row(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.lightBlue),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppColors.lightBlue,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -298,4 +302,4 @@ class _CompileDataScreenState extends State<CompileDataScreen>
       ),
     );
   }
-} 
+}

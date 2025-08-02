@@ -17,21 +17,21 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
   TimeOfDay _sleepTime = const TimeOfDay(hour: 21, minute: 0);
 
   Future<void> _selectWakeUpTime() async {
-    final TimeOfDay? picked = await showTimePicker(
+    final picked = await showTimePicker(
       context: context,
       initialTime: _wakeUpTime,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: AppColors.waterFull,
-            ),
+            colorScheme: Theme.of(
+              context,
+            ).colorScheme.copyWith(primary: AppColors.waterFull),
           ),
           child: child!,
         );
       },
     );
-    
+
     if (picked != null && picked != _wakeUpTime) {
       setState(() {
         _wakeUpTime = picked;
@@ -40,21 +40,21 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
   }
 
   Future<void> _selectSleepTime() async {
-    final TimeOfDay? picked = await showTimePicker(
+    final picked = await showTimePicker(
       context: context,
       initialTime: _sleepTime,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: AppColors.waterFull,
-            ),
+            colorScheme: Theme.of(
+              context,
+            ).colorScheme.copyWith(primary: AppColors.waterFull),
           ),
           child: child!,
         );
       },
     );
-    
+
     if (picked != null && picked != _sleepTime) {
       setState(() {
         _sleepTime = picked;
@@ -83,7 +83,8 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
       builder: (context, onboardingProvider, child) {
         return OnboardingScreenWrapper(
           title: "What's your daily routine?",
-          subtitle: 'Please, specify details about your daily routine for a\nmore accurate personal daily intake plan',
+          subtitle:
+              'Please, specify details about your daily routine for a\nmore accurate personal daily intake plan',
           backgroundColor: AppColors.onboardingBackground,
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           onContinue: () => _handleContinue(onboardingProvider),
@@ -91,7 +92,7 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
           child: Column(
             children: [
               const SizedBox(height: 32),
-              
+
               // Wake-up time card
               _buildTimeCard(
                 icon: Icons.wb_sunny,
@@ -99,9 +100,9 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
                 time: _formatTime(_wakeUpTime),
                 onTap: _selectWakeUpTime,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Sleep time card
               _buildTimeCard(
                 icon: Icons.nightlight_round,
@@ -109,7 +110,7 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
                 time: _formatTime(_sleepTime),
                 onTap: _selectSleepTime,
               ),
-              
+
               const Spacer(),
             ],
           ),
@@ -150,15 +151,11 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
                 color: AppColors.boxIconBackground,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: AppColors.textHeadline,
-                size: 24,
-              ),
+              child: Icon(icon, color: AppColors.textHeadline, size: 24),
             ),
-            
+
             const SizedBox(width: 16),
-            
+
             // Title
             Expanded(
               child: Text(
@@ -170,7 +167,7 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
                 ),
               ),
             ),
-            
+
             // Time display
             Text(
               time,
@@ -180,11 +177,11 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
                 color: AppColors.waterFull,
               ),
             ),
-            
+
             const SizedBox(width: 8),
-            
+
             // Arrow icon
-            Icon(
+            const Icon(
               Icons.chevron_right,
               color: AppColors.textSubtitle,
               size: 20,

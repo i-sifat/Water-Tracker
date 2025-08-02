@@ -20,20 +20,20 @@ class ContinueButton extends StatelessWidget {
         minimumSize: const Size(double.infinity, 56),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      child: Row(
+      child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             'Continue',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
               fontFamily: 'Nunito',
             ),
           ),
-          const SizedBox(width: 8),
-          const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+          SizedBox(width: 8),
+          Icon(Icons.arrow_forward, color: Colors.white, size: 20),
         ],
       ),
     );

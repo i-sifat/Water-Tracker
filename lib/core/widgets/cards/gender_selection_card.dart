@@ -27,7 +27,8 @@ class GenderSelectionCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.lightPurple : AppColors.unselectedBorder,
+            color:
+                isSelected ? AppColors.lightPurple : AppColors.unselectedBorder,
             width: 2,
           ),
           boxShadow: [
@@ -41,18 +42,16 @@ class GenderSelectionCard extends StatelessWidget {
         child: Column(
           children: [
             // Top section with avatar
-            Expanded(
-              flex: 3,
-              child: Center(
-                child: _buildAvatar(),
-              ),
-            ),
+            Expanded(flex: 3, child: Center(child: _buildAvatar())),
             // Bottom section with text
             Container(
               width: double.infinity,
               height: 60,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.lightPurple : AppColors.genderUnselected,
+                color:
+                    isSelected
+                        ? AppColors.lightPurple
+                        : AppColors.genderUnselected,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(14),
                   bottomRight: Radius.circular(14),
@@ -77,19 +76,15 @@ class GenderSelectionCard extends StatelessWidget {
   }
 
   Widget _buildAvatar() {
-    final String assetPath = gender == 'male' 
-        ? 'assets/images/avatars/male.svg'
-        : 'assets/images/avatars/female.svg';
-    
+    final assetPath =
+        gender == 'male'
+            ? 'assets/images/avatars/male.svg'
+            : 'assets/images/avatars/female.svg';
+
     return SizedBox(
       width: 80,
       height: 80,
-      child: SvgPicture.asset(
-        assetPath,
-        width: 80,
-        height: 80,
-        fit: BoxFit.contain,
-      ),
+      child: SvgPicture.asset(assetPath, width: 80, height: 80),
     );
   }
 }

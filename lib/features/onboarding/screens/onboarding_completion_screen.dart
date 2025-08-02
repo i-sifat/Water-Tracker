@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 
 /// Celebration screen shown when onboarding is completed
@@ -83,7 +82,7 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
               const Spacer(),
 
               // Celebration animation
-                              ScaleTransition(
+              ScaleTransition(
                 scale: _scaleAnimation,
                 child: Container(
                   width: 120, // Increased from 80
@@ -93,21 +92,20 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                                      child: Lottie.asset(
-                    'assets/animations/lottie/check_animation.json',
-                    width: 140, // Increased from 90
-                    height: 140, // Increased from 90
-                    repeat: false,
-                    onLoaded: (composition) {
-                      // Animation loaded successfully
-                    },
-                  ),
+                    child: Lottie.asset(
+                      'assets/animations/lottie/check_animation.json',
+                      width: 140, // Increased from 90
+                      height: 140, // Increased from 90
+                      repeat: false,
+                      onLoaded: (composition) {
+                        // Animation loaded successfully
+                      },
+                    ),
                   ),
                 ),
               ),
 
               const SizedBox(height: 30), // Reduced from 40
-
               // Success message
               FadeTransition(
                 opacity: _fadeAnimation,
@@ -139,7 +137,6 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                     ),
 
                     const SizedBox(height: 24), // Reduced from 32
-
                     // Daily goal display
                     Container(
                       padding: const EdgeInsets.all(20), // Reduced from 24
@@ -192,7 +189,6 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                     ),
 
                     const SizedBox(height: 24), // Reduced from 32
-
                     // Features preview
                     Container(
                       padding: const EdgeInsets.all(16), // Reduced from 20
@@ -249,7 +245,9 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                       backgroundColor: Colors.white,
                       foregroundColor: AppColors.lightBlue,
                       minimumSize: const Size(double.infinity, 56),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -264,7 +262,11 @@ class _OnboardingCompletionScreenState extends State<OnboardingCompletionScreen>
                           ),
                         ),
                         SizedBox(width: 8),
-                        Icon(Icons.arrow_forward, color: AppColors.lightBlue, size: 20),
+                        Icon(
+                          Icons.arrow_forward,
+                          color: AppColors.lightBlue,
+                          size: 20,
+                        ),
                       ],
                     ),
                   ),

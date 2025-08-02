@@ -1,6 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
-import 'dart:math' as math;
 
 /// Animation utilities for consistent interactions across the app
 class AppAnimations {
@@ -27,10 +28,7 @@ class AppAnimations {
       builder: (context, value, child) {
         return Transform.scale(
           scale: value,
-          child: GestureDetector(
-            onTapDown: (_) => onTap(),
-            child: child,
-          ),
+          child: GestureDetector(onTapDown: (_) => onTap(), child: child),
         );
       },
       child: child,
@@ -50,31 +48,35 @@ class AppAnimations {
       duration: duration,
       curve: smooth,
       decoration: BoxDecoration(
-        color: isSelected 
-            ? (selectedColor ?? AppColors.selectedShade)
-            : (unselectedColor ?? Colors.white),
+        color:
+            isSelected
+                ? (selectedColor ?? AppColors.selectedShade)
+                : (unselectedColor ?? Colors.white),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected 
-              ? (selectedColor ?? AppColors.selectedBorder)
-              : AppColors.unselectedBorder,
+          color:
+              isSelected
+                  ? (selectedColor ?? AppColors.selectedBorder)
+                  : AppColors.unselectedBorder,
           width: isSelected ? 2 : 1,
         ),
-        boxShadow: isSelected
-            ? [
-                BoxShadow(
-                  color: (selectedColor ?? AppColors.selectedBorder).withValues(alpha: 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                ),
-              ],
+        boxShadow:
+            isSelected
+                ? [
+                  BoxShadow(
+                    color: (selectedColor ?? AppColors.selectedBorder)
+                        .withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+                : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -124,16 +126,10 @@ class AppAnimations {
   }) {
     return TweenAnimationBuilder<Offset>(
       duration: duration,
-      tween: Tween(
-        begin: Offset(isForward ? 1.0 : -1.0, 0),
-        end: Offset.zero,
-      ),
+      tween: Tween(begin: Offset(isForward ? 1.0 : -1.0, 0), end: Offset.zero),
       curve: smooth,
       builder: (context, offset, child) {
-        return Transform.translate(
-          offset: offset,
-          child: child,
-        );
+        return Transform.translate(offset: offset, child: child);
       },
       child: child,
     );
@@ -150,10 +146,7 @@ class AppAnimations {
       tween: Tween(begin: 0, end: 1),
       curve: curve,
       builder: (context, opacity, child) {
-        return Opacity(
-          opacity: opacity,
-          child: child,
-        );
+        return Opacity(opacity: opacity, child: child);
       },
       child: child,
     );
@@ -168,10 +161,7 @@ class AppAnimations {
       duration: duration,
       tween: Tween(begin: 0.8, end: 1),
       builder: (context, scale, child) {
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
+        return Transform.scale(scale: scale, child: child);
       },
       child: child,
     );
@@ -187,10 +177,7 @@ class AppAnimations {
       tween: Tween(begin: 0, end: 1),
       curve: bounce,
       builder: (context, scale, child) {
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
+        return Transform.scale(scale: scale, child: child);
       },
       child: child,
     );
@@ -206,10 +193,7 @@ class AppAnimations {
       tween: Tween(begin: 0, end: 1),
       builder: (context, value, child) {
         final shake = math.sin(value * 10) * 5;
-        return Transform.translate(
-          offset: Offset(shake, 0),
-          child: child,
-        );
+        return Transform.translate(offset: Offset(shake, 0), child: child);
       },
       child: child,
     );
@@ -263,13 +247,10 @@ class AppAnimations {
         color: AppColors.waterFull,
         shape: BoxShape.circle,
       ),
-      child: isVisible
-          ? const Icon(
-              Icons.check,
-              color: Colors.white,
-              size: 16,
-            )
-          : null,
+      child:
+          isVisible
+              ? const Icon(Icons.check, color: Colors.white, size: 16)
+              : null,
     );
   }
 
@@ -283,10 +264,7 @@ class AppAnimations {
       duration: duration,
       tween: Tween(begin: 0, end: text.length),
       builder: (context, value, child) {
-        return Text(
-          text.substring(0, value),
-          style: style,
-        );
+        return Text(text.substring(0, value), style: style);
       },
     );
   }
@@ -303,14 +281,12 @@ class PageTransitions {
         const end = Offset.zero;
         const curve = Curves.easeInOut;
 
-        final tween = Tween(begin: begin, end: end).chain(
-          CurveTween(curve: curve),
-        );
+        final tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
 
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+        return SlideTransition(position: animation.drive(tween), child: child);
       },
     );
   }
@@ -324,14 +300,12 @@ class PageTransitions {
         const end = Offset.zero;
         const curve = Curves.easeInOut;
 
-        final tween = Tween(begin: begin, end: end).chain(
-          CurveTween(curve: curve),
-        );
+        final tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
 
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+        return SlideTransition(position: animation.drive(tween), child: child);
       },
     );
   }
@@ -341,10 +315,7 @@ class PageTransitions {
     return PageRouteBuilder<dynamic>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       },
     );
   }

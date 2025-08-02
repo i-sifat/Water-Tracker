@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 /// Enum representing different types of drinks
 enum DrinkType {
@@ -47,6 +48,46 @@ enum DrinkType {
         return 'Sports Drink';
       case DrinkType.other:
         return 'Other';
+    }
+  }
+
+  /// Icon for the drink type
+  IconData get icon {
+    switch (this) {
+      case DrinkType.water:
+        return Icons.water_drop;
+      case DrinkType.tea:
+        return Icons.local_cafe;
+      case DrinkType.coffee:
+        return Icons.coffee;
+      case DrinkType.juice:
+        return Icons.local_drink;
+      case DrinkType.soda:
+        return Icons.local_bar;
+      case DrinkType.sports:
+        return Icons.sports_bar;
+      case DrinkType.other:
+        return Icons.local_drink;
+    }
+  }
+
+  /// Color associated with the drink type
+  Color get color {
+    switch (this) {
+      case DrinkType.water:
+        return const Color(0xFF2196F3); // Blue
+      case DrinkType.tea:
+        return const Color(0xFF8D6E63); // Brown
+      case DrinkType.coffee:
+        return const Color(0xFF5D4037); // Dark Brown
+      case DrinkType.juice:
+        return const Color(0xFFFF9800); // Orange
+      case DrinkType.soda:
+        return const Color(0xFF9C27B0); // Purple
+      case DrinkType.sports:
+        return const Color(0xFF4CAF50); // Green
+      case DrinkType.other:
+        return const Color(0xFF607D8B); // Blue Grey
     }
   }
 }

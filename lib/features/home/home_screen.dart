@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _widgetOptions = <Widget>[
       const HomeScreenContent(),
-      const AddHydrationScreenContent(),
+      const AddHydrationScreen(),
       const HistoryScreenContent(),
     ];
   }
@@ -211,12 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (BuildContext dialogContext) {
         return ExitConfirmationModal(
           title: 'Exit App?',
-          content: 'Are you sure you want to exit the app?',
-          confirmText: 'Exit',
-          cancelText: 'Cancel',
-          onConfirm: () {
-            SystemNavigator.pop();
-          },
+          onConfirm: SystemNavigator.pop,
           onCancel: () {
             // Stay in the app
           },

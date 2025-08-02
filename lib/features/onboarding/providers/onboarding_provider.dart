@@ -201,12 +201,10 @@ class OnboardingProvider extends ChangeNotifier {
     notifyListeners();
   }
   void updateDrinkGoal(double goalInLiters) {
-    // Store the drink goal in user profile
-    // You may need to add a field to UserProfile for this
-    // For now, we'll store it in a way that can be accessed later
+    // Convert liters to milliliters and store in user profile
+    final goalInMilliliters = (goalInLiters * 1000).round();
     _userProfile = _userProfile.copyWith(
-      // Add a custom field or use existing field to store drink goal
-      // This is a placeholder - you'll need to add the appropriate field
+      dailyGoal: goalInMilliliters,
     );
     notifyListeners();
   }

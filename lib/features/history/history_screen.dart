@@ -38,7 +38,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   late Animation<double> _fadeAnimation;
 
   // Weekly view state
-  int _selectedWeekIndex = 0;
+  final int _selectedWeekIndex = 0;
   DateTime get _currentWeekStart {
     final now = DateTime.now();
     final weekStart = now.subtract(Duration(days: now.weekday - 1));
@@ -123,10 +123,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
               ],
             ),
             child: IconButton(
-              icon: const Icon(
-                Icons.settings,
-                color: AppColors.darkBlue,
-              ),
+              icon: const Icon(Icons.settings, color: AppColors.darkBlue),
               onPressed: () {
                 Navigator.pushNamed(context, SettingsScreen.routeName);
               },
@@ -155,10 +152,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
               ],
             ),
             child: IconButton(
-              icon: const Icon(
-                Icons.share,
-                color: AppColors.darkBlue,
-              ),
+              icon: const Icon(Icons.share, color: AppColors.darkBlue),
               onPressed: () {
                 _showShareDialog(context);
               },
@@ -175,24 +169,15 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
       child: Row(
         children: [
           Expanded(
-            child: _buildViewModeButton(
-              'WEEKLY',
-              HistoryViewMode.weekly,
-            ),
+            child: _buildViewModeButton('WEEKLY', HistoryViewMode.weekly),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildViewModeButton(
-              'MONTHLY',
-              HistoryViewMode.monthly,
-            ),
+            child: _buildViewModeButton('MONTHLY', HistoryViewMode.monthly),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildViewModeButton(
-              'YEARLY',
-              HistoryViewMode.yearly,
-            ),
+            child: _buildViewModeButton('YEARLY', HistoryViewMode.yearly),
           ),
         ],
       ),
@@ -216,17 +201,19 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
           color: isSelected ? AppColors.waterFull : Colors.white,
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
-            color: isSelected ? AppColors.waterFull : AppColors.unselectedBorder,
+            color:
+                isSelected ? AppColors.waterFull : AppColors.unselectedBorder,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.waterFull.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
+          boxShadow:
+              isSelected
+                  ? [
+                    BoxShadow(
+                      color: AppColors.waterFull.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                  : null,
         ),
         child: Text(
           title,
@@ -281,11 +268,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(
-                  Icons.emoji_events,
-                  color: Colors.orange,
-                  size: 20,
-                ),
+                const Icon(Icons.emoji_events, color: Colors.orange, size: 20),
                 const SizedBox(width: 8),
                 Text(
                   'Longest chain: ${provider.longestStreak}',
@@ -302,19 +285,24 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ...['S', 'M', 'T', 'W', 'T', 'F', 'S'].asMap().entries.map((entry) {
+                ...['S', 'M', 'T', 'W', 'T', 'F', 'S'].asMap().entries.map((
+                  entry,
+                ) {
                   final index = entry.key;
                   final day = entry.value;
                   final isToday = index == DateTime.now().weekday % 7;
                   final hasGoal = _hasGoalForDay(provider, index);
-                  
+
                   return Column(
                     children: [
                       Container(
                         width: 8,
                         height: 8,
                         decoration: BoxDecoration(
-                          color: hasGoal ? AppColors.waterFull : AppColors.unselectedBorder,
+                          color:
+                              hasGoal
+                                  ? AppColors.waterFull
+                                  : AppColors.unselectedBorder,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -323,8 +311,12 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
                         day,
                         style: TextStyle(
                           fontSize: 14,
-                          color: isToday ? AppColors.textHeadline : AppColors.textSubtitle,
-                          fontWeight: isToday ? FontWeight.w600 : FontWeight.w400,
+                          color:
+                              isToday
+                                  ? AppColors.textHeadline
+                                  : AppColors.textSubtitle,
+                          fontWeight:
+                              isToday ? FontWeight.w600 : FontWeight.w400,
                           fontFamily: 'Nunito',
                         ),
                       ),
@@ -353,7 +345,6 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     return Row(
       children: [
         Expanded(
-          flex: 1,
           child: AppCard(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -428,7 +419,6 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
         ),
         const SizedBox(width: 16),
         Expanded(
-          flex: 1,
           child: Column(
             children: [
               _buildBalanceCard(provider),
@@ -443,7 +433,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 
   Widget _buildBalanceCard(HydrationProvider provider) {
     final percentage = (provider.intakePercentage * 100).round();
-    
+
     return AppCard(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -476,7 +466,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 
   Widget _buildDailyAverageCard(HydrationProvider provider) {
     final averageIntake = _calculateDailyAverage(provider);
-    
+
     return AppCard(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -569,7 +559,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 
   Widget _buildMostUsedSection(HydrationProvider provider) {
     final mostUsedDrinks = _getMostUsedDrinks(provider);
-    
+
     return AppCard(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -589,11 +579,15 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ...mostUsedDrinks.take(3).map((drink) => _buildMostUsedItem(
-                  drink['icon'] as IconData,
-                  drink['amount'] as String,
-                  drink['rank'] as int,
-                )),
+                ...mostUsedDrinks
+                    .take(3)
+                    .map(
+                      (drink) => _buildMostUsedItem(
+                        drink['icon'] as IconData,
+                        drink['amount'] as String,
+                        drink['rank'] as int,
+                      ),
+                    ),
               ],
             ),
           ],
@@ -612,11 +606,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
             color: AppColors.waterFull.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            icon,
-            size: 32,
-            color: AppColors.waterFull,
-          ),
+          child: Icon(icon, size: 32, color: AppColors.waterFull),
         ),
         const SizedBox(height: 8),
         Text(
@@ -652,7 +642,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
     return ['S', 'M', 'T', 'W', 'T', 'F', 'S'].asMap().entries.map((entry) {
       final index = entry.key;
       final hasGoal = _hasGoalForDay(provider, index);
-      
+
       return Container(
         width: 8,
         height: 8,
@@ -666,7 +656,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 
   List<BarChartGroupData> _buildBarGroups(HydrationProvider provider) {
     final weekData = provider.getWeeklyData(_currentWeekStart);
-    
+
     return weekData.entries.map((entry) {
       final index = weekData.keys.toList().indexOf(entry.key);
       final intake = entry.value;
@@ -692,48 +682,49 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   void _showShareDialog(BuildContext context) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          'Share Statistics',
-          style: TextStyle(
-            fontFamily: 'Nunito',
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        content: const Text(
-          'Choose what to share:',
-          style: TextStyle(fontFamily: 'Nunito'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancel',
+      builder:
+          (context) => AlertDialog(
+            title: const Text(
+              'Share Statistics',
+              style: TextStyle(
+                fontFamily: 'Nunito',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            content: const Text(
+              'Choose what to share:',
               style: TextStyle(fontFamily: 'Nunito'),
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(fontFamily: 'Nunito'),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _shareWeeklyStats();
+                },
+                child: const Text(
+                  'Weekly Stats',
+                  style: TextStyle(fontFamily: 'Nunito'),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _shareMonthlyStats();
+                },
+                child: const Text(
+                  'Monthly Stats',
+                  style: TextStyle(fontFamily: 'Nunito'),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _shareWeeklyStats();
-            },
-            child: const Text(
-              'Weekly Stats',
-              style: TextStyle(fontFamily: 'Nunito'),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _shareMonthlyStats();
-            },
-            child: const Text(
-              'Monthly Stats',
-              style: TextStyle(fontFamily: 'Nunito'),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -792,10 +783,13 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   double _calculateDailyAverage(HydrationProvider provider) {
     final history = provider.hydrationHistory;
     if (history.isEmpty) return 0;
-    
-    final totalIntake = history.fold(0, (sum, entry) => sum + entry.waterContent);
+
+    final totalIntake = history.fold(
+      0,
+      (sum, entry) => sum + entry.waterContent,
+    );
     final uniqueDays = history.map((e) => e.date).toSet().length;
-    
+
     return uniqueDays > 0 ? totalIntake / uniqueDays : 0;
   }
 
@@ -807,14 +801,15 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
   double _getGoalAchievementRate(HydrationProvider provider) {
     final history = provider.hydrationHistory;
     if (history.isEmpty) return 0;
-    
+
     final dailyTotals = <DateTime, int>{};
     for (final entry in history) {
       final date = entry.date;
       dailyTotals[date] = (dailyTotals[date] ?? 0) + entry.waterContent;
     }
-    
-    final achievedDays = dailyTotals.values.where((total) => total >= provider.dailyGoal).length;
+
+    final achievedDays =
+        dailyTotals.values.where((total) => total >= provider.dailyGoal).length;
     return dailyTotals.isNotEmpty ? achievedDays / dailyTotals.length : 0;
   }
 
@@ -825,21 +820,25 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 
   List<Map<String, dynamic>> _getMostUsedDrinks(HydrationProvider provider) {
     final drinkCounts = <DrinkType, int>{};
-    
+
     for (final entry in provider.hydrationHistory) {
       drinkCounts[entry.type] = (drinkCounts[entry.type] ?? 0) + entry.amount;
     }
-    
-    final sortedDrinks = drinkCounts.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    
+
+    final sortedDrinks =
+        drinkCounts.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
+
     return sortedDrinks.take(3).map((entry) {
       final type = entry.key;
       final amount = entry.value;
-      
+
       return {
         'icon': _getDrinkTypeIcon(type),
-        'amount': amount > 1000 ? '${(amount / 1000).toStringAsFixed(1)}L' : '${amount}ml',
+        'amount':
+            amount > 1000
+                ? '${(amount / 1000).toStringAsFixed(1)}L'
+                : '${amount}ml',
         'rank': sortedDrinks.indexOf(entry) + 1,
       };
     }).toList();
@@ -868,7 +867,7 @@ class _HistoryScreenContentState extends State<HistoryScreenContent>
 class _HistoryScreenState extends State<HistoryScreen> {
   static final List<Widget> _widgetOptions = <Widget>[
     const HomeScreenContent(),
-    const AddHydrationScreenContent(),
+    const AddHydrationScreen(),
     const HistoryScreenContent(),
   ];
   int _selectedIndex = 2;

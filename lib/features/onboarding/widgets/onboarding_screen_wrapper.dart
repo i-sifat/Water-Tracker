@@ -5,7 +5,6 @@ import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/core/widgets/common/assessment_counter.dart';
 import 'package:watertracker/core/widgets/common/exit_confirmation_modal.dart';
-import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_progress_indicator.dart';
 
@@ -273,63 +272,10 @@ class OnboardingScreenWrapper extends StatelessWidget {
               isDisabled: !(canContinue && !isLoading),
             ),
           ),
-
-          // Skip onboarding option (only on first screen)
-          if (provider.currentStep == 0)
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: TextButton(
-                onPressed:
-                    isLoading ? null : () => _showSkipOnboardingDialog(context),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.waterFull,
-                ),
-                child: const Text(
-                  'Skip onboarding',
-                  style: TextStyle(
-                    fontFamily: 'Nunito',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.waterFull,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );
   }
 
-  void _showSkipOnboardingDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Skip Onboarding?'),
-          content: const Text(
-            "Skipping onboarding means we won't be able to personalize your hydration goal. You can always set this up later in settings.",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute<void>(
-                    builder: (context) => const HomeScreen(),
-                  ),
-                  (route) => false,
-                );
-              },
-              child: const Text('Skip'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 }
