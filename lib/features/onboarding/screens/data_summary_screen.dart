@@ -7,6 +7,11 @@ import 'package:watertracker/features/hydration/providers/hydration_provider.dar
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/screens/onboarding_completion_screen.dart';
 
+// Helper function for unawaited futures
+void unawaited(Future<void> future) {
+  // Intentionally ignore the future
+}
+
 class CompileDataScreen extends StatefulWidget {
   const CompileDataScreen({super.key});
 
@@ -56,7 +61,7 @@ class _CompileDataScreenState extends State<CompileDataScreen>
     );
 
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(1.0, 0.0), // Start from right
+      begin: const Offset(1, 0), // Start from right
       end: Offset.zero, // End at center
     ).animate(CurvedAnimation(
       parent: _textController,
@@ -90,13 +95,14 @@ class _CompileDataScreenState extends State<CompileDataScreen>
         });
 
         // Animate text change
-        _textController.reset();
-        _textController.forward();
+        _textController
+          ..reset()
+          ..forward();
 
         // Complete when progress reaches 100%
         if (_progress >= 100) {
           timer.cancel();
-          _navigateToCompletion();
+          unawaited(_navigateToCompletion());
         }
       } else {
         timer.cancel();
@@ -125,12 +131,12 @@ class _CompileDataScreenState extends State<CompileDataScreen>
       if (!mounted) return;
 
       // Navigate to completion screen
-      Navigator.of(context).pushReplacement(
+      unawaited(Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
           builder:
               (context) => OnboardingCompletionScreen(dailyGoal: dailyGoal),
         ),
-      );
+      ));
     } catch (e) {
       debugPrint('Error completing onboarding: $e');
       if (mounted) {
