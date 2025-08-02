@@ -47,6 +47,15 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
   late PageController _circularCardController;
   int _currentCardIndex = 0;
 
+  // Swipe functionality
+  late AnimationController _swipeAnimationController;
+  late Animation<Offset> _swipeAnimation;
+  double _swipeOffset = 0.0;
+  bool _isSwipeActive = false;
+  
+  // Page states
+  int _currentPage = 1; // 0: History (up), 1: Main (center), 2: Goal Breakdown (down)
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +71,20 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
     );
     
     _circularCardController = PageController(viewportFraction: 1.0);
+    
+    _swipeAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    
+    _swipeAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _swipeAnimationController,
+      curve: Curves.elasticOut,
+    ));
+    
     _loadSmartSuggestions();
   }
 
@@ -71,6 +94,7 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
     _notesController.dispose();
     _undoAnimationController.dispose();
     _circularCardController.dispose();
+    _swipeAnimationController.dispose();
     _undoTimer?.cancel();
     super.dispose();
   }
@@ -100,9 +124,134 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
     }
   }
 
+  void _handleVerticalDrag(DragUpdateDetails details) {
+    if (_isSwipeActive) return;
+    
+    setState(() {
+      _swipeOffset += details.delta.dy;
+      _swipeOffset = _swipeOffset.clamp(-200.0, 200.0);
+    });
+  }
+
+  void _handleVerticalDragEnd(DragEndDetails details) {
+    if (_isSwipeActive) return;
+    
+    final velocity = details.velocity.pixelsPerSecond.dy;
+    final threshold = 80.0;
+    
+    int targetPage = _currentPage;
+    
+    if (_swipeOffset < -threshold || velocity < -500) {
+      // Swipe up - go to history page
+      targetPage = 0;
+    } else if (_swipeOffset > threshold || velocity > 500) {
+      // Swipe down - go to goal breakdown page
+      targetPage = 2;
+    }
+    
+    _animateToPage(targetPage);
+  }
+
+  void _animateToPage(int page) {
+    if (_isSwipeActive || page == _currentPage) {
+      _resetSwipeOffset();
+      return;
+    }
+    
+    setState(() {
+      _isSwipeActive = true;
+      _currentPage = page;
+    });
+    
+    Offset targetOffset;
+    switch (page) {
+      case 0: // History page
+        targetOffset = const Offset(0, 1);
+        break;
+      case 2: // Goal breakdown page
+        targetOffset = const Offset(0, -1);
+        break;
+      default: // Main page
+        targetOffset = Offset.zero;
+    }
+    
+    _swipeAnimation = Tween<Offset>(
+      begin: Offset(0, _swipeOffset / 200.0),
+      end: targetOffset,
+    ).animate(CurvedAnimation(
+      parent: _swipeAnimationController,
+      curve: Curves.elasticOut,
+    ));
+    
+    _swipeAnimationController.forward(from: 0).then((_) {
+      setState(() {
+        _isSwipeActive = false;
+        _swipeOffset = 0.0;
+      });
+    });
+  }
+
+  void _resetSwipeOffset() {
+    _swipeAnimation = Tween<Offset>(
+      begin: Offset(0, _swipeOffset / 200.0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _swipeAnimationController,
+      curve: Curves.elasticOut,
+    ));
+    
+    _swipeAnimationController.forward(from: 0).then((_) {
+      setState(() {
+        _swipeOffset = 0.0;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final hydrationProvider = Provider.of<HydrationProvider>(context);
+    
+    return GestureDetector(
+      onPanUpdate: _handleVerticalDrag,
+      onPanEnd: _handleVerticalDragEnd,
+      child: AnimatedBuilder(
+        animation: _swipeAnimation,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(
+              0,
+              _isSwipeActive 
+                ? _swipeAnimation.value.dy * MediaQuery.of(context).size.height
+                : _swipeOffset,
+            ),
+            child: Stack(
+              children: [
+                // History Page (Top)
+                if (_currentPage == 0 || _swipeOffset < -50)
+                  Positioned.fill(
+                    child: _buildHistoryPage(hydrationProvider),
+                  ),
+                
+                // Goal Breakdown Page (Bottom)
+                if (_currentPage == 2 || _swipeOffset > 50)
+                  Positioned.fill(
+                    child: _buildGoalBreakdownPage(hydrationProvider),
+                  ),
+                
+                // Main Page (Center)
+                if (_currentPage == 1 || (_swipeOffset.abs() < 50 && !_isSwipeActive))
+                  Positioned.fill(
+                    child: _buildMainPage(hydrationProvider),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildMainPage(HydrationProvider hydrationProvider) {
     const darkBlueColor = Color(0xFF323062);
 
     return SingleChildScrollView(
@@ -299,13 +448,487 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
             ),
           ),
 
-          const SizedBox(height: 30),
-
-          // Today's entries with edit/delete options
-          _buildTodaysEntries(hydrationProvider),
-
           const SizedBox(height: 100), // Bottom padding for navigation
         ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryPage(HydrationProvider hydrationProvider) {
+    return Container(
+      color: AppColors.background,
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => _animateToPage(1),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: AppColors.textHeadline,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                  const Expanded(
+                    child: Text(
+                      'Today',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textHeadline,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.menu,
+                      color: AppColors.textHeadline,
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Today's entries list
+            Expanded(
+              child: _buildTodaysEntriesList(hydrationProvider),
+            ),
+
+            // Add button
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: AppColors.waterFull,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.waterFull.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGoalBreakdownPage(HydrationProvider hydrationProvider) {
+    return Container(
+      color: AppColors.background,
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => _animateToPage(1),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: AppColors.textHeadline,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                  const Expanded(
+                    child: Text(
+                      'Today',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textHeadline,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: AppColors.textHeadline,
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Goal breakdown content
+            Expanded(
+              child: _buildGoalBreakdownContent(hydrationProvider),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTodaysEntriesList(HydrationProvider hydrationProvider) {
+    final todaysEntries = hydrationProvider.todaysEntries;
+
+    if (todaysEntries.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.water_drop_outlined,
+              size: 64,
+              color: AppColors.textSubtitle,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'No entries today yet',
+              style: TextStyle(
+                fontFamily: 'Nunito',
+                fontSize: 18,
+                color: AppColors.textSubtitle,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemCount: todaysEntries.length,
+      itemBuilder: (context, index) {
+        final entry = todaysEntries[index];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Row(
+            children: [
+              // Drink type icon
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.waterFull.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  _getDrinkTypeIcon(entry.type),
+                  color: AppColors.waterFull,
+                  size: 20,
+                ),
+              ),
+              
+              const SizedBox(width: 16),
+              
+              // Entry details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${(entry.amount / 1000).toStringAsFixed(1)} L',
+                      style: const TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textHeadline,
+                      ),
+                    ),
+                    if (entry.notes?.isNotEmpty == true)
+                      Text(
+                        entry.notes!,
+                        style: const TextStyle(
+                          fontFamily: 'Nunito',
+                          fontSize: 14,
+                          color: AppColors.textSubtitle,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              
+              // Time
+              Text(
+                '${entry.timestamp.hour.toString().padLeft(2, '0')}:${entry.timestamp.minute.toString().padLeft(2, '0')} ${entry.timestamp.hour >= 12 ? 'PM' : 'AM'}',
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 14,
+                  color: AppColors.textSubtitle,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGoalBreakdownContent(HydrationProvider hydrationProvider) {
+    final currentIntake = hydrationProvider.currentIntake;
+    final dailyGoal = hydrationProvider.dailyGoal;
+    
+    // Calculate breakdown values
+    final manualVolume = currentIntake; // For now, all intake is manual
+    final lifestyleBonus = 0; // Placeholder
+    final weatherBonus = 0; // Placeholder
+    final totalGoal = manualVolume + lifestyleBonus + weatherBonus;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          // Manual volume
+          _buildBreakdownItem(
+            icon: Icons.edit,
+            iconColor: AppColors.textSubtitle,
+            title: 'Manual volume',
+            subtitle: 'Tap to calculate',
+            value: '$manualVolume ml',
+            onTap: () {
+              // Handle manual volume calculation
+            },
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Lifestyle
+          _buildBreakdownItem(
+            icon: Icons.access_time,
+            iconColor: AppColors.waterFull,
+            title: 'Lifestyle',
+            subtitle: 'Inactive',
+            value: '$lifestyleBonus ml',
+            onTap: () {
+              // Handle lifestyle settings
+            },
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Weather
+          _buildBreakdownItem(
+            icon: Icons.wb_sunny,
+            iconColor: Colors.orange,
+            title: 'Weather',
+            subtitle: 'Normal',
+            value: '$weatherBonus ml',
+            onTap: () {
+              // Handle weather settings
+            },
+          ),
+          
+          const Spacer(),
+          
+          // Total
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Total',
+                  style: TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textHeadline,
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '$totalGoal ml',
+                      style: const TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textHeadline,
+                      ),
+                    ),
+                    Container(
+                      height: 2,
+                      width: 60,
+                      color: AppColors.textHeadline,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBreakdownItem({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                icon,
+                color: iconColor,
+                size: 20,
+              ),
+            ),
+            
+            const SizedBox(width: 16),
+            
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textHeadline,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 14,
+                      color: AppColors.textSubtitle,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            Row(
+              children: [
+                const Icon(
+                  Icons.edit,
+                  color: AppColors.textSubtitle,
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textHeadline,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -756,113 +1379,6 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
     );
   }
 
-  Widget _buildTodaysEntries(HydrationProvider provider) {
-    final todaysEntries = provider.todaysEntries;
-
-    if (todaysEntries.isEmpty) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Center(
-          child: Text(
-            'No entries today yet',
-            style: TextStyle(color: Colors.grey, fontSize: 16),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Today's Entries",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF323062),
-            ),
-          ),
-          const SizedBox(height: 12),
-          ...todaysEntries
-              .take(5)
-              .map((entry) => _buildEntryItem(entry, provider)),
-          if (todaysEntries.length > 5)
-            TextButton(
-              onPressed: () {
-                // Navigate to full history
-              },
-              child: Text('View all ${todaysEntries.length} entries'),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEntryItem(HydrationData entry, HydrationProvider provider) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            _getDrinkTypeIcon(entry.type),
-            color: const Color(0xFF323062),
-            size: 20,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${entry.amount}ml ${entry.type.displayName}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                Text(
-                  '${entry.timestamp.hour.toString().padLeft(2, '0')}:${entry.timestamp.minute.toString().padLeft(2, '0')} • ${entry.waterContent}ml water',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                ),
-                if (entry.notes?.isNotEmpty == true)
-                  Text(
-                    entry.notes!,
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 11,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: () => _editEntry(entry, provider),
-            icon: const Icon(Icons.edit, size: 18),
-            style: IconButton.styleFrom(foregroundColor: Colors.blue),
-          ),
-          IconButton(
-            onPressed: () => _deleteEntry(entry, provider),
-            icon: const Icon(Icons.delete, size: 18),
-            style: IconButton.styleFrom(foregroundColor: Colors.red),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildAmountButton(
     BuildContext context,
     int amount,
@@ -1153,178 +1669,6 @@ class _AddHydrationScreenContentState extends State<AddHydrationScreenContent>
         );
       }
     }
-  }
-
-  void _editEntry(HydrationData entry, HydrationProvider provider) {
-    final amountController = TextEditingController(
-      text: entry.amount.toString(),
-    );
-    final notesController = TextEditingController(text: entry.notes ?? '');
-    var selectedType = entry.type;
-
-    showDialog(
-      context: context,
-      builder:
-          (context) => StatefulBuilder(
-            builder:
-                (context, setState) => AlertDialog(
-                  title: const Text('Edit Entry'),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: amountController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        decoration: const InputDecoration(
-                          labelText: 'Amount (ml)',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<DrinkType>(
-                        value: selectedType,
-                        decoration: const InputDecoration(
-                          labelText: 'Drink Type',
-                          border: OutlineInputBorder(),
-                        ),
-                        items:
-                            DrinkType.values.map((type) {
-                              return DropdownMenuItem(
-                                value: type,
-                                child: Row(
-                                  children: [
-                                    Icon(_getDrinkTypeIcon(type), size: 20),
-                                    const SizedBox(width: 8),
-                                    Text(type.displayName),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() {
-                              selectedType = value;
-                            });
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: notesController,
-                        decoration: const InputDecoration(
-                          labelText: 'Notes (optional)',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 2,
-                      ),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final amount = int.tryParse(amountController.text);
-                        if (amount == null || amount <= 0) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Please enter a valid amount'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          return;
-                        }
-
-                        try {
-                          await provider.editHydrationEntry(
-                            entry.id,
-                            amount: amount,
-                            type: selectedType,
-                            notes:
-                                notesController.text.trim().isEmpty
-                                    ? null
-                                    : notesController.text.trim(),
-                          );
-
-                          Navigator.pop(context);
-                          _loadSmartSuggestions();
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Entry updated successfully'),
-                              backgroundColor: Color(0xFF323062),
-                            ),
-                          );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Error updating entry: $e'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      },
-                      child: const Text('Save'),
-                    ),
-                  ],
-                ),
-          ),
-    );
-  }
-
-  void _deleteEntry(HydrationData entry, HydrationProvider provider) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Delete Entry'),
-            content: Text(
-              'Are you sure you want to delete this entry?\n\n'
-              '${entry.amount}ml ${entry.type.displayName}\n'
-              '${entry.timestamp.hour.toString().padLeft(2, '0')}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await provider.deleteHydrationEntry(entry.id);
-                    Navigator.pop(context);
-                    _loadSmartSuggestions();
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Entry deleted successfully'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  } catch (e) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error deleting entry: $e'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
-    );
   }
 }
 
