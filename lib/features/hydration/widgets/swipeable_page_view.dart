@@ -265,38 +265,7 @@ class _SwipeablePageViewState extends State<SwipeablePageView>
     }
   }
 
-  /// Build page indicator dots
-  Widget _buildPageIndicator() {
-    return Semantics(
-      label: AccessibilityUtils.createPageIndicatorLabel(
-        _currentPage,
-        widget.pages.length,
-        AccessibilityUtils.pageNames,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(widget.pages.length, (index) {
-          final isActive = index == _currentPage;
-          return Semantics(
-            excludeSemantics: true, // Parent handles semantics
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: isActive ? 12 : 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color:
-                    isActive
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -345,27 +314,7 @@ class _SwipeablePageViewState extends State<SwipeablePageView>
               ),
             ),
 
-            // Performance optimization: RepaintBoundary around page indicator
-            Positioned(
-              bottom: 40,
-              left: 0,
-              right: 0,
-              child: RepaintBoundary(
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: _buildPageIndicator(),
-                  ),
-                ),
-              ),
-            ),
+
           ],
         ),
       ),

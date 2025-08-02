@@ -168,7 +168,12 @@ class _CircularProgressSectionState extends State<CircularProgressSection>
   /// Performance optimization: Cache painter instance to avoid recreation
   CircularProgressPainter _getCachedPainter(double progress) {
     if (_cachedPainter == null || _lastProgress != progress) {
-      _cachedPainter = CircularProgressPainter(progress: progress);
+      _cachedPainter = CircularProgressPainter(
+        progress: progress,
+        backgroundColor: AppColors.progressBackground,
+        progressColors: [AppColors.progressGradientStart, AppColors.progressGradientEnd],
+        innerRingColor: AppColors.progressInnerRing,
+      );
       _lastProgress = progress;
     }
     return _cachedPainter!;

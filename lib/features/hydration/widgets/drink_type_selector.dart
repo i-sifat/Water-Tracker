@@ -48,22 +48,19 @@ class _DrinkTypeSelectorState extends State<DrinkTypeSelector> {
           widget.selectedType.waterContent,
         ),
         semanticHint: 'Double tap to open drink type selection menu',
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(
-              16,
-            ), // Increased for consistency
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+                 child: Container(
+           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+           decoration: BoxDecoration(
+             color: const Color(0xFFF8F9FA),
+             borderRadius: BorderRadius.circular(12),
+             boxShadow: [
+               BoxShadow(
+                 color: Colors.black.withValues(alpha: 0.05),
+                 blurRadius: 4,
+                 offset: const Offset(0, 2),
+               ),
+             ],
+           ),
           child: Row(
             children: [
               // Drink type icon
@@ -89,7 +86,10 @@ class _DrinkTypeSelectorState extends State<DrinkTypeSelector> {
               Expanded(
                 child: AccessibilityUtils.createAccessibleText(
                   text: widget.selectedType.displayName,
-                  style: AppTypography.buttonLargeText.copyWith(fontSize: 16),
+                  style: AppTypography.buttonLargeText.copyWith(
+                    fontSize: 16,
+                    color: const Color(0xFF313A34),
+                  ),
                 ),
               ),
 
@@ -98,7 +98,9 @@ class _DrinkTypeSelectorState extends State<DrinkTypeSelector> {
                 AccessibilityUtils.createAccessibleText(
                   text:
                       '${(widget.selectedType.waterContent * 100).round()}% water',
-                  style: AppTypography.buttonSmallText,
+                  style: AppTypography.buttonSmallText.copyWith(
+                    color: const Color(0xFF647067),
+                  ),
                 ),
                 const SizedBox(width: 8),
               ],
@@ -108,7 +110,7 @@ class _DrinkTypeSelectorState extends State<DrinkTypeSelector> {
                 excludeSemantics: true, // Icon is decorative
                 child: Icon(
                   Icons.edit,
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: const Color(0xFF647067),
                   size: 18,
                 ),
               ),

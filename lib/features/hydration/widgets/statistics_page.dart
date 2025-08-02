@@ -28,7 +28,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
           label: 'Statistics page',
           hint: 'View your hydration statistics and progress over time',
           child: Scaffold(
-            backgroundColor: AppColors.background,
+            backgroundColor: Colors.white,
             body: SafeArea(
               child: Column(
                 children: [

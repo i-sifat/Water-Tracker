@@ -5,10 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/animations/water_animation.dart';
 import 'package:watertracker/core/widgets/common/exit_confirmation_modal.dart';
-import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';
-import 'package:watertracker/features/history/history_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/screens/add_hydration_screen.dart';
+import 'package:watertracker/features/hydration/widgets/statistics_page.dart';
 import 'package:watertracker/features/settings/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -137,8 +136,26 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  late final List<Widget> _widgetOptions;
+  late PageController _pageController;
+  int _currentPage = 0; // 0: Home (leftmost), 1: Add Hydration (middle), 2: Statistics (rightmost)
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentPage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onPageChanged(int page) {
+    setState(() {
+      _currentPage = page;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,43 +182,25 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            // Main content
-            Center(child: _widgetOptions.elementAt(_selectedIndex)),
-
-            // Custom navigation bar with transparent background
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: CustomBottomNavigationBar(
-                selectedIndex: _selectedIndex,
-                onItemTapped: _onItemTapped,
-                backgroundColor: Colors.transparent,
-              ),
+            // Swipeable page view
+            PageView(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              children: [
+                // Home Page (leftmost - default)
+                const HomeScreenContent(),
+                
+                // Add Hydration Page (middle)
+                const AddHydrationScreen(),
+                
+                // Statistics Page (rightmost)
+                const StatisticsPage(),
+              ],
             ),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _widgetOptions = <Widget>[
-      const HomeScreenContent(),
-      const AddHydrationScreen(),
-      const HistoryScreenContent(),
-    ];
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      if (index == 0) {
-        Provider.of<HydrationProvider>(context, listen: false).loadData();
-      }
-    });
   }
 
   void _showExitConfirmation(BuildContext context) {

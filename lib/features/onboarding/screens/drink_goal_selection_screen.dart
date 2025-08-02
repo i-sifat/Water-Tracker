@@ -4,6 +4,7 @@ import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/utils/app_colors.dart';
 import 'package:watertracker/core/widgets/common/exit_confirmation_modal.dart';
 import 'package:watertracker/features/home/home_screen.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
@@ -58,8 +59,18 @@ class _DrinkGoalSelectionScreenState extends State<DrinkGoalSelectionScreen> {
       // Update the user profile with the selected goal
       provider.updateDrinkGoal(goalInLiters);
 
-      // Complete onboarding and go to home screen
+      // Complete onboarding
       await provider.completeOnboarding();
+
+      // Update HydrationProvider with the selected goal
+      final hydrationProvider = Provider.of<HydrationProvider>(
+        context,
+        listen: false,
+      );
+      
+      // Convert liters to milliliters for HydrationProvider
+      final goalInMilliliters = (goalInLiters * 1000).round();
+      await hydrationProvider.setDailyGoal(goalInMilliliters);
 
       // Navigate to home screen
       if (mounted) {

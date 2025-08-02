@@ -9,7 +9,6 @@ import 'package:watertracker/features/hydration/providers/hydration_provider.dar
 import 'package:watertracker/features/hydration/widgets/circular_progress_section.dart';
 import 'package:watertracker/features/hydration/widgets/drink_type_selector.dart';
 import 'package:watertracker/features/hydration/widgets/quick_add_button_grid.dart';
-import 'package:watertracker/features/settings/screens/settings_screen.dart';
 
 /// Main hydration page widget that combines all hydration tracking components
 /// with header, progress display, drink selection, and quick add buttons
@@ -35,6 +34,7 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
   late String _currentTime;
   late String _nextReminderTime;
   late String _endTime;
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -50,8 +50,8 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
           label: 'Main hydration tracking page',
           hint:
               '${AccessibilityUtils.swipeUpHint}. ${AccessibilityUtils.swipeDownHint}',
-          child: Container(
-            decoration: _buildGradientBackground(),
+          child: ColoredBox(
+            color: Colors.white,
             child: SafeArea(
               child: Column(
                 children: [
@@ -78,13 +78,13 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.waterFull),
             ),
             SizedBox(height: 16),
             Text(
               'Loading your hydration data...',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.textHeadline,
                 fontSize: 16,
                 fontFamily: 'Nunito',
               ),
@@ -94,117 +94,68 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
+    return Column(
+      children: [
+        const SizedBox(height: 4),
 
-          // Performance optimization: RepaintBoundary around circular progress
-          RepaintBoundary(
-            child: _buildCircularProgressSection(hydrationProvider),
-          ),
+        // Performance optimization: RepaintBoundary around circular progress
+        RepaintBoundary(
+          child: _buildCircularProgressSection(hydrationProvider),
+        ),
 
-          const SizedBox(height: 32),
+        const SizedBox(height: 16),
 
-          // Performance optimization: RepaintBoundary around drink selector
-          RepaintBoundary(child: _buildDrinkTypeSelector()),
+        // Performance optimization: RepaintBoundary around drink selector
+        RepaintBoundary(child: _buildDrinkTypeSelector()),
 
-          const SizedBox(height: 24),
+        const SizedBox(height: 16),
 
-          // Performance optimization: RepaintBoundary around button grid
-          RepaintBoundary(child: _buildQuickAddButtonGrid()),
+        // Performance optimization: RepaintBoundary around button grid
+        RepaintBoundary(child: _buildQuickAddButtonGrid()),
 
-          const SizedBox(height: 32),
-        ],
-      ),
+        const SizedBox(height: 20),
+      ],
     );
   }
 
-  /// Build gradient background matching design mockup
-  BoxDecoration _buildGradientBackground() {
-    return const BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          AppColors.gradientTop, // Top gradient color - matches design mockup
-          AppColors
-              .gradientBottom, // Bottom gradient color - matches design mockup
-        ],
-        stops: [0.0, 1.0],
-      ),
-    );
-  }
 
-  /// Build header with "Today" title and navigation icons
+
+    /// Build header with "Today" title
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Column(
         children: [
-          // Top row with navigation icons and title
-          Row(
-            children: [
-              // Hamburger menu icon
-              AccessibilityUtils.ensureMinTouchTarget(
-                onTap: _onMenuTapped,
-                semanticLabel: AccessibilityUtils.navigationMenuLabel,
-                semanticHint: 'Double tap to open navigation menu',
-                child: Container(
-                  width: 40,
-                  height: 40,
+          // Tappable "Today" title that opens calendar
+          AccessibilityUtils.ensureMinTouchTarget(
+            onTap: _onTodayTapped,
+            semanticLabel: 'Select date',
+            semanticHint: 'Double tap to select a different date',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AccessibilityUtils.createAccessibleText(
+                  text: _getDateDisplayText(),
+                  style: AppTypography.hydrationTitle.copyWith(
+                    color: AppColors.textHeadline,
+                  ),
+                  semanticLabel: "Hydration tracking page for ${_getDateDisplayText()}",
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    color: AppColors.waterFull.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  child: const Icon(Icons.menu, color: Colors.white, size: 20),
-                ),
-              ),
-
-              // Performance optimization: const widget for Today title
-              Expanded(
-                child: AccessibilityUtils.createAccessibleText(
-                  text: 'Today',
-                  style: AppTypography.hydrationTitle,
-                  textAlign: TextAlign.center,
-                  semanticLabel: "Today's hydration tracking page",
-                ),
-              ),
-
-              // Profile/settings icon
-              AccessibilityUtils.ensureMinTouchTarget(
-                onTap: _onProfileTapped,
-                semanticLabel: AccessibilityUtils.profileButtonLabel,
-                semanticHint: 'Double tap to open profile and settings',
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.person_outline,
-                    color: Colors.white,
-                    size: 20,
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: AppColors.waterFull,
+                    size: 16,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           const SizedBox(height: 16),
@@ -221,35 +172,39 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildTimeIndicator(_currentTime),
-        const SizedBox(width: 16),
-        _buildTimeIndicator(_nextReminderTime),
-        const SizedBox(width: 16),
-        _buildTimeIndicator(_endTime),
+        _buildTimeIndicator(_currentTime, 'Wake up time', _onWakeUpTimeTapped),
+        const SizedBox(width: 8),
+        _buildTimeIndicator(_nextReminderTime, 'Reminder interval', _onReminderIntervalTapped),
+        const SizedBox(width: 8),
+        _buildTimeIndicator(_endTime, 'Sleep time', _onSleepTimeTapped),
       ],
     );
   }
 
   /// Build individual time indicator
-  Widget _buildTimeIndicator(String text) {
-    return Semantics(
-      label: 'Time indicator: $text',
+  Widget _buildTimeIndicator(String text, String label, VoidCallback onTap) {
+    return AccessibilityUtils.ensureMinTouchTarget(
+      onTap: onTap,
+      semanticLabel: 'Edit $label',
+      semanticHint: 'Double tap to edit $label',
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(16),
+          color: const Color(0xFFF8F9FA),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: AccessibilityUtils.createAccessibleText(
           text: text,
-          style: AppTypography.timeIndicatorText,
+          style: AppTypography.timeIndicatorText.copyWith(
+            color: AppColors.textHeadline,
+          ),
         ),
       ),
     );
@@ -340,124 +295,192 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
     return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period';
   }
 
-  /// Handle hamburger menu tap - opens navigation drawer
-  void _onMenuTapped() {
-    try {
-      // Try to open drawer if available
-      Scaffold.of(context).openDrawer();
-    } catch (e) {
-      // If no drawer available, show a menu modal
-      _showNavigationMenu();
+  /// Handle wake up time selection
+  void _onWakeUpTimeTapped() async {
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: 7, minute: 0),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              backgroundColor: Colors.white,
+              hourMinuteTextColor: AppColors.textHeadline,
+              hourMinuteColor: AppColors.waterFull.withValues(alpha: 0.1),
+              dialHandColor: AppColors.waterFull,
+              dialBackgroundColor: AppColors.waterFull.withValues(alpha: 0.1),
+              dialTextColor: AppColors.textHeadline,
+              entryModeIconColor: AppColors.textHeadline,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (selectedTime != null) {
+      setState(() {
+        _currentTime = _formatTime(DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          selectedTime.hour,
+          selectedTime.minute,
+        ));
+      });
     }
   }
 
-  /// Show navigation menu modal when drawer is not available
-  void _showNavigationMenu() {
-    showModalBottomSheet<void>(
+  /// Handle reminder interval selection
+  void _onReminderIntervalTapped() async {
+    final TimeOfDay? selectedTime = await showTimePicker(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+      initialTime: TimeOfDay(hour: 2, minute: 0),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              backgroundColor: Colors.white,
+              hourMinuteTextColor: AppColors.textHeadline,
+              hourMinuteColor: AppColors.waterFull.withValues(alpha: 0.1),
+              dialHandColor: AppColors.waterFull,
+              dialBackgroundColor: AppColors.waterFull.withValues(alpha: 0.1),
+              dialTextColor: AppColors.textHeadline,
+              entryModeIconColor: AppColors.textHeadline,
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle bar
-              Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(top: 12, bottom: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
+          child: child!,
+        );
+      },
+    );
+
+    if (selectedTime != null) {
+      final hours = selectedTime.hour;
+      final minutes = selectedTime.minute;
+      final totalMinutes = hours * 60 + minutes;
+      
+      setState(() {
+        if (totalMinutes < 60) {
+          _nextReminderTime = '${totalMinutes}min';
+        } else {
+          _nextReminderTime = '${hours}h ${minutes}min';
+        }
+      });
+    }
+  }
+
+  /// Handle sleep time selection
+  void _onSleepTimeTapped() async {
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: 23, minute: 0),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              backgroundColor: Colors.white,
+              hourMinuteTextColor: AppColors.textHeadline,
+              hourMinuteColor: AppColors.waterFull.withValues(alpha: 0.1),
+              dialHandColor: AppColors.waterFull,
+              dialBackgroundColor: AppColors.waterFull.withValues(alpha: 0.1),
+              dialTextColor: AppColors.textHeadline,
+              entryModeIconColor: AppColors.textHeadline,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (selectedTime != null) {
+      setState(() {
+        _endTime = _formatTime(DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          selectedTime.hour,
+          selectedTime.minute,
+        ));
+      });
+    }
+  }
+
+  /// Get display text for selected date
+  String _getDateDisplayText() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final selectedDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+    
+    if (selectedDay == today) {
+      return 'Today';
+    } else if (selectedDay == today.subtract(const Duration(days: 1))) {
+      return 'Yesterday';
+    } else if (selectedDay == today.add(const Duration(days: 1))) {
+      return 'Tomorrow';
+    } else {
+      // Format as "Jan 15" or similar
+      final months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      return '${months[_selectedDate.month - 1]} ${_selectedDate.day}';
+    }
+  }
+
+  /// Handle today text tap to open calendar
+  void _onTodayTapped() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.waterFull,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: AppColors.textHeadline,
+              secondary: AppColors.lightPurple,
+              onSecondary: Colors.white,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.waterFull,
+                textStyle: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-
-              // Menu items
-              ListTile(
-                leading: const Icon(Icons.home, color: Color(0xFF6B73FF)),
-                title: const Text('Home'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.settings, color: Color(0xFF6B73FF)),
-                title: const Text('Settings'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _navigateToSettings();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.history, color: Color(0xFF6B73FF)),
-                title: const Text('History'),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Navigate to history - would need to be implemented
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('History feature coming soon'),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.help, color: Color(0xFF6B73FF)),
-                title: const Text('Help & Support'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showHelpDialog();
-                },
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  /// Handle profile icon tap - navigates to settings/profile
-  void _onProfileTapped() {
-    _navigateToSettings();
-  }
-
-  /// Navigate to settings screen
-  void _navigateToSettings() {
-    Navigator.of(context).pushNamed(SettingsScreen.routeName);
-  }
-
-  /// Show help dialog
-  void _showHelpDialog() {
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Help & Support'),
-          content: const Text(
-            'Welcome to Water Tracker!\n\n'
-            '• Swipe up to view your hydration statistics\n'
-            '• Swipe down to see your goal breakdown\n'
-            '• Tap the quick add buttons to log water intake\n'
-            '• Change drink types to track different beverages\n\n'
-            'For more help, visit the Settings page.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Got it'),
             ),
-          ],
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: Colors.white,
+              headerBackgroundColor: AppColors.waterFull,
+              headerForegroundColor: Colors.white,
+              dayStyle: const TextStyle(
+                fontFamily: 'Nunito',
+                color: AppColors.textHeadline,
+              ),
+              yearStyle: const TextStyle(
+                fontFamily: 'Nunito',
+                color: AppColors.textHeadline,
+              ),
+              headerHelpStyle: const TextStyle(
+                fontFamily: 'Nunito',
+                color: Colors.white,
+              ),
+            ),
+          ),
+          child: child!,
         );
       },
     );
+
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
   }
 }
