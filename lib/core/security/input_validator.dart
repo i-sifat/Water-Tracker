@@ -21,8 +21,8 @@ class InputValidator {
 
   // Text input constants
   static const int maxStringLength = 1000;
-  static const RegExp _safeTextPattern = RegExp(r'^[a-zA-Z0-9\s\-_.,!?()]+$');
-  static const RegExp _emailPattern = RegExp(
+  static final RegExp _safeTextPattern = RegExp(r'^[a-zA-Z0-9\s\-_.,!?()]+$');
+  static final RegExp _emailPattern = RegExp(
     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
   );
 

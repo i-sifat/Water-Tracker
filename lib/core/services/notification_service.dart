@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -48,6 +50,13 @@ class NotificationService {
   static const String _customRemindersKey = 'custom_reminders';
   static const String _notificationSettingsKey = 'notification_settings';
   static const String _usagePatternKey = 'usage_pattern';
+  static const String _deliveryTrackingKey = 'delivery_tracking';
+
+  // Legacy constants for backward compatibility
+  static const String _notificationChannelId = _defaultChannelId;
+  static const String _notificationChannelName = _defaultChannelName;
+  static const String _notificationChannelDescription =
+      _defaultChannelDescription;
 
   bool _isInitialized = false;
 
@@ -1344,6 +1353,17 @@ class NotificationService {
       debugPrint('All notification debug data cleared');
     } catch (e) {
       debugPrint('Error clearing debug data: $e');
+    }
+  }
+
+  /// Get delivery tracking data
+  Future<Map<String, dynamic>> _getDeliveryTracking() async {
+    try {
+      final data = await _storageService.getJson(_deliveryTrackingKey);
+      return data ?? {'tracking': []};
+    } catch (e) {
+      debugPrint('Error getting delivery tracking: $e');
+      return {'tracking': []};
     }
   }
 }

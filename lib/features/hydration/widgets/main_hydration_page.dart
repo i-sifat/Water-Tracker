@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/design_system/design_system.dart';
+import 'package:watertracker/core/design_system/accessibility/accessibility_helper.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/models/hydration_progress.dart';
 import 'package:watertracker/core/services/notification_service.dart';
@@ -53,8 +54,7 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
       builder: (context, hydrationProvider, child) {
         return Semantics(
           label: 'Main hydration tracking page',
-          hint:
-              '${AccessibilityUtils.swipeUpHint}. ${AccessibilityUtils.swipeDownHint}',
+          hint: 'Swipe up or down to navigate between pages',
           child: ColoredBox(
             color: AppColors.surface,
             child: SafeArea(
@@ -86,13 +86,9 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.waterFull),
             ),
             SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 16)),
-            Text(
+            AppText.body(
               'Loading your hydration data...',
-              style: TextStyle(
-                color: AppColors.textHeadline,
-                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
-                fontFamily: 'Nunito',
-              ),
+              color: AppColors.textHeadline,
             ),
           ],
         ),
@@ -134,10 +130,10 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
       child: Column(
         children: [
           // Tappable "Today" title that opens calendar
-          AccessibilityUtils.ensureMinTouchTarget(
+          AccessibilityHelper.ensureMinTouchTarget(
             onTap: _onTodayTapped,
             semanticLabel: 'Select date',
-            semanticHint: 'Double tap to select a different date',
+            tooltip: 'Double tap to select a different date',
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

@@ -241,7 +241,7 @@ class GoalBreakdownPage extends StatelessWidget {
   Widget _buildTotalSection(HydrationProvider hydrationProvider) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
             color: AppColors.getSemanticColor('background', 'primary'),

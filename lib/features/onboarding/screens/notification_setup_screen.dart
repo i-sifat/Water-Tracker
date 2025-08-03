@@ -50,9 +50,9 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
   }
 
   Future<void> _requestNotificationPermission() async {
-    final permissionGranted = await _notificationService.requestPermissions();
+    final permissionResult = await _notificationService.requestPermissions();
     setState(() {
-      _isNotificationPermissionGranted = permissionGranted;
+      _isNotificationPermissionGranted = permissionResult['granted'] == true;
     });
   }
 
@@ -80,9 +80,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
     await _saveNotificationPreferences();
     if (mounted) {
       await Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const CompileDataScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const CompileDataScreen()),
       );
     }
   }
@@ -106,10 +104,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.orange[700],
-                  ),
+                  Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

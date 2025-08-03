@@ -70,7 +70,9 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
           isLoading: onboardingProvider.isSaving,
           child: Column(
             children: [
-              SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 50)),
+              SizedBox(
+                height: ResponsiveHelper.getResponsiveHeight(context, 50),
+              ),
 
               // Unit selection buttons
               Container(
@@ -84,12 +86,16 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                 child: Row(
                   children: [
                     Expanded(child: _buildUnitButton('kg', true)),
-                    SizedBox(width: ResponsiveHelper.getResponsiveWidth(context, 8)),
+                    SizedBox(
+                      width: ResponsiveHelper.getResponsiveWidth(context, 8),
+                    ),
                     Expanded(child: _buildUnitButton('lbs', false)),
                   ],
                 ),
               ),
-              SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 60)),
+              SizedBox(
+                height: ResponsiveHelper.getResponsiveHeight(context, 60),
+              ),
 
               // Weight display
               Row(
@@ -101,24 +107,34 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                     _weight.toInt().toString(),
                     style: TextStyle(
                       fontFamily: 'Nunito',
-                      fontSize: ResponsiveHelper.getResponsiveFontSize(context, 89),
+                      fontSize: ResponsiveHelper.getResponsiveFontSize(
+                        context,
+                        89,
+                      ),
                       fontWeight: FontWeight.w800,
                       color: AppColors.textHeadline,
                     ),
                   ),
-                  SizedBox(width: ResponsiveHelper.getResponsiveWidth(context, 4)),
+                  SizedBox(
+                    width: ResponsiveHelper.getResponsiveWidth(context, 4),
+                  ),
                   Text(
                     _isKg ? 'kg' : 'lbs',
                     style: TextStyle(
                       fontFamily: 'Nunito',
-                      fontSize: ResponsiveHelper.getResponsiveFontSize(context, 24),
+                      fontSize: ResponsiveHelper.getResponsiveFontSize(
+                        context,
+                        24,
+                      ),
                       fontWeight: FontWeight.w400,
                       color: AppColors.textSubtitle,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 40)),
+              SizedBox(
+                height: ResponsiveHelper.getResponsiveHeight(context, 40),
+              ),
 
               // Custom Ruler Picker - removed number reading
               SizedBox(
@@ -155,7 +171,10 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
         child: Text(
           unit,
           style: TextStyle(
-            color: isSelected ? AppColors.weightUnitTextSelected : AppColors.weightUnitTextUnselected,
+            color:
+                isSelected
+                    ? AppColors.weightUnitTextSelected
+                    : AppColors.weightUnitTextUnselected,
             fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
             fontWeight: FontWeight.w600,
           ),
@@ -165,8 +184,8 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     );
   }
 }
-class C
-ustomRulerPicker extends StatefulWidget {
+
+class CustomRulerPicker extends StatefulWidget {
   const CustomRulerPicker({
     required this.value,
     required this.minValue,
@@ -174,6 +193,7 @@ ustomRulerPicker extends StatefulWidget {
     required this.onValueChanged,
     super.key,
   });
+
   final double value;
   final double minValue;
   final double maxValue;
@@ -233,7 +253,8 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final totalTicks = ((widget.maxValue - widget.minValue) * _ticksPerUnit).toInt();
+    final totalTicks =
+        ((widget.maxValue - widget.minValue) * _ticksPerUnit).toInt();
     final screenWidth = MediaQuery.of(context).size.width;
     final centerOffset = screenWidth / 2;
     final rulerHeight = ResponsiveHelper.getResponsiveHeight(context, 80);
@@ -246,9 +267,12 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
               _isDragging = true;
             } else if (notification is ScrollEndNotification) {
               _isDragging = false;
-            } else if (notification is ScrollUpdateNotification && _isDragging) {
+            } else if (notification is ScrollUpdateNotification &&
+                _isDragging) {
               final offset = _scrollController.offset + centerOffset;
-              final newValue = _offsetToValue(offset).clamp(widget.minValue, widget.maxValue);
+              final newValue = _offsetToValue(
+                offset,
+              ).clamp(widget.minValue, widget.maxValue);
               if ((newValue - widget.value).abs() >= 0.1) {
                 widget.onValueChanged(newValue);
               }
@@ -264,9 +288,11 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
                   _scrollController.position.maxScrollExtent,
                 );
                 _scrollController.jumpTo(clampedOffset);
-                
+
                 final offset = clampedOffset + centerOffset;
-                final newValue = _offsetToValue(offset).clamp(widget.minValue, widget.maxValue);
+                final newValue = _offsetToValue(
+                  offset,
+                ).clamp(widget.minValue, widget.maxValue);
                 if ((newValue - widget.value).abs() >= 0.1) {
                   widget.onValueChanged(newValue);
                 }
@@ -285,11 +311,17 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
                     tickSpacing: _tickSpacing,
                     ticksPerUnit: _ticksPerUnit,
                     centerOffset: centerOffset,
-                    scrollOffset: _scrollController.hasClients ? _scrollController.offset : 0,
+                    scrollOffset:
+                        _scrollController.hasClients
+                            ? _scrollController.offset
+                            : 0,
                     currentValue: widget.value,
                     context: context,
                   ),
-                  size: Size(totalTicks * _tickSpacing + screenWidth, rulerHeight),
+                  size: Size(
+                    totalTicks * _tickSpacing + screenWidth,
+                    rulerHeight,
+                  ),
                 ),
               ),
             ),
@@ -337,9 +369,10 @@ class RulerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..strokeWidth = ResponsiveHelper.getResponsiveWidth(context, 1.5)
-      ..strokeCap = StrokeCap.round;
+    final paint =
+        Paint()
+          ..strokeWidth = ResponsiveHelper.getResponsiveWidth(context, 1.5)
+          ..strokeCap = StrokeCap.round;
 
     final totalTicks = ((maxValue - minValue) * ticksPerUnit).toInt();
     final currentPosition = centerOffset + scrollOffset;

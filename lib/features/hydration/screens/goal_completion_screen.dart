@@ -79,7 +79,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
                     ),
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.check_circle,
                   size: 100,
                   color: AppColors.getSemanticColor('status', 'successMain'),

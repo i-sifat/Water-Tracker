@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/design_system/design_system.dart';
+import 'package:watertracker/core/design_system/accessibility/accessibility_helper.dart';
 import 'package:watertracker/core/models/app_error.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/utils/animation_cache.dart';
@@ -71,15 +73,8 @@ class QuickAddButtonGrid extends StatelessWidget {
 
       if (!context.mounted) return;
 
-      // Announce hydration addition to screen readers
-      AccessibilityUtils.announceHydrationAdded(
-        context,
-        amount,
-        selectedDrinkType.displayName,
-      );
-
       // Provide haptic feedback for accessibility
-      await AccessibilityUtils.provideAccessibilityFeedback();
+      HapticFeedback.lightImpact();
 
       onAmountAdded?.call();
     } catch (e) {
@@ -203,12 +198,10 @@ class _QuickAddButtonState extends State<QuickAddButton>
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        return AccessibilityUtils.createAccessibleButton(
-          semanticLabel: AccessibilityUtils.createQuickAddButtonLabel(
-            widget.amount,
-            widget.selectedDrinkType.displayName,
-          ),
-          semanticHint: 'Double tap to add this amount to your hydration log',
+        return AccessibilityHelper.createAccessibleButton(
+          semanticLabel:
+              'Add ${widget.amount} ml of ${widget.selectedDrinkType.displayName}',
+          tooltip: 'Double tap to add this amount to your hydration log',
           onPressed: _handlePress,
           child: Transform.scale(
             scale: _scaleAnimation.value,
@@ -218,8 +211,8 @@ class _QuickAddButtonState extends State<QuickAddButton>
               onTapCancel: () => _animationController.reverse(),
               child: Container(
                 constraints: const BoxConstraints(
-                  minWidth: AccessibilityUtils.minTouchTargetSize,
-                  minHeight: AccessibilityUtils.minTouchTargetSize,
+                  minWidth: AccessibilityHelper.minTouchTargetSize,
+                  minHeight: AccessibilityHelper.minTouchTargetSize,
                 ),
                 decoration: BoxDecoration(
                   color: _colorAnimation.value,
@@ -246,15 +239,15 @@ class _QuickAddButtonState extends State<QuickAddButton>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    AccessibilityUtils.createAccessibleText(
-                      text: '${widget.amount} ml',
-                      style: AppTypography.buttonLargeText,
+                    AppText.label(
+                      '${widget.amount} ml',
+                      color: AppColors.textOnPrimary,
                     ),
                     if (widget.selectedDrinkType != DrinkType.water) ...[
                       const SizedBox(height: 4),
-                      AccessibilityUtils.createAccessibleText(
-                        text: _getWaterContentText(),
-                        style: AppTypography.buttonSmallText,
+                      AppText.caption(
+                        _getWaterContentText(),
+                        color: AppColors.textOnPrimary,
                       ),
                     ],
                   ],

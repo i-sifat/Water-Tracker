@@ -408,7 +408,7 @@ class _InteractiveCircularProgressState
               color: AppColors.textPrimary,
               fontWeight: FontWeight.bold,
             ),
-            suffix: 'remaining',
+            label: 'remaining',
             textAlign: TextAlign.center,
             animationDuration: const Duration(milliseconds: 500),
           ),

@@ -511,8 +511,10 @@ class OnboardingProvider extends ChangeNotifier {
         NavigationState(
           currentStep: _currentStep,
           isLoading: _isSaving,
-          stepCompletionStatus: Map.from(
-            _completedSteps.asMap().map((index, step) => MapEntry(step, true)),
+          stepCompletionStatus: Map.fromIterable(
+            _completedSteps,
+            key: (step) => step,
+            value: (step) => true,
           ),
         ),
       );
