@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/utils/accessibility_utils.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 

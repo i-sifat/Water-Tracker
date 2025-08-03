@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:watertracker/core/utils/performance_utils.dart';
 
 class CelebrationAnimation extends StatefulWidget {
   const CelebrationAnimation({
@@ -29,6 +30,7 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
   late AnimationController _controller;
   late List<Particle> _particles;
   final Random _random = Random();
+  int _frameCount = 0;
 
   @override
   void initState() {
@@ -67,21 +69,33 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
       animation: _controller,
       builder: (context, child) {
         _updateParticles();
-        return CustomPaint(
-          painter: CelebrationPainter(_particles),
-          size: Size.infinite,
+        // Performance optimization: RepaintBoundary around expensive particle animation
+        return PerformanceUtils.optimizedRepaintBoundary(
+          debugLabel: 'CelebrationAnimation',
+          child: CustomPaint(
+            painter: CelebrationPainter(_particles),
+            size: Size.infinite,
+          ),
         );
       },
     );
   }
 
   void _updateParticles() {
+    _frameCount++;
+
+    // Frame rate limiting: Only update every other frame for better performance
+    if (_frameCount % 2 != 0) return;
+
     for (final particle in _particles) {
       if (particle.life > 0) {
-        particle.x += particle.velocityX * 0.016; // 60fps
-        particle.y += particle.velocityY * 0.016;
-        particle.velocityY += particle.gravity * 0.016;
-        particle.life -= particle.decay;
+        particle
+          ..x +=
+              particle.velocityX *
+              0.032 // Compensate for half frame rate
+          ..y += particle.velocityY * 0.032
+          ..velocityY += particle.gravity * 0.032
+          ..life -= particle.decay;
       }
     }
   }
@@ -206,8 +220,13 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog>
       backgroundColor: Colors.transparent,
       child: Stack(
         children: [
-          // Celebration particles
-          const Positioned.fill(child: CelebrationAnimation()),
+          // Celebration particles with RepaintBoundary optimization
+          Positioned.fill(
+            child: PerformanceUtils.optimizedRepaintBoundary(
+              debugLabel: 'CelebrationAnimationDialog',
+              child: const CelebrationAnimation(),
+            ),
+          ),
 
           // Dialog content
           Center(

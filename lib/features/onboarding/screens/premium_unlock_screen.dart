@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 import 'package:watertracker/features/premium/screens/donation_info_screen.dart';

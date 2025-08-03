@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/design_system/design_system.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/models/hydration_progress.dart';
-import 'package:watertracker/core/utils/accessibility_utils.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/services/notification_service.dart';
+import 'package:watertracker/core/utils/responsive_helper.dart';
+import 'package:watertracker/core/widgets/animations/smooth_text_transition.dart';
+
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/widgets/circular_progress_section.dart';
 import 'package:watertracker/features/hydration/widgets/drink_type_selector.dart';
@@ -36,6 +38,9 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
   late String _endTime;
   DateTime _selectedDate = DateTime.now();
 
+  final GlobalKey<_CircularProgressSectionState> _progressSectionKey =
+      GlobalKey<_CircularProgressSectionState>();
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +56,7 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
           hint:
               '${AccessibilityUtils.swipeUpHint}. ${AccessibilityUtils.swipeDownHint}',
           child: ColoredBox(
-            color: Colors.white,
+            color: AppColors.surface,
             child: SafeArea(
               child: Column(
                 children: [
@@ -80,12 +85,12 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
             CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.waterFull),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 16)),
             Text(
               'Loading your hydration data...',
               style: TextStyle(
                 color: AppColors.textHeadline,
-                fontSize: 16,
+                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
                 fontFamily: 'Nunito',
               ),
             ),
@@ -96,34 +101,36 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
 
     return Column(
       children: [
-        const SizedBox(height: 4),
+        SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 4)),
 
         // Performance optimization: RepaintBoundary around circular progress
         RepaintBoundary(
           child: _buildCircularProgressSection(hydrationProvider),
         ),
 
-        const SizedBox(height: 16),
+        SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 16)),
 
         // Performance optimization: RepaintBoundary around drink selector
         RepaintBoundary(child: _buildDrinkTypeSelector()),
 
-        const SizedBox(height: 16),
+        SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 16)),
 
         // Performance optimization: RepaintBoundary around button grid
         RepaintBoundary(child: _buildQuickAddButtonGrid()),
 
-        const SizedBox(height: 20),
+        SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 20)),
       ],
     );
   }
 
-
-
-    /// Build header with "Today" title
+  /// Build header with "Today" title
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: ResponsiveHelper.getResponsivePadding(
+        context,
+        horizontal: 20,
+        vertical: 16,
+      ),
       child: Column(
         children: [
           // Tappable "Today" title that opens calendar
@@ -134,31 +141,44 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AccessibilityUtils.createAccessibleText(
+                SmoothTextTransition(
                   text: _getDateDisplayText(),
-                  style: AppTypography.hydrationTitle.copyWith(
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
                     color: AppColors.textHeadline,
                   ),
-                  semanticLabel: "Hydration tracking page for ${_getDateDisplayText()}",
+                  semanticLabel:
+                      'Hydration tracking page for ${_getDateDisplayText()}',
+                  duration: const Duration(milliseconds: 400),
+                  slideDistance: 20.0,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(
+                  width: ResponsiveHelper.getResponsiveWidth(context, 8),
+                ),
                 Container(
-                  padding: const EdgeInsets.all(4),
+                  padding: ResponsiveHelper.getResponsivePadding(
+                    context,
+                    all: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.waterFull.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.getResponsiveBorderRadius(context, 4),
+                    ),
                   ),
                   child: Icon(
                     Icons.keyboard_arrow_down,
                     color: AppColors.waterFull,
-                    size: 16,
+                    size: ResponsiveHelper.getResponsiveIconSize(context, 16),
                   ),
                 ),
               ],
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 16)),
 
           // Time range indicators
           _buildTimeRangeIndicators(),
@@ -173,9 +193,13 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildTimeIndicator(_currentTime, 'Wake up time', _onWakeUpTimeTapped),
-        const SizedBox(width: 8),
-        _buildTimeIndicator(_nextReminderTime, 'Reminder interval', _onReminderIntervalTapped),
-        const SizedBox(width: 8),
+        SizedBox(width: ResponsiveHelper.getResponsiveWidth(context, 8)),
+        _buildTimeIndicator(
+          _nextReminderTime,
+          'Reminder interval',
+          _onReminderIntervalTapped,
+        ),
+        SizedBox(width: ResponsiveHelper.getResponsiveWidth(context, 8)),
         _buildTimeIndicator(_endTime, 'Sleep time', _onSleepTimeTapped),
       ],
     );
@@ -183,27 +207,44 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
 
   /// Build individual time indicator
   Widget _buildTimeIndicator(String text, String label, VoidCallback onTap) {
-    return AccessibilityUtils.ensureMinTouchTarget(
+    return GestureDetector(
       onTap: onTap,
-      semanticLabel: 'Edit $label',
-      semanticHint: 'Double tap to edit $label',
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8F9FA),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+      child: Semantics(
+        label: 'Edit $label',
+        hint: 'Double tap to edit $label',
+        button: true,
+        child: Container(
+          padding: ResponsiveHelper.getResponsivePadding(
+            context,
+            horizontal: 12,
+            vertical: 8,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceVariant,
+            borderRadius: BorderRadius.circular(
+              ResponsiveHelper.getResponsiveBorderRadius(context, 12),
             ),
-          ],
-        ),
-        child: AccessibilityUtils.createAccessibleText(
-          text: text,
-          style: AppTypography.timeIndicatorText.copyWith(
-            color: AppColors.textHeadline,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadowLight,
+                blurRadius: ResponsiveHelper.getResponsiveWidth(context, 4),
+                offset: Offset(
+                  0,
+                  ResponsiveHelper.getResponsiveHeight(context, 2),
+                ),
+              ),
+            ],
+          ),
+          child: SmoothTextTransition(
+            text: text,
+            style: const TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textHeadline,
+            ),
+            duration: const Duration(milliseconds: 350),
+            slideDistance: 15.0,
           ),
         ),
       ),
@@ -220,6 +261,7 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
     );
 
     return CircularProgressSection(
+      key: _progressSectionKey,
       progress: progress,
       currentPage: widget.currentPage,
       totalPages: widget.totalPages,
@@ -243,8 +285,8 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
     return QuickAddButtonGrid(
       selectedDrinkType: _selectedDrinkType,
       onAmountAdded: () {
-        // Optional callback for when amount is added
-        // Could trigger animations or other UI updates
+        // Trigger border pulse animation on circular progress
+        _progressSectionKey.currentState?.triggerWaterAddedAnimation();
       },
     );
   }
@@ -296,15 +338,15 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
   }
 
   /// Handle wake up time selection
-  void _onWakeUpTimeTapped() async {
-    final TimeOfDay? selectedTime = await showTimePicker(
+  Future<void> _onWakeUpTimeTapped() async {
+    final selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: 7, minute: 0),
+      initialTime: const TimeOfDay(hour: 7, minute: 0),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.surface,
               hourMinuteTextColor: AppColors.textHeadline,
               hourMinuteColor: AppColors.waterFull.withValues(alpha: 0.1),
               dialHandColor: AppColors.waterFull,
@@ -320,27 +362,60 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
 
     if (selectedTime != null) {
       setState(() {
-        _currentTime = _formatTime(DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          DateTime.now().day,
-          selectedTime.hour,
-          selectedTime.minute,
-        ));
+        _currentTime = _formatTime(
+          DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+            selectedTime.hour,
+            selectedTime.minute,
+          ),
+        );
       });
+
+      // Schedule notifications with new wake up time
+      try {
+        final notificationService = NotificationService();
+        await notificationService.updateNotificationSettings(
+          startHour: selectedTime.hour,
+        );
+        await notificationService.scheduleSmartReminders();
+
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Wake up time set to $_currentTime'),
+              backgroundColor: AppColors.success,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint('Error scheduling wake up reminders: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to set wake up time. Please try again.'),
+              backgroundColor: AppColors.error,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
     }
   }
 
   /// Handle reminder interval selection
-  void _onReminderIntervalTapped() async {
-    final TimeOfDay? selectedTime = await showTimePicker(
+  Future<void> _onReminderIntervalTapped() async {
+    final selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: 2, minute: 0),
+      initialTime: const TimeOfDay(hour: 2, minute: 0),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.surface,
               hourMinuteTextColor: AppColors.textHeadline,
               hourMinuteColor: AppColors.waterFull.withValues(alpha: 0.1),
               dialHandColor: AppColors.waterFull,
@@ -358,7 +433,7 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
       final hours = selectedTime.hour;
       final minutes = selectedTime.minute;
       final totalMinutes = hours * 60 + minutes;
-      
+
       setState(() {
         if (totalMinutes < 60) {
           _nextReminderTime = '${totalMinutes}min';
@@ -366,19 +441,50 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
           _nextReminderTime = '${hours}h ${minutes}min';
         }
       });
+
+      // Schedule notifications with the new interval
+      try {
+        final notificationService = NotificationService();
+        await notificationService.updateNotificationSettings(
+          interval: totalMinutes ~/ 60, // Convert to hours
+        );
+        await notificationService.scheduleSmartReminders();
+
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Reminders set for every $_nextReminderTime'),
+              backgroundColor: AppColors.success,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint('Error scheduling reminders: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to set reminders. Please try again.'),
+              backgroundColor: AppColors.error,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
     }
   }
 
   /// Handle sleep time selection
-  void _onSleepTimeTapped() async {
-    final TimeOfDay? selectedTime = await showTimePicker(
+  Future<void> _onSleepTimeTapped() async {
+    final selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: 23, minute: 0),
+      initialTime: const TimeOfDay(hour: 23, minute: 0),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.surface,
               hourMinuteTextColor: AppColors.textHeadline,
               hourMinuteColor: AppColors.waterFull.withValues(alpha: 0.1),
               dialHandColor: AppColors.waterFull,
@@ -394,14 +500,47 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
 
     if (selectedTime != null) {
       setState(() {
-        _endTime = _formatTime(DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          DateTime.now().day,
-          selectedTime.hour,
-          selectedTime.minute,
-        ));
+        _endTime = _formatTime(
+          DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+            selectedTime.hour,
+            selectedTime.minute,
+          ),
+        );
       });
+
+      // Schedule notifications with new sleep time
+      try {
+        final notificationService = NotificationService();
+        await notificationService.updateNotificationSettings(
+          endHour: selectedTime.hour,
+        );
+        await notificationService.scheduleSmartReminders();
+
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Sleep time set to $_endTime'),
+              backgroundColor: AppColors.success,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint('Error scheduling sleep time reminders: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to set sleep time. Please try again.'),
+              backgroundColor: AppColors.error,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -409,8 +548,12 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
   String _getDateDisplayText() {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final selectedDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
-    
+    final selectedDay = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
+
     if (selectedDay == today) {
       return 'Today';
     } else if (selectedDay == today.subtract(const Duration(days: 1))) {
@@ -420,16 +563,26 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
     } else {
       // Format as "Jan 15" or similar
       final months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ];
       return '${months[_selectedDate.month - 1]} ${_selectedDate.day}';
     }
   }
 
   /// Handle today text tap to open calendar
-  void _onTodayTapped() async {
-    final DateTime? pickedDate = await showDatePicker(
+  Future<void> _onTodayTapped() async {
+    final pickedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
@@ -439,11 +592,9 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
               primary: AppColors.waterFull,
-              onPrimary: Colors.white,
-              surface: Colors.white,
               onSurface: AppColors.textHeadline,
               secondary: AppColors.lightPurple,
-              onSecondary: Colors.white,
+              onSecondary: AppColors.textOnSecondary,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
@@ -454,21 +605,21 @@ class _MainHydrationPageState extends State<MainHydrationPage> {
                 ),
               ),
             ),
-            datePickerTheme: DatePickerThemeData(
-              backgroundColor: Colors.white,
+            datePickerTheme: const DatePickerThemeData(
+              backgroundColor: AppColors.surface,
               headerBackgroundColor: AppColors.waterFull,
-              headerForegroundColor: Colors.white,
-              dayStyle: const TextStyle(
+              headerForegroundColor: AppColors.textOnPrimary,
+              dayStyle: TextStyle(
                 fontFamily: 'Nunito',
                 color: AppColors.textHeadline,
               ),
-              yearStyle: const TextStyle(
+              yearStyle: TextStyle(
                 fontFamily: 'Nunito',
                 color: AppColors.textHeadline,
               ),
-              headerHelpStyle: const TextStyle(
+              headerHelpStyle: TextStyle(
                 fontFamily: 'Nunito',
-                color: Colors.white,
+                color: AppColors.textOnPrimary,
               ),
             ),
           ),

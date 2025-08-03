@@ -555,6 +555,33 @@ class AnalyticsProvider extends ChangeNotifier {
     return ((thisMonthTotal - lastMonthTotal) / lastMonthTotal) * 100;
   }
 
+  /// Get weekly data for a specific week
+  Map<DateTime, int> getWeeklyData(DateTime weekStart) {
+    final weeklyData = <DateTime, int>{};
+
+    for (var i = 0; i < 7; i++) {
+      final date = weekStart.add(Duration(days: i));
+      final dayEntries = _hydrationProvider.getEntriesForDate(date);
+      weeklyData[date] = dayEntries.totalWaterIntake;
+    }
+
+    return weeklyData;
+  }
+
+  /// Get monthly data for a specific month
+  Map<DateTime, int> getMonthlyData(DateTime monthStart) {
+    final monthlyData = <DateTime, int>{};
+    final monthEnd = DateTime(monthStart.year, monthStart.month + 1, 0);
+
+    for (var i = 1; i <= monthEnd.day; i++) {
+      final date = DateTime(monthStart.year, monthStart.month, i);
+      final dayEntries = _hydrationProvider.getEntriesForDate(date);
+      monthlyData[date] = dayEntries.totalWaterIntake;
+    }
+
+    return monthlyData;
+  }
+
   /// Clear error
   void clearError() {
     _lastError = null;

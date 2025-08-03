@@ -9,6 +9,7 @@ import 'package:watertracker/core/models/goal_factors.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/models/hydration_entry.dart';
 import 'package:watertracker/core/models/hydration_progress.dart';
+import 'package:watertracker/core/security/input_validator.dart';
 import 'package:watertracker/core/services/health_service.dart';
 import 'package:watertracker/core/services/storage_service.dart';
 import 'package:watertracker/features/hydration/screens/goal_completion_screen.dart';
@@ -136,26 +137,31 @@ class HydrationProvider extends ChangeNotifier {
       final currentIntakeValue = await _storageService.getInt('currentIntake');
       _currentIntake = currentIntakeValue ?? 0;
 
-      // Try to load goal from user profile first, then fallback to direct storage
-      int? dailyGoalValue;
-      try {
-        final userProfileJson = await _storageService.getString(
-          'user_profile',
-          encrypted: false,
-        );
-        if (userProfileJson != null) {
-          final userProfile =
-              jsonDecode(userProfileJson) as Map<String, dynamic>;
-          dailyGoalValue = userProfile['dailyGoal'] as int?;
+      // Load goal from direct storage first (prioritize user updates), then fallback to user profile
+      int? dailyGoalValue = await _storageService.getInt('dailyGoal');
+      String goalSource = 'direct storage';
+
+      // If no direct storage goal, try user profile
+      if (dailyGoalValue == null) {
+        try {
+          final userProfileJson = await _storageService.getString(
+            'user_profile',
+            encrypted: false,
+          );
+          if (userProfileJson != null) {
+            final userProfile =
+                jsonDecode(userProfileJson) as Map<String, dynamic>;
+            dailyGoalValue = userProfile['dailyGoal'] as int?;
+            goalSource = 'user profile';
+          }
+        } catch (e) {
+          debugPrint('Failed to load goal from user profile: $e');
         }
-      } catch (e) {
-        debugPrint('Failed to load goal from user profile: $e');
       }
 
-      // Fallback to direct storage if user profile doesn't have goal
-      dailyGoalValue ??= await _storageService.getInt('dailyGoal');
-
       _dailyGoal = dailyGoalValue ?? 2000;
+      if (dailyGoalValue == null) goalSource = 'default';
+      debugPrint('Loaded daily goal: $_dailyGoal ml (from $goalSource)');
 
       final goalReachedValue = await _storageService.getBool(
         'goalReachedToday',
@@ -320,6 +326,7 @@ class HydrationProvider extends ChangeNotifier {
     try {
       await _storageService.saveInt('currentIntake', _currentIntake);
       await _storageService.saveInt('dailyGoal', _dailyGoal);
+      debugPrint('Saved daily goal to storage: $_dailyGoal ml');
       await _storageService.saveBool(
         'goalReachedToday',
         value: _goalReachedToday,
@@ -727,7 +734,10 @@ class HydrationProvider extends ChangeNotifier {
       _updateCurrentDayData();
       _calculateStreaks();
 
+      // Save to both direct storage and user profile to prevent conflicts
       await _saveBasicData();
+      await _updateUserProfileGoal(goal);
+
       _lastError = null;
       notifyListeners();
     } catch (e, stackTrace) {
@@ -736,6 +746,28 @@ class HydrationProvider extends ChangeNotifier {
       debugPrint('Stack trace: $stackTrace');
       notifyListeners();
       rethrow;
+    }
+  }
+
+  /// Update user profile with new goal to prevent conflicts
+  Future<void> _updateUserProfileGoal(int goal) async {
+    try {
+      final userProfileJson = await _storageService.getString(
+        'user_profile',
+        encrypted: false,
+      );
+      if (userProfileJson != null) {
+        final userProfile = jsonDecode(userProfileJson) as Map<String, dynamic>;
+        userProfile['dailyGoal'] = goal;
+        await _storageService.saveString(
+          'user_profile',
+          jsonEncode(userProfile),
+          encrypted: false,
+        );
+      }
+    } catch (e) {
+      debugPrint('Failed to update user profile goal: $e');
+      // Don't throw error as this is not critical
     }
   }
 
@@ -789,6 +821,77 @@ class HydrationProvider extends ChangeNotifier {
   void clearError() {
     _lastError = null;
     notifyListeners();
+  }
+
+  // MARK: - Additional methods for test compatibility
+
+  /// Get today's intake (alias for currentIntake)
+  int get todayIntake => _currentIntake;
+
+  /// Add water (alias for addHydration)
+  Future<void> addWater(int amount, {DrinkType type = DrinkType.water}) async {
+    await addHydration(amount, type: type);
+  }
+
+  /// Get progress percentage
+  double get progressPercentage => intakePercentage;
+
+  /// Check if goal is completed
+  bool get isGoalCompleted => _goalReachedToday;
+
+  /// Save data (alias for existing save methods)
+  Future<void> saveData() async {
+    await _saveBasicData();
+    await _saveHistoricalData();
+  }
+
+  /// Get history (alias for hydrationHistory)
+  List<HydrationData> getHistory() => hydrationHistory;
+
+  /// Get weekly summary
+  Map<String, dynamic> getWeeklySummary() {
+    final now = DateTime.now();
+    final weekStart = now.subtract(Duration(days: now.weekday - 1));
+    final weekData = getWeeklyData(weekStart);
+
+    final totalIntake = weekData.values.fold(0, (sum, value) => sum + value);
+    final averageIntake = totalIntake / 7.0;
+    final daysWithGoal =
+        weekData.values.where((value) => value >= _dailyGoal).length;
+
+    return {
+      'totalIntake': totalIntake,
+      'averageIntake': averageIntake,
+      'daysWithGoal': daysWithGoal,
+      'goalAchievementRate': daysWithGoal / 7.0,
+    };
+  }
+
+  /// Reset daily data
+  Future<void> resetDailyData() async {
+    await resetIntake();
+  }
+
+  /// Refresh data
+  Future<void> refreshData() async {
+    await _initialize();
+  }
+
+  /// Update reminder time
+  Future<void> updateReminderTime(DateTime time) async {
+    _nextReminderTime = time;
+    await _storageService.saveInt(
+      'nextReminderTime',
+      time.millisecondsSinceEpoch,
+    );
+    notifyListeners();
+  }
+
+  /// Get progress for specific date
+  double getProgressForDate(DateTime date) {
+    final dayEntries = getEntriesForDate(date);
+    final dayIntake = dayEntries.totalWaterIntake;
+    return (dayIntake / _dailyGoal).clamp(0.0, 1.0);
   }
 
   // MARK: - Validation Methods
@@ -1211,11 +1314,24 @@ class HydrationProvider extends ChangeNotifier {
     BuildContext? context,
   }) async {
     try {
-      if (amount <= 0) {
-        throw ValidationError.invalidInput(
-          'amount',
-          'Amount must be greater than 0',
-        );
+      // Use secure input validation
+      final amountError = InputValidator.validateHydrationAmount(amount);
+      if (amountError != null) {
+        throw amountError;
+      }
+
+      final notesError = InputValidator.validateNotes(notes);
+      if (notesError != null) {
+        throw notesError;
+      }
+
+      // Check daily intake limits
+      final dailyIntakeError = InputValidator.validateDailyIntake(
+        _currentIntake,
+        amount,
+      );
+      if (dailyIntakeError != null) {
+        throw dailyIntakeError;
       }
 
       final drinkType = type ?? _selectedDrinkType;

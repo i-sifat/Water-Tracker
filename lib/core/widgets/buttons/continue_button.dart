@@ -1,41 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
+import 'package:watertracker/core/widgets/buttons/base_button.dart';
 
-class ContinueButton extends StatelessWidget {
+class ContinueButton extends BaseButton {
   const ContinueButton({
-    required this.onPressed,
+    required VoidCallback onPressed,
     super.key,
-    this.isDisabled = false,
-  });
-  final VoidCallback onPressed;
-  final bool isDisabled;
+    bool isDisabled = false,
+  }) : super(
+         onPressed: onPressed,
+         text: 'Continue',
+         isDisabled: isDisabled,
+         icon: Icons.arrow_forward,
+       );
 
   @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: isDisabled ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.lightPurple,
-        foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 56),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Continue',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Nunito',
-            ),
-          ),
-          SizedBox(width: 8),
-          Icon(Icons.arrow_forward, color: Colors.white, size: 20),
-        ],
-      ),
+  ButtonStyle getButtonStyle(BuildContext context) {
+    return ElevatedButton.styleFrom(
+      backgroundColor: AppColors.primaryLight,
+      foregroundColor: AppColors.textOnPrimary,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    );
+  }
+
+  @override
+  Color getTextColor(BuildContext context) {
+    return AppColors.textOnPrimary;
+  }
+
+  @override
+  Color getLoadingIndicatorColor(BuildContext context) {
+    return AppColors.textOnPrimary;
+  }
+
+  @override
+  TextStyle? getTextStyle(BuildContext context) {
+    return const TextStyle(
+      color: AppColors.textOnPrimary,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      fontFamily: 'Nunito',
     );
   }
 }

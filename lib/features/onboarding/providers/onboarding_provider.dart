@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/models/user_profile.dart';
+import 'package:watertracker/core/navigation/navigation_error_handler.dart';
 
 /// Provider to manage onboarding flow state and data persistence
 class OnboardingProvider extends ChangeNotifier {
@@ -106,8 +107,6 @@ class OnboardingProvider extends ChangeNotifier {
     }
   }
 
-
-
   /// Move to previous step
   void previousStep() {
     if (_currentStep > 0) {
@@ -191,22 +190,18 @@ class OnboardingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateDailyRoutine({
-    TimeOfDay? wakeUpTime,
-    TimeOfDay? sleepTime,
-  }) {
+  void updateDailyRoutine({TimeOfDay? wakeUpTime, TimeOfDay? sleepTime}) {
     _userProfile = _userProfile.copyWith(
       wakeUpTime: wakeUpTime,
       sleepTime: sleepTime,
     );
     notifyListeners();
   }
+
   void updateDrinkGoal(double goalInLiters) {
     // Convert liters to milliliters and store in user profile
     final goalInMilliliters = (goalInLiters * 1000).round();
-    _userProfile = _userProfile.copyWith(
-      dailyGoal: goalInMilliliters,
-    );
+    _userProfile = _userProfile.copyWith(dailyGoal: goalInMilliliters);
     notifyListeners();
   }
 
@@ -499,31 +494,58 @@ class OnboardingProvider extends ChangeNotifier {
     }
   }
 
-  /// Navigate to next step with proper validation
+  /// Navigate to next step with proper validation and error handling
   Future<bool> navigateNext() async {
-    final validationError = getValidationError(_currentStep);
-    if (validationError != null) {
-      _error = validationError;
+    try {
+      final validationError = getValidationError(_currentStep);
+      if (validationError != null) {
+        _error = validationError;
+        notifyListeners();
+        return false;
+      }
+
+      _error = null;
+
+      // Save current state before navigation
+      await NavigationErrorHandler.saveNavigationState(
+        NavigationState(
+          currentStep: _currentStep,
+          isLoading: _isSaving,
+          stepCompletionStatus: Map.from(
+            _completedSteps.asMap().map((index, step) => MapEntry(step, true)),
+          ),
+        ),
+      );
+
+      // Optimize navigation by batching updates
+      if (!canGoNext) return false;
+
+      _completedSteps.add(_currentStep);
+      final nextStep = _currentStep + 1;
+
+      if (nextStep < totalSteps) {
+        _currentStep = nextStep;
+        await _saveProgress();
+        notifyListeners();
+        return true;
+      } else {
+        await completeOnboarding();
+        return true;
+      }
+    } catch (e, stackTrace) {
+      // Handle navigation error
+      final error = NavigationErrorDetails(
+        type: NavigationError.pageLoadFailed,
+        message: 'Failed to navigate to next step: $e',
+        stackTrace: stackTrace,
+        context: {'currentStep': _currentStep, 'targetStep': _currentStep + 1},
+      );
+
+      await NavigationErrorHandler.handleError(error);
+
+      _error = 'Navigation failed. Please try again.';
       notifyListeners();
       return false;
-    }
-
-    _error = null;
-    
-    // Optimize navigation by batching updates
-    if (!canGoNext) return false;
-    
-    _completedSteps.add(_currentStep);
-    final nextStep = _currentStep + 1;
-    
-    if (nextStep < totalSteps) {
-      _currentStep = nextStep;
-      await _saveProgress();
-      notifyListeners();
-      return true;
-    } else {
-      await completeOnboarding();
-      return true;
     }
   }
 
@@ -594,4 +616,55 @@ class OnboardingProvider extends ChangeNotifier {
     );
   }
 
+  /// Recover from navigation error by restoring saved state
+  Future<bool> recoverFromNavigationError() async {
+    try {
+      final savedState = await NavigationErrorHandler.restoreNavigationState();
+
+      if (savedState != null &&
+          !NavigationErrorHandler.isNavigationStateCorrupted(savedState)) {
+        // Restore from saved state
+        _currentStep = savedState.currentStep;
+        _completedSteps.clear();
+        _completedSteps.addAll(savedState.stepCompletionStatus.keys);
+        _error = null;
+
+        notifyListeners();
+        return true;
+      } else {
+        // Use safe fallback state
+        final fallbackState = NavigationErrorHandler.createSafeFallbackState();
+        _currentStep = fallbackState.currentStep;
+        _completedSteps.clear();
+        _error = null;
+
+        notifyListeners();
+        return true;
+      }
+    } catch (e) {
+      debugPrint('Failed to recover from navigation error: $e');
+
+      // Last resort: reset to beginning
+      _currentStep = 0;
+      _completedSteps.clear();
+      _error = null;
+
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Handle navigation timeout
+  Future<void> handleNavigationTimeout() async {
+    final error = NavigationErrorDetails(
+      type: NavigationError.transitionTimeout,
+      message: 'Navigation transition timed out',
+      context: {'currentStep': _currentStep},
+    );
+
+    await NavigationErrorHandler.handleError(error);
+
+    _error = 'Navigation is taking too long. Please try again.';
+    notifyListeners();
+  }
 }

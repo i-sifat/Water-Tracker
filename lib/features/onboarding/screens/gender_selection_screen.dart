@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/models/user_profile.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
+import 'package:watertracker/core/utils/responsive_helper.dart';
 import 'package:watertracker/core/widgets/cards/gender_selection_card.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
@@ -17,16 +18,8 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
   Gender? _selectedGender;
 
   final List<Map<String, dynamic>> _genderOptions = [
-    {
-      'value': Gender.male,
-      'title': '♂ I am Male',
-      'gender': 'male',
-    },
-    {
-      'value': Gender.female,
-      'title': '♀ I am Female',
-      'gender': 'female',
-    },
+    {'value': Gender.male, 'title': '♂ I am Male', 'gender': 'male'},
+    {'value': Gender.female, 'title': '♀ I am Female', 'gender': 'female'},
   ];
 
   Future<void> _handleContinue(OnboardingProvider provider) async {
@@ -63,23 +56,29 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                       child: GenderSelectionCard(
                         title: _genderOptions[0]['title'] as String,
                         gender: _genderOptions[0]['gender'] as String,
-                        isSelected: _selectedGender == _genderOptions[0]['value'],
+                        isSelected:
+                            _selectedGender == _genderOptions[0]['value'],
                         onTap: () {
                           setState(() {
-                            _selectedGender = _genderOptions[0]['value'] as Gender;
+                            _selectedGender =
+                                _genderOptions[0]['value'] as Gender;
                           });
                         },
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(
+                      width: ResponsiveHelper.getResponsiveWidth(context, 16),
+                    ),
                     Expanded(
                       child: GenderSelectionCard(
                         title: _genderOptions[1]['title'] as String,
                         gender: _genderOptions[1]['gender'] as String,
-                        isSelected: _selectedGender == _genderOptions[1]['value'],
+                        isSelected:
+                            _selectedGender == _genderOptions[1]['value'],
                         onTap: () {
                           setState(() {
-                            _selectedGender = _genderOptions[1]['value'] as Gender;
+                            _selectedGender =
+                                _genderOptions[1]['value'] as Gender;
                           });
                         },
                       ),
@@ -88,7 +87,9 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(
+                height: ResponsiveHelper.getResponsiveHeight(context, 16),
+              ),
 
               // Prefer not to answer button
               SizedBox(
@@ -98,24 +99,40 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.lightPurple,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: ResponsiveHelper.getResponsivePadding(
+                      context,
+                      vertical: 16,
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.getResponsiveBorderRadius(context, 12),
+                      ),
                     ),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'Prefer not to answer',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: ResponsiveHelper.getResponsiveFontSize(
+                            context,
+                            16,
+                          ),
                           fontWeight: FontWeight.w600,
                           fontFamily: 'Nunito',
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.close, size: 20),
+                      SizedBox(
+                        width: ResponsiveHelper.getResponsiveWidth(context, 8),
+                      ),
+                      Icon(
+                        Icons.close,
+                        size: ResponsiveHelper.getResponsiveIconSize(
+                          context,
+                          20,
+                        ),
+                      ),
                     ],
                   ),
                 ),

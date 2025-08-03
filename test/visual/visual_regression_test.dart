@@ -5,7 +5,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/constants/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
@@ -96,9 +96,7 @@ void main() {
       WidgetTester tester,
     ) async {
       // Set up provider with specific progress for visual testing
-      await hydrationProvider.addHydration(
-        1750,
-      ); // 1.75L of 3L goal
+      await hydrationProvider.addHydration(1750); // 1.75L of 3L goal
 
       await tester.pumpWidget(
         MaterialApp(

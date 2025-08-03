@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 
 class CustomRulerPicker extends StatelessWidget {
   const CustomRulerPicker({
@@ -18,6 +18,10 @@ class CustomRulerPicker extends StatelessWidget {
   final int max;
   final String leftLabel;
   final String rightLabel;
+
+  /// Compatibility getters for tests
+  int get minValue => min;
+  int get maxValue => max;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +110,8 @@ class CustomRulerPicker extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.textHeadline,
                           fontSize: 16,
-                          fontWeight: value == min ? FontWeight.w700 : FontWeight.w400,
+                          fontWeight:
+                              value == min ? FontWeight.w700 : FontWeight.w400,
                           fontFamily: 'Nunito',
                         ),
                       ),
@@ -136,7 +141,8 @@ class CustomRulerPicker extends StatelessWidget {
                     style: TextStyle(
                       color: AppColors.textHeadline,
                       fontSize: 16,
-                      fontWeight: value == max ? FontWeight.w700 : FontWeight.w400,
+                      fontWeight:
+                          value == max ? FontWeight.w700 : FontWeight.w400,
                       fontFamily: 'Nunito',
                     ),
                   ),
@@ -154,7 +160,7 @@ class CustomRulerPicker extends StatelessWidget {
     final availableWidth = rulerWidth - circleWidth;
     final step = availableWidth / (max - min);
     final position = (value - min) * step;
-    
+
     // Ensure the circle stays within the ruler boundaries
     return position.clamp(0.0, availableWidth);
   }

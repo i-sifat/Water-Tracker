@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/models/goal_factors.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/widgets/goal_breakdown_page.dart';
 

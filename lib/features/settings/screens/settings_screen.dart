@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 
 import 'package:watertracker/core/constants/premium_features.dart';
 import 'package:watertracker/core/providers/theme_provider.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/utils/avatar_extensions.dart';
+import 'package:watertracker/core/utils/responsive_helper.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/core/widgets/common/loading_widget.dart';
@@ -53,11 +54,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Settings',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
+            fontSize: ResponsiveHelper.getResponsiveFontSize(context, 20),
           ),
         ),
         backgroundColor: AppColors.background,
@@ -74,63 +76,99 @@ class _SettingsScreenState extends State<SettingsScreen> {
           }
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: ResponsiveHelper.getResponsivePadding(context, all: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // User Profile Section
                 _buildSectionHeader('Profile'),
-                const SizedBox(height: 12),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 12),
+                ),
                 _buildUserProfileCard(context, settingsProvider),
-                const SizedBox(height: 24),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 24),
+                ),
 
                 // Notifications Section
                 _buildSectionHeader('Notifications'),
-                const SizedBox(height: 12),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 12),
+                ),
                 _buildNotificationCard(context, settingsProvider),
-                const SizedBox(height: 24),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 24),
+                ),
 
                 // App Preferences Section
                 _buildSectionHeader('Preferences'),
-                const SizedBox(height: 12),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 12),
+                ),
                 _buildPreferencesCard(context, settingsProvider),
-                const SizedBox(height: 24),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 24),
+                ),
 
                 // Theme Section
                 _buildSectionHeader('Appearance'),
-                const SizedBox(height: 12),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 12),
+                ),
                 _buildThemeCard(context),
-                const SizedBox(height: 24),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 24),
+                ),
 
                 // Accessibility Section
                 _buildSectionHeader('Accessibility'),
-                const SizedBox(height: 12),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 12),
+                ),
                 _buildAccessibilityCard(context),
-                const SizedBox(height: 24),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 24),
+                ),
 
                 // Language Section
                 _buildSectionHeader('Language'),
-                const SizedBox(height: 12),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 12),
+                ),
                 _buildLanguageCard(context),
-                const SizedBox(height: 24),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 24),
+                ),
 
                 // Data Management Section
                 _buildSectionHeader('Data'),
-                const SizedBox(height: 12),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 12),
+                ),
                 _buildDataManagementCard(context, settingsProvider),
-                const SizedBox(height: 24),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 24),
+                ),
 
                 // Premium Section
                 _buildSectionHeader('Premium'),
-                const SizedBox(height: 12),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 12),
+                ),
                 _buildPremiumCard(context, settingsProvider),
-                const SizedBox(height: 24),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 24),
+                ),
 
                 // About Section
                 _buildSectionHeader('About'),
-                const SizedBox(height: 12),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 12),
+                ),
                 _buildAboutCard(context),
-                const SizedBox(height: 32),
+                SizedBox(
+                  height: ResponsiveHelper.getResponsiveHeight(context, 32),
+                ),
               ],
             ),
           );
@@ -142,8 +180,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 18,
+      style: TextStyle(
+        fontSize: ResponsiveHelper.getResponsiveFontSize(context, 18),
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimary,
       ),
@@ -162,26 +200,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           ListTile(
             leading: CircleAvatar(
-              radius: 24,
+              radius: ResponsiveHelper.getResponsiveWidth(context, 24),
               backgroundColor: AppColors.waterFull.withValues(alpha: 0.1),
-              child: SvgPicture.asset(avatar.assetPath, width: 32, height: 32),
+              child: SvgPicture.asset(
+                avatar.assetPath,
+                width: ResponsiveHelper.getResponsiveIconSize(context, 32),
+                height: ResponsiveHelper.getResponsiveIconSize(context, 32),
+              ),
             ),
             title: Text(
               userProfile?.isComplete == true
                   ? '${userProfile!.age} years old, ${userProfile.gender.displayName}'
                   : 'Complete your profile',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
+                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
               ),
             ),
             subtitle: Text(
               'Daily Goal: ${settingsProvider.getFormattedDailyGoal()}',
-              style: const TextStyle(color: AppColors.textSubtitle),
+              style: TextStyle(
+                color: AppColors.textSubtitle,
+                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 14),
+              ),
             ),
-            trailing: const Icon(
+            trailing: Icon(
               Icons.arrow_forward_ios,
-              size: 16,
+              size: ResponsiveHelper.getResponsiveIconSize(context, 16),
               color: AppColors.textSubtitle,
             ),
             onTap: () => _navigateToUserProfile(context),

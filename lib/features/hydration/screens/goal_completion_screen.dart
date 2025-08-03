@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/features/history/history_screen.dart';
 
@@ -68,10 +68,13 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
                   width: 160,
                   height: 160,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF2F2F2),
+                    color: AppColors.getSemanticColor('background', 'surface'),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: const Color(0xFF7FB364),
+                      color: AppColors.getSemanticColor(
+                        'status',
+                        'successMain',
+                      ),
                       width: 3,
                     ),
                   ),
@@ -79,7 +82,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen>
                 const Icon(
                   Icons.check_circle,
                   size: 100,
-                  color: Color(0xFF7FB364),
+                  color: AppColors.getSemanticColor('status', 'successMain'),
                 ),
               ],
             ),

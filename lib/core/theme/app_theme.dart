@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:watertracker/core/services/accessibility_service.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 
 class AppTheme {
   // Private constructor to prevent instantiation

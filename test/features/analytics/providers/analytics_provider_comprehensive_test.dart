@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:test/test.dart';
 import 'package:watertracker/features/analytics/providers/analytics_provider.dart';
+import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
+import 'package:watertracker/features/premium/providers/premium_provider.dart';
 
 @Skip('Temporarily disabled - needs API alignment')
 void main() {
@@ -8,7 +9,12 @@ void main() {
     late AnalyticsProvider analyticsProvider;
 
     setUp(() {
-      analyticsProvider = AnalyticsProvider();
+      final hydrationProvider = HydrationProvider();
+      final premiumProvider = PremiumProvider();
+      analyticsProvider = AnalyticsProvider(
+        hydrationProvider: hydrationProvider,
+        premiumProvider: premiumProvider,
+      );
     });
 
     group('Basic Functionality', () {
@@ -19,19 +25,36 @@ void main() {
 
       test('should handle data retrieval', () {
         // Act & Assert
-        expect(() => analyticsProvider.getWeeklyData(), returnsNormally);
+        final weekStart = DateTime.now().subtract(
+          Duration(days: DateTime.now().weekday - 1),
+        );
+        expect(
+          () => analyticsProvider.getWeeklyData(weekStart),
+          returnsNormally,
+        );
       });
 
       test('should handle monthly data', () {
         // Act & Assert
-        expect(() => analyticsProvider.getMonthlyData(), returnsNormally);
+        final monthStart = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          1,
+        );
+        expect(
+          () => analyticsProvider.getMonthlyData(monthStart),
+          returnsNormally,
+        );
       });
     });
 
     group('Data Processing', () {
       test('should process hydration data', () {
         // Act
-        final weeklyData = analyticsProvider.getWeeklyData();
+        final weekStart = DateTime.now().subtract(
+          Duration(days: DateTime.now().weekday - 1),
+        );
+        final weeklyData = analyticsProvider.getWeeklyData(weekStart);
 
         // Assert
         expect(weeklyData, isNotNull);
@@ -39,7 +62,12 @@ void main() {
 
       test('should calculate statistics', () {
         // Act
-        final monthlyData = analyticsProvider.getMonthlyData();
+        final monthStart = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          1,
+        );
+        final monthlyData = analyticsProvider.getMonthlyData(monthStart);
 
         // Assert
         expect(monthlyData, isNotNull);
@@ -49,8 +77,22 @@ void main() {
     group('Error Handling', () {
       test('should handle empty data gracefully', () {
         // Act & Assert
-        expect(() => analyticsProvider.getWeeklyData(), returnsNormally);
-        expect(() => analyticsProvider.getMonthlyData(), returnsNormally);
+        final weekStart = DateTime.now().subtract(
+          Duration(days: DateTime.now().weekday - 1),
+        );
+        final monthStart = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          1,
+        );
+        expect(
+          () => analyticsProvider.getWeeklyData(weekStart),
+          returnsNormally,
+        );
+        expect(
+          () => analyticsProvider.getMonthlyData(monthStart),
+          returnsNormally,
+        );
       });
     });
   });

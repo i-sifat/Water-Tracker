@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/utils/accessibility_utils.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 
 /// History page showing daily hydration intake entries
@@ -20,9 +20,7 @@ class HistoryPage extends StatelessWidget {
             child: Column(
               children: [
                 _buildHeader(),
-                Expanded(
-                  child: _buildHydrationList(provider),
-                ),
+                Expanded(child: _buildHydrationList(provider)),
                 _buildFloatingActionButton(),
               ],
             ),
@@ -51,7 +49,7 @@ class HistoryPage extends StatelessWidget {
               size: 24,
             ),
           ),
-          
+
           // Title
           Expanded(
             child: Center(
@@ -66,7 +64,7 @@ class HistoryPage extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Filter icon
           AccessibilityUtils.ensureMinTouchTarget(
             onTap: () {
@@ -88,7 +86,7 @@ class HistoryPage extends StatelessWidget {
   /// Build the list of hydration entries
   Widget _buildHydrationList(HydrationProvider provider) {
     final todaysEntries = provider.todaysEntries;
-    
+
     if (todaysEntries.isEmpty) {
       return _buildEmptyState();
     }
@@ -96,11 +94,12 @@ class HistoryPage extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: todaysEntries.length,
-      separatorBuilder: (context, index) => const Divider(
-        color: Color(0xFFE0E0E0),
-        height: 1,
-        thickness: 1,
-      ),
+      separatorBuilder:
+          (context, index) => Divider(
+            color: AppColors.getSemanticColor('background', 'primary'),
+            height: 1,
+            thickness: 1,
+          ),
       itemBuilder: (context, index) {
         final entry = todaysEntries[index];
         return _buildHydrationEntry(entry);
@@ -128,9 +127,9 @@ class HistoryPage extends StatelessWidget {
               size: 20,
             ),
           ),
-          
+
           const SizedBox(width: 16),
-          
+
           // Amount text
           Expanded(
             child: AccessibilityUtils.createAccessibleText(
@@ -143,7 +142,7 @@ class HistoryPage extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Time
           AccessibilityUtils.createAccessibleText(
             text: _formatTime(entry.timestamp),
@@ -219,11 +218,7 @@ class HistoryPage extends StatelessWidget {
               ),
             ],
           ),
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 24,
-          ),
+          child: const Icon(Icons.add, color: Colors.white, size: 24),
         ),
       ),
     );
@@ -266,4 +261,4 @@ class HistoryPage extends StatelessWidget {
     final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
     return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period';
   }
-} 
+}

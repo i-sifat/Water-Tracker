@@ -139,9 +139,7 @@ void main() {
       }
 
       final RenderObject rootRenderObject = tester.binding.renderView;
-      if (rootRenderObject != null) {
-        countRenderObjects(rootRenderObject);
-      }
+      countRenderObjects(rootRenderObject);
 
       // Perform many rapid interactions
       for (var i = 0; i < 50; i++) {
@@ -169,9 +167,7 @@ void main() {
         renderObject.visitChildren(countFinalRenderObjects);
       }
 
-      if (rootRenderObject != null) {
-        countFinalRenderObjects(rootRenderObject);
-      }
+      countFinalRenderObjects(rootRenderObject);
 
       // Allow some growth but not excessive (within 50% of initial)
       final growthRatio = finalRenderObjects / initialRenderObjects;

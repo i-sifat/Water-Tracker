@@ -169,7 +169,7 @@ void main() {
         final widget = AccessibilityUtils.ensureMinTouchTarget(
           onTap: () {},
           semanticLabel: 'Test button',
-          child: SizedBox(width: 20, height: 20),
+          child: const SizedBox(width: 20, height: 20),
         );
 
         await tester.pumpWidget(MaterialApp(home: Scaffold(body: widget)));

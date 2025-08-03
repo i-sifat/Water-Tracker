@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:watertracker/core/utils/performance_utils.dart';
 
 class WaterAnimation extends StatefulWidget {
   const WaterAnimation({
@@ -33,6 +34,11 @@ class _WaterAnimationState extends State<WaterAnimation>
   Ticker? _bubbleTicker;
   double _lastProgress = 0;
   int _frameCount = 0;
+
+  // Animation caching for better performance
+  WaterLevelPainter? _cachedPainter;
+  double _lastCachedProgress = -1;
+  double _lastCachedAnimationValue = -1;
 
   @override
   void initState() {
@@ -69,6 +75,9 @@ class _WaterAnimationState extends State<WaterAnimation>
     if (!mounted) return;
 
     _frameCount++;
+
+    // Frame rate limiting: Only update every other frame for better performance
+    if (_frameCount % 2 != 0) return;
 
     // Only add new bubbles every 30 frames (approximately 0.5 seconds at 60fps)
     if (_frameCount % 30 == 0 && widget.progress > 0.1) {
@@ -148,6 +157,7 @@ class _WaterAnimationState extends State<WaterAnimation>
     _progressController.dispose();
     _bubbleTimer?.cancel();
     _bubbleTicker?.dispose();
+    _cachedPainter = null; // Clear cached painter
     super.dispose();
   }
 
@@ -156,15 +166,16 @@ class _WaterAnimationState extends State<WaterAnimation>
     return AnimatedBuilder(
       animation: Listenable.merge([_controller, _progressAnimation]),
       builder: (context, child) {
-        return ClipRect(
-          child: CustomPaint(
-            size: Size(widget.width, widget.height),
-            painter: WaterLevelPainter(
-              progress: _progressAnimation.value,
-              waterColor: widget.waterColor.withAlpha(179), // Semi-transparent
-              backgroundColor: widget.backgroundColor.withAlpha(150),
-              animationValue: _controller.value,
-              bubbles: bubbles,
+        // Performance optimization: RepaintBoundary around expensive water animation
+        return PerformanceUtils.optimizedRepaintBoundary(
+          debugLabel: 'WaterAnimation',
+          child: ClipRect(
+            child: CustomPaint(
+              size: Size(widget.width, widget.height),
+              painter: _getCachedPainter(
+                _progressAnimation.value,
+                _controller.value,
+              ),
             ),
           ),
         );
@@ -180,6 +191,27 @@ class _WaterAnimationState extends State<WaterAnimation>
             bubble.speed / 60; // Divide by frame rate for smoother movement
       }
     }
+  }
+
+  /// Performance optimization: Cache painter instance to avoid recreation
+  WaterLevelPainter _getCachedPainter(double progress, double animationValue) {
+    // Only recreate painter if values have changed significantly
+    if (_cachedPainter == null ||
+        (_lastCachedProgress - progress).abs() > 0.001 ||
+        (_lastCachedAnimationValue - animationValue).abs() > 0.001) {
+      _cachedPainter = WaterLevelPainter(
+        progress: progress,
+        waterColor: widget.waterColor.withAlpha(179), // Semi-transparent
+        backgroundColor: widget.backgroundColor.withAlpha(150),
+        animationValue: animationValue,
+        bubbles: bubbles,
+      );
+
+      _lastCachedProgress = progress;
+      _lastCachedAnimationValue = animationValue;
+    }
+
+    return _cachedPainter!;
   }
 }
 

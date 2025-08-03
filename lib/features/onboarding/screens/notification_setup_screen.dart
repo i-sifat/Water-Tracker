@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watertracker/core/services/notification_service.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/features/onboarding/screens/data_summary_screen.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/constants/typography.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/settings/screens/settings_screen.dart';
 

@@ -4,7 +4,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/models/app_error.dart';
-import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/services/storage_service.dart';
 import 'package:watertracker/core/utils/error_handler.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
@@ -543,16 +542,13 @@ void main() {
     test('should handle retry operations correctly', () async {
       var attemptCount = 0;
 
-      final result = await ErrorHandler.retryOperation<String>(
-        () async {
-          attemptCount++;
-          if (attemptCount < 3) {
-            throw Exception('Temporary failure');
-          }
-          return 'Success';
-        },
-        initialDelay: const Duration(milliseconds: 1),
-      );
+      final result = await ErrorHandler.retryOperation<String>(() async {
+        attemptCount++;
+        if (attemptCount < 3) {
+          throw Exception('Temporary failure');
+        }
+        return 'Success';
+      }, initialDelay: const Duration(milliseconds: 1));
 
       expect(result, equals('Success'));
       expect(attemptCount, equals(3));

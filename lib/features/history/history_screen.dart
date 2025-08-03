@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/core/widgets/common/loading_widget.dart';
 import 'package:watertracker/core/widgets/custom_bottom_navigation_bar.dart';

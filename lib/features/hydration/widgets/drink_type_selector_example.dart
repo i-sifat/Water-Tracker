@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/features/hydration/widgets/drink_type_selector.dart';
 
@@ -17,7 +18,10 @@ class _DrinkTypeSelectorExampleState extends State<DrinkTypeSelectorExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E88E5), // Blue gradient background
+      backgroundColor: AppColors.getSemanticColor(
+        'hydration',
+        'primary',
+      ), // Hydration primary background
       appBar: AppBar(
         title: const Text('Drink Type Selector Example'),
         backgroundColor: Colors.transparent,

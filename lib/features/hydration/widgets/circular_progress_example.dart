@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/models/hydration_progress.dart';
 import 'package:watertracker/features/hydration/widgets/circular_progress_section.dart';
@@ -79,7 +80,7 @@ class _CircularProgressExampleState extends State<CircularProgressExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.getSemanticColor('background', 'primary'),
       appBar: AppBar(
         title: const Text('Circular Progress Example'),
         backgroundColor: Colors.transparent,
@@ -131,12 +132,15 @@ class _CircularProgressExampleState extends State<CircularProgressExample> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF313A34),
+                color: AppColors.getSemanticColor('text', 'headline'),
               ),
             ),
             Text(
               '07:00 AM • 2min • 11:00 PM',
-              style: TextStyle(fontSize: 12, color: Color(0xFF647067)),
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.getSemanticColor('text', 'subtitle'),
+              ),
             ),
           ],
         ),
@@ -147,10 +151,22 @@ class _CircularProgressExampleState extends State<CircularProgressExample> {
 
   Widget _buildQuickAddButtons() {
     final buttonData = [
-      {'amount': 500, 'color': const Color(0xFFB39DDB)},
-      {'amount': 250, 'color': const Color(0xFF81D4FA)},
-      {'amount': 400, 'color': const Color(0xFFA5D6A7)},
-      {'amount': 100, 'color': const Color(0xFFFFF59D)},
+      {
+        'amount': 500,
+        'color': AppColors.getSemanticColor('hydration', 'button500ml'),
+      },
+      {
+        'amount': 250,
+        'color': AppColors.getSemanticColor('hydration', 'button250ml'),
+      },
+      {
+        'amount': 400,
+        'color': AppColors.getSemanticColor('hydration', 'button400ml'),
+      },
+      {
+        'amount': 100,
+        'color': AppColors.getSemanticColor('hydration', 'button100ml'),
+      },
     ];
 
     return Column(
@@ -205,12 +221,12 @@ class _CircularProgressExampleState extends State<CircularProgressExample> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Page Navigation (for testing)',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF313A34),
+            color: AppColors.getSemanticColor('text', 'headline'),
           ),
         ),
         const SizedBox(height: 12),
@@ -222,8 +238,14 @@ class _CircularProgressExampleState extends State<CircularProgressExample> {
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     _currentPage == 0
-                        ? const Color(0xFF918DFE)
-                        : Colors.grey[300],
+                        ? AppColors.getSemanticColor(
+                          'interactive',
+                          'primaryDefault',
+                        )
+                        : AppColors.getSemanticColor(
+                          'interactive',
+                          'tertiaryDefault',
+                        ),
                 foregroundColor:
                     _currentPage == 0 ? Colors.white : Colors.black87,
               ),
@@ -234,8 +256,14 @@ class _CircularProgressExampleState extends State<CircularProgressExample> {
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     _currentPage == 1
-                        ? const Color(0xFF918DFE)
-                        : Colors.grey[300],
+                        ? AppColors.getSemanticColor(
+                          'interactive',
+                          'primaryDefault',
+                        )
+                        : AppColors.getSemanticColor(
+                          'interactive',
+                          'tertiaryDefault',
+                        ),
                 foregroundColor:
                     _currentPage == 1 ? Colors.white : Colors.black87,
               ),
@@ -246,8 +274,14 @@ class _CircularProgressExampleState extends State<CircularProgressExample> {
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     _currentPage == 2
-                        ? const Color(0xFF918DFE)
-                        : Colors.grey[300],
+                        ? AppColors.getSemanticColor(
+                          'interactive',
+                          'primaryDefault',
+                        )
+                        : AppColors.getSemanticColor(
+                          'interactive',
+                          'tertiaryDefault',
+                        ),
                 foregroundColor:
                     _currentPage == 2 ? Colors.white : Colors.black87,
               ),
@@ -266,12 +300,12 @@ class _CircularProgressExampleState extends State<CircularProgressExample> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Progress Details',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF313A34),
+                color: AppColors.getSemanticColor('text', 'headline'),
               ),
             ),
             const SizedBox(height: 12),
@@ -303,14 +337,17 @@ class _CircularProgressExampleState extends State<CircularProgressExample> {
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF647067)),
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColors.getSemanticColor('text', 'subtitle'),
+            ),
           ),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF313A34),
+              color: AppColors.getSemanticColor('text', 'headline'),
             ),
           ),
         ],

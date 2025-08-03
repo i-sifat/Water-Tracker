@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 
 class PreferNotToAnswerButton extends StatelessWidget {
   const PreferNotToAnswerButton({required this.onPressed, super.key});

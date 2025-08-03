@@ -187,7 +187,7 @@ void main() {
 
       // Look for undo option (might be in a snackbar or button)
       // This test verifies the widget structure supports undo
-      expect(find.byType(AddHydrationScreenContent), findsOneWidget);
+      expect(find.byType(AddHydrationScreen), findsOneWidget);
     });
 
     testWidgets('shows smart suggestions', (WidgetTester tester) async {

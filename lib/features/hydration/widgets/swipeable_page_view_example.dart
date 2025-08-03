@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:watertracker/core/constants/typography.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/features/hydration/widgets/swipeable_page_view.dart';
 
 /// Example implementation of SwipeablePageView showing three hydration pages
@@ -63,8 +63,11 @@ class _SwipeablePageViewExampleState extends State<SwipeablePageViewExample> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF4CAF50), // Green gradient for history
-            Color(0xFF2E7D32),
+            AppColors.getSemanticColor(
+              'status',
+              'successMain',
+            ), // Green gradient for history
+            AppColors.getSemanticColor('status', 'successDark'),
           ],
         ),
       ),
@@ -150,8 +153,11 @@ class _SwipeablePageViewExampleState extends State<SwipeablePageViewExample> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF6B73FF), // Main page gradient
-            Color(0xFF9546C4),
+            AppColors.getSemanticColor(
+              'hydration',
+              'primary',
+            ), // Main page gradient
+            AppColors.getSemanticColor('hydration', 'secondary'),
           ],
         ),
       ),
@@ -320,8 +326,11 @@ class _SwipeablePageViewExampleState extends State<SwipeablePageViewExample> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFFFF9800), // Orange gradient for goal breakdown
-            Color(0xFFE65100),
+            AppColors.getSemanticColor(
+              'status',
+              'warningMain',
+            ), // Orange gradient for goal breakdown
+            AppColors.getSemanticColor('status', 'warningDark'),
           ],
         ),
       ),

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:watertracker/core/models/app_error.dart';
+import 'package:watertracker/core/utils/error_logger.dart';
 
 /// Comprehensive error handling utility for the hydration interface
 class ErrorHandler {
@@ -58,6 +59,16 @@ class ErrorHandler {
 
   /// Log error with appropriate level
   static void _logError(AppError error) {
+    // Use the comprehensive error logger
+    ErrorLogger.logError(
+      error,
+      stackTrace: error.stackTrace,
+      context: error.details != null ? {'details': error.details} : null,
+      operation: 'error_handling',
+      isCritical: error is ValidationError ? false : true,
+    );
+
+    // Also log to debug console in debug mode
     if (kDebugMode) {
       debugPrint('Error [${error.code}]: ${error.message}');
       if (error.details != null) {

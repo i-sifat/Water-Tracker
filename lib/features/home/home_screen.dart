@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/design_system.dart';
+import 'package:watertracker/core/utils/performance_utils.dart';
+import 'package:watertracker/core/utils/responsive_helper.dart';
+import 'package:watertracker/core/utils/widget_cache.dart';
 import 'package:watertracker/core/widgets/animations/water_animation.dart';
 import 'package:watertracker/core/widgets/common/exit_confirmation_modal.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
@@ -38,29 +41,45 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: ResponsiveHelper.getResponsivePadding(
+                  context,
+                  horizontal: 16,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      height: 40,
-                      width: 40,
+                      height: ResponsiveHelper.getResponsiveHeight(context, 40),
+                      width: ResponsiveHelper.getResponsiveWidth(context, 40),
                       decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(200),
+                        color: AppColors.surface.withValues(alpha: 0.8),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withAlpha(150),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
+                            color: AppColors.shadow,
+                            blurRadius: ResponsiveHelper.getResponsiveWidth(
+                              context,
+                              4,
+                            ),
+                            offset: Offset(
+                              0,
+                              ResponsiveHelper.getResponsiveHeight(context, 2),
+                            ),
                           ),
                         ],
                       ),
                       child: IconButton(
-                        icon: SvgPicture.asset(
-                          'assets/images/icons/navbar/setting page top right icon.svg',
-                          width: 30,
-                          height: 30,
+                        icon: CachedAvatarWidget(
+                          avatarPath:
+                              'assets/images/icons/navbar/setting page top right icon.svg',
+                          width: ResponsiveHelper.getResponsiveIconSize(
+                            context,
+                            30,
+                          ),
+                          height: ResponsiveHelper.getResponsiveIconSize(
+                            context,
+                            30,
+                          ),
                           colorFilter: const ColorFilter.mode(
                             AppColors.darkBlue,
                             BlendMode.srcIn,
@@ -76,17 +95,21 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                   ],
                 ),
               ),
-              const SizedBox(height: 130),
+              SizedBox(
+                height: ResponsiveHelper.getResponsiveHeight(context, 130),
+              ),
 
               Text(
                 '${hydrationProvider.currentIntake} ml',
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  fontSize: 58,
+                  fontSize: ResponsiveHelper.getResponsiveFontSize(context, 58),
                   fontWeight: FontWeight.bold,
                   height: 1,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(
+                height: ResponsiveHelper.getResponsiveHeight(context, 8),
+              ),
 
               // Fixed remaining text visibility
               Text(
@@ -97,25 +120,43 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                 ),
               ),
 
+              // Debug info (remove this later)
+              Text(
+                'Debug: Current: ${hydrationProvider.currentIntake}ml, Goal: ${hydrationProvider.dailyGoal}ml',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.textDisabled,
+                  fontSize: ResponsiveHelper.getResponsiveFontSize(context, 10),
+                ),
+              ),
+
               Expanded(
                 child: Center(
-                  child: SvgPicture.asset(
-                    hydrationProvider.selectedAvatar == AvatarOption.male
-                        ? 'assets/images/avatars/male.svg'
-                        : 'assets/images/avatars/female.svg',
-                    width: 390,
-                    height: 390,
+                  child: PerformanceUtils.optimizedRepaintBoundary(
+                    debugLabel: 'HomeScreenAvatar',
+                    child: CachedAvatarWidget(
+                      avatarPath:
+                          hydrationProvider.selectedAvatar == AvatarOption.male
+                              ? 'assets/images/avatars/male.svg'
+                              : 'assets/images/avatars/female.svg',
+                      width: ResponsiveHelper.getResponsiveWidth(context, 390),
+                      height: ResponsiveHelper.getResponsiveHeight(
+                        context,
+                        390,
+                      ),
+                    ),
                   ),
                 ),
               ),
 
-              const SizedBox(height: 80),
+              SizedBox(
+                height: ResponsiveHelper.getResponsiveHeight(context, 80),
+              ),
             ],
           ),
 
           // Updated percentage indicator
           Positioned(
-            left: 26,
+            left: ResponsiveHelper.getResponsiveWidth(context, 26),
             top:
                 screenSize.height *
                 (1 - hydrationProvider.intakePercentage) *
@@ -123,7 +164,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             child: Text(
               '${(hydrationProvider.intakePercentage * 100).toInt()}%',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontSize: 32,
+                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 32),
                 fontWeight: FontWeight.w500,
                 color: AppColors.darkBlue,
               ),
@@ -137,7 +178,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
 
 class _HomeScreenState extends State<HomeScreen> {
   late PageController _pageController;
-  int _currentPage = 0; // 0: Home (leftmost), 1: Add Hydration (middle), 2: Statistics (rightmost)
+  int _currentPage =
+      0; // 0: Home (leftmost), 1: Add Hydration (middle), 2: Statistics (rightmost)
 
   @override
   void initState() {
@@ -171,14 +213,17 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         body: Stack(
           children: [
-            // Water animation that covers the entire screen
+            // Water animation that covers the entire screen with RepaintBoundary optimization
             Positioned.fill(
-              child: WaterAnimation(
-                progress: hydrationProvider.intakePercentage,
-                waterColor: AppColors.waterFull,
-                backgroundColor: AppColors.waterLow,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
+              child: PerformanceUtils.optimizedRepaintBoundary(
+                debugLabel: 'HomeScreenWaterAnimation',
+                child: WaterAnimation(
+                  progress: hydrationProvider.intakePercentage,
+                  waterColor: AppColors.waterFull,
+                  backgroundColor: AppColors.waterLow,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                ),
               ),
             ),
 
@@ -186,15 +231,15 @@ class _HomeScreenState extends State<HomeScreen> {
             PageView(
               controller: _pageController,
               onPageChanged: _onPageChanged,
-              children: [
+              children: const [
                 // Home Page (leftmost - default)
-                const HomeScreenContent(),
-                
+                HomeScreenContent(),
+
                 // Add Hydration Page (middle)
-                const AddHydrationScreen(),
-                
+                AddHydrationScreen(),
+
                 // Statistics Page (rightmost)
-                const StatisticsPage(),
+                StatisticsPage(),
               ],
             ),
           ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/models/hydration_progress.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 import 'package:watertracker/features/hydration/widgets/circular_progress_section.dart';
@@ -259,11 +258,7 @@ void main() {
         ];
 
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: SwipeablePageView(pages: pages),
-            ),
-          ),
+          MaterialApp(home: Scaffold(body: SwipeablePageView(pages: pages))),
         );
 
         await tester.pumpAndSettle();

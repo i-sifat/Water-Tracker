@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:watertracker/core/utils/performance_utils.dart';
 
 class TapAnimation extends StatefulWidget {
   const TapAnimation({
@@ -61,9 +62,12 @@ class _TapAnimationState extends State<TapAnimation>
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: widget.child,
+          return PerformanceUtils.optimizedRepaintBoundary(
+            debugLabel: 'TapAnimation',
+            child: Transform.scale(
+              scale: _scaleAnimation.value,
+              child: widget.child,
+            ),
           );
         },
       ),
@@ -119,9 +123,12 @@ class _PulseAnimationState extends State<PulseAnimation>
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: widget.child,
+        return PerformanceUtils.optimizedRepaintBoundary(
+          debugLabel: 'PulseAnimation',
+          child: Transform.scale(
+            scale: _scaleAnimation.value,
+            child: widget.child,
+          ),
         );
       },
     );

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
+import 'package:watertracker/core/utils/responsive_helper.dart';
 import 'package:watertracker/core/widgets/buttons/continue_button.dart';
 import 'package:watertracker/core/widgets/common/assessment_counter.dart';
 import 'package:watertracker/core/widgets/common/exit_confirmation_modal.dart';
@@ -25,7 +26,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
     this.canContinue = true,
     this.isLoading = false,
     this.backgroundColor,
-    this.padding = const EdgeInsets.all(24),
+    this.padding,
   });
 
   final Widget child;
@@ -41,14 +42,14 @@ class OnboardingScreenWrapper extends StatelessWidget {
   final bool canContinue;
   final bool isLoading;
   final Color? backgroundColor;
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<OnboardingProvider>(
       builder: (context, onboardingProvider, _) {
         final bgColor = backgroundColor ?? AppColors.onboardingBackground;
-        
+
         return Scaffold(
           backgroundColor: bgColor,
           appBar: _buildAppBar(context, onboardingProvider, bgColor),
@@ -57,12 +58,15 @@ class OnboardingScreenWrapper extends StatelessWidget {
               // Progress indicator - start from second page (step 1)
               if (showProgress && onboardingProvider.currentStep > 0)
                 Padding(
-                  padding: const EdgeInsets.symmetric(
+                  padding: ResponsiveHelper.getResponsivePadding(
+                    context,
                     horizontal: 24,
                     vertical: 8,
                   ),
                   child: AnimatedOnboardingProgressIndicator(
-                    currentStep: onboardingProvider.currentStep - 1, // Adjust to start from 0 for progress
+                    currentStep:
+                        onboardingProvider.currentStep -
+                        1, // Adjust to start from 0 for progress
                     totalSteps: 15, // Total onboarding steps (0-14)
                     showStepNumbers: false,
                   ),
@@ -114,29 +118,44 @@ class OnboardingScreenWrapper extends StatelessWidget {
               // Header
               if (title != null || subtitle != null)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                  padding: ResponsiveHelper.getResponsivePadding(
+                    context,
+                    horizontal: 24,
+                    vertical: 20,
+                  ).copyWith(bottom: 0),
                   child: Column(
                     children: [
                       if (title != null)
                         Text(
                           title!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Nunito',
-                            fontSize: 32,
+                            fontSize: ResponsiveHelper.getResponsiveFontSize(
+                              context,
+                              32,
+                            ),
                             fontWeight: FontWeight.w900,
                             color: AppColors.textHeadline,
                             height: 1.2,
                           ),
                         ),
                       if (subtitle != null) ...[
-                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: ResponsiveHelper.getResponsiveHeight(
+                            context,
+                            8,
+                          ),
+                        ),
                         Text(
                           subtitle!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Nunito',
-                            fontSize: 16,
+                            fontSize: ResponsiveHelper.getResponsiveFontSize(
+                              context,
+                              16,
+                            ),
                             fontWeight: FontWeight.w400,
                             color: AppColors.textSubtitle,
                             height: 1.5,
@@ -148,7 +167,14 @@ class OnboardingScreenWrapper extends StatelessWidget {
                 ),
 
               // Main content
-              Expanded(child: Padding(padding: padding, child: child)),
+              Expanded(
+                child: Padding(
+                  padding:
+                      padding ??
+                      ResponsiveHelper.getResponsivePadding(context, all: 24),
+                  child: child,
+                ),
+              ),
 
               // Bottom navigation
               _buildBottomNavigation(context, onboardingProvider),
@@ -166,7 +192,8 @@ class OnboardingScreenWrapper extends StatelessWidget {
   ) {
     // Hide app bar for drink goal selection screen (step 1)
     if (!showBackButton && provider.currentStep == 0) return null;
-    if (provider.currentStep == 1) return null; // Hide app bar for drink goal screen
+    if (provider.currentStep == 1)
+      return null; // Hide app bar for drink goal screen
 
     return AppBar(
       backgroundColor: bgColor,
@@ -174,10 +201,14 @@ class OnboardingScreenWrapper extends StatelessWidget {
       leading:
           showBackButton && provider.currentStep > 0
               ? Container(
-                margin: const EdgeInsets.only(left: 16),
+                margin: EdgeInsets.only(
+                  left: ResponsiveHelper.getResponsiveWidth(context, 16),
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.getResponsiveBorderRadius(context, 12),
+                  ),
                 ),
                 child: IconButton(
                   icon: const Icon(
@@ -196,11 +227,11 @@ class OnboardingScreenWrapper extends StatelessWidget {
                 ),
               )
               : null,
-      title: const Text(
+      title: Text(
         'Assessment',
         style: TextStyle(
           fontFamily: 'Nunito',
-          fontSize: 18,
+          fontSize: ResponsiveHelper.getResponsiveFontSize(context, 18),
           fontWeight: FontWeight.w600,
           color: AppColors.textHeadline,
         ),
@@ -234,14 +265,16 @@ class OnboardingScreenWrapper extends StatelessWidget {
     OnboardingProvider provider,
   ) {
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: ResponsiveHelper.getResponsivePadding(context, all: 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // Skip button (if enabled and step is optional)
           if (showSkipButton && provider.canSkipCurrent)
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: EdgeInsets.only(
+                bottom: ResponsiveHelper.getResponsiveHeight(context, 16),
+              ),
               child: SizedBox(
                 width: double.infinity,
                 child: TextButton(
@@ -249,12 +282,18 @@ class OnboardingScreenWrapper extends StatelessWidget {
                       isLoading ? null : (onSkip ?? () => provider.skipStep()),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.textSubtitle,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: ResponsiveHelper.getResponsivePadding(
+                      context,
+                      vertical: 12,
+                    ),
                   ),
                   child: Text(
                     skipButtonText,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontSize: ResponsiveHelper.getResponsiveFontSize(
+                        context,
+                        16,
+                      ),
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -266,9 +305,10 @@ class OnboardingScreenWrapper extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ContinueButton(
-              onPressed: (canContinue && !isLoading)
-                  ? (onContinue ?? () => provider.navigateNext())
-                  : () {},
+              onPressed:
+                  (canContinue && !isLoading)
+                      ? (onContinue ?? () => provider.navigateNext())
+                      : () {},
               isDisabled: !(canContinue && !isLoading),
             ),
           ),
@@ -276,6 +316,4 @@ class OnboardingScreenWrapper extends StatelessWidget {
       ),
     );
   }
-
-
 }

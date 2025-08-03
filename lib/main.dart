@@ -8,6 +8,7 @@ import 'package:watertracker/core/providers/theme_provider.dart';
 import 'package:watertracker/core/services/performance_service.dart';
 import 'package:watertracker/core/theme/app_theme.dart';
 import 'package:watertracker/core/utils/image_optimization.dart';
+import 'package:watertracker/core/utils/widget_cache.dart';
 import 'package:watertracker/features/analytics/screens/weekly_progress_screen.dart';
 import 'package:watertracker/features/home/home_screen.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
@@ -32,6 +33,9 @@ void main() async {
 
   // Initialize image optimization
   ImageOptimization.initialize();
+
+  // Initialize widget cache and preload common widgets
+  WidgetCache.preloadCommonWidgets();
 
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([

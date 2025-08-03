@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/widgets/buttons/primary_button.dart';
 import 'package:watertracker/core/widgets/cards/app_card.dart';
 import 'package:watertracker/features/settings/providers/settings_provider.dart';

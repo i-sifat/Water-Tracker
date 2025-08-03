@@ -17,24 +17,24 @@ void main() {
       return MaterialApp(
         home: ChangeNotifierProvider<HydrationProvider>.value(
           value: mockProvider,
-          child: Scaffold(
-            body: child ?? const MainHydrationPage(),
-          ),
+          child: Scaffold(body: child ?? const MainHydrationPage()),
         ),
-        routes: {
-          SettingsScreen.routeName: (context) => const SettingsScreen(),
-        },
+        routes: {SettingsScreen.routeName: (context) => const SettingsScreen()},
       );
     }
 
-    testWidgets('should display header with Today title', (WidgetTester tester) async {
+    testWidgets('should display header with Today title', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
       expect(find.text('Today'), findsOneWidget);
     });
 
-    testWidgets('should display hamburger menu icon', (WidgetTester tester) async {
+    testWidgets('should display hamburger menu icon', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -48,23 +48,26 @@ void main() {
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
     });
 
-    testWidgets('should display three time range indicators', (WidgetTester tester) async {
+    testWidgets('should display three time range indicators', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
       // Should find 3 time indicators (start time, next reminder, end time)
-      final timeIndicators = find.byType(Container).evaluate()
-          .where((element) {
-            final widget = element.widget as Container;
-            return widget.decoration is BoxDecoration &&
-                (widget.decoration! as BoxDecoration).color != null &&
-                (widget.decoration! as BoxDecoration).color!.alpha < 255;
-          });
-      
+      final timeIndicators = find.byType(Container).evaluate().where((element) {
+        final widget = element.widget as Container;
+        return widget.decoration is BoxDecoration &&
+            (widget.decoration! as BoxDecoration).color != null &&
+            (widget.decoration! as BoxDecoration).color!.alpha < 255;
+      });
+
       expect(timeIndicators.length, greaterThanOrEqualTo(3));
     });
 
-    testWidgets('should show navigation menu when hamburger menu is tapped', (WidgetTester tester) async {
+    testWidgets('should show navigation menu when hamburger menu is tapped', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -79,7 +82,9 @@ void main() {
       expect(find.text('Help & Support'), findsOneWidget);
     });
 
-    testWidgets('should navigate to settings when profile icon is tapped', (WidgetTester tester) async {
+    testWidgets('should navigate to settings when profile icon is tapped', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -91,7 +96,9 @@ void main() {
       expect(find.byType(SettingsScreen), findsOneWidget);
     });
 
-    testWidgets('should navigate to settings from menu', (WidgetTester tester) async {
+    testWidgets('should navigate to settings from menu', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -107,7 +114,9 @@ void main() {
       expect(find.byType(SettingsScreen), findsOneWidget);
     });
 
-    testWidgets('should show help dialog when help is tapped from menu', (WidgetTester tester) async {
+    testWidgets('should show help dialog when help is tapped from menu', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -125,7 +134,9 @@ void main() {
       expect(find.text('Got it'), findsOneWidget);
     });
 
-    testWidgets('should close help dialog when Got it is tapped', (WidgetTester tester) async {
+    testWidgets('should close help dialog when Got it is tapped', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -143,7 +154,9 @@ void main() {
       expect(find.text('Welcome to Water Tracker!'), findsNothing);
     });
 
-    testWidgets('should show snackbar for history feature', (WidgetTester tester) async {
+    testWidgets('should show snackbar for history feature', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -159,7 +172,9 @@ void main() {
       expect(find.text('History feature coming soon'), findsOneWidget);
     });
 
-    testWidgets('should navigate to home when home is tapped from menu', (WidgetTester tester) async {
+    testWidgets('should navigate to home when home is tapped from menu', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -175,7 +190,9 @@ void main() {
       expect(find.text('Home'), findsNothing);
     });
 
-    testWidgets('should close menu when tapping outside', (WidgetTester tester) async {
+    testWidgets('should close menu when tapping outside', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -198,21 +215,32 @@ void main() {
 
         // Time indicators should be present and formatted
         // We can't test exact times due to dynamic nature, but we can test format
-        final timeTexts = tester.widgetList<Text>(find.byType(Text))
-            .where((text) => text.data != null && 
-                (text.data!.contains('AM') || text.data!.contains('PM') || text.data!.contains('min')))
-            .toList();
+        final timeTexts =
+            tester
+                .widgetList<Text>(find.byType(Text))
+                .where(
+                  (text) =>
+                      text.data != null &&
+                      (text.data!.contains('AM') ||
+                          text.data!.contains('PM') ||
+                          text.data!.contains('min')),
+                )
+                .toList();
 
         expect(timeTexts.length, greaterThanOrEqualTo(2));
       });
 
-      testWidgets('should update time indicators on init', (WidgetTester tester) async {
+      testWidgets('should update time indicators on init', (
+        WidgetTester tester,
+      ) async {
         await tester.pumpWidget(createTestWidget());
         await tester.pumpAndSettle();
 
         // Should have time indicators displayed
-        final containers = tester.widgetList<Container>(find.byType(Container))
-            .where((container) {
+        final containers =
+            tester.widgetList<Container>(find.byType(Container)).where((
+              container,
+            ) {
               final decoration = container.decoration;
               return decoration is BoxDecoration &&
                   decoration.borderRadius != null &&
@@ -224,7 +252,9 @@ void main() {
     });
 
     group('Header Styling', () {
-      testWidgets('should have correct header styling', (WidgetTester tester) async {
+      testWidgets('should have correct header styling', (
+        WidgetTester tester,
+      ) async {
         await tester.pumpWidget(createTestWidget());
         await tester.pumpAndSettle();
 
@@ -235,35 +265,44 @@ void main() {
         expect(titleText.style?.color, Colors.white);
       });
 
-      testWidgets('should have correct icon button styling', (WidgetTester tester) async {
+      testWidgets('should have correct icon button styling', (
+        WidgetTester tester,
+      ) async {
         await tester.pumpWidget(createTestWidget());
         await tester.pumpAndSettle();
 
         // Check icon containers
-        final iconContainers = tester.widgetList<Container>(find.byType(Container))
-            .where((container) {
+        final iconContainers =
+            tester.widgetList<Container>(find.byType(Container)).where((
+              container,
+            ) {
               final decoration = container.decoration;
               return decoration is BoxDecoration &&
-                  container.width == 40 &&
-                  container.height == 40;
+                  container.constraints?.maxWidth == 40 &&
+                  container.constraints?.maxHeight == 40;
             }).toList();
 
         expect(iconContainers.length, greaterThanOrEqualTo(2));
       });
 
-      testWidgets('should have gradient background', (WidgetTester tester) async {
+      testWidgets('should have gradient background', (
+        WidgetTester tester,
+      ) async {
         await tester.pumpWidget(createTestWidget());
         await tester.pumpAndSettle();
 
         // Find the main container with gradient
-        final mainContainer = tester.widgetList<Container>(find.byType(Container))
+        final mainContainer = tester
+            .widgetList<Container>(find.byType(Container))
             .firstWhere((container) {
               final decoration = container.decoration;
               return decoration is BoxDecoration &&
                   decoration.gradient is LinearGradient;
             });
 
-        final gradient = (mainContainer.decoration! as BoxDecoration).gradient! as LinearGradient;
+        final gradient =
+            (mainContainer.decoration! as BoxDecoration).gradient!
+                as LinearGradient;
         expect(gradient.colors.length, 2);
         expect(gradient.colors[0], const Color(0xFF6B73FF));
         expect(gradient.colors[1], const Color(0xFF9546C4));

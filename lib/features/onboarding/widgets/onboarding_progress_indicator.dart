@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 
 /// Custom progress indicator for onboarding flow
 class OnboardingProgressIndicator extends StatelessWidget {

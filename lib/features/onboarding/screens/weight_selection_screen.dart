@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/design_system.dart';
+import 'package:watertracker/core/utils/responsive_helper.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
@@ -60,29 +61,35 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
         return OnboardingScreenWrapper(
           title: "What's your current\nweight right now?",
           backgroundColor: AppColors.onboardingBackground,
-          padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+          padding: ResponsiveHelper.getResponsivePadding(
+            context,
+            horizontal: 24,
+            vertical: 40,
+          ).copyWith(bottom: 24),
           onContinue: () => _handleContinue(onboardingProvider),
           isLoading: onboardingProvider.isSaving,
           child: Column(
             children: [
-              const SizedBox(height: 50),
+              SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 50)),
 
               // Unit selection buttons
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: AppColors.weightUnitUnselected,
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.getResponsiveBorderRadius(context, 28),
+                  ),
                 ),
                 child: Row(
                   children: [
                     Expanded(child: _buildUnitButton('kg', true)),
-                    const SizedBox(width: 8),
+                    SizedBox(width: ResponsiveHelper.getResponsiveWidth(context, 8)),
                     Expanded(child: _buildUnitButton('lbs', false)),
                   ],
                 ),
               ),
-              const SizedBox(height: 60),
+              SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 60)),
 
               // Weight display
               Row(
@@ -92,30 +99,30 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
                 children: [
                   Text(
                     _weight.toInt().toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Nunito',
-                      fontSize: 89,
+                      fontSize: ResponsiveHelper.getResponsiveFontSize(context, 89),
                       fontWeight: FontWeight.w800,
                       color: AppColors.textHeadline,
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: ResponsiveHelper.getResponsiveWidth(context, 4)),
                   Text(
                     _isKg ? 'kg' : 'lbs',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Nunito',
-                      fontSize: 24,
+                      fontSize: ResponsiveHelper.getResponsiveFontSize(context, 24),
                       fontWeight: FontWeight.w400,
                       color: AppColors.textSubtitle,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 40)),
 
               // Custom Ruler Picker - removed number reading
               SizedBox(
-                height: 80,
+                height: ResponsiveHelper.getResponsiveHeight(context, 80),
                 child: CustomRulerPicker(
                   value: _weight,
                   minValue: _minWeight,
@@ -138,16 +145,18 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     return GestureDetector(
       onTap: () => _handleUnitChange(isKg),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: ResponsiveHelper.getResponsivePadding(context, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.weightUnitSelected : Colors.transparent,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.getResponsiveBorderRadius(context, 24),
+          ),
         ),
         child: Text(
           unit,
           style: TextStyle(
             color: isSelected ? AppColors.weightUnitTextSelected : AppColors.weightUnitTextUnselected,
-            fontSize: 16,
+            fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
@@ -156,8 +165,8 @@ class _WeightSelectionScreenState extends State<WeightSelectionScreen> {
     );
   }
 }
-
-class CustomRulerPicker extends StatefulWidget {
+class C
+ustomRulerPicker extends StatefulWidget {
   const CustomRulerPicker({
     required this.value,
     required this.minValue,
@@ -176,7 +185,7 @@ class CustomRulerPicker extends StatefulWidget {
 
 class _CustomRulerPickerState extends State<CustomRulerPicker> {
   late ScrollController _scrollController;
-  final double _tickSpacing = 8;
+  late double _tickSpacing;
   final double _ticksPerUnit = 10;
   bool _isDragging = false;
 
@@ -186,6 +195,13 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
     _scrollController = ScrollController(
       initialScrollOffset: _valueToOffset(widget.value),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Make tick spacing responsive
+    _tickSpacing = ResponsiveHelper.getResponsiveWidth(context, 8);
   }
 
   @override
@@ -217,10 +233,10 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final totalTicks =
-        ((widget.maxValue - widget.minValue) * _ticksPerUnit).toInt();
+    final totalTicks = ((widget.maxValue - widget.minValue) * _ticksPerUnit).toInt();
     final screenWidth = MediaQuery.of(context).size.width;
     final centerOffset = screenWidth / 2;
+    final rulerHeight = ResponsiveHelper.getResponsiveHeight(context, 80);
 
     return Stack(
       children: [
@@ -232,9 +248,7 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
               _isDragging = false;
             } else if (notification is ScrollUpdateNotification && _isDragging) {
               final offset = _scrollController.offset + centerOffset;
-              final newValue = _offsetToValue(
-                offset,
-              ).clamp(widget.minValue, widget.maxValue);
+              final newValue = _offsetToValue(offset).clamp(widget.minValue, widget.maxValue);
               if ((newValue - widget.value).abs() >= 0.1) {
                 widget.onValueChanged(newValue);
               }
@@ -271,13 +285,11 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
                     tickSpacing: _tickSpacing,
                     ticksPerUnit: _ticksPerUnit,
                     centerOffset: centerOffset,
-                    scrollOffset:
-                        _scrollController.hasClients
-                            ? _scrollController.offset
-                            : 0,
+                    scrollOffset: _scrollController.hasClients ? _scrollController.offset : 0,
                     currentValue: widget.value,
+                    context: context,
                   ),
-                  size: Size(totalTicks * _tickSpacing + screenWidth, 80),
+                  size: Size(totalTicks * _tickSpacing + screenWidth, rulerHeight),
                 ),
               ),
             ),
@@ -285,14 +297,16 @@ class _CustomRulerPickerState extends State<CustomRulerPicker> {
         ),
         // Center indicator
         Positioned(
-          left: centerOffset - 1,
+          left: centerOffset - ResponsiveHelper.getResponsiveWidth(context, 1),
           top: 0,
           child: Container(
-            width: 2,
-            height: 80,
+            width: ResponsiveHelper.getResponsiveWidth(context, 2),
+            height: rulerHeight,
             decoration: BoxDecoration(
               color: AppColors.lightPurple,
-              borderRadius: BorderRadius.circular(1),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.getResponsiveBorderRadius(context, 1),
+              ),
             ),
           ),
         ),
@@ -310,6 +324,7 @@ class RulerPainter extends CustomPainter {
     required this.centerOffset,
     required this.scrollOffset,
     required this.currentValue,
+    required this.context,
   });
   final double minValue;
   final double maxValue;
@@ -318,20 +333,21 @@ class RulerPainter extends CustomPainter {
   final double centerOffset;
   final double scrollOffset;
   final double currentValue;
+  final BuildContext context;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..strokeWidth = 1.5
-          ..strokeCap = StrokeCap.round;
+    final paint = Paint()
+      ..strokeWidth = ResponsiveHelper.getResponsiveWidth(context, 1.5)
+      ..strokeCap = StrokeCap.round;
 
     final totalTicks = ((maxValue - minValue) * ticksPerUnit).toInt();
     final currentPosition = centerOffset + scrollOffset;
+    final bigTickHeight = ResponsiveHelper.getResponsiveHeight(context, 40);
+    final smallTickHeight = ResponsiveHelper.getResponsiveHeight(context, 20);
 
     for (var i = 0; i <= totalTicks; i++) {
       final x = centerOffset + (i * tickSpacing);
-      final tickValue = minValue + (i / ticksPerUnit);
       final isBigTick = i % ticksPerUnit.toInt() == 0;
 
       // Determine tick color based on position relative to current selection
@@ -339,16 +355,16 @@ class RulerPainter extends CustomPainter {
       paint.color = isPassed ? AppColors.lightPurple : Colors.grey.shade400;
 
       if (isBigTick) {
-        // Big tick (every unit) - removed number labels
+        // Big tick (every unit)
         canvas.drawLine(
-          Offset(x, size.height - 40),
+          Offset(x, size.height - bigTickHeight),
           Offset(x, size.height),
           paint,
         );
       } else {
         // Small tick (0.1 precision)
         canvas.drawLine(
-          Offset(x, size.height - 20),
+          Offset(x, size.height - smallTickHeight),
           Offset(x, size.height),
           paint,
         );

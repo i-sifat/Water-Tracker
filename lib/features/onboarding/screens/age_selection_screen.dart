@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
+import 'package:watertracker/core/utils/responsive_helper.dart';
 import 'package:watertracker/features/onboarding/providers/onboarding_provider.dart';
 import 'package:watertracker/features/onboarding/widgets/onboarding_screen_wrapper.dart';
 
@@ -128,10 +129,10 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
   late final List<int> _ages;
   int _selectedAge = 45;
 
-  // Increase font sizes for better visibility
-  final double _maxFontSize = 140; // Increased from 74
-  final double _minFontSize = 28; // Slightly decreased to create more contrast
-  final double _itemExtent = 160; // Increased from 100 for more spacing
+  // Base font sizes and dimensions - will be made responsive
+  late final double _maxFontSize;
+  late final double _minFontSize;
+  late final double _itemExtent;
 
   @override
   void initState() {
@@ -140,6 +141,15 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
     _scrollController = FixedExtentScrollController(
       initialItem: _ages.indexOf(_selectedAge),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Initialize responsive dimensions
+    _maxFontSize = ResponsiveHelper.getResponsiveFontSize(context, 140);
+    _minFontSize = ResponsiveHelper.getResponsiveFontSize(context, 28);
+    _itemExtent = ResponsiveHelper.getResponsiveHeight(context, 160);
   }
 
   @override
@@ -173,7 +183,7 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
       builder: (context, provider, child) {
         return OnboardingScreenWrapper(
           title: "What's your Age?",
-          backgroundColor: AppColors.onBoardingpagebackground,
+          backgroundColor: AppColors.onboardingBackground,
           onContinue: _handleContinue,
           isLoading: provider.isSaving,
           child: Expanded(
@@ -183,22 +193,28 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
                 // Outer container with stroke effect
                 Container(
                   height: _itemExtent,
-                  width: 200,
+                  width: ResponsiveHelper.getResponsiveWidth(context, 200),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.getResponsiveBorderRadius(context, 30),
+                    ),
                     border: Border.all(
                       color: AppColors.waterFull.withValues(alpha: 0.3),
-                      width: 9,
+                      width: ResponsiveHelper.getResponsiveWidth(context, 9),
                     ),
                   ),
                 ),
                 // Inner container (the blue background)
                 Container(
-                  height: _itemExtent - 9,
-                  width: 194,
+                  height:
+                      _itemExtent -
+                      ResponsiveHelper.getResponsiveWidth(context, 9),
+                  width: ResponsiveHelper.getResponsiveWidth(context, 194),
                   decoration: BoxDecoration(
                     color: AppColors.waterFull,
-                    borderRadius: BorderRadius.circular(27),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.getResponsiveBorderRadius(context, 27),
+                    ),
                   ),
                 ),
                 AgeSelectionWheel(
@@ -207,9 +223,9 @@ class _AgeSelectionScreenState extends State<AgeSelectionScreen> {
                   selectedAge: _selectedAge,
                   itemExtent: _itemExtent,
                   highlightColor: AppColors.selectedBorder,
-                  selectedTextColor: Colors.white,
-                  unselectedTextColor: AppColors.assessmentText,
-                  farTextColor: Colors.grey.shade300,
+                  selectedTextColor: AppColors.textOnPrimary,
+                  unselectedTextColor: AppColors.textPrimary,
+                  farTextColor: AppColors.textDisabled,
                   maxFontSize: _maxFontSize,
                   minFontSize: _minFontSize,
                   onSelectedItemChanged: _handleSelectionChange,

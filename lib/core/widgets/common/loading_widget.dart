@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 
 /// Enhanced loading widget with multiple styles and animations
 class LoadingWidget extends StatefulWidget {

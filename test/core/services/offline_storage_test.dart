@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:watertracker/core/models/hydration_entry.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
+import 'package:watertracker/core/models/hydration_entry.dart';
 import 'package:watertracker/core/services/connectivity_service.dart';
 import 'package:watertracker/core/services/offline_storage_service.dart';
 import 'package:watertracker/core/services/storage_service.dart';
@@ -82,9 +82,7 @@ void main() {
       });
 
       test('should accumulate multiple operations', () async {
-        final entry1 = HydrationEntry.create(
-          amount: 250,
-        );
+        final entry1 = HydrationEntry.create(amount: 250);
         final entry2 = HydrationEntry.create(amount: 300, type: DrinkType.tea);
 
         await offlineStorageService.addHydrationOffline(entry1);
@@ -179,9 +177,7 @@ void main() {
       });
 
       test('should maintain operation order during sync', () async {
-        final entry1 = HydrationEntry.create(
-          amount: 250,
-        );
+        final entry1 = HydrationEntry.create(amount: 250);
         final entry2 = HydrationEntry.create(amount: 300, type: DrinkType.tea);
 
         await offlineStorageService.addHydrationOffline(entry1);
@@ -236,9 +232,7 @@ void main() {
 
     group('Statistics and Monitoring', () {
       test('should provide offline statistics', () async {
-        final entry1 = HydrationEntry.create(
-          amount: 250,
-        );
+        final entry1 = HydrationEntry.create(amount: 250);
         final entry2 = HydrationEntry.create(amount: 300, type: DrinkType.tea);
 
         await offlineStorageService.addHydrationOffline(entry1);

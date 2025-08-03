@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/design_system/design_system.dart';
 import 'package:watertracker/core/models/app_error.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
-import 'package:watertracker/core/utils/accessibility_utils.dart';
-import 'package:watertracker/core/utils/app_colors.dart';
+import 'package:watertracker/core/utils/animation_cache.dart';
 import 'package:watertracker/features/hydration/providers/hydration_provider.dart';
 
 /// A 2x2 grid of quick add buttons for common hydration amounts
@@ -151,13 +150,17 @@ class _QuickAddButtonState extends State<QuickAddButton>
   @override
   void initState() {
     super.initState();
+
+    // Use cached animation controller for better performance
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    // Use cached scale animation
+    _scaleAnimation = CommonAnimations.getTapScaleAnimation(
+      controller: _animationController,
+      scale: 0.95,
     );
 
     // Performance optimization: Cache darkened color calculation

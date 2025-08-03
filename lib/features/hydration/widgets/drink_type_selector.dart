@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:watertracker/core/constants/typography.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/models/hydration_data.dart';
 import 'package:watertracker/core/utils/accessibility_utils.dart';
 
@@ -48,19 +49,19 @@ class _DrinkTypeSelectorState extends State<DrinkTypeSelector> {
           widget.selectedType.waterContent,
         ),
         semanticHint: 'Double tap to open drink type selection menu',
-                 child: Container(
-           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-           decoration: BoxDecoration(
-             color: const Color(0xFFF8F9FA),
-             borderRadius: BorderRadius.circular(12),
-             boxShadow: [
-               BoxShadow(
-                 color: Colors.black.withValues(alpha: 0.05),
-                 blurRadius: 4,
-                 offset: const Offset(0, 2),
-               ),
-             ],
-           ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: AppColors.getSemanticColor('background', 'surfaceVariant'),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
           child: Row(
             children: [
               // Drink type icon
@@ -88,7 +89,7 @@ class _DrinkTypeSelectorState extends State<DrinkTypeSelector> {
                   text: widget.selectedType.displayName,
                   style: AppTypography.buttonLargeText.copyWith(
                     fontSize: 16,
-                    color: const Color(0xFF313A34),
+                    color: AppColors.getSemanticColor('text', 'headline'),
                   ),
                 ),
               ),
@@ -99,7 +100,7 @@ class _DrinkTypeSelectorState extends State<DrinkTypeSelector> {
                   text:
                       '${(widget.selectedType.waterContent * 100).round()}% water',
                   style: AppTypography.buttonSmallText.copyWith(
-                    color: const Color(0xFF647067),
+                    color: AppColors.getSemanticColor('text', 'subtitle'),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -110,7 +111,7 @@ class _DrinkTypeSelectorState extends State<DrinkTypeSelector> {
                 excludeSemantics: true, // Icon is decorative
                 child: Icon(
                   Icons.edit,
-                  color: const Color(0xFF647067),
+                  color: AppColors.getSemanticColor('text', 'subtitle'),
                   size: 18,
                 ),
               ),

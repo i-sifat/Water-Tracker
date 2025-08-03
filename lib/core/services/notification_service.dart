@@ -20,10 +20,25 @@ class NotificationService {
   final PremiumService _premiumService = PremiumService();
   final StorageService _storageService = StorageService();
 
-  static const String _notificationChannelId = 'water_reminder';
-  static const String _notificationChannelName = 'Water Reminder';
-  static const String _notificationChannelDescription =
-      'Reminds you to drink water';
+  // Notification channels
+  static const String _defaultChannelId = 'water_reminder';
+  static const String _defaultChannelName = 'Water Reminders';
+  static const String _defaultChannelDescription =
+      'Regular hydration reminders';
+
+  static const String _urgentChannelId = 'urgent_reminder';
+  static const String _urgentChannelName = 'Urgent Reminders';
+  static const String _urgentChannelDescription = 'Important hydration alerts';
+
+  static const String _goalChannelId = 'goal_notifications';
+  static const String _goalChannelName = 'Goal Achievements';
+  static const String _goalChannelDescription =
+      'Notifications for reaching hydration goals';
+
+  static const String _systemChannelId = 'system_notifications';
+  static const String _systemChannelName = 'System Notifications';
+  static const String _systemChannelDescription =
+      'App updates and system messages';
 
   // Storage keys
   static const String _lastNotificationKey = 'last_notification_time';
@@ -59,6 +74,7 @@ class NotificationService {
 
       await _notifications.initialize(initSettings);
       await _storageService.initialize();
+      await _createNotificationChannels();
 
       _isInitialized = true;
       debugPrint('Enhanced NotificationService initialized successfully');
@@ -68,30 +84,222 @@ class NotificationService {
     }
   }
 
-  /// Request notification permissions
-  Future<bool> requestPermissions() async {
+  /// Create notification channels for different types of notifications
+  Future<void> _createNotificationChannels() async {
+    try {
+      // Default water reminder channel
+      const defaultChannel = AndroidNotificationChannel(
+        _defaultChannelId,
+        _defaultChannelName,
+        description: _defaultChannelDescription,
+        importance: Importance.high,
+        enableLights: true,
+        ledColor: Color.fromARGB(255, 0, 150, 255),
+        enableVibration: true,
+        playSound: true,
+      );
+
+      // Urgent reminder channel
+      const urgentChannel = AndroidNotificationChannel(
+        _urgentChannelId,
+        _urgentChannelName,
+        description: _urgentChannelDescription,
+        importance: Importance.max,
+        enableLights: true,
+        ledColor: Color.fromARGB(255, 255, 0, 0),
+        enableVibration: true,
+        playSound: true,
+      );
+
+      // Goal achievement channel
+      const goalChannel = AndroidNotificationChannel(
+        _goalChannelId,
+        _goalChannelName,
+        description: _goalChannelDescription,
+        importance: Importance.high,
+        enableLights: true,
+        ledColor: Color.fromARGB(255, 0, 255, 0),
+        enableVibration: true,
+        playSound: true,
+      );
+
+      // System notifications channel
+      const systemChannel = AndroidNotificationChannel(
+        _systemChannelId,
+        _systemChannelName,
+        description: _systemChannelDescription,
+        importance: Importance.defaultImportance,
+        enableLights: false,
+        enableVibration: false,
+        playSound: false,
+      );
+
+      // Create channels on Android
+      final plugin =
+          _notifications
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
+
+      if (plugin != null) {
+        await plugin.createNotificationChannel(defaultChannel);
+        await plugin.createNotificationChannel(urgentChannel);
+        await plugin.createNotificationChannel(goalChannel);
+        await plugin.createNotificationChannel(systemChannel);
+
+        debugPrint('Notification channels created successfully');
+      }
+    } catch (e) {
+      debugPrint('Error creating notification channels: $e');
+    }
+  }
+
+  /// Get notification channel for reminder type
+  String _getChannelForReminderType(String reminderType) {
+    switch (reminderType) {
+      case 'urgent':
+        return _urgentChannelId;
+      case 'goal':
+        return _goalChannelId;
+      case 'system':
+        return _systemChannelId;
+      default:
+        return _defaultChannelId;
+    }
+  }
+
+  /// Request notification permissions with user guidance
+  Future<Map<String, dynamic>> requestPermissions({
+    bool showGuidance = true,
+  }) async {
     try {
       // Check current permission status
       final permissionStatus = await Permission.notification.status;
 
       if (permissionStatus.isGranted) {
-        return true;
+        await _logPermissionEvent(
+          'already_granted',
+          'Permissions already granted',
+        );
+        return {
+          'granted': true,
+          'status': 'already_granted',
+          'message': 'Notification permissions are already granted',
+          'needsGuidance': false,
+        };
       }
 
       if (permissionStatus.isDenied) {
+        await _logPermissionEvent(
+          'requesting',
+          'Requesting notification permissions',
+        );
+
         final status = await Permission.notification.request();
-        return status.isGranted;
+
+        if (status.isGranted) {
+          await _logPermissionEvent('granted', 'Permissions granted by user');
+          return {
+            'granted': true,
+            'status': 'granted',
+            'message': 'Notification permissions granted successfully',
+            'needsGuidance': false,
+          };
+        } else {
+          await _logPermissionEvent('denied', 'Permissions denied by user');
+          return {
+            'granted': false,
+            'status': 'denied',
+            'message': 'Notification permissions were denied',
+            'needsGuidance': showGuidance,
+            'guidance': _getPermissionGuidance('denied'),
+          };
+        }
       }
 
       // Handle permanently denied case
       if (permissionStatus.isPermanentlyDenied) {
-        debugPrint('Notification permission permanently denied');
-        return false;
+        await _logPermissionEvent(
+          'permanently_denied',
+          'Permissions permanently denied',
+        );
+        return {
+          'granted': false,
+          'status': 'permanently_denied',
+          'message': 'Notification permissions are permanently denied',
+          'needsGuidance': showGuidance,
+          'guidance': _getPermissionGuidance('permanently_denied'),
+          'canOpenSettings': true,
+        };
       }
 
-      return false;
+      return {
+        'granted': false,
+        'status': 'unknown',
+        'message': 'Unknown permission status',
+        'needsGuidance': false,
+      };
     } catch (e) {
+      await _logPermissionEvent('error', 'Error requesting permissions: $e');
       debugPrint('Error requesting notification permissions: $e');
+      return {
+        'granted': false,
+        'status': 'error',
+        'message': 'Error requesting notification permissions: $e',
+        'needsGuidance': false,
+      };
+    }
+  }
+
+  /// Get permission guidance based on status
+  Map<String, dynamic> _getPermissionGuidance(String status) {
+    switch (status) {
+      case 'denied':
+        return {
+          'title': 'Enable Notifications',
+          'message':
+              'To receive hydration reminders, please allow notifications when prompted again.',
+          'steps': [
+            'Tap "Allow" when the permission dialog appears',
+            'Notifications help you stay on track with your hydration goals',
+            'You can change this setting later in your device settings',
+          ],
+          'canRetry': true,
+        };
+      case 'permanently_denied':
+        return {
+          'title': 'Enable Notifications in Settings',
+          'message':
+              'Notifications are disabled. Please enable them in your device settings to receive hydration reminders.',
+          'steps': [
+            'Open your device Settings',
+            'Find "Apps" or "Application Manager"',
+            'Select "Water Tracker"',
+            'Tap "Notifications" or "Permissions"',
+            'Enable "Allow notifications"',
+          ],
+          'canRetry': false,
+          'canOpenSettings': true,
+        };
+      default:
+        return {
+          'title': 'Notification Setup',
+          'message': 'Allow notifications to receive hydration reminders.',
+          'steps': [],
+          'canRetry': true,
+        };
+    }
+  }
+
+  /// Open app settings (for permanently denied permissions)
+  Future<bool> openAppSettings() async {
+    try {
+      final opened = await openAppSettings();
+      await _logPermissionEvent('settings_opened', 'App settings opened');
+      return opened;
+    } catch (e) {
+      await _logPermissionEvent('settings_error', 'Error opening settings: $e');
+      debugPrint('Error opening app settings: $e');
       return false;
     }
   }
@@ -266,14 +474,17 @@ class NotificationService {
     required DateTime scheduledTime,
     String? payload,
     bool repeatWeekly = false,
+    String reminderType = 'default',
   }) async {
     try {
-      const androidDetails = AndroidNotificationDetails(
-        _notificationChannelId,
-        _notificationChannelName,
-        channelDescription: _notificationChannelDescription,
-        importance: Importance.high,
-        priority: Priority.high,
+      final channelId = _getChannelForReminderType(reminderType);
+
+      final androidDetails = AndroidNotificationDetails(
+        channelId,
+        _getChannelNameForId(channelId),
+        channelDescription: _getChannelDescriptionForId(channelId),
+        importance: _getImportanceForChannel(channelId),
+        priority: _getPriorityForChannel(channelId),
         enableLights: true,
         ledColor: Color.fromARGB(255, 0, 150, 255),
         ledOnMs: 1000,
@@ -767,5 +978,372 @@ class NotificationService {
   /// Legacy method for backward compatibility
   Future<void> scheduleWaterReminder() async {
     await scheduleSmartReminders();
+  }
+
+  // MARK: - Notification Testing Tools
+
+  /// Test notification delivery with different priorities
+  Future<Map<String, dynamic>> testNotificationDelivery() async {
+    final results = <String, dynamic>{
+      'testStarted': DateTime.now().toIso8601String(),
+      'tests': <String, dynamic>{},
+    };
+
+    try {
+      // Test default notification
+      await showImmediateNotification(
+        title: 'Test: Default Priority',
+        body: 'This is a default priority test notification',
+        payload: 'test_default',
+      );
+      results['tests']['default'] = {
+        'sent': true,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Test high priority notification
+      await _showTestNotification(
+        id: 9001,
+        title: 'Test: High Priority',
+        body: 'This is a high priority test notification',
+        channelId: _urgentChannelId,
+        payload: 'test_urgent',
+      );
+      results['tests']['urgent'] = {
+        'sent': true,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Test goal notification
+      await _showTestNotification(
+        id: 9002,
+        title: 'Test: Goal Achievement',
+        body: 'This is a goal achievement test notification',
+        channelId: _goalChannelId,
+        payload: 'test_goal',
+      );
+      results['tests']['goal'] = {
+        'sent': true,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      results['testCompleted'] = DateTime.now().toIso8601String();
+      results['success'] = true;
+
+      // Save test results
+      await _storageService.saveJson('notification_delivery_test', results);
+    } catch (e) {
+      results['error'] = e.toString();
+      results['success'] = false;
+      debugPrint('Error testing notification delivery: $e');
+    }
+
+    return results;
+  }
+
+  /// Show test notification with specific channel
+  Future<void> _showTestNotification({
+    required int id,
+    required String title,
+    required String body,
+    required String channelId,
+    String? payload,
+  }) async {
+    try {
+      final androidDetails = AndroidNotificationDetails(
+        channelId,
+        _getChannelNameForId(channelId),
+        channelDescription: _getChannelDescriptionForId(channelId),
+        importance: _getImportanceForChannel(channelId),
+        priority: _getPriorityForChannel(channelId),
+        enableLights: true,
+        enableVibration: true,
+        icon: '@mipmap/ic_launcher',
+      );
+
+      const iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+        interruptionLevel: InterruptionLevel.active,
+      );
+
+      const details = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
+
+      await _notifications.show(id, title, body, details, payload: payload);
+    } catch (e) {
+      debugPrint('Error showing test notification: $e');
+    }
+  }
+
+  /// Get channel name for ID
+  String _getChannelNameForId(String channelId) {
+    switch (channelId) {
+      case _urgentChannelId:
+        return _urgentChannelName;
+      case _goalChannelId:
+        return _goalChannelName;
+      case _systemChannelId:
+        return _systemChannelName;
+      default:
+        return _defaultChannelName;
+    }
+  }
+
+  /// Get channel description for ID
+  String _getChannelDescriptionForId(String channelId) {
+    switch (channelId) {
+      case _urgentChannelId:
+        return _urgentChannelDescription;
+      case _goalChannelId:
+        return _goalChannelDescription;
+      case _systemChannelId:
+        return _systemChannelDescription;
+      default:
+        return _defaultChannelDescription;
+    }
+  }
+
+  /// Get importance for channel
+  Importance _getImportanceForChannel(String channelId) {
+    switch (channelId) {
+      case _urgentChannelId:
+        return Importance.max;
+      case _goalChannelId:
+        return Importance.high;
+      case _systemChannelId:
+        return Importance.defaultImportance;
+      default:
+        return Importance.high;
+    }
+  }
+
+  /// Get priority for channel
+  Priority _getPriorityForChannel(String channelId) {
+    switch (channelId) {
+      case _urgentChannelId:
+        return Priority.max;
+      case _goalChannelId:
+        return Priority.high;
+      case _systemChannelId:
+        return Priority.defaultPriority;
+      default:
+        return Priority.high;
+    }
+  }
+
+  /// Test notification persistence across app lifecycle
+  Future<Map<String, dynamic>> testNotificationPersistence() async {
+    final testId = DateTime.now().millisecondsSinceEpoch;
+    final scheduledTime = DateTime.now().add(const Duration(minutes: 1));
+
+    try {
+      // Schedule a notification for 1 minute from now
+      await _scheduleNotification(
+        id: testId,
+        title: 'Persistence Test',
+        body: 'This notification should survive app restart and device reboot',
+        scheduledTime: scheduledTime,
+        payload: 'persistence_test_$testId',
+      );
+
+      final testData = {
+        'testId': testId,
+        'scheduledTime': scheduledTime.toIso8601String(),
+        'status': 'scheduled',
+        'instructions': [
+          'Close the app completely',
+          'Wait for the notification to appear',
+          'Reopen the app to verify the test',
+        ],
+        'expectedDelivery': scheduledTime.toIso8601String(),
+      };
+
+      await _storageService.saveJson('persistence_test_$testId', testData);
+
+      return {
+        'success': true,
+        'testId': testId,
+        'scheduledTime': scheduledTime.toIso8601String(),
+        'message': 'Persistence test scheduled successfully',
+        'instructions': testData['instructions'],
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'error': e.toString(),
+        'message': 'Failed to schedule persistence test',
+      };
+    }
+  }
+
+  /// Verify notification delivery (to be called when app reopens)
+  Future<Map<String, dynamic>> verifyNotificationDelivery(int testId) async {
+    try {
+      final testData = await _storageService.getJson(
+        'persistence_test_$testId',
+      );
+      if (testData == null) {
+        return {'success': false, 'message': 'Test data not found'};
+      }
+
+      final scheduledTime = DateTime.tryParse(testData['scheduledTime'] ?? '');
+      final now = DateTime.now();
+
+      if (scheduledTime != null && now.isAfter(scheduledTime)) {
+        // Test should have completed
+        return {
+          'success': true,
+          'testId': testId,
+          'scheduledTime': testData['scheduledTime'],
+          'verifiedAt': now.toIso8601String(),
+          'message': 'Test completed. Did you receive the notification?',
+          'status': 'awaiting_user_confirmation',
+        };
+      } else {
+        return {
+          'success': false,
+          'testId': testId,
+          'message': 'Test is still pending',
+          'status': 'pending',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'error': e.toString(),
+        'message': 'Error verifying notification delivery',
+      };
+    }
+  }
+
+  /// Get notification reliability statistics
+  Future<Map<String, dynamic>> getReliabilityStatistics() async {
+    try {
+      final permissionLogs = await _getPermissionLogs();
+      final deliveryTracking = await _getDeliveryTracking();
+      final testResults = await _storageService.getJson(
+        'notification_delivery_test',
+      );
+
+      // Calculate permission success rate
+      final totalPermissionRequests = permissionLogs.length;
+      final grantedPermissions =
+          permissionLogs
+              .where(
+                (log) =>
+                    log['status'] == 'granted' ||
+                    log['status'] == 'already_granted',
+              )
+              .length;
+      final permissionSuccessRate =
+          totalPermissionRequests > 0
+              ? grantedPermissions / totalPermissionRequests
+              : 0.0;
+
+      // Calculate delivery success rate
+      final totalDeliveries = deliveryTracking.length;
+      final successfulDeliveries =
+          deliveryTracking
+              .where((entry) => entry['status'] == 'delivered')
+              .length;
+      final deliverySuccessRate =
+          totalDeliveries > 0 ? successfulDeliveries / totalDeliveries : 0.0;
+
+      return {
+        'permissionStatistics': {
+          'totalRequests': totalPermissionRequests,
+          'granted': grantedPermissions,
+          'successRate': permissionSuccessRate,
+        },
+        'deliveryStatistics': {
+          'totalDeliveries': totalDeliveries,
+          'successful': successfulDeliveries,
+          'successRate': deliverySuccessRate,
+        },
+        'lastTestResults': testResults,
+        'generatedAt': DateTime.now().toIso8601String(),
+      };
+    } catch (e) {
+      return {
+        'error': e.toString(),
+        'message': 'Error generating reliability statistics',
+      };
+    }
+  }
+
+  // MARK: - Permission Logging
+
+  /// Log permission events
+  Future<void> _logPermissionEvent(String status, String details) async {
+    try {
+      final logEntry = {
+        'timestamp': DateTime.now().toIso8601String(),
+        'status': status,
+        'details': details,
+        'platform': Platform.operatingSystem,
+      };
+
+      final existingLogs = await _getPermissionLogs();
+      existingLogs.add(logEntry);
+
+      // Keep only last 50 entries
+      if (existingLogs.length > 50) {
+        existingLogs.removeRange(0, existingLogs.length - 50);
+      }
+
+      await _storageService.saveJson('permission_event_log', {
+        'logs': existingLogs,
+        'lastUpdated': DateTime.now().toIso8601String(),
+      });
+
+      if (kDebugMode) {
+        debugPrint('PermissionEvent [$status]: $details');
+      }
+    } catch (e) {
+      debugPrint('Error logging permission event: $e');
+    }
+  }
+
+  /// Get permission logs
+  Future<List<Map<String, dynamic>>> _getPermissionLogs() async {
+    try {
+      final logData = await _storageService.getJson('permission_event_log');
+      if (logData == null) return [];
+
+      final logs = logData['logs'] as List<dynamic>?;
+      return logs?.cast<Map<String, dynamic>>() ?? [];
+    } catch (e) {
+      debugPrint('Error getting permission logs: $e');
+      return [];
+    }
+  }
+
+  /// Clear all debug data
+  Future<void> clearAllDebugData() async {
+    try {
+      await _storageService.saveJson('permission_event_log', {'logs': []});
+      await _storageService.saveJson('notification_delivery_test', {});
+      await _storageService.saveJson(_deliveryTrackingKey, {'tracking': []});
+
+      // Clear persistence test data
+      final allData = await _storageService.getJson('') ?? {};
+      for (final key in allData.keys) {
+        if (key.toString().startsWith('persistence_test_')) {
+          await _storageService.saveJson(key.toString(), {});
+        }
+      }
+
+      debugPrint('All notification debug data cleared');
+    } catch (e) {
+      debugPrint('Error clearing debug data: $e');
+    }
   }
 }

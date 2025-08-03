@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:watertracker/core/design_system/app_colors.dart';
 import 'package:watertracker/core/constants/typography.dart';
 import 'package:watertracker/features/settings/screens/settings_screen.dart';
 
@@ -16,7 +17,7 @@ class HydrationNavigationDrawer extends StatelessWidget {
           children: [
             // Header section
             _buildDrawerHeader(context),
-            
+
             // Navigation items
             Expanded(
               child: ListView(
@@ -63,7 +64,7 @@ class HydrationNavigationDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Footer section
             _buildDrawerFooter(context),
           ],
@@ -81,8 +82,8 @@ class HydrationNavigationDrawer extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF6B73FF),
-            Color(0xFF9546C4),
+            AppColors.getSemanticColor('hydration', 'primary'),
+            AppColors.getSemanticColor('hydration', 'secondary'),
           ],
         ),
       ),
@@ -97,14 +98,10 @@ class HydrationNavigationDrawer extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.water_drop,
-              color: Colors.white,
-              size: 24,
-            ),
+            child: const Icon(Icons.water_drop, color: Colors.white, size: 24),
           ),
           const SizedBox(height: 16),
-          
+
           // App title
           Text(
             'Water Tracker',
@@ -115,7 +112,7 @@ class HydrationNavigationDrawer extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          
+
           // Subtitle
           Text(
             'Stay hydrated, stay healthy',
@@ -140,13 +137,22 @@ class HydrationNavigationDrawer extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFF6B73FF).withValues(alpha: 0.1) : null,
+        color:
+            isSelected
+                ? AppColors.getSemanticColor(
+                  'hydration',
+                  'primary',
+                ).withValues(alpha: 0.1)
+                : null,
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
         leading: Icon(
           icon,
-          color: isSelected ? const Color(0xFF6B73FF) : Colors.grey[600],
+          color:
+              isSelected
+                  ? AppColors.getSemanticColor('hydration', 'primary')
+                  : Colors.grey[600],
           size: 22,
         ),
         title: Text(
@@ -154,13 +160,14 @@ class HydrationNavigationDrawer extends StatelessWidget {
           style: AppTypography.subtitle.copyWith(
             fontSize: 16,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            color: isSelected ? const Color(0xFF6B73FF) : Colors.grey[800],
+            color:
+                isSelected
+                    ? AppColors.getSemanticColor('hydration', 'primary')
+                    : Colors.grey[800],
           ),
         ),
         onTap: onTap,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
